@@ -1,0 +1,2833 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost"
+        }
+    ],
+    "info": {
+        "name": "Laravel",
+        "_postman_id": "cac2e034-89f6-47be-9f5d-fd77df8f94f8",
+        "description": "",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Notifications",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get notifications list",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/notifications",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "20",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "5",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/notifications?size=20&page=5"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return notifications list.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": 1, \"object_id\": 1, \"object_name\": \"Task #1\", \"type\": \"task:assign\", \"read\": 0, \"read_time\": null, \"created_at\": \"2023-01-01 00:00:00\", \"added_user_id\": 1, \"added_user\": \"John Doe\", \"extra_object_id\": 1}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get notification",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/notification\/:id",
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "3",
+                                    "description": "notification identifier",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/notification\/:id?id=3"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get notification.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"id\": 1, \"object_id\": 1, \"object_name\": \"Task #1\", \"type\": \"task:assign\", \"read\": 0, \"read_time\": null, \"created_at\": \"2023-01-01 00:00:00\", \"added_user_id\": 1, \"added_user\": \"John Doe\", \"extra_object_id\": 1}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Set notification as read",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/notification\/read\/:id",
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "11",
+                                    "description": "notification identifier",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/notification\/read\/:id?id=11"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Set notification as read.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Orders",
+            "description": "",
+            "item": [
+                {
+                    "name": "Create order",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/order\/create",
+                            "query": [
+                                {
+                                    "key": "package",
+                                    "value": "aut",
+                                    "description": "Package name (one of: p1)",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/order\/create?package=aut"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Create order and return redirect to payment URL.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"url\": \"https:\/\/...\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get invoices list",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invoices",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "2",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "8",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/invoices?size=2&page=8"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return invoices list.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"order_id\": 1, \"full_number\", \"date\": \"2022-12-11\", \"nip\": \"0123456789\", \"name\": \"John Doe\", \"street\": \"Street name\", \"house_no\": 12, \"apartment_no\": \"1A\", \"zip\": \"00-123\", \"city\": \"London\", \"amount\": 100, \"gross\": 123, \"items\": [], \"generated\": 1, \"created_at\": \"2023-01-01 10:00:00\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get invoice PDF",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invoice\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invoice\/:id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return invoice pdf.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Validate invoicing data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/validate-invoicing-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/validate-invoicing-data"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Validate invoicing data.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Others",
+            "description": "",
+            "item": [
+                {
+                    "name": "Return countries list",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/countries",
+                            "query": [
+                                {
+                                    "key": "lang",
+                                    "value": "reiciendis",
+                                    "description": "Language Default: pl",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/countries?lang=reiciendis"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Payments",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get payment status",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/payment\/status\/:md5",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/payment\/status\/:md5"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return payment status.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"status\": \"finished\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Search",
+            "description": "",
+            "item": [
+                {
+                    "name": "Search task \/ projects",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/search",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "13",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "14",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "q",
+                                    "value": "maxime",
+                                    "description": "search phrase",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/search?size=13&page=14&q=maxime"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Search in task \/ projects table by specified query",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": \"1\", \"name\": \"Example name\", \"type\": \"task\", \"creatd_at\" : \"2023-01-01 10:00:00\"}, {\"id\": \"1\", \"name\": \"Example project\", \"type\": \"project\", \"creatd_at\" : \"2023-01-01 10:00:00\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Search task \/ projects \/ user",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/search\/:source",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "17",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "10",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "q",
+                                    "value": "commodi",
+                                    "description": "search phrase",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/search\/:source?size=17&page=10&q=commodi",
+                            "variable": [
+                                {
+                                    "id": "source",
+                                    "key": "source",
+                                    "value": "aut",
+                                    "description": "search in source table (one of: tasks, users, projects)"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Search task \/ projects \/ user in specified source table",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": \"1\", \"name\": \"Example task\", \"project_id\": 2, \"project\": \"Project name\"}]}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": \"1\", \"name\": \"Example task\"}]}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": \"1\", \"firstname\": \"John\", \"lastname\": \"Doe\"}]}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Stats",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get daily user stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/user\/:id\/daily",
+                            "query": [
+                                {
+                                    "key": "month",
+                                    "value": "ab",
+                                    "description": "Month in format: \"YYYY-MM\", Default current month",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/daily?month=ab",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "18",
+                                    "description": "User identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return daily user stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"user\": {\"id\": \"1\", \"firstname\": \"John\", \"lastname\": \"Doe\"}, \"month\": \"2022-12\", \"stats\": [{\"2023-06-30\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"John Doe\",\"total\":86400}}}}], \"total\": 100, \"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get monthy user stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/user\/:id\/monthly",
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "dolores",
+                                    "description": "Year in format: \"YYYY\", Default current year",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/monthly?year=dolores",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "7",
+                                    "description": "User identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return monthy user stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"user\": {\"id\": \"1\", \"firstname\": \"John\", \"lastname\": \"Doe\"}, \"year\": \"2022\", \"stats\": [{\"2023-06\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"John Doe\",\"total\":86400}}}}], \"total\": 100, \"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get daily project stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/project\/:id\/daily",
+                            "query": [
+                                {
+                                    "key": "month",
+                                    "value": "quam",
+                                    "description": "Month in format: \"YYYY-MM\", Default current month",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/daily?month=quam",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "6",
+                                    "description": "Project identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return daily project stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"project\": {\"id\": \"1\", \"name\": \"Example project name\"}, \"month\": \"2022-12\", \"stats\": [{\"2023-06-30\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"Task name\",\"total\":86400}}}}], \"total\": 100, \"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get monthy project stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/project\/:id\/monthly",
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "qui",
+                                    "description": "Year in format: \"YYYY\", Default current year",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/monthly?year=qui",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "20",
+                                    "description": "Project identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return project user stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"project\": {\"id\": \"1\", \"name\": \"Example project name\"}, \"year\": \"2022\", \"stats\": [{\"2023-06\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"Task name\",\"total\":86400}}}}], \"total\": 100, \"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get daily task stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/task\/:id\/daily",
+                            "query": [
+                                {
+                                    "key": "month",
+                                    "value": "non",
+                                    "description": "Month in format: \"YYYY-MM\", Default current month",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/daily?month=non",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "14",
+                                    "description": "Task identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return daily task stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"task\": {\"id\": \"1\", \"name\": \"Example task name\"}, \"month\": \"2022-12\", \"stats\": [{\"2023-06-30\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"John Doe\",\"total\":86400}}}}], \"total\": 100, \"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get monthy task stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/task\/:id\/monthly",
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "labore",
+                                    "description": "Year in format: \"YYYY\", Default current year",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/monthly?year=labore",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "11",
+                                    "description": "Task identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return task user stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"project\": {\"id\": \"1\", \"name\": \"Example task name\"}, \"year\": \"2022\", \"stats\": [{\"2023-06\":{\"total\":86400,\"objects\":{\"1\":{\"id\":1,\"name\":\"John Doe\",\"total\":86400}}}}], \"total\": 100,\"allowed_months\": [\"2022-12\", \"2023-01\"], \"allowed_years\" : [\"2022\", \"2023\"]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get total task stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/stats\/total",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "12",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "13",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "user_id",
+                                    "value": "1",
+                                    "description": "User identifier",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "task_id",
+                                    "value": "13",
+                                    "description": "Task identifier",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "project_id",
+                                    "value": "6",
+                                    "description": "Project identifier",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "date_from",
+                                    "value": "omnis",
+                                    "description": "Date from",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "date_to",
+                                    "value": "non",
+                                    "description": "Date to",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/total?size=12&page=13&user_id=1&task_id=13&project_id=6&date_from=omnis&date_to=non"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return total task stats.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Subscription",
+            "description": "",
+            "item": [
+                {
+                    "name": "Return package limits",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/packages",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/packages"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get active subscription",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/subscription",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/subscription"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"start\": 1686580275, \"start_date\": \"2023-01-02 10:00:12\", \"end\": 1686580275, \"end_date\": \"2023-01-02 11:00:12\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get current stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/current-stats",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/current-stats"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"tasks\": 18, \"can_add_task\": true, \"projects\": 2, \"can_add_project\": false, \"space\": 512012, \"can_add_files\": false}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Return package limits",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/packages-site",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/packages-site"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "User management",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get users list",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/users",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "2",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "5",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/users?size=2&page=5"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return users account list.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\": 1, \"firstname\": \"John\", \"lastname\": \"Doe\", \"phone\": 123456789, \"email\": \"john@doe.com\", \"activated\": 1, \"owner\": 0, \"superuser\": 0, \"can_delete\": 1, \"user_permission_id\": 1, \"user_permission_name\": \"Permission name\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Create user account",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/user"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"et\",\"lastname\":\"et\",\"email\":\"dave57@example.net\",\"password\":\"OYY3?I\",\"phone\":\"quidem\",\"user_permission_id\":15,\"superuser\":true}"
+                        },
+                        "description": "Create user account. After create account is ready to use.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 409,
+                            "body": "{\"error\":true,\"message\":\"The given e-mail address is already registered\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Invite user",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invite",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invite"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"august52@example.org\",\"user_permission_id\":16}"
+                        },
+                        "description": "Send invitation to the email address provided.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 409,
+                            "body": "{\"error\":true,\"message\":\"The given e-mail address is already registered\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get user account data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/user\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "2",
+                                    "description": "User identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return user account data.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"id\": 1, \"firstname\": \"John\", \"lastname\": \"Doe\", \"phone\": 123456789, \"email\": \"john@doe.com\", \"activated\": 1, \"owner\": 0, \"superuser\": 0, \"can_delete\": 1, \"user_permission_id\": 1, \"user_permission_name\": \"Permission name\"}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"User does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update user account data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/user\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "12",
+                                    "description": "User identifier."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"et\",\"lastname\":\"magnam\",\"email\":\"trey32@example.org\",\"password\":\"Up!|\\\/66?\",\"phone\":\"asperiores\",\"user_permission_id\":11,\"superuser\":false}"
+                        },
+                        "description": "Update user account data.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete user account",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/user\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "14",
+                                    "description": "User identifier."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Delete user account.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"User does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get logged user permissions",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user\/permission",
+                            "query": [
+                                {
+                                    "key": "text",
+                                    "value": "",
+                                    "description": "return text permission",
+                                    "disabled": true
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/user\/permission?text="
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get logged user permissions",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"permission\":{\"project\":[\"list\",\"create\",\"update\",\"delete\"],\"task\":[\"list\",\"create\",\"update\",\"delete\"],\"user\":[\"list\",\"create\",\"update\",\"delete\"],\"permission\":[\"list\",\"create\",\"update\",\"delete\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "User profile",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/profile",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/profile"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "User profile.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"id\": 1, \"firstname\": \"John\", \"lastname\": \"Doe\", \"phone\": 123456789, \"email\": \"john@doe.com\", \"activated\": 1, \"owner\": 0, \"superuser\": 0, \"user_permission_id\": 1, \"user_permission_name\": \"Permission name\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update user profile",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/profile",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/profile"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"perferendis\",\"lastname\":\"dolor\",\"email\":\"runolfsson.eveline@example.org\",\"password\":\"1G,mD;Fl56}]\\\\%Wt.\",\"phone\":\"facilis\"}"
+                        },
+                        "description": "User profile.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update user profile avatar",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/profile\/avatar",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/profile\/avatar"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": "User profile avatar.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "User settings",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/settings",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/settings"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "User settings.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"locale\": \"pl\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update user settings",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/settings",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/settings"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"locale\":\"cs_CZ\",\"notifications\":\"beatae\",\"mobile_notifications\":\"voluptas\"}"
+                        },
+                        "description": "User settings.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get login user firm identifier",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/get-firm-id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/get-firm-id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get login user firm identifier.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get login user identifier",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/get-id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/get-id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get login user identifier.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get active timer",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/user\/getActiveTimer",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/user\/getActiveTimer"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get user active timer list.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total\": 100, \"data\": [{\"id\": 1, \"task_id\": 12, \"status\": \"active\", \"total\": 1, \"task\": \"Task name\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get firm data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/firm-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/firm-data"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get firm data",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"identifier\": \"Firm ID\", \"firstname\": \"John\", \"lastname\": \"Doe\", \"email\": \"example@com.pl\", \"nip\": \"0123456789\", \"name\": \"Firm name\", \"street\": \"Street name\", \"house_no\": \"12\", \"apartment_no\": \"1A\", \"city\": \"London\", \"zip\": \"91-000\", \"country\": \"PL\", \"phone\": \"888777666\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update firm data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/firm-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/firm-data"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"officiis\",\"lastname\":\"voluptatem\",\"email\":\"nayeli.vandervort@example.org\",\"nip\":\"repudiandae\",\"name\":\"consectetur\",\"street\":\"voluptate\",\"house_no\":\"enim\",\"apartment_no\":\"provident\",\"city\":\"sit\",\"zip\":\"similique\",\"country\":\"modi\",\"phone\":\"at\"}"
+                        },
+                        "description": "Update firm data",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get invoice data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invoice-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invoice-data"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get invoice data",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"type\": \"firm\", \"name\": \"Firm name\", \"firstname\": \"John\", \"lastname\": \"Doe\", \"nip\": \"0123456789\", \"name\": \"Firm name\", \"street\": \"Street name\", \"house_no\": \"12\", \"apartment_no\": \"1A\", \"city\": \"London\", \"zip\": \"91-000\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update invoice data",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invoice-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invoice-data"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"type\":\"incidunt\",\"firstname\":\"amet\",\"lastname\":\"sit\",\"nip\":\"nihil\",\"name\":\"sapiente\",\"street\":\"nobis\",\"house_no\":\"repellendus\",\"apartment_no\":\"et\",\"city\":\"debitis\",\"zip\":\"accusamus\",\"country\":\"optio\"}"
+                        },
+                        "description": "Update invoice data",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Validate invite token",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invite\/:token",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invite\/:token",
+                            "variable": [
+                                {
+                                    "id": "token",
+                                    "key": "token",
+                                    "value": "totam",
+                                    "description": "Invite token from invitation message."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Check validate invite token.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{'email': 'john@doe.com'}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"The given token is invalid\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Confirm invitation",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/invite\/:token",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/invite\/:token",
+                            "variable": [
+                                {
+                                    "id": "token",
+                                    "key": "token",
+                                    "value": "quia",
+                                    "description": "Invite token."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"aut\",\"lastname\":\"in\",\"password\":\"|iojIy~,@M)k'@\",\"phone\":\"sunt\"}"
+                        },
+                        "description": "Confirm invitation and create new user account.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"The given token is invalid\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "User permissions",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get permissions group list",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permissions",
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "3",
+                                    "description": "Number of rows. Default: 50",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "11",
+                                    "description": "Number of page (pagination). Default: 1",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/permissions?size=3&page=11"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return permissions list.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"total_rows\": 100, \"total_pages\": \"4\", \"current_page\": 1, \"has_more\": true, \"data\": [{\"id\":1,\"name\":\"Example group name\",\"permissions\":[{\"name\": \"module name\", \"perm\": [\"list\",\"create\"]}], \"is_default\": 0, \"can_delete\": 1}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Create new persmission group",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"animi\",\"permissions\":\"odit\",\"is_default\":false}"
+                        },
+                        "description": "Create new persmission group. Permissions should look like this:\nprojects:list,create,update,delete;users:list",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"'projects:' does not contain a list of items.\",\"errors\":{\"permissions\":[\"'projects:' does not contain a list of items.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get persmission group details",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "6",
+                                    "description": "Permission group identifier."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get persmission group details.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"id\":1,\"name\":\"Example group name\",\"permissions\":{\"module\":[\"list\",\"create\"]}, \"is_default\": 0, \"can_delete\": 1}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"Permission does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update persmission group",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "18",
+                                    "description": "Permission group identifier."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"est\",\"permissions\":\"in\",\"is_default\":false}"
+                        },
+                        "description": "Update persmission group.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete persmission group",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "7",
+                                    "description": "Permission group identifier."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Delete persmission group.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"Permission does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Add permission to persmission group",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/:id\/add",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/:id\/add",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "2",
+                                    "description": "Permission group identifier."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"object\":\"nulla\",\"action\":\"voluptatem\"}"
+                        },
+                        "description": "Add permission to persmission group.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"Permission does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete permission from persmission group",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/:id\/del",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/:id\/del",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "12",
+                                    "description": "Permission group identifier."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"object\":\"qui\",\"action\":\"dolor\"}"
+                        },
+                        "description": "Delete permission from persmission group.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"Permission does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Return permission modules",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/permission\/modules",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/permission\/modules"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization:",
+                                "value": "Bearer {TOKEN}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Return permission modules",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"permissions\":[{\"name\": \"module name\", \"perm\": [\"list\",\"create\"]}]}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "User registation",
+            "description": "",
+            "item": [
+                {
+                    "name": "Check user is login",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/is-login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/is-login"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Check user is login",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "[{\"firstname\": \"John\", \"lastname\": \"Doe\", \"locale\": \"pl\", \"owner\": 0}]",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"The provided credentials are incorrect.\",\"errors\":{\"email\":[\"The provided credentials are incorrect.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/logout",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/logout"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Logout.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Remove logged user account",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/removeAccount",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/removeAccount"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Remove logged user account",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Register new account",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/register",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/register"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"john@doe.com\",\"source\":\"tenetur\"}"
+                        },
+                        "description": "Create new user account. After registration, a confirmation link is sent to the provided e-mail address.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "true",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"The provided email is already registered.\",\"errors\":{\"email\":[\"The provided email is already registered.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Validate register token",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/register\/confirm\/:token",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/register\/confirm\/:token",
+                            "variable": [
+                                {
+                                    "id": "token",
+                                    "key": "token",
+                                    "value": "mollitia",
+                                    "description": "Register token."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Check validate register token from confirmation message.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{'email': 'john@doe.com'}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"The provided email is already registered.\",\"errors\":{\"email\":[\"The provided email is already registered.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Confirm register",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/register\/confirm\/:token",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/register\/confirm\/:token",
+                            "variable": [
+                                {
+                                    "id": "token",
+                                    "key": "token",
+                                    "value": "magnam",
+                                    "description": "Register token."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"firstname\":\"numquam\",\"lastname\":\"labore\",\"password\":\"k\\\/A3\\\"@b:%h}ssM~\\\"\",\"firm_identifier\":\"nihil\",\"phone\":\"et\"}"
+                        },
+                        "description": "Confirm register and finish registration.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"Invalid register token.\",\"errors\":{\"token\":[\"Invalid register token.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get token",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/login"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"dominic.lindgren@example.com\",\"password\":\"\\\/Y5U1:3ztB71@\",\"device_name\":\"quisquam\",\"mobile\":8,\"firm_id\":13}"
+                        },
+                        "description": "Return auth bearer Token.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "[{\"id\": 1, \"token\": \"xxxxxxxx\", \"firstname\": \"John\", \"lastname\": \"Doe\", \"locale\": \"pl\", \"owner\": 0, \"avatar\": \"b64 avatar image\", \"permission\":{\"project\":[\"list\",\"create\",\"update\",\"delete\"],\"task\":[\"list\",\"create\",\"update\",\"delete\"],\"user\":[\"list\",\"create\",\"update\",\"delete\"],\"permission\":[\"list\",\"create\",\"update\",\"delete\"]}}]",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"error\":true,\"message\":\"The provided credentials are incorrect.\",\"errors\":{\"email\":[\"The provided credentials are incorrect.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Forgot password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/forgot-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/forgot-password"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"linnea38@example.net\",\"firm_id\":11}"
+                        },
+                        "description": "Send password reset link",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"User does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Validate token reset password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/reset-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/reset-password"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"token\":\"nemo\",\"email\":\"retta68@example.com\"}"
+                        },
+                        "description": "Validate token reset password",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reset password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/reset-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/reset-password"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"token\":\"suscipit\",\"email\":\"omer.larkin@example.org\",\"password\":\"g3+%7,?4&N`U'&^s\"}"
+                        },
+                        "description": "Send password reset link",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get email firm ids",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/get-email-firm-ids",
+                            "query": [
+                                {
+                                    "key": "email",
+                                    "value": "kraig.kris%40example.com",
+                                    "description": "Account e-mail address",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/get-email-firm-ids?email=kraig.kris%40example.com"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Get user email assigned firm identifiers\nBecause e-mail addresses may be repeated within other companies, if the e-mail address exists more than once,\nyou must enter the company ID when logging in \/ remembering the password.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "[{\"id\": 1, \"name\": \"Example Firm\"}]",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"error\":true,\"message\":\"User does not exist\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "dashboard",
+            "description": "",
+            "item": [
+                {
+                    "name": "Get dashboard stats",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dashboard",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dashboard"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": null,
+                "type": "string"
+            }
+        ]
+    }
+}
