@@ -54,6 +54,19 @@ class UserController extends Controller
             "password" => "required",
             "device_name" => "required",
         ];
+        
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password
+        ];
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return [
+                "id" => Auth::user()->id,
+            ];
+        }
+        
+        
         $requiredFirm = false;
         if(User::where("email", $request->email)->active()->count() > 1)
         {
@@ -141,7 +154,8 @@ class UserController extends Controller
     */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
+        //$request->user()->currentAccessToken()->delete();
     }
     
     /**

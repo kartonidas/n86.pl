@@ -19,7 +19,7 @@
             </p>
         </div>
         <div style="text-align: left; margin-top: 10px; margin-bottom: 10px">
-            <a href="{{ env("FRONTEND_URL") }}{{ $locale }}/sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+            <a href="{{ env("FRONTEND_URL") }}/sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
                 Potwierdź rejestrację
             </a>
         </div>
@@ -32,7 +32,7 @@
         </div>
             
         <div style="text-align: left; margin-top: 10px; margin-bottom: 10px">
-            <a href="{{ env("FRONTEND_URL") }}{{ $locale }}/sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+            <a href="{{ env("FRONTEND_URL") }}/sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
                 Potwierdź rejestrację
             </a>
         </div>

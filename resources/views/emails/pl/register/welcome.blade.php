@@ -12,7 +12,7 @@
     <p>
         Aby zalogować się do aplikacji, prosimy kliknąć w poniższy link:
         <div style="text-align: left; margin-top: 10px; margin-bottom: 10px">
-            <a href="{{ env("FRONTEND_URL") }}{{ $locale }}/sign-in" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+            <a href="{{ env("FRONTEND_URL") }}/sign-in" style="display:inline-block; background-color: #506fd9; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
                 Zaloguj się.
             </a>
         </div>

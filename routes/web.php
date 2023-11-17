@@ -16,5 +16,6 @@ use App\Http\Controllers\PaymentController;
 
 $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
 
-Route::get('/', function () {
-});
+Route::get('{any?}', function () {
+    return view('welcome');
+})->where('any', '.*');

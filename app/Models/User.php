@@ -97,7 +97,7 @@ class User extends Authenticatable
         $tokenRow->token = $token;
         $tokenRow->save();
         
-        $url = env("FRONTEND_URL") . app()->getLocale() . "/reset-password?token=" . $token . "&email=" . $this->email;
+        $url = env("FRONTEND_URL") . "/reset-password?token=" . $token . "&email=" . $this->email;
         Mail::to($this->email)->locale(app()->getLocale())->queue(new ForgotPasswordMessage($url));
     }
     

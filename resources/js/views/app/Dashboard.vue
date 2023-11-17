@@ -1,0 +1,3 @@
+<template>
+    Tablica
+</template>
