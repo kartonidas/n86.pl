@@ -10,10 +10,13 @@ import i18n from "./i18n"
 import PrimeVue from 'primevue/config';
 import Breadcrumb from 'primevue/breadcrumb';
 import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 import Password from 'primevue/password';
 import Sidebar from 'primevue/sidebar';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 
 axios.defaults.baseURL = 'https://estate.netextend.pl/';
 axios.defaults.params = {
@@ -27,12 +30,15 @@ app.use(i18n)
 app.use(router);
 app.use(store)
 app.use(PrimeVue);
+app.use(ToastService);
 
 app.component('Breadcrumb', Breadcrumb);
 app.component('Button', Button);
+app.component('Checkbox', Checkbox);
 app.component('InputText', InputText);
 app.component('Message', Message);
 app.component('Password', Password);
 app.component('Sidebar', Sidebar);
+app.component('Toast', Toast);
 
 app.mount("#app")

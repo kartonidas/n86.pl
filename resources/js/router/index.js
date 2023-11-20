@@ -103,6 +103,27 @@ const router = createRouter({
                     name: 'profile',
                     component: () => import('@/views/app/Profile.vue'),
                 },
+                {
+                    path: '/app/users',
+                    name: 'users',
+                    component: () => import('@/views/app/Users/List.vue'),
+                },
+                {
+                    path: '/app/user/new',
+                    name: 'user_new',
+                    component: () => import('@/views/app/Users/New.vue'),
+                },
+                {
+                    path: '/app/user/:userId',
+                    name: 'user_edit',
+                    component: () => import('@/views/app/Users/Edit.vue'),
+                },
+                {
+                    path: '/app/user/permissions',
+                    name: 'permissions',
+                    component: () => import('@/views/app/Users/New.vue'),
+                },
+                
             ]
         },
         {

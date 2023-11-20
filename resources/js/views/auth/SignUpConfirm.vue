@@ -94,7 +94,7 @@
                             <label for="lastname" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.lastname') }}</label>
                             <InputText id="lastname" type="text" :placeholder="$t('auth.lastname')" class="w-full md:w-20rem" :class="{'p-invalid' : v$.lastname.$error}" style="padding: 1rem" v-model="lastname" />
                             <div v-if="v$.lastname.$dirty">
-                                <p v-for="error of v$.firstname.$errors" :key="error.$uid">
+                                <p v-for="error of v$.lastname.$errors" :key="error.$uid">
                                     <small class="p-error">{{ error.$message }}</small>
                                 </p>
                             </div>

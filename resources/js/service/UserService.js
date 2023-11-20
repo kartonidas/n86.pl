@@ -110,6 +110,21 @@ export default class UserService {
             });
     }
     
+    profile() {
+        return axios.get('api/v1/profile');
+    }
+    
+    profileUpdate(firstname, lastname, email, phone) {
+        var profileData = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            phone: phone,
+        };
+        
+        return axios.put('api/v1/profile', profileData);
+    }
+    
     isLogin() {
         return new Promise((resolve, reject) => {
             return axios.get('api/v1/is-login')

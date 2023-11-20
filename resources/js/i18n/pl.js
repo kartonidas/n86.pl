@@ -22,13 +22,27 @@ export default {
         repeat_password: 'Powtórz hasło',
     },
     app: {
+        'dashboard': 'Tablica',
         'profile': 'Profil',
         'logout': 'Wyloguj się',
         'save': 'Zapisz',
-        'home': 'Start'
+        'home': 'Start',
+        'change_password': 'Zmień hasło',
+        'success': 'Sukces',
+        'profile_updated': 'Profil został zaktualizowany',
+        'users': 'Użytkownicy',
+        'users_list': 'Lista użytkowników',
+        'add_new_user': 'Dodaj nowego użytkownika',
+        'new_user': 'Nowy użytkownik',
+        'edit_user': 'Edycja użytkownika',
+        'permissions': 'Uprawnienia',
+        'estates': 'Nieruchomości',
+        'estate_list': 'Lista nieruchomości',
+        'user_updated': 'Konto użytkownika zostało zaktualizowane'
     },
     validations: {
         required: "Uzupełnij pole",
+        requiredIf: "Uzupełnij pole",
         email: "Podany adres e-mail jest nieprawidłowy",
         sameAsPassword: "Podane hasła nie są identyczne"
     },
