@@ -121,9 +121,18 @@ const router = createRouter({
                 {
                     path: '/app/user/permissions',
                     name: 'permissions',
-                    component: () => import('@/views/app/Users/New.vue'),
+                    component: () => import('@/views/app/Permissions/List.vue'),
                 },
-                
+                {
+                    path: '/app/user/permission/new',
+                    name: 'permission_new',
+                    component: () => import('@/views/app/Permissions/New.vue'),
+                },
+                {
+                    path: '/app/user/permission/:permissionId',
+                    name: 'permission_edit',
+                    component: () => import('@/views/app/Permissions/Edit.vue'),
+                },
             ]
         },
         {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { removeNullValues } from './../utils/helper.js';
 
 export default class UsersService {
     list(size, page) {
@@ -24,15 +25,18 @@ export default class UsersService {
         return axios.get('api/v1/user/' + userId);
     }
     
-    update(userId, firstname, lastname, email, phone, password) {
+    update(userId, firstname, lastname, email, phone, password, superuser, permission_id) {
         var userData = {
             firstname : firstname,
             lastname : lastname,
             email : email,
             phone : phone,
-            password : password
+            password : password,
+            superuser : superuser,
+            user_permission_id : permission_id,
         };
-        return axios.put('api/v1/user/' + userId, userData);
+        
+        return axios.put('api/v1/user/' + userId, removeNullValues(userData));
     }
     
     remove(userId) {

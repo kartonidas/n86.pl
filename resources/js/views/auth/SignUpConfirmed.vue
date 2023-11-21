@@ -4,11 +4,11 @@
 
 <template>
     <div class="w-full py-6 px-5 sm:px-8 text-center">
-        {{ $t('auth.registering_confirmed') }}
+        {{ $t('app.registering_confirmed') }}
         
         <div class="mt-4">
             <router-link :to="{name: 'signin'}">
-                {{ $t('auth.login') }}
+                {{ $t('app.login') }}
             </router-link>
         </div>
     </div>

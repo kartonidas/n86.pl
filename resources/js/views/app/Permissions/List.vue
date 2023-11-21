@@ -7,33 +7,33 @@
     import Column from 'primevue/column';
     import DataTable from 'primevue/datatable';
     import Dialog from 'primevue/dialog';
-    import UsersService from '@/service/UsersService'
+    import PermissionService from '@/service/PermissionService'
     
     export default {
         setup() {
             const router = useRouter()
-            const usersService = new UsersService()
+            const permissionService = new PermissionService()
             const { t } = useI18n();
             
             return {
                 router,
                 t,
-                usersService,
+                permissionService,
             }
         },
         data() {
             return {
                 loading: false,
-                users: [],
+                permissions: [],
                 displayConfirmation: false,
-                deleteUserId: null,
+                deletePermissionId: null,
                 meta: {
                     currentPage: 1,
                     perPage: 25,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), route : { name : 'users'}, disabled : true },
+                        {'label' : this.t('app.permissions'), route : { name : 'permissions'}, disabled : true },
                     ],
                 }
             }
@@ -44,21 +44,20 @@
         methods: {
             getList() {
                 this.loading = true
-                this.usersService.list(this.meta.perPage, this.meta.currentPage)
+                this.permissionService.list(this.meta.perPage, this.meta.currentPage)
                     .then(response => {
-                        this.users = response.data.data
+                        this.permissions = response.data.data
                         this.meta.totalRecords = response.data.total_rows
                         this.meta.totalPages = response.data.total_pages
                         this.loading = false
                     }, () => {});
             },
-            
-            newUser() {
-                this.router.push({name: 'user_new'})
+            newGroup() {
+                this.router.push({name: 'permission_new'})
             },
             
-            editUser(userId) {
-                this.router.push({name: 'user_edit', params: { userId : userId }})
+            editGroup(permissionId) {
+                this.router.push({name: 'permission_edit', params: { permissionId : permissionId }})
             },
             
             changePage(event) {
@@ -68,22 +67,22 @@
             
             openConfirmation(id) {
                 this.displayConfirmation = true
-                this.deleteUserId = id
-            },
-            
-            closeConfirmation() {
-                this.displayConfirmation = false
+                this.deletePermissionId = id
             },
             
             confirmDeleteUser() {
-                this.usersService.remove(this.deleteUserId)
+                this.permissionService.remove(this.deletePermissionId)
                     .then((response) => {
                         this.getList()
                     })
                 
                 this.displayConfirmation = false
-                this.deleteUserId = null
-            }
+                this.deletePermissionId = null
+            },
+            
+            closeConfirmation() {
+                this.displayConfirmation = false
+            },
         },
         components: {
             "DataTable": DataTable,
@@ -100,30 +99,22 @@
         <div class="col-12">
             <div class="card">
                 <div class="text-right mb-2">
-                    <Button :label="$t('app.add_new_user')" @click="newUser" class="text-center"></Button>
+                    <Button :label="$t('app.add_new_group')" @click="newGroup" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
+                <DataTable :value="permissions" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
                     <Column field="delete" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editUser(data.id)"/>
+                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editGroup(data.id)"/>
                             <Button icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
                         </template>
                     </Column>
-                    <Column field="name" :header="$t('app.name')" style="min-width: 300px;">
+                     <Column field="name" :header="$t('app.name')" style="min-width: 300px;"></Column>
+                     <Column field="is_default" :header="$t('app.default')" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
-                            {{ data.firstname }} {{ data.lastname }}
+                            <span v-if="data.is_default">{{ $t('app.yes') }}</span>
                         </template>
-                    </Column>
-                    <Column field="email" :header="$t('app.email')"></Column>
-                    <Column field="phone" :header="$t('app.phone')"></Column>
-                    <Column :header="$t('app.permission_group')">
-                        <template #body="{ data }">
-                            <span v-if="data.owner">{{ $t('app.owner') }}</span>
-                            <span v-if="!data.owner && data.superuser">{{ $t('app.superuser') }}</span>
-                            <span v-if="!data.owner && !data.superuser">{{ data.user_permission_name }}</span>
-                        </template>
-                    </Column>
+                     </Column>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">

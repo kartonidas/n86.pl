@@ -67,11 +67,11 @@
     <div class="w-full py-6 px-5 sm:px-8">
         <div>
             <h3 class="mb-5">
-                {{ $t('auth.remind_password') }}
+                {{ $t('app.remind_password') }}
             </h3>
             <div class="mb-4">
-                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('auth.password') }}</label>
-                <Password id="password" v-model="password" :placeholder="$t('auth.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :inputStyle="{ padding: '1rem' }" ></Password>
+                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
+                <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem"></Password>
                 <div v-if="v$.password.$dirty">
                     <p v-for="error of v$.password.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -80,8 +80,8 @@
             </div>
                 
             <div class="mb-4">
-                <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('auth.repeat_password') }}</label>
-                <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('auth.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :inputStyle="{ padding: '1rem' }" ></Password>
+                <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.repeat_password') }}</label>
+                <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem"></Password>
                 <div v-if="v$.confirm_password.$dirty">
                     <p v-for="error of v$.confirm_password.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -97,7 +97,7 @@
                 </ul>
             </Message>
             
-            <Button :label="$t('auth.remind_password')" :loading="loading" iconPos="right" @click="resetPassword" class="w-full p-3 text-xl text-center"></Button>
+            <Button :label="$t('app.remind_password')" :loading="loading" iconPos="right" @click="resetPassword" class="w-full p-3 text-xl text-center"></Button>
         </div>
     </div>
 </template>

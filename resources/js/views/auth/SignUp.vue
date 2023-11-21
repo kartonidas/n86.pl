@@ -63,11 +63,11 @@
     <div class="w-full py-6 px-5 sm:px-8">
         <div>
             <h3 class="mb-5">
-                {{ $t('auth.register') }}
+                {{ $t('app.register') }}
             </h3>
             <div class="mb-4">
-                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.email') }}</label>
-                <InputText id="email" type="text" :placeholder="$t('auth.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" style="padding: 1rem" v-model="email" />
+                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
+                <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" />
                 <div v-if="v$.email.$dirty">
                     <p v-for="error of v$.email.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -83,7 +83,7 @@
                 </ul>
             </Message>
             
-            <Button :label="$t('auth.create_account')" :loading="loading" iconPos="right" @click="register" class="w-full p-3 text-xl text-center"></Button>
+            <Button :label="$t('app.create_account')" :loading="loading" iconPos="right" @click="register" class="w-full p-3 text-xl text-center"></Button>
         </div>
     </div>
 </template>

@@ -87,16 +87,16 @@
                     <div class="p-fluid">
                         <div class="formgrid grid">
                             <div class="field col-12 sm:col-6">
-                                <label for="firstname" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.firstname') }}</label>
-                                <InputText id="firstname" type="text" :placeholder="$t('auth.firstname')" class="w-full" :class="{'p-invalid' : v$.profile.firstname.$error}" style="padding: 1rem" v-model="profile.firstname" />
+                                <label for="firstname" class="block text-900 text-xl font-medium mb-2">{{ $t('app.firstname') }}</label>
+                                <InputText id="firstname" type="text" :placeholder="$t('app.firstname')" class="w-full" :class="{'p-invalid' : v$.profile.firstname.$error}" v-model="profile.firstname" />
                                 <div v-if="v$.profile.firstname.$error">
                                     <small class="p-error">{{ v$.profile.firstname.$errors[0].$message }}</small>
                                 </div>
                             </div>
                             
                             <div class="field col-12 sm:col-6">
-                                <label for="lastname" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.lastname') }}</label>
-                                <InputText id="lastname" type="text" :placeholder="$t('auth.lastname')" class="w-full" :class="{'p-invalid' : v$.profile.lastname.$error}" style="padding: 1rem" v-model="profile.lastname" />
+                                <label for="lastname" class="block text-900 text-xl font-medium mb-2">{{ $t('app.lastname') }}</label>
+                                <InputText id="lastname" type="text" :placeholder="$t('app.lastname')" class="w-full" :class="{'p-invalid' : v$.profile.lastname.$error}" v-model="profile.lastname" />
                                 <div v-if="v$.profile.lastname.$error">
                                     <p v-for="error of v$.profile.lastname.$errors" :key="error.$uid">
                                         <small class="p-error">{{ error.$message }}</small>
@@ -105,16 +105,16 @@
                             </div>
                             
                             <div class="field col-12 sm:col-6">
-                                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.email') }}</label>
-                                <InputText id="email" type="text" :placeholder="$t('auth.email')" class="w-full" :class="{'p-invalid' : v$.profile.email.$error}" style="padding: 1rem" v-model="profile.email" />
+                                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
+                                <InputText id="email" type="text" :placeholder="$t('app.email')" class="w-full" :class="{'p-invalid' : v$.profile.email.$error}" v-model="profile.email" />
                                 <div v-if="v$.profile.email.$error">
                                     <small class="p-error">{{ v$.profile.email.$errors[0].$message }}</small>
                                 </div>
                             </div>
                             
                             <div class="field col-12 sm:col-6">
-                                <label for="phone" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.phone') }}</label>
-                                <InputText id="phone" type="text" :placeholder="$t('auth.phone')" class="w-full" :class="{'p-invalid' : v$.profile.phone.$error}" style="padding: 1rem" v-model="profile.phone" />
+                                <label for="phone" class="block text-900 text-xl font-medium mb-2">{{ $t('app.phone') }}</label>
+                                <InputText id="phone" type="text" :placeholder="$t('app.phone')" class="w-full" :class="{'p-invalid' : v$.profile.phone.$error}" v-model="profile.phone" />
                                 <div v-if="v$.profile.phone.$error">
                                     <small class="p-error">{{ v$.profile.phone.$errors[0].$message }}</small>
                                 </div>
@@ -128,15 +128,15 @@
                             </div>
                             
                             <div class="field col-12 sm:col-6" v-if="changePassword">
-                                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('auth.password') }}</label>
-                                <Password id="password" v-model="profile.password" :placeholder="$t('auth.password')" :feedback="false" :class="{'p-invalid' : v$.profile.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+                                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
+                                <Password id="password" v-model="profile.password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.profile.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
                                 <div v-if="v$.profile.password.$error">
                                     <small class="p-error">{{ v$.profile.password.$errors[0].$message }}</small>
                                 </div>
                             </div>
                             <div class="field col-12 sm:col-6" v-if="changePassword">
-                                <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('auth.repeat_password') }}</label>
-                                <Password id="confirm_password" v-model="profile.confirm_password" :placeholder="$t('auth.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.profile.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :inputStyle="{ padding: '1rem' }" ></Password>
+                                <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.repeat_password') }}</label>
+                                <Password id="confirm_password" v-model="profile.confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.profile.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
                                 <div v-if="v$.profile.confirm_password.$error">
                                     <small class="p-error">{{ v$.profile.confirm_password.$errors[0].$message }}</small>
                                 </div>

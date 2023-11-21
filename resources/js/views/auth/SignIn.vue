@@ -66,11 +66,11 @@
     <div class="w-full py-6 px-5 sm:px-8">
         <div>
             <h3 class="mb-5">
-                {{ $t('auth.login') }}
+                {{ $t('app.login') }}
             </h3>
             <div class="mb-4">
-                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('auth.email') }}</label>
-                <InputText id="email" type="text" :placeholder="$t('auth.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" style="padding: 1rem" v-model="email" />
+                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
+                <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" />
                 <div v-if="v$.email.$dirty">
                     <p v-for="error of v$.email.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -79,15 +79,15 @@
             </div>
 
             <div class="mb-4">
-                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('auth.password') }}</label>
-                <Password id="password" v-model="password" :placeholder="$t('auth.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+                <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
+                <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
                 <div v-if="v$.password.$dirty">
                     <p v-for="error of v$.password.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
                     </p>
                 </div>
                 <div class="text-right mt-1">
-                    <router-link :to="{name: 'forgot-password'}">{{ $t('auth.forgot_password') }}</router-link>
+                    <router-link :to="{name: 'forgot-password'}">{{ $t('app.forgot_password') }}</router-link>
                 </div>
             </div>
             
@@ -100,10 +100,10 @@
                 </ul>
             </Message>
             
-            <Button :label="$t('auth.signin')" :loading="loading" iconPos="right" @click="login" class="w-full p-3 text-xl text-center"></Button>
+            <Button :label="$t('app.signin')" :loading="loading" iconPos="right" @click="login" class="w-full p-3 text-xl text-center"></Button>
             
             <div class="mt-4">
-                {{ $t('auth.no_account_yet') }} <router-link :to="{name: 'signup'}">{{ $t('auth.create_account') }}</router-link>
+                {{ $t('app.no_account_yet') }} <router-link :to="{name: 'signup'}">{{ $t('app.create_account') }}</router-link>
             </div>
         </div>
     </div>

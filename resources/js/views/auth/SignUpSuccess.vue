@@ -4,6 +4,6 @@
 
 <template>
     <div class="w-full py-6 px-5 sm:px-8 text-center">
-        {{ $t('auth.thank_for_registering') }}
+        {{ $t('app.thank_for_registering') }}
     </div>
 </template>
