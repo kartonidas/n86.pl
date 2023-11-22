@@ -64,4 +64,5 @@ const isOutsideClicked = (event) => {
             </div>
         </div>
     </div>
+    <Toast />
 </template>

@@ -24,27 +24,27 @@ endpoints:
         name: size
         description: 'Number of rows. Default: 50'
         required: false
-        example: 13
+        example: 18
         type: integer
         custom: []
       page:
         name: page
         description: 'Number of page (pagination). Default: 1'
         required: false
-        example: 14
+        example: 18
         type: integer
         custom: []
       q:
         name: q
         description: 'search phrase'
         required: false
-        example: maxime
+        example: tenetur
         type: string
         custom: []
     cleanQueryParameters:
-      size: 13
-      page: 14
-      q: maxime
+      size: 18
+      page: 18
+      q: tenetur
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -82,37 +82,37 @@ endpoints:
         name: source
         description: 'search in source table (one of: tasks, users, projects)'
         required: false
-        example: aut
+        example: sit
         type: string
         custom: []
     cleanUrlParameters:
-      source: aut
+      source: sit
     queryParameters:
       size:
         name: size
         description: 'Number of rows. Default: 50'
         required: false
-        example: 17
+        example: 6
         type: integer
         custom: []
       page:
         name: page
         description: 'Number of page (pagination). Default: 1'
         required: false
-        example: 10
+        example: 4
         type: integer
         custom: []
       q:
         name: q
         description: 'search phrase'
         required: false
-        example: commodi
+        example: blanditiis
         type: string
         custom: []
     cleanQueryParameters:
-      size: 17
-      page: 10
-      q: commodi
+      size: 6
+      page: 4
+      q: blanditiis
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []

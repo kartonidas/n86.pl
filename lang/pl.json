@@ -121,5 +121,7 @@
     "Out of disk space": "Brak miejsca na dysku",
     "New comment') . ": "New comment') . ",
     "New task') . ": "New task') . ",
-    "Change status') . ": "Change status') . "
+    "Change status') . ": "Change status') . ",
+    "Fee included in the rent" : "Opłaty zawarte w czynszu",
+    "Type of bill" : "Rodzaje rachunków"
 }

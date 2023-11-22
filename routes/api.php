@@ -77,6 +77,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/tenant/{id}/history', [TenantController::class, "history"])->where("id", "[0-9]+");
     
     // SŁOWNIKI
+    $router->get('/dictionary/types', [DictionaryController::class, "types"]);
     $router->get('/dictionaries', [DictionaryController::class, "list"]);
     $router->get('/dictionaries/{type}', [DictionaryController::class, "listByType"]);
     $router->put('/dictionary', [DictionaryController::class, "create"]);

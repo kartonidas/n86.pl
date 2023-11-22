@@ -58,6 +58,9 @@
     
         const sidebarEl = document.querySelector('.layout-topbar-menu');
         const topbarEl = document.querySelector('.layout-topbar-menu-button');
+        
+        if (topbarEl == undefined)
+            return
     
         return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
     };

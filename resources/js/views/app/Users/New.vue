@@ -4,6 +4,7 @@
     import { useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, sameAs, email } from '@/utils/i18n-validators'
+    import { getResponseErrors } from '@/utils/helper'
     import Dropdown from 'primevue/dropdown';
     
     import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
@@ -55,32 +56,23 @@
                 if (result) {
                     this.saving = true
                     this.errors = []
-                    this.usersService.create(this.user.firstname, this.user.lastname, this.user.email, this.user.phone, this.user.password).then(
-                        (response) => {
-                            store.commit('setToastMessage', {
-                                severity : 'success',
-                                summary : this.t('app.success'),
-                                detail : this.t('app.user_added'),
-                            });
-                            this.router.push({name: 'user_edit', params: { userId : response.data }})
-                        },
-                        (errors) => {
-                            if (errors.response.data.errors != undefined)
-                                this.getErrors(errors.response.data.errors)
-                            else
-                                this.errors.push(errors.response.data.message)
-                            this.saving = false
-                        }
-                    )
+                    this.usersService.create(this.user.firstname, this.user.lastname, this.user.email, this.user.phone, this.user.password)
+                        .then(
+                            (response) => {
+                                store.commit('setToastMessage', {
+                                    severity : 'success',
+                                    summary : this.t('app.success'),
+                                    detail : this.t('app.user_added'),
+                                });
+                                this.router.push({name: 'user_edit', params: { userId : response.data }})
+                            },
+                            (response) => {
+                                this.saving = false
+                                this.errors = getResponseErrors(response);
+                            }
+                        )
                 }
             },
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         },
         validations () {
             return {
@@ -111,7 +103,7 @@
                         <div class="formgrid grid">
                             <div class="field col-12 sm:col-6">
                                 <label for="firstname" class="block text-900 font-medium mb-2">{{ $t('app.firstname') }}</label>
-                                <InputText id="firstname" type="text" :placeholder="$t('app.firstname')" class="w-full" :class="{'p-invalid' : v$.user.firstname.$error}" v-model="user.firstname" />
+                                <InputText id="firstname" type="text" :placeholder="$t('app.firstname')" class="w-full" :class="{'p-invalid' : v$.user.firstname.$error}" v-model="user.firstname" :disabled="saving"/>
                                 <div v-if="v$.user.firstname.$error">
                                     <small class="p-error">{{ v$.user.firstname.$errors[0].$message }}</small>
                                 </div>
@@ -119,7 +111,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="lastname" class="block text-900 font-medium mb-2">{{ $t('app.lastname') }}</label>
-                                <InputText id="lastname" type="text" :placeholder="$t('app.lastname')" class="w-full" :class="{'p-invalid' : v$.user.lastname.$error}" v-model="user.lastname" />
+                                <InputText id="lastname" type="text" :placeholder="$t('app.lastname')" class="w-full" :class="{'p-invalid' : v$.user.lastname.$error}" v-model="user.lastname" :disabled="saving" />
                                 <div v-if="v$.user.lastname.$error">
                                     <p v-for="error of v$.user.lastname.$errors" :key="error.$uid">
                                         <small class="p-error">{{ error.$message }}</small>
@@ -129,7 +121,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="email" class="block text-900 font-medium mb-2">{{ $t('app.email') }}</label>
-                                <InputText id="email" type="text" :placeholder="$t('app.email')" class="w-full" :class="{'p-invalid' : v$.user.email.$error}" v-model="user.email" />
+                                <InputText id="email" type="text" :placeholder="$t('app.email')" class="w-full" :class="{'p-invalid' : v$.user.email.$error}" v-model="user.email" :disabled="saving" />
                                 <div v-if="v$.user.email.$error">
                                     <small class="p-error">{{ v$.user.email.$errors[0].$message }}</small>
                                 </div>
@@ -137,7 +129,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="phone" class="block text-900 font-medium mb-2">{{ $t('app.phone') }}</label>
-                                <InputText id="phone" type="text" :placeholder="$t('app.phone')" class="w-full" :class="{'p-invalid' : v$.user.phone.$error}" v-model="user.phone" />
+                                <InputText id="phone" type="text" :placeholder="$t('app.phone')" class="w-full" :class="{'p-invalid' : v$.user.phone.$error}" v-model="user.phone" :disabled="saving" />
                                 <div v-if="v$.user.phone.$error">
                                     <small class="p-error">{{ v$.user.phone.$errors[0].$message }}</small>
                                 </div>
@@ -145,18 +137,18 @@
                             
                             <div class="field col-12">
                                 <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="superuserCheck" name="superuser" value="1" v-model="user.superuser" :binary="true" />
+                                    <Checkbox inputId="superuserCheck" name="superuser" value="1" v-model="user.superuser" :binary="true" :disabled="saving" />
                                     <label for="superuserCheck">{{ $t('app.superuser') }}</label>
                                 </div>
                             </div>
                             <div class="field col-12" v-if="!user.superuser">
                                 <label for="phone" class="block text-900 font-medium mb-2">{{ $t('app.user_group') }}</label>
-                                <Dropdown v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id" style="padding: 0rem"/>
+                                <Dropdown v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id" style="padding: 0rem" :disabled="saving"/>
                             </div>
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="password" class="block text-900 font-medium mb-2">{{ $t('app.password') }}</label>
-                                <Password id="password" v-model="user.password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.user.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
+                                <Password id="password" v-model="user.password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.user.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="saving"></Password>
                                 <div v-if="v$.user.password.$error">
                                     <small class="p-error">{{ v$.user.password.$errors[0].$message }}</small>
                                 </div>
@@ -164,7 +156,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="confirm_password" class="block text-900 font-medium mb-2">{{ $t('app.repeat_password') }}</label>
-                                <Password id="confirm_password" v-model="user.confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.user.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" ></Password>
+                                <Password id="confirm_password" v-model="user.confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.user.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="saving" ></Password>
                                 <div v-if="v$.user.confirm_password.$error">
                                     <small class="p-error">{{ v$.user.confirm_password.$errors[0].$message }}</small>
                                 </div>

@@ -1,20 +1,10 @@
 import axios from 'axios';
 import store from './../store.js';
+import { removeNullValues } from './../utils/helper.js';
 
 export default class UserService {
     register(email) {
-        return new Promise((resolve, reject) => {
-            return axios.post('api/v1/register', {email : email})
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(function (error) {
-                    if (error.response.data.errors != undefined) 
-                        reject(error.response.data.errors);
-                    else
-                        reject(error.message);
-                });
-        });
+        return axios.post('api/v1/register', {email : email});
     }
     
     registerConfirm(token, firstname, lastname, password, phone, firm_identifier) {
@@ -26,18 +16,7 @@ export default class UserService {
             firm_identifier: firm_identifier
         };
         
-        return new Promise((resolve, reject) => {
-            return axios.post('api/v1/register/confirm/' + token, registerData)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(function (error) {
-                    if (error.response.data.errors != undefined) 
-                        reject(error.response.data.errors);
-                    else
-                        reject(error.message);
-                });
-        });
+        return axios.post('api/v1/register/confirm/' + token, registerData);
     }
     
     login(email, password) {
@@ -50,33 +29,22 @@ export default class UserService {
         return new Promise((resolve, reject) => {
             return axios.get('sanctum/csrf-cookie').then(() => {
                 return axios.post('api/v1/login', loginData)
-                    .then((response) => {
-                        store.commit('setUserId', response.data.id);
-                        resolve(response.data);
-                    })
-                    .catch(function (error) {
-                        if (error.response.data.errors != undefined) 
-                            reject(error.response.data.errors);
-                        else
-                            reject(error.message);
-                    });
+                    .then(
+                        (response) => {
+                            store.commit('setUserId', response.data.id);
+                            store.commit('setUserPermission', response.data.permission);
+                            resolve(response.data);
+                        },
+                        (response) => {
+                            reject(response);
+                        }
+                    );
             });
         });
     }
     
     forgotPassword(email) {
-        return new Promise((resolve, reject) => {
-            return axios.post('api/v1/forgot-password', {email : email})
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(function (error) {
-                    if (error.response.data.errors != undefined) 
-                        reject(error.response.data.errors);
-                    else
-                        reject(error.message);
-                });
-        });
+        return axios.post('api/v1/forgot-password', {email : email});
     }
     
     resetPassword(token, email, password) {
@@ -86,27 +54,18 @@ export default class UserService {
             password: password
         };
         
-        return new Promise((resolve, reject) => {
-            return axios.post('api/v1/reset-password', resetPasswordData)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(function (error) {
-                    if (error.response.data.errors != undefined) 
-                        reject(error.response.data.errors);
-                    else
-                        reject(error.message);
-                });
-        });
+        return axios.post('api/v1/reset-password', resetPasswordData);
     }
     
     logout() {
         axios.get('api/v1/logout')
             .then(() => {
                 store.commit('setUserId', null);
+                store.commit('setUserPermission', null);
             })
             .catch(function () {
                 store.commit('setUserId', null);
+                store.commit('setUserPermission', null);
             });
     }
     
@@ -114,15 +73,16 @@ export default class UserService {
         return axios.get('api/v1/profile');
     }
     
-    profileUpdate(firstname, lastname, email, phone) {
+    profileUpdate(firstname, lastname, email, phone, password) {
         var profileData = {
             firstname: firstname,
             lastname: lastname,
             email: email,
             phone: phone,
+            password: password,
         };
         
-        return axios.put('api/v1/profile', profileData);
+        return axios.put('api/v1/profile', removeNullValues(profileData));
     }
     
     isLogin() {

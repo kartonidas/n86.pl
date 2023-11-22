@@ -2,42 +2,41 @@
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useI18n } from 'vue-i18n'
-    import { hasAccess } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
+    
     import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
     import Column from 'primevue/column';
     import DataTable from 'primevue/datatable';
     import Dialog from 'primevue/dialog';
-    import UsersService from '@/service/UsersService'
+    import ItemService from '@/service/ItemService'
     
     export default {
         setup() {
             const router = useRouter()
-            const usersService = new UsersService()
+            const itemService = new ItemService()
             const { t } = useI18n();
             const toast = useToast();
             
             return {
                 router,
                 t,
-                usersService,
+                itemService,
                 toast,
-                hasAccess
             }
         },
         data() {
             return {
                 loading: false,
-                users: [],
+                items: [],
                 displayConfirmation: false,
-                deleteUserId: null,
+                deleteItemId: null,
                 meta: {
                     currentPage: 1,
                     perPage: 25,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), route : { name : 'users'}, disabled : true },
+                        {'label' : this.t('app.items'), route : { name : 'items'}, disabled : true },
                     ],
                 }
             }
@@ -48,26 +47,26 @@
         methods: {
             getList() {
                 this.loading = true
-                this.usersService.list(this.meta.perPage, this.meta.currentPage)
+                this.itemService.list(this.meta.perPage, this.meta.currentPage)
                     .then(
                         (response) => {
-                            this.users = response.data.data
+                            this.items = response.data.data
                             this.meta.totalRecords = response.data.total_rows
                             this.meta.totalPages = response.data.total_pages
                             this.loading = false
                         },
-                        (errors) => {
+                        (response) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     );
             },
             
-            newUser() {
-                this.router.push({name: 'user_new'})
+            newItem() {
+                this.router.push({name: 'item_new'})
             },
             
-            editUser(userId) {
-                this.router.push({name: 'user_edit', params: { userId : userId }})
+            editItem(itemId) {
+                this.router.push({name: 'item_edit', params: { itemId : itemId }})
             },
             
             changePage(event) {
@@ -77,27 +76,27 @@
             
             openConfirmation(id) {
                 this.displayConfirmation = true
-                this.deleteUserId = id
+                this.deleteItemId = id
+            },
+            
+            confirmDeleteUser() {
+                this.itemService.remove(this.deleteItemId)
+                    .then(
+                        (response) => {
+                            this.getList()
+                        },
+                        (response) => {
+                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        }
+                    )
+                
+                this.displayConfirmation = false
+                this.deleteItemId = null
             },
             
             closeConfirmation() {
                 this.displayConfirmation = false
             },
-            
-            confirmDeleteUser() {
-                this.usersService.remove(this.deleteUserId)
-                    .then(
-                        (response) => {
-                            this.getList()
-                        },
-                        (errors) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
-                        }
-                    )
-                
-                this.displayConfirmation = false
-                this.deleteUserId = null
-            }
         },
         components: {
             "DataTable": DataTable,
@@ -113,30 +112,21 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2" v-if="hasAccess('user:create')">
-                    <Button :label="$t('app.new_user')" @click="newUser" class="text-center"></Button>
+                <div class="text-right mb-2">
+                    <Button :label="$t('app.new_item')" @click="newItem" class="text-center"></Button>
                 </div>
-                <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
+                
+                <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
                     <Column field="delete" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editUser(data.id)"/>
-                            <Button v-if="hasAccess('user:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
+                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editItem(data.id)"/>
+                            <Button icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
-                    <Column field="name" :header="$t('app.name')" style="min-width: 300px;">
-                        <template #body="{ data }">
-                            {{ data.firstname }} {{ data.lastname }}
-                        </template>
-                    </Column>
-                    <Column field="email" :header="$t('app.email')"></Column>
-                    <Column field="phone" :header="$t('app.phone')"></Column>
-                    <Column :header="$t('app.permission_group')">
-                        <template #body="{ data }">
-                            <span v-if="data.owner">{{ $t('app.owner') }}</span>
-                            <span v-if="!data.owner && data.superuser">{{ $t('app.superuser') }}</span>
-                            <span v-if="!data.owner && !data.superuser">{{ data.user_permission_name }}</span>
-                        </template>
-                    </Column>
+                     <Column field="name" :header="$t('app.name')" style="min-width: 300px;"></Column>
+                     <template #empty>
+                        {{ $t('app.items_empty_list') }}
+                     </template>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">

@@ -59,13 +59,29 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => $request->password
         ];
+        
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return [
                 "id" => Auth::user()->id,
+                "firstname" => Auth::user()->firstname,
+                "lastname" => Auth::user()->lastname,
+                "locale" => Auth::user()->locale,
+                "owner" => Auth::user()->owner,
+                "permission" => UserPermission::permissionArrayToString(Auth::user()->getAllUserPermissions(Auth::user()->getUuid(), true)),
             ];
         }
         
+        throw new Exception("Invalid credentials");
+    }
+    
+    public function getToken(Request $request)
+    {
+        $rule = [
+            "email" => "required|email",
+            "password" => "required",
+            "device_name" => "required",
+        ];
         
         $requiredFirm = false;
         if(User::where("email", $request->email)->active()->count() > 1)
@@ -516,7 +532,6 @@ class UserController extends Controller
         $user = User::byFirm()->apiFields()->find($id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
-        
         
         $user->activated = $user->activated == 1;
         $user->owner = $user->owner == 1;

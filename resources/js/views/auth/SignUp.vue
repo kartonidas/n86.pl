@@ -1,6 +1,7 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
+    import { getResponseErrors } from '@/utils/helper'
     import UserService from '@/service/UserService';
     
     import { useVuelidate } from '@vuelidate/core'
@@ -19,7 +20,7 @@
         },
         data() {
             return {
-                loading: false,
+                saving: false,
                 email: '',
                 errors: []
             }
@@ -34,27 +35,20 @@
                 const result = await this.v$.$validate()
                 if (result) {
                     this.errors = []
-                    this.loading = true
+                    this.saving = true
                     this.userService.register(this.email)
                         .then(
                             (response) => {
-                                this.loading = false
+                                this.saving = false
                                 this.router.push({name: 'signup-success'})
                             },
-                            (errors) => {
-                                this.getErrors(errors)
-                                this.loading = false
+                            (response) => {
+                                this.errors = getResponseErrors(response)
+                                this.saving = false
                             }
                         );
                 }
             },
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         }
     }
 </script>
@@ -67,7 +61,7 @@
             </h3>
             <div class="mb-4">
                 <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
-                <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" />
+                <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="saving"/>
                 <div v-if="v$.email.$dirty">
                     <p v-for="error of v$.email.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -83,7 +77,7 @@
                 </ul>
             </Message>
             
-            <Button :label="$t('app.create_account')" :loading="loading" iconPos="right" @click="register" class="w-full p-3 text-xl text-center"></Button>
+            <Button :label="$t('app.create_account')" :loading="saving" iconPos="right" @click="register" class="w-full p-3 text-xl text-center"></Button>
         </div>
     </div>
 </template>

@@ -5,16 +5,1142 @@
             "key": "baseUrl",
             "type": "string",
             "name": "string",
-            "value": "http:\/\/localhost"
+            "value": "estate.netextend.pl"
         }
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "cac2e034-89f6-47be-9f5d-fd77df8f94f8",
+        "_postman_id": "0de036c0-ee82-4cd9-bd17-4e8687b9e334",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
     "item": [
+        {
+            "name": "Endpoints",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/v1\/items",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/items",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/items"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/item\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/tenants",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenants",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenants"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/tenant",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenant",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenant"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/tenant\/{tid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenant\/:tid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenant\/:tid"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/tenant\/{tid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenant\/:tid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenant\/:tid"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/item\/{id}\/tenant\/{tid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenant\/:tid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenant\/:tid"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/item\/{id}\/tenant\/{tid}\/terminate",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/tenant\/:tid\/terminate",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/tenant\/:tid\/terminate"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/bills",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bills",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bills"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/bill",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/bill\/{bid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill\/:bid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill\/:bid"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/bill\/{bid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill\/:bid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill\/:bid"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/item\/{id}\/bill\/{bid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill\/:bid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill\/:bid"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/item\/{id}\/bill\/{bid}\/paid",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill\/:bid\/paid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill\/:bid\/paid"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/item\/{id}\/bill\/{bid}\/unpaid",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/bill\/:bid\/unpaid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/bill\/:bid\/unpaid"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/fees",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/fees",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/fees"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/fee",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/fee",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/fee"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/item\/{id}\/fee\/{fid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/fee\/:fid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/fee\/:fid"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/item\/{id}\/fee\/{fid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/fee\/:fid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/fee\/:fid"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/item\/{id}\/fee\/{fid}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/item\/:id\/fee\/:fid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/item\/:id\/fee\/:fid"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/tenants",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenants",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenants"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/tenant",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenant",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenant"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/tenant\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenant\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenant\/:id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/tenant\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenant\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenant\/:id"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/tenant\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenant\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenant\/:id"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/tenant\/{id}\/history",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/tenant\/:id\/history",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/tenant\/:id\/history"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/dictionaries",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionaries",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionaries"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/dictionaries\/{type}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionaries\/:type",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionaries\/:type"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/dictionary",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionary",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionary"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/dictionary\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionary\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionary\/:id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/dictionary\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionary\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionary\/:id"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/dictionary\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dictionary\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dictionary\/:id"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/customers",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/customers",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/customers"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/customer",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/customer",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/customer"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/customer\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/customer\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/customer\/:id"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/customer\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/customer\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/customer\/:id"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/customer\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/customer\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/customer\/:id"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
         {
             "name": "Notifications",
             "description": "",
@@ -28,18 +1154,18 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "20",
+                                    "value": "19",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "5",
+                                    "value": "2",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/notifications?size=20&page=5"
+                            "raw": "{{baseUrl}}\/api\/v1\/notifications?size=19&page=2"
                         },
                         "method": "GET",
                         "header": [
@@ -80,12 +1206,12 @@
                             "query": [
                                 {
                                     "key": "id",
-                                    "value": "3",
+                                    "value": "11",
                                     "description": "notification identifier",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/notification\/:id?id=3"
+                            "raw": "{{baseUrl}}\/api\/v1\/notification\/:id?id=11"
                         },
                         "method": "GET",
                         "header": [
@@ -126,12 +1252,12 @@
                             "query": [
                                 {
                                     "key": "id",
-                                    "value": "11",
+                                    "value": "14",
                                     "description": "notification identifier",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/notification\/read\/:id?id=11"
+                            "raw": "{{baseUrl}}\/api\/v1\/notification\/read\/:id?id=14"
                         },
                         "method": "PUT",
                         "header": [
@@ -171,12 +1297,12 @@
                             "query": [
                                 {
                                     "key": "package",
-                                    "value": "aut",
+                                    "value": "explicabo",
                                     "description": "Package name (one of: p1)",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/order\/create?package=aut"
+                            "raw": "{{baseUrl}}\/api\/v1\/order\/create?package=explicabo"
                         },
                         "method": "POST",
                         "header": [
@@ -217,18 +1343,18 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "2",
+                                    "value": "3",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "8",
+                                    "value": "13",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/invoices?size=2&page=8"
+                            "raw": "{{baseUrl}}\/api\/v1\/invoices?size=3&page=13"
                         },
                         "method": "GET",
                         "header": [
@@ -339,12 +1465,12 @@
                             "query": [
                                 {
                                     "key": "lang",
-                                    "value": "reiciendis",
+                                    "value": "quasi",
                                     "description": "Language Default: pl",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/countries?lang=reiciendis"
+                            "raw": "{{baseUrl}}\/api\/v1\/countries?lang=quasi"
                         },
                         "method": "GET",
                         "header": [
@@ -425,24 +1551,24 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "13",
+                                    "value": "18",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "14",
+                                    "value": "18",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 },
                                 {
                                     "key": "q",
-                                    "value": "maxime",
+                                    "value": "tenetur",
                                     "description": "search phrase",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/search?size=13&page=14&q=maxime"
+                            "raw": "{{baseUrl}}\/api\/v1\/search?size=18&page=18&q=tenetur"
                         },
                         "method": "GET",
                         "header": [
@@ -479,29 +1605,29 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "17",
+                                    "value": "6",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "10",
+                                    "value": "4",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 },
                                 {
                                     "key": "q",
-                                    "value": "commodi",
+                                    "value": "blanditiis",
                                     "description": "search phrase",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/search\/:source?size=17&page=10&q=commodi",
+                            "raw": "{{baseUrl}}\/api\/v1\/search\/:source?size=6&page=4&q=blanditiis",
                             "variable": [
                                 {
                                     "id": "source",
                                     "key": "source",
-                                    "value": "aut",
+                                    "value": "sit",
                                     "description": "search in source table (one of: tasks, users, projects)"
                                 }
                             ]
@@ -559,17 +1685,17 @@
                             "query": [
                                 {
                                     "key": "month",
-                                    "value": "ab",
+                                    "value": "quae",
                                     "description": "Month in format: \"YYYY-MM\", Default current month",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/daily?month=ab",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/daily?month=quae",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "18",
+                                    "value": "5",
                                     "description": "User identifier."
                                 }
                             ]
@@ -613,17 +1739,17 @@
                             "query": [
                                 {
                                     "key": "year",
-                                    "value": "dolores",
+                                    "value": "tempora",
                                     "description": "Year in format: \"YYYY\", Default current year",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/monthly?year=dolores",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/user\/:id\/monthly?year=tempora",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "7",
+                                    "value": "1",
                                     "description": "User identifier."
                                 }
                             ]
@@ -667,17 +1793,17 @@
                             "query": [
                                 {
                                     "key": "month",
-                                    "value": "quam",
+                                    "value": "rerum",
                                     "description": "Month in format: \"YYYY-MM\", Default current month",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/daily?month=quam",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/daily?month=rerum",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "6",
+                                    "value": "4",
                                     "description": "Project identifier."
                                 }
                             ]
@@ -721,17 +1847,17 @@
                             "query": [
                                 {
                                     "key": "year",
-                                    "value": "qui",
+                                    "value": "laborum",
                                     "description": "Year in format: \"YYYY\", Default current year",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/monthly?year=qui",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/project\/:id\/monthly?year=laborum",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "20",
+                                    "value": "3",
                                     "description": "Project identifier."
                                 }
                             ]
@@ -775,17 +1901,17 @@
                             "query": [
                                 {
                                     "key": "month",
-                                    "value": "non",
+                                    "value": "quia",
                                     "description": "Month in format: \"YYYY-MM\", Default current month",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/daily?month=non",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/daily?month=quia",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "14",
+                                    "value": "1",
                                     "description": "Task identifier."
                                 }
                             ]
@@ -829,17 +1955,17 @@
                             "query": [
                                 {
                                     "key": "year",
-                                    "value": "labore",
+                                    "value": "quae",
                                     "description": "Year in format: \"YYYY\", Default current year",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/monthly?year=labore",
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/task\/:id\/monthly?year=quae",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "11",
+                                    "value": "2",
                                     "description": "Task identifier."
                                 }
                             ]
@@ -883,48 +2009,48 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "12",
+                                    "value": "1",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "13",
+                                    "value": "9",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 },
                                 {
                                     "key": "user_id",
-                                    "value": "1",
+                                    "value": "16",
                                     "description": "User identifier",
                                     "disabled": false
                                 },
                                 {
                                     "key": "task_id",
-                                    "value": "13",
+                                    "value": "4",
                                     "description": "Task identifier",
                                     "disabled": false
                                 },
                                 {
                                     "key": "project_id",
-                                    "value": "6",
+                                    "value": "13",
                                     "description": "Project identifier",
                                     "disabled": false
                                 },
                                 {
                                     "key": "date_from",
-                                    "value": "omnis",
+                                    "value": "mollitia",
                                     "description": "Date from",
                                     "disabled": false
                                 },
                                 {
                                     "key": "date_to",
-                                    "value": "non",
+                                    "value": "ipsa",
                                     "description": "Date to",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/stats\/total?size=12&page=13&user_id=1&task_id=13&project_id=6&date_from=omnis&date_to=non"
+                            "raw": "{{baseUrl}}\/api\/v1\/stats\/total?size=1&page=9&user_id=16&task_id=4&project_id=13&date_from=mollitia&date_to=ipsa"
                         },
                         "method": "GET",
                         "header": [
@@ -1109,12 +2235,12 @@
                                 },
                                 {
                                     "key": "page",
-                                    "value": "5",
+                                    "value": "14",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/users?size=2&page=5"
+                            "raw": "{{baseUrl}}\/api\/v1\/users?size=2&page=14"
                         },
                         "method": "GET",
                         "header": [
@@ -1172,7 +2298,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"et\",\"lastname\":\"et\",\"email\":\"dave57@example.net\",\"password\":\"OYY3?I\",\"phone\":\"quidem\",\"user_permission_id\":15,\"superuser\":true}"
+                            "raw": "{\"firstname\":\"minus\",\"lastname\":\"excepturi\",\"email\":\"coty.cremin@example.net\",\"password\":\"LFYPUs:(da$xyWi@6z$\",\"phone\":\"qui\",\"user_permission_id\":13,\"superuser\":false}"
                         },
                         "description": "Create user account. After create account is ready to use.",
                         "auth": {
@@ -1214,7 +2340,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"august52@example.org\",\"user_permission_id\":16}"
+                            "raw": "{\"email\":\"rosalinda11@example.com\",\"user_permission_id\":16}"
                         },
                         "description": "Send invitation to the email address provided.",
                         "auth": {
@@ -1242,7 +2368,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "2",
+                                    "value": "10",
                                     "description": "User identifier."
                                 }
                             ]
@@ -1295,7 +2421,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "12",
+                                    "value": "5",
                                     "description": "User identifier."
                                 }
                             ]
@@ -1317,7 +2443,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"et\",\"lastname\":\"magnam\",\"email\":\"trey32@example.org\",\"password\":\"Up!|\\\/66?\",\"phone\":\"asperiores\",\"user_permission_id\":11,\"superuser\":false}"
+                            "raw": "{\"firstname\":\"culpa\",\"lastname\":\"dolores\",\"email\":\"kassulke.kariane@example.com\",\"password\":\"3I._V5b`\",\"phone\":\"sit\",\"user_permission_id\":14,\"superuser\":false}"
                         },
                         "description": "Update user account data.",
                         "auth": {
@@ -1338,7 +2464,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "14",
+                                    "value": "15",
                                     "description": "User identifier."
                                 }
                             ]
@@ -1484,7 +2610,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"perferendis\",\"lastname\":\"dolor\",\"email\":\"runolfsson.eveline@example.org\",\"password\":\"1G,mD;Fl56}]\\\\%Wt.\",\"phone\":\"facilis\"}"
+                            "raw": "{\"firstname\":\"sit\",\"lastname\":\"aut\",\"email\":\"albina70@example.com\",\"password\":\"`]3?$0jN{CMc9U&L<Q2\",\"phone\":\"eveniet\"}"
                         },
                         "description": "User profile.",
                         "auth": {
@@ -1599,7 +2725,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"locale\":\"cs_CZ\",\"notifications\":\"beatae\",\"mobile_notifications\":\"voluptas\"}"
+                            "raw": "{\"locale\":\"en_IE\",\"notifications\":\"veritatis\",\"mobile_notifications\":\"rerum\"}"
                         },
                         "description": "User settings.",
                         "auth": {
@@ -1776,7 +2902,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"officiis\",\"lastname\":\"voluptatem\",\"email\":\"nayeli.vandervort@example.org\",\"nip\":\"repudiandae\",\"name\":\"consectetur\",\"street\":\"voluptate\",\"house_no\":\"enim\",\"apartment_no\":\"provident\",\"city\":\"sit\",\"zip\":\"similique\",\"country\":\"modi\",\"phone\":\"at\"}"
+                            "raw": "{\"firstname\":\"voluptatem\",\"lastname\":\"doloremque\",\"email\":\"qdeckow@example.com\",\"nip\":\"vitae\",\"name\":\"culpa\",\"street\":\"eos\",\"house_no\":\"aut\",\"apartment_no\":\"rem\",\"city\":\"officiis\",\"zip\":\"debitis\",\"country\":\"sint\",\"phone\":\"voluptates\"}"
                         },
                         "description": "Update firm data",
                         "auth": {
@@ -1850,7 +2976,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"type\":\"incidunt\",\"firstname\":\"amet\",\"lastname\":\"sit\",\"nip\":\"nihil\",\"name\":\"sapiente\",\"street\":\"nobis\",\"house_no\":\"repellendus\",\"apartment_no\":\"et\",\"city\":\"debitis\",\"zip\":\"accusamus\",\"country\":\"optio\"}"
+                            "raw": "{\"type\":\"amet\",\"firstname\":\"natus\",\"lastname\":\"sit\",\"nip\":\"recusandae\",\"name\":\"soluta\",\"street\":\"delectus\",\"house_no\":\"accusamus\",\"apartment_no\":\"nihil\",\"city\":\"voluptatum\",\"zip\":\"nobis\",\"country\":\"hic\"}"
                         },
                         "description": "Update invoice data",
                         "auth": {
@@ -1871,7 +2997,7 @@
                                 {
                                     "id": "token",
                                     "key": "token",
-                                    "value": "totam",
+                                    "value": "rerum",
                                     "description": "Invite token from invitation message."
                                 }
                             ]
@@ -1920,7 +3046,7 @@
                                 {
                                     "id": "token",
                                     "key": "token",
-                                    "value": "quia",
+                                    "value": "facilis",
                                     "description": "Invite token."
                                 }
                             ]
@@ -1938,7 +3064,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"aut\",\"lastname\":\"in\",\"password\":\"|iojIy~,@M)k'@\",\"phone\":\"sunt\"}"
+                            "raw": "{\"firstname\":\"officia\",\"lastname\":\"reprehenderit\",\"password\":\"mA{E&sX1%S@_d;d\",\"phone\":\"non\"}"
                         },
                         "description": "Confirm invitation and create new user account.",
                         "auth": {
@@ -1969,18 +3095,18 @@
                             "query": [
                                 {
                                     "key": "size",
-                                    "value": "3",
+                                    "value": "11",
                                     "description": "Number of rows. Default: 50",
                                     "disabled": false
                                 },
                                 {
                                     "key": "page",
-                                    "value": "11",
+                                    "value": "2",
                                     "description": "Number of page (pagination). Default: 1",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/permissions?size=3&page=11"
+                            "raw": "{{baseUrl}}\/api\/v1\/permissions?size=11&page=2"
                         },
                         "method": "GET",
                         "header": [
@@ -2038,7 +3164,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"animi\",\"permissions\":\"odit\",\"is_default\":false}"
+                            "raw": "{\"name\":\"voluptatem\",\"permissions\":\"et\",\"is_default\":false}"
                         },
                         "description": "Create new persmission group. Permissions should look like this:\nprojects:list,create,update,delete;users:list",
                         "auth": {
@@ -2066,7 +3192,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "6",
+                                    "value": "10",
                                     "description": "Permission group identifier."
                                 }
                             ]
@@ -2119,7 +3245,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "18",
+                                    "value": "5",
                                     "description": "Permission group identifier."
                                 }
                             ]
@@ -2141,7 +3267,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"est\",\"permissions\":\"in\",\"is_default\":false}"
+                            "raw": "{\"name\":\"nesciunt\",\"permissions\":\"sit\",\"is_default\":false}"
                         },
                         "description": "Update persmission group.",
                         "auth": {
@@ -2162,7 +3288,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "7",
+                                    "value": "19",
                                     "description": "Permission group identifier."
                                 }
                             ]
@@ -2209,7 +3335,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "2",
+                                    "value": "16",
                                     "description": "Permission group identifier."
                                 }
                             ]
@@ -2231,7 +3357,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"object\":\"nulla\",\"action\":\"voluptatem\"}"
+                            "raw": "{\"object\":\"facere\",\"action\":\"similique\"}"
                         },
                         "description": "Add permission to persmission group.",
                         "auth": {
@@ -2259,7 +3385,7 @@
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": "12",
+                                    "value": "20",
                                     "description": "Permission group identifier."
                                 }
                             ]
@@ -2281,7 +3407,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"object\":\"qui\",\"action\":\"dolor\"}"
+                            "raw": "{\"object\":\"facilis\",\"action\":\"in\"}"
                         },
                         "description": "Delete permission from persmission group.",
                         "auth": {
@@ -2474,7 +3600,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"john@doe.com\",\"source\":\"tenetur\"}"
+                            "raw": "{\"email\":\"john@doe.com\",\"source\":\"est\"}"
                         },
                         "description": "Create new user account. After registration, a confirmation link is sent to the provided e-mail address.",
                         "auth": {
@@ -2508,7 +3634,7 @@
                                 {
                                     "id": "token",
                                     "key": "token",
-                                    "value": "mollitia",
+                                    "value": "veritatis",
                                     "description": "Register token."
                                 }
                             ]
@@ -2557,7 +3683,7 @@
                                 {
                                     "id": "token",
                                     "key": "token",
-                                    "value": "magnam",
+                                    "value": "accusamus",
                                     "description": "Register token."
                                 }
                             ]
@@ -2575,7 +3701,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"firstname\":\"numquam\",\"lastname\":\"labore\",\"password\":\"k\\\/A3\\\"@b:%h}ssM~\\\"\",\"firm_identifier\":\"nihil\",\"phone\":\"et\"}"
+                            "raw": "{\"firstname\":\"consequatur\",\"lastname\":\"vel\",\"password\":\"zC1-EX@\",\"firm_identifier\":\"quam\",\"phone\":\"animi\"}"
                         },
                         "description": "Confirm register and finish registration.",
                         "auth": {
@@ -2613,7 +3739,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"dominic.lindgren@example.com\",\"password\":\"\\\/Y5U1:3ztB71@\",\"device_name\":\"quisquam\",\"mobile\":8,\"firm_id\":13}"
+                            "raw": "{\"email\":\"aturner@example.org\",\"password\":\";NY+\\\/\\\"\\\"E;J?v\",\"device_name\":\"saepe\",\"mobile\":20,\"firm_id\":2}"
                         },
                         "description": "Return auth bearer Token.",
                         "auth": {
@@ -2657,7 +3783,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"linnea38@example.net\",\"firm_id\":11}"
+                            "raw": "{\"email\":\"nyah.renner@example.net\",\"firm_id\":12}"
                         },
                         "description": "Send password reset link",
                         "auth": {
@@ -2695,7 +3821,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"token\":\"nemo\",\"email\":\"retta68@example.com\"}"
+                            "raw": "{\"token\":\"officia\",\"email\":\"abagail73@example.org\"}"
                         },
                         "description": "Validate token reset password",
                         "auth": {
@@ -2726,7 +3852,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"token\":\"suscipit\",\"email\":\"omer.larkin@example.org\",\"password\":\"g3+%7,?4&N`U'&^s\"}"
+                            "raw": "{\"token\":\"eveniet\",\"email\":\"karmstrong@example.org\",\"password\":\"Gm$)-\\\"ffmo64(r{@Y4I3\"}"
                         },
                         "description": "Send password reset link",
                         "auth": {
@@ -2744,12 +3870,12 @@
                             "query": [
                                 {
                                     "key": "email",
-                                    "value": "kraig.kris%40example.com",
+                                    "value": "cristobal.hartmann%40example.org",
                                     "description": "Account e-mail address",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/get-email-firm-ids?email=kraig.kris%40example.com"
+                            "raw": "{{baseUrl}}\/api\/v1\/get-email-firm-ids?email=cristobal.hartmann%40example.org"
                         },
                         "method": "GET",
                         "header": [

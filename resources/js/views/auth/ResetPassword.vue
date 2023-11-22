@@ -3,6 +3,7 @@
     import { useRoute, useRouter } from 'vue-router'
     import UserService from '@/service/UserService';
     
+    import { getResponseErrors } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
     import { required, sameAs } from '@/utils/i18n-validators'
     
@@ -45,20 +46,13 @@
                                 this.loading = false
                                 this.router.push({name: 'reset-password-success'})
                             },
-                            (errors) => {
-                                this.getErrors(errors)
+                            (response) => {
+                                this.errors = getResponseErrors(response)
                                 this.loading = false
                             }
                         );
                 }
             },
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         }
     }
 </script>
@@ -71,7 +65,7 @@
             </h3>
             <div class="mb-4">
                 <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
-                <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem"></Password>
+                <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
                 <div v-if="v$.password.$dirty">
                     <p v-for="error of v$.password.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>
@@ -81,7 +75,7 @@
                 
             <div class="mb-4">
                 <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.repeat_password') }}</label>
-                <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem"></Password>
+                <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
                 <div v-if="v$.confirm_password.$dirty">
                     <p v-for="error of v$.confirm_password.$errors" :key="error.$uid">
                         <small class="p-error">{{ error.$message }}</small>

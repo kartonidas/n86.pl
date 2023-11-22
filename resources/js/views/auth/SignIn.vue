@@ -1,6 +1,7 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
+    import { getResponseErrors } from '@/utils/helper'
     import UserService from '@/service/UserService'
     
     import { useVuelidate } from '@vuelidate/core'
@@ -44,20 +45,13 @@
                                     this.router.push({name: 'dashboard'})
                                 this.loading = false
                             },
-                            (errors) => {
-                                this.getErrors(errors)
+                            (response) => {
+                                this.errors = getResponseErrors(response)
                                 this.loading = false
                             }
                         );
                 }
             },
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         }
     }
 </script>

@@ -5,8 +5,954 @@ info:
   version: 1.0.0
 servers:
   -
-    url: 'http://localhost'
+    url: estate.netextend.pl
 paths:
+  /api/v1/items:
+    get:
+      summary: ''
+      operationId: getApiV1Items
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/item:
+    put:
+      summary: ''
+      operationId: putApiV1Item
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ItemId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ItemId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ItemId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/tenants':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdTenants
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/tenant':
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdTenant
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/tenant/{tid}':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdTenantTid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdTenantTid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ItemIdTenantTid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/tenant/{tid}/terminate':
+    post:
+      summary: ''
+      operationId: postApiV1ItemIdTenantTidTerminate
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/bills':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdBills
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/bill':
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdBill
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/bill/{bid}':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdBillBid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdBillBid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ItemIdBillBid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/bill/{bid}/paid':
+    post:
+      summary: ''
+      operationId: postApiV1ItemIdBillBidPaid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/bill/{bid}/unpaid':
+    post:
+      summary: ''
+      operationId: postApiV1ItemIdBillBidUnpaid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/fees':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdFees
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/fee':
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdFee
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/item/{id}/fee/{fid}':
+    get:
+      summary: ''
+      operationId: getApiV1ItemIdFeeFid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ItemIdFeeFid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ItemIdFeeFid
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/tenants:
+    get:
+      summary: ''
+      operationId: getApiV1Tenants
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/tenant:
+    put:
+      summary: ''
+      operationId: putApiV1Tenant
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/tenant/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1TenantId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1TenantId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1TenantId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/tenant/{id}/history':
+    get:
+      summary: ''
+      operationId: getApiV1TenantIdHistory
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/dictionaries:
+    get:
+      summary: ''
+      operationId: getApiV1Dictionaries
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/dictionaries/{type}':
+    get:
+      summary: ''
+      operationId: getApiV1DictionariesType
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/dictionary:
+    put:
+      summary: ''
+      operationId: putApiV1Dictionary
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/dictionary/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1DictionaryId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1DictionaryId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1DictionaryId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/customers:
+    get:
+      summary: ''
+      operationId: getApiV1Customers
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/customer:
+    put:
+      summary: ''
+      operationId: putApiV1Customer
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/customer/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1CustomerId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1CustomerId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1CustomerId
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
   /api/v1/notifications:
     get:
       summary: 'Get notifications list'
@@ -17,22 +963,22 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 20
+          example: 19
           required: false
           schema:
             type: integer
             description: 'Number of rows. Default: 50'
-            example: 20
+            example: 19
         -
           in: query
           name: page
           description: 'Number of page (pagination). Default: 1'
-          example: 5
+          example: 2
           required: false
           schema:
             type: integer
             description: 'Number of page (pagination). Default: 1'
-            example: 5
+            example: 2
         -
           in: header
           name: Content-Type
@@ -151,12 +1097,12 @@ paths:
           in: query
           name: id
           description: 'notification identifier'
-          example: 3
+          example: 11
           required: false
           schema:
             type: integer
             description: 'notification identifier'
-            example: 3
+            example: 11
         -
           in: header
           name: Content-Type
@@ -240,12 +1186,12 @@ paths:
           in: query
           name: id
           description: 'notification identifier'
-          example: 11
+          example: 14
           required: false
           schema:
             type: integer
             description: 'notification identifier'
-            example: 11
+            example: 14
         -
           in: header
           name: Content-Type
@@ -281,12 +1227,12 @@ paths:
           in: query
           name: package
           description: 'Package name (one of: p1)'
-          example: aut
+          example: explicabo
           required: false
           schema:
             type: string
             description: 'Package name (one of: p1)'
-            example: aut
+            example: explicabo
         -
           in: header
           name: Content-Type
@@ -334,22 +1280,22 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 2
+          example: 3
           required: false
           schema:
             type: integer
             description: 'Number of rows. Default: 50'
-            example: 2
+            example: 3
         -
           in: query
           name: page
           description: 'Number of page (pagination). Default: 1'
-          example: 8
+          example: 13
           required: false
           schema:
             type: integer
             description: 'Number of page (pagination). Default: 1'
-            example: 8
+            example: 13
         -
           in: header
           name: Content-Type
@@ -454,12 +1400,12 @@ paths:
           in: query
           name: lang
           description: 'Language Default: pl'
-          example: reiciendis
+          example: quasi
           required: false
           schema:
             type: string
             description: 'Language Default: pl'
-            example: reiciendis
+            example: quasi
         -
           in: header
           name: Content-Type
@@ -531,32 +1477,32 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 13
+          example: 18
           required: false
           schema:
             type: integer
             description: 'Number of rows. Default: 50'
-            example: 13
+            example: 18
         -
           in: query
           name: page
           description: 'Number of page (pagination). Default: 1'
-          example: 14
+          example: 18
           required: false
           schema:
             type: integer
             description: 'Number of page (pagination). Default: 1'
-            example: 14
+            example: 18
         -
           in: query
           name: q
           description: 'search phrase'
-          example: maxime
+          example: tenetur
           required: false
           schema:
             type: string
             description: 'search phrase'
-            example: maxime
+            example: tenetur
         -
           in: header
           name: Content-Type
@@ -648,32 +1594,32 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 17
+          example: 6
           required: false
           schema:
             type: integer
             description: 'Number of rows. Default: 50'
-            example: 17
+            example: 6
         -
           in: query
           name: page
           description: 'Number of page (pagination). Default: 1'
-          example: 10
+          example: 4
           required: false
           schema:
             type: integer
             description: 'Number of page (pagination). Default: 1'
-            example: 10
+            example: 4
         -
           in: query
           name: q
           description: 'search phrase'
-          example: commodi
+          example: blanditiis
           required: false
           schema:
             type: string
             description: 'search phrase'
-            example: commodi
+            example: blanditiis
         -
           in: header
           name: Content-Type
@@ -754,7 +1700,7 @@ paths:
             value: ''
           present:
             summary: 'When the value is present'
-            value: aut
+            value: sit
   '/api/v1/stats/user/{id}/daily':
     get:
       summary: 'Get daily user stats'
@@ -765,12 +1711,12 @@ paths:
           in: query
           name: month
           description: 'Month in format: "YYYY-MM", Default current month'
-          example: ab
+          example: quae
           required: false
           schema:
             type: string
             description: 'Month in format: "YYYY-MM", Default current month'
-            example: ab
+            example: quae
         -
           in: header
           name: Content-Type
@@ -897,7 +1843,7 @@ paths:
         in: path
         name: id
         description: 'User identifier.'
-        example: 18
+        example: 5
         required: true
         schema:
           type: integer
@@ -911,12 +1857,12 @@ paths:
           in: query
           name: year
           description: 'Year in format: "YYYY", Default current year'
-          example: dolores
+          example: tempora
           required: false
           schema:
             type: string
             description: 'Year in format: "YYYY", Default current year'
-            example: dolores
+            example: tempora
         -
           in: header
           name: Content-Type
@@ -1043,7 +1989,7 @@ paths:
         in: path
         name: id
         description: 'User identifier.'
-        example: 7
+        example: 1
         required: true
         schema:
           type: integer
@@ -1057,12 +2003,12 @@ paths:
           in: query
           name: month
           description: 'Month in format: "YYYY-MM", Default current month'
-          example: quam
+          example: rerum
           required: false
           schema:
             type: string
             description: 'Month in format: "YYYY-MM", Default current month'
-            example: quam
+            example: rerum
         -
           in: header
           name: Content-Type
@@ -1185,7 +2131,7 @@ paths:
         in: path
         name: id
         description: 'Project identifier.'
-        example: 6
+        example: 4
         required: true
         schema:
           type: integer
@@ -1199,12 +2145,12 @@ paths:
           in: query
           name: year
           description: 'Year in format: "YYYY", Default current year'
-          example: qui
+          example: laborum
           required: false
           schema:
             type: string
             description: 'Year in format: "YYYY", Default current year'
-            example: qui
+            example: laborum
         -
           in: header
           name: Content-Type
@@ -1327,7 +2273,7 @@ paths:
         in: path
         name: id
         description: 'Project identifier.'
-        example: 20
+        example: 3
         required: true
         schema:
           type: integer
@@ -1341,12 +2287,12 @@ paths:
           in: query
           name: month
           description: 'Month in format: "YYYY-MM", Default current month'
-          example: non
+          example: quia
           required: false
           schema:
             type: string
             description: 'Month in format: "YYYY-MM", Default current month'
-            example: non
+            example: quia
         -
           in: header
           name: Content-Type
@@ -1469,7 +2415,7 @@ paths:
         in: path
         name: id
         description: 'Task identifier.'
-        example: 14
+        example: 1
         required: true
         schema:
           type: integer
@@ -1483,12 +2429,12 @@ paths:
           in: query
           name: year
           description: 'Year in format: "YYYY", Default current year'
-          example: labore
+          example: quae
           required: false
           schema:
             type: string
             description: 'Year in format: "YYYY", Default current year'
-            example: labore
+            example: quae
         -
           in: header
           name: Content-Type
@@ -1611,7 +2557,7 @@ paths:
         in: path
         name: id
         description: 'Task identifier.'
-        example: 11
+        example: 2
         required: true
         schema:
           type: integer
@@ -1625,72 +2571,72 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 12
-          required: false
-          schema:
-            type: integer
-            description: 'Number of rows. Default: 50'
-            example: 12
-        -
-          in: query
-          name: page
-          description: 'Number of page (pagination). Default: 1'
-          example: 13
-          required: false
-          schema:
-            type: integer
-            description: 'Number of page (pagination). Default: 1'
-            example: 13
-        -
-          in: query
-          name: user_id
-          description: 'User identifier'
           example: 1
           required: false
           schema:
             type: integer
-            description: 'User identifier'
+            description: 'Number of rows. Default: 50'
             example: 1
+        -
+          in: query
+          name: page
+          description: 'Number of page (pagination). Default: 1'
+          example: 9
+          required: false
+          schema:
+            type: integer
+            description: 'Number of page (pagination). Default: 1'
+            example: 9
+        -
+          in: query
+          name: user_id
+          description: 'User identifier'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'User identifier'
+            example: 16
         -
           in: query
           name: task_id
           description: 'Task identifier'
-          example: 13
+          example: 4
           required: false
           schema:
             type: integer
             description: 'Task identifier'
-            example: 13
+            example: 4
         -
           in: query
           name: project_id
           description: 'Project identifier'
-          example: 6
+          example: 13
           required: false
           schema:
             type: integer
             description: 'Project identifier'
-            example: 6
+            example: 13
         -
           in: query
           name: date_from
           description: 'Date from'
-          example: omnis
+          example: mollitia
           required: false
           schema:
             type: string
             description: 'Date from'
-            example: omnis
+            example: mollitia
         -
           in: query
           name: date_to
           description: 'Date to'
-          example: non
+          example: ipsa
           required: false
           schema:
             type: string
             description: 'Date to'
-            example: non
+            example: ipsa
         -
           in: header
           name: Content-Type
@@ -1896,12 +2842,12 @@ paths:
           in: query
           name: page
           description: 'Number of page (pagination). Default: 1'
-          example: 5
+          example: 14
           required: false
           schema:
             type: integer
             description: 'Number of page (pagination). Default: 1'
-            example: 5
+            example: 14
         -
           in: header
           name: Content-Type
@@ -2071,31 +3017,31 @@ paths:
                 firstname:
                   type: string
                   description: 'User first name.'
-                  example: et
+                  example: minus
                 lastname:
                   type: string
                   description: 'User last name.'
-                  example: et
+                  example: excepturi
                 email:
                   type: string
                   description: 'User e-mail address.'
-                  example: dave57@example.net
+                  example: coty.cremin@example.net
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: 'OYY3?I'
+                  example: 'LFYPUs:(da$xyWi@6z$'
                 phone:
                   type: string
                   description: 'User phone number.'
-                  example: quidem
+                  example: qui
                 user_permission_id:
                   type: integer
                   description: 'Permission group identifier (if not set default permission will be used).'
-                  example: 15
+                  example: 13
                 superuser:
                   type: boolean
                   description: 'If set true user have full access regardless of permissions.'
-                  example: true
+                  example: false
               required:
                 - firstname
                 - lastname
@@ -2158,7 +3104,7 @@ paths:
                 email:
                   type: string
                   description: 'User e-mail address.'
-                  example: august52@example.org
+                  example: rosalinda11@example.com
                 user_permission_id:
                   type: integer
                   description: 'Permission group identifier (if not set default permission will be used).'
@@ -2304,27 +3250,27 @@ paths:
                 firstname:
                   type: string
                   description: 'User first name.'
-                  example: et
+                  example: culpa
                 lastname:
                   type: string
                   description: 'User last name.'
-                  example: magnam
+                  example: dolores
                 email:
                   type: string
                   description: 'User e-mail address.'
-                  example: trey32@example.org
+                  example: kassulke.kariane@example.com
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: 'Up!|/66?'
+                  example: 3I._V5b`
                 phone:
                   type: string
                   description: 'User phone number.'
-                  example: asperiores
+                  example: sit
                 user_permission_id:
                   type: integer
                   description: 'Permission group identifier.'
-                  example: 11
+                  example: 14
                 superuser:
                   type: boolean
                   description: 'If set true user have full access regardless of permissions.'
@@ -2381,7 +3327,7 @@ paths:
         in: path
         name: id
         description: 'User identifier.'
-        example: 2
+        example: 10
         required: true
         schema:
           type: integer
@@ -2612,23 +3558,23 @@ paths:
                 firstname:
                   type: string
                   description: 'User first name.'
-                  example: perferendis
+                  example: sit
                 lastname:
                   type: string
                   description: 'User last name.'
-                  example: dolor
+                  example: aut
                 email:
                   type: string
                   description: 'User e-mail address.'
-                  example: runolfsson.eveline@example.org
+                  example: albina70@example.com
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: '1G,mD;Fl56}]\%Wt.'
+                  example: '`]3?$0jN{CMc9U&L<Q2'
                 phone:
                   type: string
                   description: 'User phone number.'
-                  example: facilis
+                  example: eveniet
       security: []
   /api/v1/profile/avatar:
     post:
@@ -2754,15 +3700,15 @@ paths:
                 locale:
                   type: string
                   description: 'Locale ex. pl.'
-                  example: cs_CZ
+                  example: en_IE
                 notifications:
                   type: string
                   description: 'User e-mail notifications (separated by a comma)'
-                  example: beatae
+                  example: veritatis
                 mobile_notifications:
                   type: string
                   description: 'Mobile notifications (separated by a comma)'
-                  example: voluptas
+                  example: rerum
       security: []
   /api/v1/get-firm-id:
     get:
@@ -3033,51 +3979,51 @@ paths:
                 firstname:
                   type: string
                   description: 'Owner first name.'
-                  example: officiis
+                  example: voluptatem
                 lastname:
                   type: string
                   description: 'Owner last name.'
-                  example: voluptatem
+                  example: doloremque
                 email:
                   type: string
                   description: 'Firm e-mail address.'
-                  example: nayeli.vandervort@example.org
+                  example: qdeckow@example.com
                 nip:
                   type: string
                   description: NIP.
-                  example: repudiandae
+                  example: vitae
                 name:
                   type: string
                   description: 'Firm name.'
-                  example: consectetur
+                  example: culpa
                 street:
                   type: string
                   description: 'Firm street.'
-                  example: voluptate
+                  example: eos
                 house_no:
                   type: string
                   description: 'Firm house no.'
-                  example: enim
+                  example: aut
                 apartment_no:
                   type: string
                   description: 'Firm apartment no.'
-                  example: provident
+                  example: rem
                 city:
                   type: string
                   description: 'Firm city.'
-                  example: sit
+                  example: officiis
                 zip:
                   type: string
                   description: 'Firm zip.'
-                  example: similique
+                  example: debitis
                 country:
                   type: string
                   description: 'Firm country code.'
-                  example: modi
+                  example: sint
                 phone:
                   type: string
                   description: 'Firm phone.'
-                  example: at
+                  example: voluptates
       security: []
   /api/v1/invoice-data:
     get:
@@ -3197,11 +4143,11 @@ paths:
                 type:
                   type: string
                   description: 'Type (one of: firm, person).'
-                  example: incidunt
+                  example: amet
                 firstname:
                   type: string
                   description: 'Owner first name.'
-                  example: amet
+                  example: natus
                 lastname:
                   type: string
                   description: 'Owner last name.'
@@ -3209,35 +4155,35 @@ paths:
                 nip:
                   type: string
                   description: NIP.
-                  example: nihil
+                  example: recusandae
                 name:
                   type: string
                   description: 'Firm name.'
-                  example: sapiente
+                  example: soluta
                 street:
                   type: string
                   description: 'Firm street.'
-                  example: nobis
+                  example: delectus
                 house_no:
                   type: string
                   description: 'Firm house no.'
-                  example: repellendus
+                  example: accusamus
                 apartment_no:
                   type: string
                   description: 'Firm apartment no.'
-                  example: et
+                  example: nihil
                 city:
                   type: string
                   description: 'Firm city.'
-                  example: debitis
+                  example: voluptatum
                 zip:
                   type: string
                   description: 'Firm zip.'
-                  example: accusamus
+                  example: nobis
                 country:
                   type: string
                   description: 'Country code.'
-                  example: optio
+                  example: hic
       security: []
   '/api/v1/invite/{token}':
     get:
@@ -3334,19 +4280,19 @@ paths:
                 firstname:
                   type: string
                   description: 'User first name.'
-                  example: aut
+                  example: officia
                 lastname:
                   type: string
                   description: 'User last name.'
-                  example: in
+                  example: reprehenderit
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: "|iojIy~,@M)k'@"
+                  example: 'mA{E&sX1%S@_d;d'
                 phone:
                   type: string
                   description: 'User phone number.'
-                  example: sunt
+                  example: non
               required:
                 - firstname
                 - lastname
@@ -3357,7 +4303,7 @@ paths:
         in: path
         name: token
         description: 'Invite token from invitation message.'
-        example: totam
+        example: rerum
         required: true
         schema:
           type: string
@@ -3371,22 +4317,22 @@ paths:
           in: query
           name: size
           description: 'Number of rows. Default: 50'
-          example: 3
-          required: false
-          schema:
-            type: integer
-            description: 'Number of rows. Default: 50'
-            example: 3
-        -
-          in: query
-          name: page
-          description: 'Number of page (pagination). Default: 1'
           example: 11
           required: false
           schema:
             type: integer
-            description: 'Number of page (pagination). Default: 1'
+            description: 'Number of rows. Default: 50'
             example: 11
+        -
+          in: query
+          name: page
+          description: 'Number of page (pagination). Default: 1'
+          example: 2
+          required: false
+          schema:
+            type: integer
+            description: 'Number of page (pagination). Default: 1'
+            example: 2
         -
           in: header
           name: Content-Type
@@ -3566,11 +4512,11 @@ paths:
                 name:
                   type: string
                   description: 'Group permission name.'
-                  example: animi
+                  example: voluptatem
                 permissions:
                   type: string
                   description: Permission.
-                  example: odit
+                  example: et
                 is_default:
                   type: boolean
                   description: 'Set permission default.'
@@ -3703,11 +4649,11 @@ paths:
                 name:
                   type: string
                   description: 'Group permission name.'
-                  example: est
+                  example: nesciunt
                 permissions:
                   type: string
                   description: Permission.
-                  example: in
+                  example: sit
                 is_default:
                   type: boolean
                   description: 'Set permission default.'
@@ -3764,7 +4710,7 @@ paths:
         in: path
         name: id
         description: 'Permission group identifier.'
-        example: 6
+        example: 10
         required: true
         schema:
           type: integer
@@ -3824,11 +4770,11 @@ paths:
                 object:
                   type: string
                   description: 'Object name.'
-                  example: nulla
+                  example: facere
                 action:
                   type: string
                   description: 'Action name (if not set, allow all actions).'
-                  example: voluptatem
+                  example: similique
               required:
                 - object
       security: []
@@ -3837,7 +4783,7 @@ paths:
         in: path
         name: id
         description: 'Permission group identifier.'
-        example: 2
+        example: 16
         required: true
         schema:
           type: integer
@@ -3897,11 +4843,11 @@ paths:
                 object:
                   type: string
                   description: 'Object name.'
-                  example: qui
+                  example: facilis
                 action:
                   type: string
                   description: 'Action name (if not set, allow all actions).'
-                  example: dolor
+                  example: in
               required:
                 - object
       security: []
@@ -3910,7 +4856,7 @@ paths:
         in: path
         name: id
         description: 'Permission group identifier.'
-        example: 12
+        example: 20
         required: true
         schema:
           type: integer
@@ -4182,7 +5128,7 @@ paths:
                 source:
                   type: string
                   description: 'Register source. One of: app/www'
-                  example: tenetur
+                  example: est
               required:
                 - email
       security: []
@@ -4305,23 +5251,23 @@ paths:
                 firstname:
                   type: string
                   description: 'User first name.'
-                  example: numquam
+                  example: consequatur
                 lastname:
                   type: string
                   description: 'User last name.'
-                  example: labore
+                  example: vel
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: 'k/A3"@b:%h}ssM~"'
+                  example: zC1-EX@
                 firm_identifier:
                   type: string
                   description: 'User firm name.'
-                  example: nihil
+                  example: quam
                 phone:
                   type: string
                   description: 'User phone number.'
-                  example: et
+                  example: animi
               required:
                 - firstname
                 - lastname
@@ -4334,7 +5280,7 @@ paths:
         in: path
         name: token
         description: 'Register token.'
-        example: mollitia
+        example: veritatis
         required: true
         schema:
           type: string
@@ -4437,23 +5383,23 @@ paths:
                 email:
                   type: string
                   description: 'Account e-mail address'
-                  example: dominic.lindgren@example.com
+                  example: aturner@example.org
                 password:
                   type: string
                   description: 'Account password'
-                  example: '/Y5U1:3ztB71@'
+                  example: ';NY+/""E;J?v'
                 device_name:
                   type: string
                   description: 'Device name'
-                  example: quisquam
+                  example: saepe
                 mobile:
                   type: integer
                   description: 'From mobile app default: 0'
-                  example: 8
+                  example: 20
                 firm_id:
                   type: integer
                   description: 'Firm identifier (required if e-mail address is register on two or more firms)'
-                  example: 13
+                  example: 2
               required:
                 - email
                 - password
@@ -4508,11 +5454,11 @@ paths:
                 email:
                   type: string
                   description: 'Account e-mail address'
-                  example: linnea38@example.net
+                  example: nyah.renner@example.net
                 firm_id:
                   type: integer
                   description: 'Firm identifier (if e-mail address exist in more than once firms)'
-                  example: 11
+                  example: 12
               required:
                 - email
       security: []
@@ -4549,11 +5495,11 @@ paths:
                 token:
                   type: string
                   description: 'forgot password token'
-                  example: nemo
+                  example: officia
                 email:
                   type: string
                   description: 'Account e-mail address'
-                  example: retta68@example.com
+                  example: abagail73@example.org
               required:
                 - token
                 - email
@@ -4590,15 +5536,15 @@ paths:
                 token:
                   type: string
                   description: 'forgot password token'
-                  example: suscipit
+                  example: eveniet
                 email:
                   type: string
                   description: 'Account e-mail address'
-                  example: omer.larkin@example.org
+                  example: karmstrong@example.org
                 password:
                   type: string
                   description: 'User password (min 8 characters, lowercase and uppercase letters, number, special characters).'
-                  example: "g3+%7,?4&N`U'&^s"
+                  example: 'Gm$)-"ffmo64(r{@Y4I3'
               required:
                 - token
                 - email
@@ -4614,12 +5560,12 @@ paths:
           in: query
           name: email
           description: 'Account e-mail address'
-          example: kraig.kris@example.com
+          example: cristobal.hartmann@example.org
           required: true
           schema:
             type: string
             description: 'Account e-mail address'
-            example: kraig.kris@example.com
+            example: cristobal.hartmann@example.org
         -
           in: header
           name: Content-Type
@@ -4691,6 +5637,9 @@ paths:
         - dashboard
       security: []
 tags:
+  -
+    name: Endpoints
+    description: ''
   -
     name: Notifications
     description: ''

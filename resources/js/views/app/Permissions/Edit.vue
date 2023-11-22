@@ -5,6 +5,7 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
+    import { getResponseErrors } from '@/utils/helper'
     import ProgressSpinner from 'primevue/progressspinner';
     
     import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
@@ -42,14 +43,12 @@
                 }
             }
         },
-        updated() {
+        mounted() {
             if(store.getters.toastMessage) {
                 let m = store.getters.toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 store.commit('setToastMessage', null);
             }
-        },
-        mounted() {
             this.permissionService.modules()
                 .then(
                     (response) => {
@@ -77,7 +76,9 @@
                                 }
                             );
                     },
-                    (error) => {}
+                    (response) => {
+                        this.errors = getResponseErrors(response)
+                    }
                 );
         },
         methods: {
@@ -92,8 +93,10 @@
                     for (var perm in this.permission_items) {
                         if (this.permission_items[perm]) {
                             var operations = []
-                            for (var op in this.permission_items[perm]) 
-                                operations.push(op);
+                            for (var op in this.permission_items[perm]) {
+                                if (this.permission_items[perm][op])
+                                    operations.push(op);
+                            }
                             
                             if(operations.length)
                                 items.push(perm + ':' + operations.join(','));
@@ -106,13 +109,9 @@
                         (response) => {
                             this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.group_updated'), life: 3000 });
                             this.saving = false;
-                            this.loading = false;
                         },
-                        (errors) => {
-                            if (errors.response.data.errors != undefined)
-                                this.getErrors(errors.response.data.errors)
-                            else
-                                this.errors.push(errors.response.data.message)
+                        (response) => {
+                            this.errors = getResponseErrors(response)
                             this.saving = false
                         }
                     )
@@ -121,13 +120,6 @@
             getCheckboxInputId(a, b) {
                 return "permission-" + a + "-" + b
             },
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         },
         validations () {
             return {
@@ -153,7 +145,7 @@
                         <div class="formgrid grid">
                             <div class="field col-12">
                                 <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading" />
+                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving" />
                                 <div v-if="v$.permission.name.$error">
                                     <small class="p-error">{{ v$.permission.name.$errors[0].$message }}</small>
                                 </div>
@@ -161,7 +153,7 @@
                             
                             <div class="field col-12">
                                 <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading"/>
+                                    <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading || saving"/>
                                     <label for="defaultCheck">{{ $t('app.default') }}</label>
                                 </div>
                             </div>
@@ -169,7 +161,7 @@
                             <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3">
                                 <div class="mb-2"><strong class="mb-3">{{ $t('app.' + module.name) }}</strong></div>
                                 <div class="field-checkbox mb-1 mt-1" v-for="op in module.perm.operation">
-                                    <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading"/>
+                                    <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading || saving"/>
                                     <label :for="getCheckboxInputId(module.name, op)">
                                         {{ $t('app.' + op) }}
                                     </label>
@@ -194,5 +186,4 @@
             </div>
         </div>
     </div>
-    <Toast />
 </template>

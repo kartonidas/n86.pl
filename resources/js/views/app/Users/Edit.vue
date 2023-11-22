@@ -5,6 +5,7 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, sameAs, email } from '@/utils/i18n-validators'
+    import { getResponseErrors } from '@/utils/helper'
     import ProgressSpinner from 'primevue/progressspinner';
     import Dropdown from 'primevue/dropdown';
     
@@ -46,14 +47,13 @@
                 }
             }
         },
-        updated() {
+        mounted() {
             if(store.getters.toastMessage) {
                 let m = store.getters.toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 store.commit('setToastMessage', null);
             }
-        },
-        mounted() {
+            
             this.usersService.get(this.route.params.userId)
                 .then(
                     (response) => {
@@ -78,7 +78,6 @@
                 const result = await this.v$.$validate()
                 if (result) {
                     this.saving = true;
-                    this.loading = true;
                     this.errors = []
                     
                     this.usersService.update(
@@ -95,12 +94,10 @@
                             (response) => {
                                 this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.user_updated'), life: 3000 });
                                 this.saving = false;
-                                this.loading = false;
                             },
-                            (errors) => {
+                            (response) => {
                                 this.saving = false;
-                                this.loading = false;
-                                this.getErrors(errors.response.data.errors)
+                                this.errors = getResponseErrors(response);
                             },
                         );
                 }
@@ -109,14 +106,6 @@
             getPasswordToCompare() {
                 return this.changePassword ? this.user.password : this.user.confirm_password;
             },
-            
-            getErrors(errors) {
-                for (var i in errors) {
-                    errors[i].forEach((err) => {
-                        this.errors.push(err);
-                    });
-                }
-            }
         },
         validations () {
             return {
@@ -148,7 +137,7 @@
                         <div class="formgrid grid">
                             <div class="field col-12 sm:col-6 mb-2">
                                 <label for="firstname" class="block text-900 font-medium mb-2">{{ $t('app.firstname') }}</label>
-                                <InputText id="firstname" type="text" :placeholder="$t('app.firstname')" class="w-full" :class="{'p-invalid' : v$.user.firstname.$error}" v-model="user.firstname" :disabled="loading" />
+                                <InputText id="firstname" type="text" :placeholder="$t('app.firstname')" class="w-full" :class="{'p-invalid' : v$.user.firstname.$error}" v-model="user.firstname" :disabled="loading || saving" />
                                 <div v-if="v$.user.firstname.$error">
                                     <small class="p-error">{{ v$.user.firstname.$errors[0].$message }}</small>
                                 </div>
@@ -156,7 +145,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="lastname" class="block text-900 font-medium mb-2">{{ $t('app.lastname') }}</label>
-                                <InputText id="lastname" type="text" :placeholder="$t('app.lastname')" class="w-full" :class="{'p-invalid' : v$.user.lastname.$error}" v-model="user.lastname" :disabled="loading" />
+                                <InputText id="lastname" type="text" :placeholder="$t('app.lastname')" class="w-full" :class="{'p-invalid' : v$.user.lastname.$error}" v-model="user.lastname" :disabled="loading || saving" />
                                 <div v-if="v$.user.lastname.$error">
                                     <p v-for="error of v$.user.lastname.$errors" :key="error.$uid">
                                         <small class="p-error">{{ error.$message }}</small>
@@ -166,7 +155,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="email" class="block text-900 font-medium mb-2">{{ $t('app.email') }}</label>
-                                <InputText id="email" type="text" :placeholder="$t('app.email')" class="w-full" :class="{'p-invalid' : v$.user.email.$error}" v-model="user.email" :disabled="loading" />
+                                <InputText id="email" type="text" :placeholder="$t('app.email')" class="w-full" :class="{'p-invalid' : v$.user.email.$error}" v-model="user.email" :disabled="loading || saving" />
                                 <div v-if="v$.user.email.$error">
                                     <small class="p-error">{{ v$.user.email.$errors[0].$message }}</small>
                                 </div>
@@ -174,7 +163,7 @@
                             
                             <div class="field col-12 sm:col-6">
                                 <label for="phone" class="block text-900 font-medium mb-2">{{ $t('app.phone') }}</label>
-                                <InputText id="phone" type="text" :placeholder="$t('app.phone')" class="w-full" :class="{'p-invalid' : v$.user.phone.$error}" v-model="user.phone" :disabled="loading" />
+                                <InputText id="phone" type="text" :placeholder="$t('app.phone')" class="w-full" :class="{'p-invalid' : v$.user.phone.$error}" v-model="user.phone" :disabled="loading || saving" />
                                 <div v-if="v$.user.phone.$error">
                                     <small class="p-error">{{ v$.user.phone.$errors[0].$message }}</small>
                                 </div>
@@ -182,25 +171,25 @@
                             
                             <div class="field col-12">
                                 <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="superuserCheck" name="superuser" value="1" v-model="user.superuser" :binary="true" :disabled="loading"/>
+                                    <Checkbox inputId="superuserCheck" name="superuser" value="1" v-model="user.superuser" :binary="true" :disabled="loading || saving"/>
                                     <label for="superuserCheck">{{ $t('app.superuser') }}</label>
                                 </div>
                             </div>
                             <div class="field col-12" v-if="!user.superuser">
                                 <label for="phone" class="block text-900 font-medium mb-2">{{ $t('app.user_group') }}</label>
-                                <Dropdown v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id"/>
+                                <Dropdown v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id" :disabled="loading || saving"/>
                             </div>
                             
                             <div class="field col-12">
                                 <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="changePasswordCheck" name="changePassword" value="1" v-model="changePassword" :binary="true" :disabled="loading"/>
+                                    <Checkbox inputId="changePasswordCheck" name="changePassword" value="1" v-model="changePassword" :binary="true" :disabled="loading || saving"/>
                                     <label for="changePasswordCheck">{{ $t('app.change_password') }}</label>
                                 </div>
                             </div>
                             
                             <div class="field col-12 sm:col-6" v-if="changePassword">
                                 <label for="password" class="block text-900 font-medium mb-2">{{ $t('app.password') }}</label>
-                                <Password id="password" v-model="user.password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.user.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading"></Password>
+                                <Password id="password" v-model="user.password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.user.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading || saving"></Password>
                                 <div v-if="v$.user.password.$error">
                                     <small class="p-error">{{ v$.user.password.$errors[0].$message }}</small>
                                 </div>
@@ -208,7 +197,7 @@
                             
                             <div class="field col-12 sm:col-6" v-if="changePassword">
                                 <label for="confirm_password" class="block text-900 font-medium mb-2">{{ $t('app.repeat_password') }}</label>
-                                <Password id="confirm_password" v-model="user.confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.user.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading"></Password>
+                                <Password id="confirm_password" v-model="user.confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.user.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading || saving"></Password>
                                 <div v-if="v$.user.confirm_password.$error">
                                     <small class="p-error">{{ v$.user.confirm_password.$errors[0].$message }}</small>
                                 </div>
@@ -229,9 +218,8 @@
                     <ProgressSpinner style="width: 25px; height: 25px"/>
                 </div>
                 
-                <Button :label="$t('app.save')" v-if="!loading" :loading="saving" :disabled="loading" iconPos="right" @click="updateUser" class="w-auto text-center"></Button>
+                <Button :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" @click="updateUser" class="w-auto text-center"></Button>
             </div>
         </div>
     </div>
-    <Toast />
 </template>

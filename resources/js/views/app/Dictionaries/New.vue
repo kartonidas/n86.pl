@@ -1,0 +1,134 @@
+<script>
+    import { ref } from 'vue'
+    import { useRouter, useRoute } from 'vue-router'
+    import { useVuelidate } from '@vuelidate/core'
+    import { required } from '@/utils/i18n-validators'
+    import { useI18n } from 'vue-i18n'
+    import { getResponseErrors } from '@/utils/helper'
+    
+    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
+    import DictionaryService from '@/service/DictionaryService'
+    import store from '@/store.js'
+    
+    export default {
+        setup() {
+            const router = useRouter()
+            const route = useRoute()
+            const dictionaryService = new DictionaryService()
+            const { t } = useI18n();
+            
+            return {
+                router,
+                route,
+                t,
+                v$: useVuelidate(),
+                dictionaryService,
+            }
+        },
+        data() {
+            return {
+                saving: false,
+                dictionary: {
+                    active : true
+                },
+                errors: [],
+                type: this.route.params.type,
+                meta: {
+                    breadcrumbItems: this.getBreadcrumbs(),
+                }
+            }
+        },
+        methods: {
+            async createDictionary() {
+                const result = await this.v$.$validate()
+                if (result) {
+                    this.saving = true
+                    this.errors = []
+                    
+                    this.dictionaryService.create(this.type, this.dictionary.active, this.dictionary.name)
+                        .then(
+                            (response) => {
+                                store.commit('setToastMessage', {
+                                    severity : 'success',
+                                    summary : this.t('app.success'),
+                                    detail : this.t('app.dictionary_added'),
+                                });
+                                this.router.push({name: 'dictionary_edit', params: { type : this.type, dictionaryId : response.data }})
+                            },
+                            (response) => {
+                                this.errors = getResponseErrors(response)
+                                this.saving = false
+                            }
+                        )
+                }
+            },
+            getBreadcrumbs() {
+                let breadcrumbs = [
+                    {'label' : this.t('app.settings'), disabled : true },
+                    {'label' : this.t('app.dictionaries'), disabled : true },
+                ]
+                
+                switch(this.route.params.type) {
+                    case 'bills':
+                        breadcrumbs.push({'label' : this.t('app.bill_type'), route : {name : 'dictionaries', params : {type : 'bills'}} });
+                    break;
+                    case 'fees':
+                        breadcrumbs.push({'label' : this.t('app.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
+                    break;
+                }
+                
+                breadcrumbs.push({'label' : this.t('app.new_dictionary'), disabled: true });
+                return breadcrumbs;
+            }
+        },
+        validations () {
+            return {
+                dictionary: {
+                    name: { required },
+                }
+            }
+        },
+        components: {
+            "Breadcrumb": AppBreadcrumb,
+        }
+    }
+</script>
+
+<template>
+    <Breadcrumb :model="meta.breadcrumbItems"/>
+    <div class="grid mt-1">
+        <div class="col">
+            <div class="card p-fluid">
+                <div class="mb-4">
+                    <div class="p-fluid">
+                        <div class="formgrid grid">
+                            <div class="field col-12 mb-2">
+                                <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
+                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="saving"/>
+                                <div v-if="v$.dictionary.name.$error">
+                                    <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="field col-12 mb-2">
+                                <div class="field-checkbox mb-0">
+                                    <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="saving"/>
+                                    <label for="activeCheck">{{ $t('app.active') }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <Message severity="error" :closable="false" v-if="errors.length">
+                    <ul class="list-unstyled">
+                        <li v-for="error of errors">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </Message>
+                
+                <Button :label="$t('app.save')" :loading="saving" iconPos="right" @click="createDictionary" class="w-auto text-center"></Button>
+            </div>
+        </div>
+    </div>
+</template>

@@ -70,7 +70,7 @@ const checkActiveRoute = (item) => {
 </script>
 
 <template>
-    <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
+    <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }" v-if="item.access == undefined || item.access">
         <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
         <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
             <i :class="item.icon" class="layout-menuitem-icon"></i>

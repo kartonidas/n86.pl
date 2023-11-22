@@ -2,6 +2,7 @@
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useI18n } from 'vue-i18n'
+    import { useToast } from 'primevue/usetoast';
     
     import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
     import Column from 'primevue/column';
@@ -14,11 +15,13 @@
             const router = useRouter()
             const permissionService = new PermissionService()
             const { t } = useI18n();
+            const toast = useToast();
             
             return {
                 router,
                 t,
                 permissionService,
+                toast
             }
         },
         data() {
@@ -45,13 +48,19 @@
             getList() {
                 this.loading = true
                 this.permissionService.list(this.meta.perPage, this.meta.currentPage)
-                    .then(response => {
-                        this.permissions = response.data.data
-                        this.meta.totalRecords = response.data.total_rows
-                        this.meta.totalPages = response.data.total_pages
-                        this.loading = false
-                    }, () => {});
+                    .then(
+                        (response) => {
+                            this.permissions = response.data.data
+                            this.meta.totalRecords = response.data.total_rows
+                            this.meta.totalPages = response.data.total_pages
+                            this.loading = false
+                        },
+                        (response) => {
+                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        }
+                    )
             },
+            
             newGroup() {
                 this.router.push({name: 'permission_new'})
             },
@@ -72,9 +81,15 @@
             
             confirmDeleteUser() {
                 this.permissionService.remove(this.deletePermissionId)
-                    .then((response) => {
-                        this.getList()
-                    })
+                    .then(
+                        (response) => {
+                            this.getList()
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.permission_deleted'), life: 3000 });
+                        },
+                        (response) => {
+                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        },
+                    )
                 
                 this.displayConfirmation = false
                 this.deletePermissionId = null
@@ -99,7 +114,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="text-right mb-2">
-                    <Button :label="$t('app.add_new_group')" @click="newGroup" class="text-center"></Button>
+                    <Button :label="$t('app.new_group')" @click="newGroup" class="text-center"></Button>
                 </div>
                 
                 <DataTable :value="permissions" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">

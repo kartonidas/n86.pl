@@ -52,7 +52,7 @@ class ItemController extends Controller
         User::checkAccess("item:create");
         
         $request->validate([
-            "type" => ["required", Rule::in("estate")],
+            //"type" => ["required", Rule::in("estate")],
             "active" => "required|boolean",
             "name" => "required|max:100",
             "street" => "required|max:80",
@@ -63,7 +63,7 @@ class ItemController extends Controller
         ]);
         
         $item = new Item;
-        $item->type = $request->input("type");
+        //$item->type = $request->input("type");
         $item->active = $request->input("active", 0);
         $item->name = $request->input("name");
         $item->street = $request->input("street");

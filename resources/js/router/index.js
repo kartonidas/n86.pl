@@ -133,6 +133,51 @@ const router = createRouter({
                     name: 'permission_edit',
                     component: () => import('@/views/app/Permissions/Edit.vue'),
                 },
+                {
+                    path: '/app/items',
+                    children: [
+                        {
+                            path: '/app/items',
+                            name: 'items',
+                            component: () => import('@/views/app/Items/List.vue'),
+                        },
+                        {
+                            path: '/app/item/new',
+                            name: 'item_new',
+                            component: () => import('@/views/app/Items/New.vue'),
+                        },
+                        {
+                            path: '/app/item/:itemId',
+                            name: 'item_edit',
+                            component: () => import('@/views/app/Items/Edit.vue'),
+                        },
+                    ]
+                },
+                {
+                    path: '/app/dictionaries',
+                    children: [
+                        {
+                            path: '/app/dictionary/:type(fees|bills)',
+                            name: 'dictionaries',
+                            component: () => import('@/views/app/Dictionaries/List.vue'),
+                        },
+                        {
+                            path: '/app/dictionary/:type(fees|bills)/new',
+                            name: 'dictionary_new',
+                            component: () => import('@/views/app/Dictionaries/New.vue'),
+                        },
+                        {
+                            path: '/app/dictionary/:type(fees|bills)/:dictionaryId',
+                            name: 'dictionary_edit',
+                            component: () => import('@/views/app/Dictionaries/Edit.vue'),
+                        },
+                    ]
+                },
+                {
+                    path: '/app/user/config',
+                    name: 'config',
+                    component: () => import('@/views/app/Config.vue'),
+                },
             ]
         },
         {
