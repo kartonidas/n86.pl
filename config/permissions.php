@@ -22,13 +22,13 @@ return [
             "module" => "Dictionaries",
             "operation" => ["list", "create", "update", "delete"]
         ],
-        "status" => [
-            "module" => "Statuses",
+        "document" => [
+            "module" => "Documents",
             "operation" => ["list", "create", "update", "delete"]
         ],
-        "stats" => [
-            "module" => "Stats",
-            "operation" => ["list"]
+        "fault" => [
+            "module" => "Faults",
+            "operation" => ["list", "create", "update", "delete"]
         ],
     ]
 ];

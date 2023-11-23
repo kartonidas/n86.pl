@@ -4,11 +4,10 @@
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
     import { useI18n } from 'vue-i18n'
-    import { getResponseErrors } from '@/utils/helper'
-    
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
-    import DictionaryService from '@/service/DictionaryService'
+    import { getResponseErrors, hasAccess } from '@/utils/helper'
     import store from '@/store.js'
+
+    import DictionaryService from '@/service/DictionaryService'
     
     export default {
         setup() {
@@ -53,7 +52,11 @@
                                     summary : this.t('app.success'),
                                     detail : this.t('app.dictionary_added'),
                                 });
-                                this.router.push({name: 'dictionary_edit', params: { type : this.type, dictionaryId : response.data }})
+                                
+                                if(hasAccess('dictionary:update'))
+                                    this.router.push({name: 'dictionary_edit', params: { type : this.type, dictionaryId : response.data }})
+                                else
+                                    this.router.push({name: 'dictionaries', params: { type : this.type } })
                             },
                             (response) => {
                                 this.errors = getResponseErrors(response)
@@ -88,9 +91,6 @@
                 }
             }
         },
-        components: {
-            "Breadcrumb": AppBreadcrumb,
-        }
     }
 </script>
 
@@ -99,35 +99,37 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <div class="mb-4">
-                    <div class="p-fluid">
-                        <div class="formgrid grid">
-                            <div class="field col-12 mb-2">
-                                <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="saving"/>
-                                <div v-if="v$.dictionary.name.$error">
-                                    <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
+                <form v-on:submit.prevent="createDictionary">
+                    <div class="mb-4">
+                        <div class="p-fluid">
+                            <div class="formgrid grid">
+                                <div class="field col-12 mb-2">
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="saving"/>
+                                    <div v-if="v$.dictionary.name.$error">
+                                        <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="field col-12 mb-2">
-                                <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="saving"/>
-                                    <label for="activeCheck">{{ $t('app.active') }}</label>
+                                
+                                <div class="field col-12 mb-2">
+                                    <div class="field-checkbox mb-0">
+                                        <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="saving"/>
+                                        <label for="activeCheck">{{ $t('app.active') }}</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
-                
-                <Button :label="$t('app.save')" :loading="saving" iconPos="right" @click="createDictionary" class="w-auto text-center"></Button>
+                    <Message severity="error" :closable="false" v-if="errors.length">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
+                    <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                </form>
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/AppLayout.vue';
 import SiteLayout from '@/layout/SiteLayout.vue';
 import Home from '@/views/Home.vue';
+import { hasAccess } from '@/utils/helper'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -107,31 +108,37 @@ const router = createRouter({
                     path: '/app/users',
                     name: 'users',
                     component: () => import('@/views/app/Users/List.vue'),
+                    meta: {permission: 'user:list'},
                 },
                 {
                     path: '/app/user/new',
                     name: 'user_new',
                     component: () => import('@/views/app/Users/New.vue'),
+                    meta: {permission: 'user:create'},
                 },
                 {
                     path: '/app/user/:userId',
                     name: 'user_edit',
                     component: () => import('@/views/app/Users/Edit.vue'),
+                    meta: {permission: 'user:update'},
                 },
                 {
                     path: '/app/user/permissions',
                     name: 'permissions',
                     component: () => import('@/views/app/Permissions/List.vue'),
+                    meta: {permission: 'permission:list'},
                 },
                 {
                     path: '/app/user/permission/new',
                     name: 'permission_new',
                     component: () => import('@/views/app/Permissions/New.vue'),
+                    meta: {permission: 'permission:create'},
                 },
                 {
                     path: '/app/user/permission/:permissionId',
                     name: 'permission_edit',
                     component: () => import('@/views/app/Permissions/Edit.vue'),
+                    meta: {permission: 'permission:update'},
                 },
                 {
                     path: '/app/items',
@@ -140,16 +147,58 @@ const router = createRouter({
                             path: '/app/items',
                             name: 'items',
                             component: () => import('@/views/app/Items/List.vue'),
+                            meta: {permission: 'item:list'},
                         },
                         {
                             path: '/app/item/new',
                             name: 'item_new',
                             component: () => import('@/views/app/Items/New.vue'),
+                            meta: {permission: 'item:create'},
+                        },
+                        {
+                            path: '/app/item/edit/:itemId',
+                            name: 'item_edit',
+                            component: () => import('@/views/app/Items/Edit.vue'),
+                            meta: {permission: 'item:update'},
                         },
                         {
                             path: '/app/item/:itemId',
-                            name: 'item_edit',
-                            component: () => import('@/views/app/Items/Edit.vue'),
+                            name: 'item_show',
+                            component: () => import('@/views/app/Items/Show.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                    ]
+                },
+                {
+                    path: '/app/tenants',
+                    children: [
+                        {
+                            path: '/app/tenants',
+                            name: 'tenants',
+                            component: () => import('@/views/app/Tenants/List.vue'),
+                            meta: {permission: 'tenant:list'},
+                        },
+                    ]
+                },
+                {
+                    path: '/app/documents',
+                    children: [
+                        {
+                            path: '/app/documents',
+                            name: 'documents',
+                            component: () => import('@/views/app/Documents/List.vue'),
+                            meta: {permission: 'document:list'},
+                        },
+                    ]
+                },
+                {
+                    path: '/app/faults',
+                    children: [
+                        {
+                            path: '/app/faults',
+                            name: 'faults',
+                            component: () => import('@/views/app/Faults/List.vue'),
+                            meta: {permission: 'fault:list'},
                         },
                     ]
                 },
@@ -160,16 +209,19 @@ const router = createRouter({
                             path: '/app/dictionary/:type(fees|bills)',
                             name: 'dictionaries',
                             component: () => import('@/views/app/Dictionaries/List.vue'),
+                            meta: {permission: 'dictionary:list'},
                         },
                         {
                             path: '/app/dictionary/:type(fees|bills)/new',
                             name: 'dictionary_new',
                             component: () => import('@/views/app/Dictionaries/New.vue'),
+                            meta: {permission: 'dictionary:create'},
                         },
                         {
                             path: '/app/dictionary/:type(fees|bills)/:dictionaryId',
                             name: 'dictionary_edit',
                             component: () => import('@/views/app/Dictionaries/Edit.vue'),
+                            meta: {permission: 'dictionary:update'},
                         },
                     ]
                 },
@@ -177,6 +229,11 @@ const router = createRouter({
                     path: '/app/user/config',
                     name: 'config',
                     component: () => import('@/views/app/Config.vue'),
+                },
+                {
+                    path: '/app/access-denied',
+                    name: 'access_denied',
+                    component: () => import('@/views/errors/AccessDenied.vue'),
                 },
             ]
         },
@@ -199,7 +256,16 @@ router.beforeEach((to, from, next) => {
         if (!store.state.userId)
             next({ name: 'signin' });
         else {
-            userService.isLogin().then(() => next(), () => next({ name: 'signin' }));
+            userService.isLogin()
+                .then(
+                    () => {
+                        if (to.meta.permission != undefined && !hasAccess(to.meta.permission))
+                            next({ name: 'access_denied' });
+                        else
+                            next();
+                    },
+                    () => next({ name: 'signin' })
+                );
         }
     } else {
         next();

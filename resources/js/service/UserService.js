@@ -90,6 +90,7 @@ export default class UserService {
             return axios.get('api/v1/is-login')
                 .then((response) => {
                     resolve(response);
+                    store.commit('setUserPermission', response.data.permission);
                 })
                 .catch(function () {
                     store.commit('setUserId', null);

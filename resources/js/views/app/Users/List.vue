@@ -4,10 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { hasAccess } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
-    import Column from 'primevue/column';
-    import DataTable from 'primevue/datatable';
-    import Dialog from 'primevue/dialog';
+    import store from '@/store.js'
     import UsersService from '@/service/UsersService'
     
     export default {
@@ -33,16 +30,22 @@
                 deleteUserId: null,
                 meta: {
                     currentPage: 1,
-                    perPage: 25,
+                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), route : { name : 'users'}, disabled : true },
+                        {'label' : this.t('app.users'), disabled : true },
+                        {'label' : this.t('app.users_list'), disabled : true },
                     ],
                 }
             }
         },
         mounted() {
+            if(store.getters.toastMessage) {
+                let m = store.getters.toastMessage
+                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                store.commit('setToastMessage', null);
+            }
             this.getList()
         },
         methods: {
@@ -89,6 +92,7 @@
                     .then(
                         (response) => {
                             this.getList()
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.user_deleted'), life: 3000 });
                         },
                         (errors) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -97,14 +101,13 @@
                 
                 this.displayConfirmation = false
                 this.deleteUserId = null
+            },
+            
+            rowClick(event) {
+                if (hasAccess('user:update')) 
+                    this.editUser(event.data.id)
             }
         },
-        components: {
-            "DataTable": DataTable,
-            "Column": Column,
-            "Dialog": Dialog,
-            "Breadcrumb": AppBreadcrumb,
-        }
     }
 </script>
 
@@ -116,10 +119,10 @@
                 <div class="text-right mb-2" v-if="hasAccess('user:create')">
                     <Button :label="$t('app.new_user')" @click="newUser" class="text-center"></Button>
                 </div>
-                <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
-                    <Column field="delete" style="min-width: 100px; width: 100px" class="text-center">
+                <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                    <Column v-if="hasAccess('user:update') || hasAccess('user:delete')" field="delete" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editUser(data.id)"/>
+                            <Button v-if="hasAccess('user:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editUser(data.id)"/>
                             <Button v-if="hasAccess('user:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
                         </template>
                     </Column>
@@ -138,7 +141,7 @@
                         </template>
                     </Column>
                 </DataTable>
-                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true">
+                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
                         <span>{{ $t('app.remove_object_confirmation') }}</span>

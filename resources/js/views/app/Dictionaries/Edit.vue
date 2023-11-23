@@ -6,11 +6,9 @@
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
     import { getResponseErrors } from '@/utils/helper'
-    import ProgressSpinner from 'primevue/progressspinner';
-    
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
-    import DictionaryService from '@/service/DictionaryService'
     import store from '@/store.js'
+    
+    import DictionaryService from '@/service/DictionaryService'
     
     export default {
         setup() {
@@ -102,10 +100,6 @@
                 }
             }
         },
-        components: {
-            "Breadcrumb": AppBreadcrumb,
-            "ProgressSpinner": ProgressSpinner,
-        }
     }
 </script>
 
@@ -114,39 +108,41 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <div class="mb-4">
-                    <div class="p-fluid">
-                        <div class="formgrid grid">
-                            <div class="field col-12 mb-2">
-                                <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
-                                <div v-if="v$.dictionary.name.$error">
-                                    <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
+                <form v-on:submit.prevent="updateDictionary">
+                    <div class="mb-4">
+                        <div class="p-fluid">
+                            <div class="formgrid grid">
+                                <div class="field col-12 mb-2">
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
+                                    <div v-if="v$.dictionary.name.$error">
+                                        <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="field col-12 mb-2">
-                                <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="loading || saving"/>
-                                    <label for="activeCheck">{{ $t('app.active') }}</label>
+                                
+                                <div class="field col-12 mb-2">
+                                    <div class="field-checkbox mb-0">
+                                        <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="loading || saving"/>
+                                        <label for="activeCheck">{{ $t('app.active') }}</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
-                
-                <div class="" v-if="loading">
-                    <ProgressSpinner style="width: 25px; height: 25px"/>
-                </div>
-                
-                <Button :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" @click="updateDictionary" class="w-auto text-center"></Button>
+                    <Message severity="error" :closable="false" v-if="errors.length">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
+                    <div class="" v-if="loading">
+                        <ProgressSpinner style="width: 25px; height: 25px"/>
+                    </div>
+                    
+                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                </form>
             </div>
         </div>
     </div>

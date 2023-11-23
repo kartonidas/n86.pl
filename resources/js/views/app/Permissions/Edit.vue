@@ -6,11 +6,9 @@
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
     import { getResponseErrors } from '@/utils/helper'
-    import ProgressSpinner from 'primevue/progressspinner';
     
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
-    import PermissionService from '@/service/PermissionService'
     import store from '@/store.js'
+    import PermissionService from '@/service/PermissionService'
     
     export default {
         setup() {
@@ -37,6 +35,7 @@
                 modules: [],
                 meta: {
                     breadcrumbItems: [
+                        {'label' : this.t('app.users'), disabled : true },
                         {'label' : this.t('app.permissions'), route : { name : 'permissions'} },
                         {'label' : this.t('app.edit_group'), route : { name : 'permissions'}, disabled : true },
                     ],
@@ -128,10 +127,6 @@
                 }
             }
         },
-        components: {
-            "Breadcrumb": AppBreadcrumb,
-            "ProgressSpinner": ProgressSpinner,
-        }
     }
 </script>
 
@@ -140,49 +135,51 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <div class="mb-4">
-                    <div class="p-fluid">
-                        <div class="formgrid grid">
-                            <div class="field col-12">
-                                <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving" />
-                                <div v-if="v$.permission.name.$error">
-                                    <small class="p-error">{{ v$.permission.name.$errors[0].$message }}</small>
+                <form v-on:submit.prevent="updateGroup">
+                    <div class="mb-4">
+                        <div class="p-fluid">
+                            <div class="formgrid grid">
+                                <div class="field col-12">
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving" />
+                                    <div v-if="v$.permission.name.$error">
+                                        <small class="p-error">{{ v$.permission.name.$errors[0].$message }}</small>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="field col-12">
-                                <div class="field-checkbox mb-0">
-                                    <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading || saving"/>
-                                    <label for="defaultCheck">{{ $t('app.default') }}</label>
+                                
+                                <div class="field col-12">
+                                    <div class="field-checkbox mb-0">
+                                        <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading || saving"/>
+                                        <label for="defaultCheck">{{ $t('app.default') }}</label>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3">
-                                <div class="mb-2"><strong class="mb-3">{{ $t('app.' + module.name) }}</strong></div>
-                                <div class="field-checkbox mb-1 mt-1" v-for="op in module.perm.operation">
-                                    <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading || saving"/>
-                                    <label :for="getCheckboxInputId(module.name, op)">
-                                        {{ $t('app.' + op) }}
-                                    </label>
+                                
+                                <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3">
+                                    <div class="mb-2"><strong class="mb-3">{{ $t('app.' + module.name) }}</strong></div>
+                                    <div class="field-checkbox mb-1 mt-1" v-for="op in module.perm.operation">
+                                        <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading || saving"/>
+                                        <label :for="getCheckboxInputId(module.name, op)">
+                                            {{ $t('app.' + op) }}
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
-                
-                <div class="" v-if="loading">
-                    <ProgressSpinner style="width: 25px; height: 25px"/>
-                </div>
-                
-                <Button :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" @click="updateGroup" class="w-auto text-center"></Button>
+                    <Message severity="error" :closable="false" v-if="errors.length">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
+                    <div class="" v-if="loading">
+                        <ProgressSpinner style="width: 25px; height: 25px"/>
+                    </div>
+                    
+                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                </form>
             </div>
         </div>
     </div>

@@ -94,6 +94,8 @@ export default {
         'dictionary_updated': 'Wartość została zaktualizowana',
         'dictionary_deleted': 'Wartość została usunięta',
         'permission_deleted': 'Grupa została usunięta',
+        'item_deleted': 'Nieruchomość została usunięta',
+        'user_deleted': 'Użytkownik został usunięty',
     },
     validations: {
         required: "Uzupełnij pole",

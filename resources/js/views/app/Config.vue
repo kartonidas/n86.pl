@@ -2,8 +2,6 @@
     import { ref } from 'vue'
     import { useI18n } from 'vue-i18n'
     
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
-    
     export default {
         setup() {
             const { t } = useI18n();
@@ -22,9 +20,6 @@
                 }
             }
         },
-        components: {
-            "Breadcrumb": AppBreadcrumb,
-        }
     }
 </script>
 

@@ -1137,6 +1137,7 @@ class UserController extends Controller
             "locale" => $settings->locale,
             "owner" => Auth::user()->owner,
             "avatar" => Auth::user()->getUserAvatar(),
+            "permission" => UserPermission::permissionArrayToString(Auth::user()->getAllUserPermissions(Auth::user()->getUuid(), true)),
         ];
         return $out;
     }

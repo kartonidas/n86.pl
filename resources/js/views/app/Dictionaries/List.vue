@@ -3,11 +3,8 @@
     import { useRouter, useRoute } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
-    import Column from 'primevue/column';
-    import DataTable from 'primevue/datatable';
-    import Dialog from 'primevue/dialog';
-    
-    import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
+    import { hasAccess } from '@/utils/helper'
+    import store from '@/store.js'
     import DictionaryService from '@/service/DictionaryService'
     
     export default {
@@ -24,6 +21,7 @@
                 toast,
                 t,
                 dictionaryService,
+                hasAccess
             }
         },
         data() {
@@ -35,7 +33,7 @@
                 deleteDictionaryId: null,
                 meta: {
                     currentPage: 1,
-                    perPage: 25,
+                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: this.getBreadcrumbs(),
@@ -43,6 +41,11 @@
             }
         },
         mounted() {
+            if(store.getters.toastMessage) {
+                let m = store.getters.toastMessage
+                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                store.commit('setToastMessage', null);
+            }
             this.getList()
         },
         updated() {
@@ -124,15 +127,14 @@
             },
             
             closeConfirmation() {
-                this.deleteDictionaryId = false
+                this.displayConfirmation = false
             },
+            
+            rowClick(event) {
+                if (hasAccess('dictionary:update')) 
+                    this.editDictionary(event.data.id)
+            }
         },
-        components: {
-            "DataTable": DataTable,
-            "Column": Column,
-            "Breadcrumb": AppBreadcrumb,
-            "Dialog": Dialog,
-        }
     }
 </script>
 
@@ -142,15 +144,15 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2">
+                <div class="text-right mb-2" v-if="hasAccess('dictionary:create')">
                     <Button :label="$t('app.new_dictionary')" @click="newDictionary" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="dictionaries" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading">
-                    <Column field="delete" style="min-width: 100px; width: 100px" class="text-center">
+                <DataTable :value="dictionaries" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                    <Column field="delete" v-if="hasAccess('dictionary:update') || hasAccess('dictionary:delete')" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editDictionary(data.id)"/>
-                            <Button icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <Button v-if="hasAccess('dictionary:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editDictionary(data.id)"/>
+                            <Button v-if="hasAccess('dictionary:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
                     <Column field="name" :header="$t('app.name')" style="min-width: 300px;"></Column>
@@ -158,7 +160,7 @@
                             {{ $t('app.dictionary_empty_list') }}
                         </template>
                 </DataTable>
-                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true">
+                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
                         <span>{{ $t('app.remove_object_confirmation') }}</span>

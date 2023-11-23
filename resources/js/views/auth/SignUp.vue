@@ -1,11 +1,11 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
-    import { getResponseErrors } from '@/utils/helper'
-    import UserService from '@/service/UserService';
-    
     import { useVuelidate } from '@vuelidate/core'
     import { required, email } from '@/utils/i18n-validators'
+    import { getResponseErrors } from '@/utils/helper'
+    
+    import UserService from '@/service/UserService';
     
     export default {
         setup() {
@@ -56,28 +56,30 @@
 <template>
     <div class="w-full py-6 px-5 sm:px-8">
         <div>
-            <h3 class="mb-5">
-                {{ $t('app.register') }}
-            </h3>
-            <div class="mb-4">
-                <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
-                <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="saving"/>
-                <div v-if="v$.email.$dirty">
-                    <p v-for="error of v$.email.$errors" :key="error.$uid">
-                        <small class="p-error">{{ error.$message }}</small>
-                    </p>
+            <form v-on:submit.prevent="register">
+                <h3 class="mb-5">
+                    {{ $t('app.register') }}
+                </h3>
+                <div class="mb-4">
+                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
+                    <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="saving"/>
+                    <div v-if="v$.email.$dirty">
+                        <p v-for="error of v$.email.$errors" :key="error.$uid">
+                            <small class="p-error">{{ error.$message }}</small>
+                        </p>
+                    </div>
                 </div>
-            </div>
-
-            <Message severity="error" :closable="false" v-if="errors.length">
-                <ul class="list-unstyled">
-                    <li v-for="error of errors">
-                        {{ error }}
-                    </li>
-                </ul>
-            </Message>
-            
-            <Button :label="$t('app.create_account')" :loading="saving" iconPos="right" @click="register" class="w-full p-3 text-xl text-center"></Button>
+    
+                <Message severity="error" :closable="false" v-if="errors.length">
+                    <ul class="list-unstyled">
+                        <li v-for="error of errors">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </Message>
+                
+                <Button type="submit" :label="$t('app.create_account')" :loading="saving" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
+            </form>
         </div>
     </div>
 </template>
