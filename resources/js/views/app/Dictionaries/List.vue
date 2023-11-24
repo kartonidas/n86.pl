@@ -144,18 +144,29 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2" v-if="hasAccess('dictionary:create')">
-                    <Button :label="$t('dictionaries.add')" @click="newDictionary" class="text-center"></Button>
+                <div class="flex justify-content-between align-items-center mb-5">
+                    <h5 class="inline-flex mb-0">{{ $t('menu.permissions') }}</h5>
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('dictionary:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('dictionaries.new_value')" @click="newDictionary" class="text-center"></Button>
+                    </div>
                 </div>
                 
                 <DataTable :value="dictionaries" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
-                    <Column field="delete" v-if="hasAccess('dictionary:update') || hasAccess('dictionary:delete')" style="min-width: 100px; width: 100px" class="text-center">
+                    <Column :header="$t('dictionaries.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Button v-if="hasAccess('dictionary:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editDictionary(data.id)"/>
-                            <Button v-if="hasAccess('dictionary:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <router-link :to="{name: 'dictionary_edit', params: { type : data.type, dictionaryId : data.id }}" v-if="hasAccess('dictionary:update')">
+                                {{ data.name }}
+                            </router-link>
+                            <span v-else>
+                                {{ data.name }}
+                            </span>
                         </template>
                     </Column>
-                    <Column field="name" :header="$t('dictionaries.name')" style="min-width: 300px;"></Column>
+                    <Column field="delete" v-if="hasAccess('dictionary:delete')" style="min-width: 45px; width: 45px" class="text-center">
+                        <template #body="{ data }">
+                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                        </template>
+                    </Column>
                     <template #empty>
                         {{ $t('dictionaries.empty_list') }}
                     </template>

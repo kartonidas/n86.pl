@@ -116,19 +116,22 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2" v-if="hasAccess('user:create')">
-                    <Button :label="$t('users.new_user')" @click="newUser" class="text-center"></Button>
+                <div class="flex justify-content-between align-items-center mb-5">
+                    <h5 class="inline-flex mb-0">{{ $t('menu.users_list') }}</h5>
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('user:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('users.add_user')" @click="newUser" class="text-center"></Button>
+                    </div>
                 </div>
+                
                 <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
-                    <Column v-if="hasAccess('user:update') || hasAccess('user:delete')" field="delete" style="min-width: 100px; width: 100px" class="text-center">
-                        <template #body="{ data }">
-                            <Button v-if="hasAccess('user:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editUser(data.id)"/>
-                            <Button v-if="hasAccess('user:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
-                        </template>
-                    </Column>
                     <Column field="name" :header="$t('users.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            {{ data.firstname }} {{ data.lastname }}
+                            <router-link :to="{name: 'user_edit', params: { userId : data.id }}" v-if="hasAccess('user:update')">
+                                {{ data.firstname }} {{ data.lastname }}
+                            </router-link>
+                            <span v-else>
+                                {{ data.firstname }} {{ data.lastname }}
+                            </span>
                         </template>
                     </Column>
                     <Column field="email" :header="$t('users.email')"></Column>
@@ -138,6 +141,11 @@
                             <span v-if="data.owner">{{ $t('users.owner') }}</span>
                             <span v-if="!data.owner && data.superuser">{{ $t('users.superuser') }}</span>
                             <span v-if="!data.owner && !data.superuser">{{ data.user_permission_name }}</span>
+                        </template>
+                    </Column>
+                    <Column v-if="hasAccess('user:delete')" field="delete" style="min-width: 45px; width: 45px" class="text-center">
+                        <template #body="{ data }">
+                            <Button v-tooltip.bottom="$t('app.remove')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
                         </template>
                     </Column>
                 </DataTable>

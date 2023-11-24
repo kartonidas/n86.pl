@@ -12,27 +12,8 @@
         "success" : "Sukces",
         "yes" : "Tak"
     },
-    "menu": {
-        "bill_type" : "Rodzaje rachunków",
-        "configuration" : "Konfiguracja",
-        "customer_list" : "Lista klientów",
-        "dashboard" : "Biurko",
-        "dictionaries" : "Słowniki",
-        "documents" : "Dokumenty",
-        "estate_list" : "Lista nieruchomości",
-        "estates" : "Nieruchomości",
-        "faults" : "Usterki",
-        "fee_include_rent" : "Opłaty zawarte w czynszu",
-        "home" : "Start",
-        "permissions" : "Uprawnienia",
-        "profile" : "Profil",
-        "settings" : "Ustawienia",
-        "tenant_list" : "Lista najemców",
-        "users" : "Użytkownicy",
-        "users_list" : "Lista użytkowników"
-    },
     "customers": {
-        "add" : "Nowy klient",
+        "add_customer" : "Dodaj klienta",
         "added" : "Klient został dodany",
         "apartment_no" : "Numer lokalu",
         "city" : "Miejscowość",
@@ -55,10 +36,11 @@
         "edit" : "Edycja",
         "empty_list" : "Brak słowników",
         "name" : "Nazwa",
+        "new_value" : "Nowa wartość",
         "updated" : "Wartość została zaktualizowana"
     },
     "items" : {
-        "add" : "Nowa nieruchomość",
+        "add_estate" : "Dodaj nieruchomość",
         "added" : "Nieruchomość została dodana",
         "add_new_reservation" : "Dodaj rezerwację",
         "add_new_tenant" : "Dodaj najemcę",
@@ -84,7 +66,27 @@
         "updated" : "Nieruchomość została zaktualizowana",
         "zip" : "Kod pocztowy"
     },
+    "menu": {
+        "bill_type" : "Rodzaje rachunków",
+        "configuration" : "Konfiguracja",
+        "customer_list" : "Lista klientów",
+        "dashboard" : "Biurko",
+        "dictionaries" : "Słowniki",
+        "documents" : "Dokumenty",
+        "estate_list" : "Lista nieruchomości",
+        "estates" : "Nieruchomości",
+        "faults" : "Usterki",
+        "fee_include_rent" : "Opłaty zawarte w czynszu",
+        "home" : "Start",
+        "permissions" : "Uprawnienia",
+        "profile" : "Profil",
+        "settings" : "Ustawienia",
+        "tenant_list" : "Lista najemców",
+        "users" : "Użytkownicy",
+        "users_list" : "Lista użytkowników"
+    },
     "permissions" : {
+        "add_group" : "Dodaj grupę",
         "added" : "Grupa została dodana",
         "create" : "Tworzenie",
         "customer" : "Klienci",
@@ -99,7 +101,6 @@
         "list" : "Lista",
         "name" : "Nazwa grupy",
         "new" : "Nowa grupa",
-        "new_group" : "Nowa grupa",
         "permission" : "Uprawnienia",
         "tenant" : "Najemcy",
         "update" : "Aktualizacja",
@@ -139,6 +140,7 @@
         "thank_for_registering" : "Dziękujemy za rejestrację. Na podany adres e-mail zostało wysłane potwierdzenie."
     },
     "users": {
+        "add_user" : "Dodaj użytkownika",
         "added" : "Konto użytkownika zostało utworzone",
         "change_password" : "Zmień hasło",
         "deleted" : "Użytkownik został usunięty",

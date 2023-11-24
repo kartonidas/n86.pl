@@ -116,23 +116,34 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2" v-if="hasAccess('permission:create')">
-                    <Button :label="$t('permissions.new_group')" @click="newGroup" class="text-center"></Button>
+                <div class="flex justify-content-between align-items-center mb-5">
+                    <h5 class="inline-flex mb-0">{{ $t('menu.permissions') }}</h5>
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('permission:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('permissions.add_group')" @click="newGroup" class="text-center"></Button>
+                    </div>
                 </div>
                 
                 <DataTable :value="permissions" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
-                    <Column field="delete" v-if="hasAccess('permission:update') || hasAccess('permission:delete')" style="min-width: 100px; width: 100px" class="text-center">
+                     <Column :header="$t('permissions.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Button v-if="hasAccess('permission:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editGroup(data.id)"/>
-                            <Button v-if="hasAccess('permission:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
+                            <router-link :to="{name: 'permission_edit', params: { permissionId : data.id }}" v-if="hasAccess('permission:update')">
+                                {{ data.name }}
+                            </router-link>
+                            <span v-else>
+                                {{ data.name }}
+                            </span>
                         </template>
-                    </Column>
-                     <Column field="name" :header="$t('permissions.name')" style="min-width: 300px;"></Column>
+                     </Column>
                      <Column field="is_default" :header="$t('permissions.default')" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
                             <span v-if="data.is_default">{{ $t('app.yes') }}</span>
                         </template>
                      </Column>
+                     <Column field="delete" v-if="hasAccess('permission:delete')" style="min-width: 45px; width: 45px" class="text-center">
+                        <template #body="{ data }">
+                            <Button v-if="hasAccess('permission:delete')" v-tooltip.bottom="$t('app.remove')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
+                        </template>
+                    </Column>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">

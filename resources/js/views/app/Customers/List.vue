@@ -95,11 +95,11 @@
             },
             
             newCustomer() {
-                this.router.push({name: 'customer_new', params: {type : this.type}})
+                this.router.push({name: 'customer_new'})
             },
             
             editCustomer(customerId) {
-                this.router.push({name: 'customer_edit', params: { type : this.type, customerId : customerId }})
+                this.router.push({name: 'customer_edit', params: { customerId : customerId }})
             },
             
             openConfirmation(id) {
@@ -141,23 +141,23 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="flex justify-content-between align-items-center">
+                <div class="flex justify-content-between align-items-center mb-5">
                     <h5 class="inline-flex mb-0">{{ $t('menu.customer_list') }}</h5>
-                    <div class="text-right mb-2 inline-flex" v-if="hasAccess('customer:create')">
-                        <Button icon="pi pi-plus" v-tooltip.left="$t('customers.add')" @click="newCustomer" class="text-center"></Button>
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('customer:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('customers.add_customer')" @click="newCustomer" class="text-center"></Button>
                     </div>
                 </div>
                 
                 <DataTable :value="customers" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
-                    <Column field="delete" v-if="hasAccess('customer:update') || hasAccess('customer:delete')" style="min-width: 100px; width: 100px" class="text-center">
-                        <template #body="{ data }">
-                            <Button v-tooltip.bottom="$t('app.edit')" v-if="hasAccess('customer:update')" icon="pi pi-pencil" class="p-button p-2 mr-1" style="width: auto" @click="editCustomer(data.id)"/>
-                            <Button v-tooltip.bottom="$t('app.remove')" v-if="hasAccess('customer:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
-                        </template>
-                    </Column>
                     <Column field="name" sortable :header="$t('customers.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            {{ data.name }}
+                            <router-link :to="{name: 'customer_edit', params: { customerId : data.id }}" v-if="hasAccess('customer:update')">
+                                {{ data.name }}
+                            </router-link>
+                            <span v-else>
+                                {{ data.name }}
+                            </span>
+                            
                             <div v-if="data.street || data.city">
                                 <small>
                                     <div v-if="data.street">
@@ -170,7 +170,11 @@
                             </div>
                         </template>
                     </Column>
-                    <Column field="nip" sortable :header="$t('customers.nip')">
+                    <Column field="nip" sortable :header="$t('customers.nip')"></Column>
+                    <Column field="delete" v-if="hasAccess('customer:delete')" style="min-width: 60px; width: 60px" class="text-center">
+                        <template #body="{ data }">
+                            <Button v-tooltip.bottom="$t('app.remove')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                        </template>
                     </Column>
                     <template #empty>
                         {{ $t('customers.empty_list') }}

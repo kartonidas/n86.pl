@@ -115,10 +115,10 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="flex justify-content-between align-items-center">
+                <div class="flex justify-content-between align-items-center mb-5">
                     <h5 class="inline-flex mb-0">{{ $t('menu.estate_list') }}</h5>
-                    <div class="text-right mb-2 inline-flex" v-if="hasAccess('item:create')">
-                        <Button icon="pi pi-plus" v-tooltip.left="$t('items.add')" @click="newItem" class="text-center"></Button>
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('item:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('items.add_estate')" @click="newItem" class="text-center"></Button>
                     </div>
                 </div>
                 
@@ -137,9 +137,9 @@
                             </div>
                         </template>
                     </Column>
-                    <Column field="delete" style="min-width: 60px; width: 60px" class="text-center">
+                    <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" v-if="hasAccess('item:delete')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
                     <template #empty>
