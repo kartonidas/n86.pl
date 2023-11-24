@@ -62,11 +62,11 @@
         <div>
             <form v-on:submit.prevent="resetPassword">
                 <h3 class="mb-5">
-                    {{ $t('app.remind_password') }}
+                    {{ $t('register.remind_password') }}
                 </h3>
                 <div class="mb-4">
-                    <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
-                    <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
+                    <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('register.password') }}</label>
+                    <Password id="password" v-model="password" :placeholder="$t('register.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
                     <div v-if="v$.password.$dirty">
                         <p v-for="error of v$.password.$errors" :key="error.$uid">
                             <small class="p-error">{{ error.$message }}</small>
@@ -75,8 +75,8 @@
                 </div>
                     
                 <div class="mb-4">
-                    <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.repeat_password') }}</label>
-                    <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('app.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
+                    <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('register.repeat_password') }}</label>
+                    <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('register.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
                     <div v-if="v$.confirm_password.$dirty">
                         <p v-for="error of v$.confirm_password.$errors" :key="error.$uid">
                             <small class="p-error">{{ error.$message }}</small>
@@ -92,7 +92,7 @@
                     </ul>
                 </Message>
                 
-                <Button type="submit" :label="$t('app.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
+                <Button type="submit" :label="$t('register.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
             </form>
         </div>
     </div>

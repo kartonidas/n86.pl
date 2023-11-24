@@ -4,7 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
     import { hasAccess } from '@/utils/helper'
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     import ItemService from '@/service/ItemService'
     
     export default {
@@ -34,17 +34,17 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.items'), disabled : true },
-                        {'label' : this.t('app.estate_list'), disabled : true },
+                        {'label' : this.t('menu.estates'), disabled : true },
+                        {'label' : this.t('menu.estate_list'), disabled : true },
                     ],
                 }
             }
         },
         mounted() {
-            if(store.getters.toastMessage) {
-                let m = store.getters.toastMessage
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
-                store.commit('setToastMessage', null);
+                appStore().setToastMessage(null)
             }
             this.getList()
         },
@@ -88,7 +88,7 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.item_deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('items.deleted'), life: 3000 });
                         },
                         (response) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -115,20 +115,19 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <div class="text-right mb-2">
-                    <Button v-if="hasAccess('item:create')" :label="$t('app.new_item')" @click="newItem" class="text-center"></Button>
+                <div class="flex justify-content-between align-items-center">
+                    <h5 class="inline-flex mb-0">{{ $t('menu.estate_list') }}</h5>
+                    <div class="text-right mb-2 inline-flex" v-if="hasAccess('item:create')">
+                        <Button icon="pi pi-plus" v-tooltip.left="$t('items.add')" @click="newItem" class="text-center"></Button>
+                    </div>
                 </div>
                 
                 <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
-                    <Column field="delete" style="min-width: 100px; width: 100px" class="text-center">
+                    <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Button icon="pi pi-search" class="p-button p-2 mr-1" style="width: auto" @click="showItem(data.id)"/>
-                            <Button icon="pi pi-trash" v-if="hasAccess('item:delete')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
-                        </template>
-                    </Column>
-                    <Column field="name" :header="$t('app.name')" style="min-width: 300px;">
-                        <template #body="{ data }">
-                            {{ data.name }}
+                            <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
+                                {{ data.name }}
+                            </router-link>
                             <div>
                                 <small>
                                     {{ data.street }} {{ data.house_no }}<span v-if="data.apartment_no">/{{ data.apartment_no }}</span>
@@ -138,8 +137,13 @@
                             </div>
                         </template>
                     </Column>
+                    <Column field="delete" style="min-width: 60px; width: 60px" class="text-center">
+                        <template #body="{ data }">
+                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" v-if="hasAccess('item:delete')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                        </template>
+                    </Column>
                     <template #empty>
-                        {{ $t('app.items_empty_list') }}
+                        {{ $t('items.empty_list') }}
                     </template>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
@@ -149,7 +153,7 @@
                     </div>
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-text" autofocus />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-danger" autofocus />
                     </template>
                 </Dialog>
             </div>

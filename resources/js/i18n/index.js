@@ -1,5 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import I18nPL from './pl.js'
+import I18nPL from './pl.json'
 
 const i18n = createI18n({
     locale: 'pl',

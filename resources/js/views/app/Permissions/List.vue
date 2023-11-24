@@ -4,7 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
     import { hasAccess } from '@/utils/helper'
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     import PermissionService from '@/service/PermissionService'
     
     export default {
@@ -34,17 +34,17 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), disabled : true },
-                        {'label' : this.t('app.permissions'), route : { name : 'permissions'}, disabled : true },
+                        {'label' : this.t('menu.users'), disabled : true },
+                        {'label' : this.t('menu.permissions'), route : { name : 'permissions'}, disabled : true },
                     ],
                 }
             }
         },
         mounted() {
-            if(store.getters.toastMessage) {
-                let m = store.getters.toastMessage
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
-                store.commit('setToastMessage', null);
+                appStore().setToastMessage(null);
             }
             this.getList()
         },
@@ -88,7 +88,7 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.permission_deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('permissions.deleted'), life: 3000 });
                         },
                         (response) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -117,7 +117,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="text-right mb-2" v-if="hasAccess('permission:create')">
-                    <Button :label="$t('app.new_group')" @click="newGroup" class="text-center"></Button>
+                    <Button :label="$t('permissions.new_group')" @click="newGroup" class="text-center"></Button>
                 </div>
                 
                 <DataTable :value="permissions" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
@@ -127,8 +127,8 @@
                             <Button v-if="hasAccess('permission:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
                         </template>
                     </Column>
-                     <Column field="name" :header="$t('app.name')" style="min-width: 300px;"></Column>
-                     <Column field="is_default" :header="$t('app.default')" style="min-width: 100px; width: 100px" class="text-center">
+                     <Column field="name" :header="$t('permissions.name')" style="min-width: 300px;"></Column>
+                     <Column field="is_default" :header="$t('permissions.default')" style="min-width: 100px; width: 100px" class="text-center">
                         <template #body="{ data }">
                             <span v-if="data.is_default">{{ $t('app.yes') }}</span>
                         </template>

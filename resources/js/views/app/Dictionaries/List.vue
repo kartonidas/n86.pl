@@ -4,7 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
     import { hasAccess } from '@/utils/helper'
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     import DictionaryService from '@/service/DictionaryService'
     
     export default {
@@ -41,10 +41,10 @@
             }
         },
         mounted() {
-            if(store.getters.toastMessage) {
-                let m = store.getters.toastMessage
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
-                store.commit('setToastMessage', null);
+                appStore().setToastMessage(null);
             }
             this.getList()
         },
@@ -90,16 +90,16 @@
             
             getBreadcrumbs() {
                 let breadcrumbs = [
-                    {'label' : this.t('app.settings'), disabled : true },
-                    {'label' : this.t('app.dictionaries'), disabled : true },
+                    {'label' : this.t('menu.settings'), disabled : true },
+                    {'label' : this.t('menu.dictionaries'), disabled : true },
                 ]
                 
                 switch(this.route.params.type) {
                     case 'bills':
-                        breadcrumbs.push({'label' : this.t('app.bill_type'), disabled : true });
+                        breadcrumbs.push({'label' : this.t('menu.bill_type'), disabled : true });
                     break;
                     case 'fees':
-                        breadcrumbs.push({'label' : this.t('app.fee_include_rent'), disabled : true });
+                        breadcrumbs.push({'label' : this.t('menu.fee_include_rent'), disabled : true });
                     break;
                 }
                 return breadcrumbs;
@@ -115,7 +115,7 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.dictionary_deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('dictionaries.deleted'), life: 3000 });
                         },
                         (response) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -145,7 +145,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="text-right mb-2" v-if="hasAccess('dictionary:create')">
-                    <Button :label="$t('app.new_dictionary')" @click="newDictionary" class="text-center"></Button>
+                    <Button :label="$t('dictionaries.add')" @click="newDictionary" class="text-center"></Button>
                 </div>
                 
                 <DataTable :value="dictionaries" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
@@ -155,10 +155,10 @@
                             <Button v-if="hasAccess('dictionary:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
-                    <Column field="name" :header="$t('app.name')" style="min-width: 300px;"></Column>
-                        <template #empty>
-                            {{ $t('app.dictionary_empty_list') }}
-                        </template>
+                    <Column field="name" :header="$t('dictionaries.name')" style="min-width: 300px;"></Column>
+                    <template #empty>
+                        {{ $t('dictionaries.empty_list') }}
+                    </template>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
                     <div class="flex align-items-center justify-content-center">

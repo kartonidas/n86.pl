@@ -11,7 +11,7 @@
         },
     });
     
-    const breadcrumbHome = { 'label' : t('app.home'), 'route' : { name : 'dashboard' } };
+    const breadcrumbHome = { 'label' : t('menu.home'), 'route' : { name : 'dashboard' } };
 </script>
 
 <template>

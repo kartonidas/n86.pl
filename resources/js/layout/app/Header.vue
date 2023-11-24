@@ -83,7 +83,7 @@
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <button @click="onProfile()" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
-                <span>{{ $t('app.profile') }}</span>
+                <span>{{ $t('menu.profile') }}</span>
             </button>
             <button @click="onLogout()" class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>

@@ -61,11 +61,11 @@
         <div>
             <form v-on:submit.prevent="login">
                 <h3 class="mb-5">
-                    {{ $t('app.login') }}
+                    {{ $t('register.login') }}
                 </h3>
                 <div class="mb-4">
-                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
-                    <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" />
+                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('register.email') }}</label>
+                    <InputText id="email" type="text" :placeholder="$t('register.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" />
                     <div v-if="v$.email.$dirty">
                         <p v-for="error of v$.email.$errors" :key="error.$uid">
                             <small class="p-error">{{ error.$message }}</small>
@@ -74,15 +74,15 @@
                 </div>
     
                 <div class="mb-4">
-                    <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('app.password') }}</label>
-                    <Password id="password" v-model="password" :placeholder="$t('app.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
+                    <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('register.password') }}</label>
+                    <Password id="password" v-model="password" :placeholder="$t('register.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full"></Password>
                     <div v-if="v$.password.$dirty">
                         <p v-for="error of v$.password.$errors" :key="error.$uid">
                             <small class="p-error">{{ error.$message }}</small>
                         </p>
                     </div>
                     <div class="text-right mt-1">
-                        <router-link :to="{name: 'forgot-password'}">{{ $t('app.forgot_password') }}</router-link>
+                        <router-link :to="{name: 'forgot-password'}">{{ $t('register.forgot_password') }}</router-link>
                     </div>
                 </div>
                 
@@ -95,10 +95,10 @@
                     </ul>
                 </Message>
                 
-                <Button type="submit" :label="$t('app.signin')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
+                <Button type="submit" :label="$t('register.signin')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
                 
                 <div class="mt-4">
-                    {{ $t('app.no_account_yet') }} <router-link :to="{name: 'signup'}">{{ $t('app.create_account') }}</router-link>
+                    {{ $t('register.no_account_yet') }} <router-link :to="{name: 'signup'}">{{ $t('register.create_account') }}</router-link>
                 </div>
             </form>
         </div>

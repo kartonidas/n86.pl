@@ -4,7 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { hasAccess } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     import UsersService from '@/service/UsersService'
     
     export default {
@@ -34,17 +34,17 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), disabled : true },
-                        {'label' : this.t('app.users_list'), disabled : true },
+                        {'label' : this.t('menu.users'), disabled : true },
+                        {'label' : this.t('menu.users_list'), disabled : true },
                     ],
                 }
             }
         },
         mounted() {
-            if(store.getters.toastMessage) {
-                let m = store.getters.toastMessage
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
-                store.commit('setToastMessage', null);
+                appStore().setToastMessage(null);
             }
             this.getList()
         },
@@ -92,7 +92,7 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.user_deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('users.deleted'), life: 3000 });
                         },
                         (errors) => {
                             this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -117,7 +117,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="text-right mb-2" v-if="hasAccess('user:create')">
-                    <Button :label="$t('app.new_user')" @click="newUser" class="text-center"></Button>
+                    <Button :label="$t('users.new_user')" @click="newUser" class="text-center"></Button>
                 </div>
                 <DataTable :value="users" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column v-if="hasAccess('user:update') || hasAccess('user:delete')" field="delete" style="min-width: 100px; width: 100px" class="text-center">
@@ -126,17 +126,17 @@
                             <Button v-if="hasAccess('user:delete')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)" :disabled="!data.can_delete"/>
                         </template>
                     </Column>
-                    <Column field="name" :header="$t('app.name')" style="min-width: 300px;">
+                    <Column field="name" :header="$t('users.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             {{ data.firstname }} {{ data.lastname }}
                         </template>
                     </Column>
-                    <Column field="email" :header="$t('app.email')"></Column>
-                    <Column field="phone" :header="$t('app.phone')"></Column>
-                    <Column :header="$t('app.permission_group')">
+                    <Column field="email" :header="$t('users.email')"></Column>
+                    <Column field="phone" :header="$t('users.phone')"></Column>
+                    <Column :header="$t('users.permission_group')">
                         <template #body="{ data }">
-                            <span v-if="data.owner">{{ $t('app.owner') }}</span>
-                            <span v-if="!data.owner && data.superuser">{{ $t('app.superuser') }}</span>
+                            <span v-if="data.owner">{{ $t('users.owner') }}</span>
+                            <span v-if="!data.owner && data.superuser">{{ $t('users.superuser') }}</span>
                             <span v-if="!data.owner && !data.superuser">{{ data.user_permission_name }}</span>
                         </template>
                     </Column>

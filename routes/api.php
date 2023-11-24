@@ -45,6 +45,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     
     // NIERUCHOMOŚCI
     $router->get('/items', [ItemController::class, "list"]);
+    $router->get('/items/settings', [ItemController::class, "settings"]);
     $router->put('/item', [ItemController::class, "create"]);
     $router->get('/item/{id}', [ItemController::class, "get"])->where("id", "[0-9]+");
     $router->put('/item/{id}', [ItemController::class, "update"])->where("id", "[0-9]+");

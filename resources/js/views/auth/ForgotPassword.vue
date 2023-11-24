@@ -58,11 +58,11 @@
         <div>
             <form v-on:submit.prevent="remindPassword">
                 <h3 class="mb-5">
-                    {{ $t('app.remind_password') }}
+                    {{ $t('register.remind_password') }}
                 </h3>
                 <div class="mb-4">
-                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('app.email') }}</label>
-                    <InputText id="email" type="text" :placeholder="$t('app.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="loading"/>
+                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('register.email') }}</label>
+                    <InputText id="email" type="text" :placeholder="$t('register.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="loading"/>
                     <div v-if="v$.email.$dirty">
                         <p v-for="error of v$.email.$errors" :key="error.$uid">
                             <small class="p-error">{{ error.$message }}</small>
@@ -78,7 +78,7 @@
                     </ul>
                 </Message>
                 
-                <Button type="submit" :label="$t('app.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
+                <Button type="submit" :label="$t('register.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
             </form>
         </div>
     </div>

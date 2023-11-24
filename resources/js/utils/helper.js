@@ -1,4 +1,4 @@
-import store from '@/store.js';
+import { appStore } from '@/store.js';
 
 export const removeNullValues = (data) => {
     let outData = {};
@@ -14,8 +14,8 @@ let __PERMISSIONS = null;
 export const hasAccess = (module) => {
     if (__PERMISSIONS == null) {
         __PERMISSIONS = [];
-        if (store.state.permissions != undefined && store.state.permissions) {
-            store.state.permissions.split(';').forEach((item) => {
+        if (appStore().permissions != undefined && appStore().permissions) {
+            appStore().permissions.split(';').forEach((item) => {
                 let module = item.split(':')[0];
                 let operations = (item.split(':')[1]).split(',');
                 
@@ -43,6 +43,10 @@ export const getResponseErrors = (errors) => {
     } else {
         if(errors.response.data.error != undefined && errors.response.data.error)
             outErrors.push(errors.response.data.message);
+        else {
+            if(errors.response.data.message != undefined && errors.response.data.message)
+                outErrors.push(errors.response.data.message);
+        }
     }
     return outErrors;
 }

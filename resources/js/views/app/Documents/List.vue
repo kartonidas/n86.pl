@@ -4,7 +4,7 @@
     import { useI18n } from 'vue-i18n'
     import { hasAccess } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     
     export default {
         setup() {
@@ -23,8 +23,8 @@
             return {
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('app.estates'), disabled : true },
-                        {'label' : this.t('app.documents'), disabled : true },
+                        {'label' : this.t('menu.estates'), disabled : true },
+                        {'label' : this.t('menu.documents'), disabled : true },
                     ],
                 }
             }

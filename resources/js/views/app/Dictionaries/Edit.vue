@@ -6,7 +6,7 @@
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
     import { getResponseErrors } from '@/utils/helper'
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     
     import DictionaryService from '@/service/DictionaryService'
     
@@ -37,10 +37,10 @@
             }
         },
         mounted() {
-            if(store.getters.toastMessage) {
-                let m = store.getters.toastMessage
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
                 this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
-                store.commit('setToastMessage', null);
+                appStore().setToastMessage(null);
             }
             this.dictionaryService.get(this.route.params.dictionaryId)
                 .then(
@@ -64,7 +64,7 @@
                     this.dictionaryService.update(this.route.params.dictionaryId, this.dictionary.active, this.dictionary.name)
                         .then(
                             (response) => {
-                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('app.dictionary_updated'), life: 3000 });
+                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('dictionaries.updated'), life: 3000 });
                                 this.saving = false;
                             },
                             (response) => {
@@ -76,20 +76,20 @@
             },
             getBreadcrumbs() {
                 let breadcrumbs = [
-                    {'label' : this.t('app.settings'), disabled : true },
-                    {'label' : this.t('app.dictionaries'), disabled : true },
+                    {'label' : this.t('menu.settings'), disabled : true },
+                    {'label' : this.t('menu.dictionaries'), disabled : true },
                 ]
                 
                 switch(this.route.params.type) {
                     case 'bills':
-                        breadcrumbs.push({'label' : this.t('app.bill_type'), route : {name : 'dictionaries', params : {type : 'bills'}} });
+                        breadcrumbs.push({'label' : this.t('menu.bill_type'), route : {name : 'dictionaries', params : {type : 'bills'}} });
                     break;
                     case 'fees':
-                        breadcrumbs.push({'label' : this.t('app.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
+                        breadcrumbs.push({'label' : this.t('menu.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
                     break;
                 }
                 
-                breadcrumbs.push({'label' : this.t('app.edit_dictionary'), disabled: true });
+                breadcrumbs.push({'label' : this.t('dictionaries.edit'), disabled: true });
                 return breadcrumbs;
             }
         },
@@ -113,8 +113,8 @@
                         <div class="p-fluid">
                             <div class="formgrid grid">
                                 <div class="field col-12 mb-2">
-                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('dictionaries.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('dictionaries.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
                                     <div v-if="v$.dictionary.name.$error">
                                         <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
                                     </div>
@@ -123,7 +123,7 @@
                                 <div class="field col-12 mb-2">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="loading || saving"/>
-                                        <label for="activeCheck">{{ $t('app.active') }}</label>
+                                        <label for="activeCheck">{{ $t('dictionaries.active') }}</label>
                                     </div>
                                 </div>
                             </div>

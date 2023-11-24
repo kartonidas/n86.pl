@@ -6,7 +6,7 @@
     import { required } from '@/utils/i18n-validators'
     import { getResponseErrors, hasAccess } from '@/utils/helper'
     
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
     import PermissionService from '@/service/PermissionService'
     
     export default {
@@ -32,9 +32,9 @@
                 permission_items: [],
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('app.users'), disabled : true },
-                        {'label' : this.t('app.permissions'), route : { name : 'permissions'} },
-                        {'label' : this.t('app.new_group'), route : { name : 'permissions'}, disabled : true },
+                        {'label' : this.t('menu.users'), disabled : true },
+                        {'label' : this.t('menu.permissions'), route : { name : 'permissions'} },
+                        {'label' : this.t('permissions.new'), route : { name : 'permissions'}, disabled : true },
                     ],
                 }
             }
@@ -80,10 +80,10 @@
                     this.permissionService.create(this.permission.name, permissions_text, this.permission.is_default)
                         .then(
                             (response) => {
-                                store.commit('setToastMessage', {
+                                appStore().setToastMessage({
                                     severity : 'success',
                                     summary : this.t('app.success'),
-                                    detail : this.t('app.group_added'),
+                                    detail : this.t('permissions.added'),
                                 });
                                 
                                 if(hasAccess('permission:update'))
@@ -122,8 +122,8 @@
                         <div class="p-fluid">
                             <div class="formgrid grid">
                                 <div class="field col-12">
-                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving"/>
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('permissions.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('permissions.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving"/>
                                     <div v-if="v$.permission.name.$error">
                                         <small class="p-error">{{ v$.permission.name.$errors[0].$message }}</small>
                                     </div>
@@ -132,16 +132,16 @@
                                 <div class="field col-12">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading || saving"/>
-                                        <label for="defaultCheck">{{ $t('app.default') }}</label>
+                                        <label for="defaultCheck">{{ $t('permissions.default') }}</label>
                                     </div>
                                 </div>
                                 
                                 <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3">
-                                    <div class="mb-2"><strong class="mb-3">{{ $t('app.' + module.name) }}</strong></div>
+                                    <div class="mb-2"><strong class="mb-3">{{ $t('permissions.' + module.name) }}</strong></div>
                                     <div class="field-checkbox mb-1 mt-1" v-for="op in module.perm.operation">
                                         <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading || saving"/>
                                         <label :for="getCheckboxInputId(module.name, op)">
-                                            {{ $t('app.' + op) }}
+                                            {{ $t('permissions.' + op) }}
                                         </label>
                                     </div>
                                 </div>

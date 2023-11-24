@@ -353,4 +353,19 @@ class Helper
         
         return $total;
     }
+    
+    public static function optionToArray($options)
+    {
+        $out = [];
+        
+        foreach($options as $optionId => $option)
+        {
+            $out[] = [
+                "id" => $optionId,
+                "name" => $option,
+            ];
+        }
+        
+        return $out;
+    }
 }

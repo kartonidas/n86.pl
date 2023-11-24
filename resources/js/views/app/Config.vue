@@ -14,8 +14,8 @@
             return {
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('app.settings'), disabled : true },
-                        {'label' : this.t('app.configuration'), disabled : true },
+                        {'label' : this.t('menu.settings'), disabled : true },
+                        {'label' : this.t('menu.configuration'), disabled : true },
                     ],
                 }
             }

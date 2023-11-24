@@ -1,33 +1,40 @@
-import { createStore } from 'vuex'
-import createPersistedState from "vuex-persistedstate";
+import { defineStore } from 'pinia'
 
-const store = createStore({
-    state () {
+export const appStore = defineStore('store', {
+    state: () => {
         return {
             userId: null,
             toastMessage: null,
             permissions: null,
-        }
+            tableOrder: {},
+        };
     },
-    mutations: {
-        setUserId (state, id) {
-            state.userId = id
+    actions: {
+        setUserId (id) {
+            this.userId = id;
         },
         
-        setUserPermission (state, permissions) {
-            state.permissions = permissions
+        setUserPermission (permissions) {
+            this.permissions = permissions;
         },
         
-        setToastMessage (state, data) {
-            state.toastMessage = data
+        setToastMessage (data) {
+            this.toastMessage = data;
+        },
+        
+        setTableOrder (table, column, order) {
+            if (this.tableOrder[table] == undefined)
+                this.tableOrder[table] = {};
+            
+            this.tableOrder[table] = {
+                'col' : column,
+                'dir' : order,
+            };
+        },
+        
+        getTableOrder(table) {
+            return this.tableOrder[table];
         },
     },
-    getters: {
-        toastMessage (state) {
-            return state.toastMessage
-        }
-    },
-    plugins: [createPersistedState()],
+    persist: true,
 })
-
-export default store

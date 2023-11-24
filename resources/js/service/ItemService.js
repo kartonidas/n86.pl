@@ -2,6 +2,10 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class ItemService {
+    settings() {
+        return axios.get('api/v1/items/settings');
+    }
+    
     list(size, page) {
         var data = {
             size: size,
@@ -10,34 +14,15 @@ export default class ItemService {
         return axios.get('api/v1/items', { params : data });
     }
     
-    create(active, name, street, house_no, apartment_no, city, zip) {
-        var itemData = {
-            active : active,
-            name : name,
-            street : street,
-            house_no : house_no,
-            apartment_no : apartment_no,
-            city : city,
-            zip : zip,
-        };
-        return axios.put('api/v1/item', itemData);
+    create(itemData) {
+        return axios.put('api/v1/item', removeNullValues(itemData));
     }
     
     get(itemId) {
         return axios.get('api/v1/item/' + itemId);
     }
     
-    update(itemId, active, name, street, house_no, apartment_no, city, zip) {
-        var itemData = {
-            active : active,
-            name : name,
-            street : street,
-            house_no : house_no,
-            apartment_no : apartment_no,
-            city : city,
-            zip : zip,
-        };
-        
+    update(itemId, itemData) {
         return axios.put('api/v1/item/' + itemId, removeNullValues(itemData));
     }
     

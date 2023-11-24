@@ -5,7 +5,7 @@
     import { required } from '@/utils/i18n-validators'
     import { useI18n } from 'vue-i18n'
     import { getResponseErrors, hasAccess } from '@/utils/helper'
-    import store from '@/store.js'
+    import { appStore } from '@/store.js'
 
     import DictionaryService from '@/service/DictionaryService'
     
@@ -47,10 +47,10 @@
                     this.dictionaryService.create(this.type, this.dictionary.active, this.dictionary.name)
                         .then(
                             (response) => {
-                                store.commit('setToastMessage', {
+                                appStore().setToastMessage({
                                     severity : 'success',
                                     summary : this.t('app.success'),
-                                    detail : this.t('app.dictionary_added'),
+                                    detail : this.t('dictionaries.added'),
                                 });
                                 
                                 if(hasAccess('dictionary:update'))
@@ -67,20 +67,20 @@
             },
             getBreadcrumbs() {
                 let breadcrumbs = [
-                    {'label' : this.t('app.settings'), disabled : true },
-                    {'label' : this.t('app.dictionaries'), disabled : true },
+                    {'label' : this.t('menu.settings'), disabled : true },
+                    {'label' : this.t('menu.dictionaries'), disabled : true },
                 ]
                 
                 switch(this.route.params.type) {
                     case 'bills':
-                        breadcrumbs.push({'label' : this.t('app.bill_type'), route : {name : 'dictionaries', params : {type : 'bills'}} });
+                        breadcrumbs.push({'label' : this.t('menu.bill_type'), route : {name : 'dictionaries', params : {type : 'bills'}} });
                     break;
                     case 'fees':
-                        breadcrumbs.push({'label' : this.t('app.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
+                        breadcrumbs.push({'label' : this.t('menu.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
                     break;
                 }
                 
-                breadcrumbs.push({'label' : this.t('app.new_dictionary'), disabled: true });
+                breadcrumbs.push({'label' : this.t('dictionaries.add'), disabled: true });
                 return breadcrumbs;
             }
         },
@@ -104,8 +104,8 @@
                         <div class="p-fluid">
                             <div class="formgrid grid">
                                 <div class="field col-12 mb-2">
-                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('app.name') }}</label>
-                                    <InputText id="name" type="text" :placeholder="$t('app.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="saving"/>
+                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('dictionaries.name') }}</label>
+                                    <InputText id="name" type="text" :placeholder="$t('dictionaries.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="saving"/>
                                     <div v-if="v$.dictionary.name.$error">
                                         <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
                                     </div>
@@ -114,7 +114,7 @@
                                 <div class="field col-12 mb-2">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="saving"/>
-                                        <label for="activeCheck">{{ $t('app.active') }}</label>
+                                        <label for="activeCheck">{{ $t('dictionaries.active') }}</label>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from './../store.js';
+import { appStore } from './../store.js';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class UserService {
@@ -31,8 +31,8 @@ export default class UserService {
                 return axios.post('api/v1/login', loginData)
                     .then(
                         (response) => {
-                            store.commit('setUserId', response.data.id);
-                            store.commit('setUserPermission', response.data.permission);
+                            appStore().setUserId(response.data.id);
+                            appStore().setUserPermission(response.data.permission);
                             resolve(response.data);
                         },
                         (response) => {
@@ -60,12 +60,12 @@ export default class UserService {
     logout() {
         axios.get('api/v1/logout')
             .then(() => {
-                store.commit('setUserId', null);
-                store.commit('setUserPermission', null);
+                appStore().setUserId(null);
+                appStore().setUserPermission(null);
             })
             .catch(function () {
-                store.commit('setUserId', null);
-                store.commit('setUserPermission', null);
+                appStore().setUserId(null);
+                appStore().setUserPermission(null);
             });
     }
     
@@ -90,10 +90,10 @@ export default class UserService {
             return axios.get('api/v1/is-login')
                 .then((response) => {
                     resolve(response);
-                    store.commit('setUserPermission', response.data.permission);
+                    appStore().setUserPermission(response.data.permission);
                 })
                 .catch(function () {
-                    store.commit('setUserId', null);
+                    appStore().setUserId(null);
                     reject(false);
                 });
         });

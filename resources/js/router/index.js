@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from './../store.js';
+import { appStore } from './../store.js';
 import UserService from '@/service/UserService';
 import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/AppLayout.vue';
@@ -170,6 +170,29 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/customers',
+                    children: [
+                        {
+                            path: '/app/customers',
+                            name: 'customers',
+                            component: () => import('@/views/app/Customers/List.vue'),
+                            meta: {permission: 'customer:list'},
+                        },
+                        {
+                            path: '/app/customer/new',
+                            name: 'customer_new',
+                            component: () => import('@/views/app/Customers/New.vue'),
+                            meta: {permission: 'customer:create'},
+                        },
+                        {
+                            path: '/app/customer/edit/:customerId',
+                            name: 'customer_edit',
+                            component: () => import('@/views/app/Customers/Edit.vue'),
+                            meta: {permission: 'customer:update'},
+                        },
+                    ]
+                },
+                {
                     path: '/app/tenants',
                     children: [
                         {
@@ -253,7 +276,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const userService = new UserService();
     if (to.meta.requiresAuth) {
-        if (!store.state.userId)
+        if (!appStore().userId)
             next({ name: 'signin' });
         else {
             userService.isLogin()

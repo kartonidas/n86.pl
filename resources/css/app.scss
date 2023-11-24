@@ -11,3 +11,9 @@
 .p-datatable th[class*="text-"] .p-column-header-content {
     display: inline-flex ;
 }
+
+SPAN.required-mark {
+    font-weight: 400;
+    color: #595959;
+    padding-left: 0.2rem;
+}

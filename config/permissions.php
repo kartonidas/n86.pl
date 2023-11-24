@@ -30,5 +30,9 @@ return [
             "module" => "Faults",
             "operation" => ["list", "create", "update", "delete"]
         ],
+        "customer" => [
+            "module" => "Customers",
+            "operation" => ["list", "create", "update", "delete"]
+        ],
     ]
 ];
