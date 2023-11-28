@@ -58,42 +58,36 @@
 </script>
 
 <template>
-    <div class="w-full py-6 px-5 sm:px-8">
-        <div>
-            <form v-on:submit.prevent="resetPassword">
-                <h3 class="mb-5">
-                    {{ $t('register.remind_password') }}
-                </h3>
-                <div class="mb-4">
-                    <label for="password" class="block text-900 font-medium text-xl mb-2">{{ $t('register.password') }}</label>
-                    <Password id="password" v-model="password" :placeholder="$t('register.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
-                    <div v-if="v$.password.$dirty">
-                        <p v-for="error of v$.password.$errors" :key="error.$uid">
-                            <small class="p-error">{{ error.$message }}</small>
-                        </p>
-                    </div>
-                </div>
-                    
-                <div class="mb-4">
-                    <label for="confirm_password" class="block text-900 font-medium text-xl mb-2">{{ $t('register.repeat_password') }}</label>
-                    <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('register.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
-                    <div v-if="v$.confirm_password.$dirty">
-                        <p v-for="error of v$.confirm_password.$errors" :key="error.$uid">
-                            <small class="p-error">{{ error.$message }}</small>
-                        </p>
-                    </div>
-                </div>
-    
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
-                
-                <Button type="submit" :label="$t('register.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
-            </form>
+    <form v-on:submit.prevent="resetPassword">
+        <h5 class="mb-5 text-center">{{ $t('register.set_new_password') }}</h5>
+        <div class="mb-4">
+            <label for="password" class="block text-900 font-medium text-lg mb-2">{{ $t('register.password') }}</label>
+            <Password id="password" v-model="password" :placeholder="$t('register.password')" :feedback="false" :class="{'p-invalid' : v$.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
+            <div v-if="v$.password.$dirty">
+                <p v-for="error of v$.password.$errors" :key="error.$uid">
+                    <small class="p-error">{{ error.$message }}</small>
+                </p>
+            </div>
         </div>
-    </div>
+            
+        <div class="mb-4">
+            <label for="confirm_password" class="block text-900 font-medium text-lg mb-2">{{ $t('register.repeat_password') }}</label>
+            <Password id="confirm_password" v-model="confirm_password" :placeholder="$t('register.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full md:w-30rem" :disabled="loading"></Password>
+            <div v-if="v$.confirm_password.$dirty">
+                <p v-for="error of v$.confirm_password.$errors" :key="error.$uid">
+                    <small class="p-error">{{ error.$message }}</small>
+                </p>
+            </div>
+        </div>
+
+        <Message severity="error" :closable="false" v-if="errors.length">
+            <ul class="list-unstyled">
+                <li v-for="error of errors">
+                    {{ error }}
+                </li>
+            </ul>
+        </Message>
+        
+        <Button type="submit" :label="$t('register.remind_password')" :loading="loading" iconPos="right" class="w-full p-3 text-lg text-center"></Button>
+    </form>
 </template>

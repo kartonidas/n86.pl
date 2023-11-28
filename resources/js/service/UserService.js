@@ -19,16 +19,21 @@ export default class UserService {
         return axios.post('api/v1/register/confirm/' + token, registerData);
     }
     
-    login(email, password) {
+    preLogin(email) {
+        return axios.get('api/v1/get-email-firm-ids?email=' + email);
+    }        
+    
+    login(email, password, firm_id) {
         var loginData = {
             email: email,
             password: password,
-            device_name: 'vue-app'
+            device_name: 'vue-app',
+            firm_id: firm_id,
         };
         
         return new Promise((resolve, reject) => {
             return axios.get('sanctum/csrf-cookie').then(() => {
-                return axios.post('api/v1/login', loginData)
+                return axios.post('api/v1/login', removeNullValues(loginData))
                     .then(
                         (response) => {
                             appStore().setUserId(response.data.id);
@@ -43,8 +48,8 @@ export default class UserService {
         });
     }
     
-    forgotPassword(email) {
-        return axios.post('api/v1/forgot-password', {email : email});
+    forgotPassword(email, firm_id) {
+        return axios.post('api/v1/forgot-password', {email : email, firm_id : firm_id});
     }
     
     resetPassword(token, email, password) {

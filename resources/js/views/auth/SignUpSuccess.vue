@@ -3,7 +3,12 @@
 </script>
 
 <template>
-    <div class="w-full py-6 px-5 sm:px-8 text-center">
-        {{ $t('register.thank_for_registering') }}
+    <div class="text-center">
+        <p>
+            {{ $t('register.thank_for_registering') }}
+        </p>
+        <p>
+            {{ $t('register.thank_for_registering_2') }}
+        </p>
     </div>
 </template>

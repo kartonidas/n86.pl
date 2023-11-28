@@ -10,7 +10,8 @@
         "remove_object_confirmation" : "Wybrany element zostanie usunięty. Kontynuować?",
         "save" : "Zapisz",
         "success" : "Sukces",
-        "yes" : "Tak"
+        "yes" : "Tak",
+        "register_title" : "Zarządzaj nieruchomościami"
     },
     "customers": {
         "add_customer" : "Dodaj klienta",
@@ -118,6 +119,7 @@
         "updated" : "Profil został zaktualizowany"
     },
     "register" : {
+        "confirmation" : "Potwierdź rejestrację",
         "create_account" : "Utwórz konto",
         "email" : "E-mail",
         "email_address" : "Adres e-mail",
@@ -135,9 +137,11 @@
         "remind_password" : "Przypomnij hasło",
         "repeat_password" : "Powtórz hasło",
         "reset_password_successfull" : "Hasło zostało zmienione!",
+        "set_new_password" : "Ustaw nowe hasło",
         "signin" : "Zaloguj się",
         "signup_confirm" : "Potwierdź rejestrację",
-        "thank_for_registering" : "Dziękujemy za rejestrację. Na podany adres e-mail zostało wysłane potwierdzenie."
+        "thank_for_registering" : "Dziękujemy za rejestrację. Na podany adres przez Ciebie adres e-mail zostało wysłane potwierdzenie rejestracji.",
+        "thank_for_registering_2" : "Kliknij w otrzymany link aby dokończyć rejestrację i móc w pełni korzystać z serwisu."
     },
     "users": {
         "add_user" : "Dodaj użytkownika",

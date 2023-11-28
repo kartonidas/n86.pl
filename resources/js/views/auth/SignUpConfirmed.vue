@@ -3,12 +3,12 @@
 </script>
 
 <template>
-    <div class="w-full py-6 px-5 sm:px-8 text-center">
+    <div class="text-center">
         {{ $t('register.registering_confirmed') }}
         
         <div class="mt-4">
             <router-link :to="{name: 'signin'}">
-                {{ $t('register.login') }}
+                {{ $t('register.signin') }}
             </router-link>
         </div>
     </div>

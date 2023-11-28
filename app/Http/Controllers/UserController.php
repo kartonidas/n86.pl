@@ -49,16 +49,21 @@ class UserController extends Controller
     */
     public function login(Request $request)
     {
-        $rule = [
+        $loginData = $request->validate([
             "email" => "required|email",
             "password" => "required",
             "device_name" => "required",
-        ];
+        ]);
         
         $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
+            "email" => $loginData["email"],
+            "password" => $loginData["password"],
         ];
+        if(User::where("email", $loginData["email"])->active()->count() > 1)
+        {
+            $firmData = $request->validate(["firm_id" => "required"]);
+            $credentials["firm_id"] = $firmData["firm_id"];
+        }
         
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();

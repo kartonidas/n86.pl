@@ -54,32 +54,26 @@
 </script>
 
 <template>
-    <div class="w-full py-6 px-5 sm:px-8">
-        <div>
-            <form v-on:submit.prevent="register">
-                <h3 class="mb-5">
-                    {{ $t('register.register') }}
-                </h3>
-                <div class="mb-4">
-                    <label for="email" class="block text-900 text-xl font-medium mb-2">{{ $t('register.email') }}</label>
-                    <InputText id="email" type="text" :placeholder="$t('register.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="saving"/>
-                    <div v-if="v$.email.$dirty">
-                        <p v-for="error of v$.email.$errors" :key="error.$uid">
-                            <small class="p-error">{{ error.$message }}</small>
-                        </p>
-                    </div>
-                </div>
-    
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
-                
-                <Button type="submit" :label="$t('register.create_account')" :loading="saving" iconPos="right" class="w-full p-3 text-xl text-center"></Button>
-            </form>
+    <form v-on:submit.prevent="register">
+        <h5 class="mb-5 text-center">{{ $t('register.register') }}</h5>
+        <div class="mb-4">
+            <label for="email" class="block text-900 text-lg font-medium mb-2">{{ $t('register.email') }}</label>
+            <InputText id="email" type="text" :placeholder="$t('register.email_address')" class="w-full" :class="{'p-invalid' : v$.email.$error}" v-model="email" :disabled="saving"/>
+            <div v-if="v$.email.$dirty">
+                <p v-for="error of v$.email.$errors" :key="error.$uid">
+                    <small class="p-error">{{ error.$message }}</small>
+                </p>
+            </div>
         </div>
-    </div>
+
+        <Message severity="error" :closable="false" v-if="errors.length">
+            <ul class="list-unstyled">
+                <li v-for="error of errors">
+                    {{ error }}
+                </li>
+            </ul>
+        </Message>
+        
+        <Button type="submit" :label="$t('register.create_account')" :loading="saving" iconPos="right" class="w-full p-3 text-lg text-center"></Button>
+    </form>
 </template>

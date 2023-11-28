@@ -69,7 +69,8 @@
 <template>
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
-            <span>SAKAI</span>
+            <span><img src="/images/logo.svg" class="mr-3"></span>
+            Moje nieruchomości
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
