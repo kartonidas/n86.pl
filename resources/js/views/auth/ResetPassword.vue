@@ -3,12 +3,14 @@
     import { useRoute, useRouter } from 'vue-router'
     import UserService from '@/service/UserService';
     
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
     import { required, sameAs } from '@/utils/i18n-validators'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.reset_password')
+            
             const userService = new UserService()
             const router = useRouter()
             const route = useRoute()

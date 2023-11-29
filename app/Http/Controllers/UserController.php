@@ -160,7 +160,7 @@ class UserController extends Controller
             $firm = Firm::find($user->firm_id);
             $ids[] = [
                 "id" => $user->firm_id,
-                "name" => $firm ? $firm->identifier : "",
+                "name" => $firm ? $firm->name : "",
             ];
         }
             
@@ -991,11 +991,11 @@ class UserController extends Controller
             "email" => "required|email",
             "nip" => "nullable",
             "name" => "nullable|max:200",
-            "street" => "required|max:80",
-            "house_no" => "required|max:20",
+            "street" => "nullable|max:80",
+            "house_no" => "nullable|max:20",
             "apartment_no" => "nullable|max:20",
-            "city" => "required|max:120",
-            "zip" => "required|max:10",
+            "city" => "nullable|max:120",
+            "zip" => "nullable|max:10",
             "country" => ["nullable", Rule::in(Country::getAllowedCodes())],
             "phone" => "nullable|max:50",
         ];

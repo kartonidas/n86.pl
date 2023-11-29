@@ -182,12 +182,14 @@ class User extends Authenticatable
         $this->sendWelcomeMessage();
     }
     
-    public function ensureFirm($identifier)
+    public function ensureFirm()
     {
         if($this->owner)
         {
             if(!Firm::where("uuid", $this->firm_uuid)->count())
             {
+                $identifier = $this->generateFirmIdentifier();
+                
                 $firm = new Firm;
                 $firm->uuid = Str::uuid()->toString();
                 $firm->identifier = $identifier;
@@ -388,5 +390,17 @@ class User extends Authenticatable
             $this->delete();
             PersonalAccessToken::where("tokenable_id", $this->id)->delete();
         }
+    }
+    
+    private function generateFirmIdentifier() {
+        $p1 = mb_substr($this->firstname, 0, 3);
+        $p2 = mb_substr($this->lastname, 0, 3);
+        $p3 = str_pad(rand(1, 9999), 4, "0", STR_PAD_LEFT);
+        
+        $identifier = mb_strtolower($p1 . $p2 . $p3);
+        if(!Firm::where("identifier", $identifier)->count())
+            return $identifier;
+        
+        return $this->generateFirmIdentifier();
     }
 }

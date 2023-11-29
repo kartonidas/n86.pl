@@ -1,4 +1,6 @@
 import { appStore } from '@/store.js';
+import { useI18n } from 'vue-i18n'
+import { useHead } from 'unhead'
 
 export const removeNullValues = (data) => {
     let outData = {};
@@ -12,6 +14,9 @@ export const removeNullValues = (data) => {
 
 let __PERMISSIONS = null;
 export const hasAccess = (module) => {
+    if (module == "owner")
+        return appStore().isOwner
+    
     if (__PERMISSIONS == null) {
         __PERMISSIONS = [];
         if (appStore().permissions != undefined && appStore().permissions) {
@@ -49,4 +54,12 @@ export const getResponseErrors = (errors) => {
         }
     }
     return outErrors;
+}
+
+export const setMetaTitle = (module) => {
+    const { t } = useI18n();
+    
+    useHead({
+        title: t(module) + " | " + t("META_APP_NAME")
+    });
 }

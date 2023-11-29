@@ -5,13 +5,15 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import DictionaryService from '@/service/DictionaryService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.dictionaries_edit')
+            
             const route = useRoute()
             const dictionaryService = new DictionaryService()
             const { t } = useI18n();
@@ -112,7 +114,7 @@
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
-                                <div class="field col-12 mb-2">
+                                <div class="field col-12 mb-4">
                                     <label for="name" class="block text-900 font-medium mb-2">{{ $t('dictionaries.name') }}</label>
                                     <InputText id="name" type="text" :placeholder="$t('dictionaries.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
                                     <div v-if="v$.dictionary.name.$error">
@@ -120,7 +122,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 mb-2">
+                                <div class="field col-12 mb-4">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="loading || saving"/>
                                         <label for="activeCheck">{{ $t('dictionaries.active') }}</label>
@@ -141,7 +143,9 @@
                         <ProgressSpinner style="width: 25px; height: 25px"/>
                     </div>
                     
-                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                    <div class="text-right">
+                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    </div>
                 </form>
             </div>
         </div>

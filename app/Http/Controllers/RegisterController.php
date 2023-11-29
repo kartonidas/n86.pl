@@ -99,8 +99,6 @@ class RegisterController extends Controller
     * @bodyParam firstname string required User first name.
     * @bodyParam lastname string required User last name.
     * @bodyParam password string required User password (min 8 characters, lowercase and uppercase letters, number, special characters).
-    * @bodyParam firm_identifier string required User firm name.
-    * @bodyParam phone string required User phone number.
     * @responseField status boolean Status
     * @response 422 {"error":true,"message":"Invalid register token.","errors":{"token":["Invalid register token."]}}
     * @group User registation
@@ -124,22 +122,19 @@ class RegisterController extends Controller
             throw new ObjectNotExist(__("User does not exist."));
         
         $request->validate([
-            "firstname" => "required|max:100",
-            "lastname" => "required|max:100",
-            "phone" => "required|max:30",
+            "firstname" => "required|min:3|max:100",
+            "lastname" => "required|min:3|max:100",
             "password" => ["required", Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
-            "firm_identifier" => ["required", new FirmIdentifier, "max:200"]
         ]);
         
         DB::transaction(function () use($user, $request) {
             $user->firstname = $request->input("firstname");
             $user->lastname = $request->input("lastname");
-            $user->phone = $request->input("phone");
             $user->password = Hash::make($request->input("password"));
             $user->default_locale = app()->getLocale();
             $user->confirm();
             
-            $user->ensureFirm($request->input("firm_identifier"));
+            $user->ensureFirm();
             $user->prepareAccount();
         });
         

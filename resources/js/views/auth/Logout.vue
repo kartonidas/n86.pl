@@ -4,10 +4,13 @@
     import UserService from '@/service/UserService';
 
     const userService = new UserService();
-    userService.logout();
-    
     const router = useRouter()
-    router.push({name: 'signin'})
+    
+    userService.logout()
+        .then(
+            () => { router.push({name: 'signin'}) },
+            () => { router.push({name: 'signin'}) },
+        );
 </script>
 
 <template></template>

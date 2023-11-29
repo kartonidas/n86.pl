@@ -5,13 +5,15 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import ItemService from '@/service/ItemService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.items_edit')
+            
             const route = useRoute()
             const router = useRouter()
             const itemService = new ItemService()
@@ -140,7 +142,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-6 mb-2">
+                                <div class="field col-12 md:col-6 mb-4">
                                     <label for="street" v-required class="block text-900 font-medium mb-2">{{ $t('items.street') }}</label>
                                     <InputText id="street" type="text" :placeholder="$t('items.street')" class="w-full" :class="{'p-invalid' : v$.item.street.$error}" v-model="item.street" :disabled="loading || saving" />
                                     <div v-if="v$.item.street.$error">
@@ -148,17 +150,17 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-3 sm:col-6 mb-2">
+                                <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                     <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('items.house_no') }}</label>
                                     <InputText id="house_no" type="text" :placeholder="$t('items.house_no')" class="w-full" v-model="item.house_no" :disabled="loading || saving" />
                                 </div>
                                 
-                                <div class="field col-12 md:col-3 sm:col-6 mb-2">
+                                <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                     <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('items.apartment_no') }}</label>
                                     <InputText id="apartment_no" type="text" :placeholder="$t('items.apartment_no')" class="w-full" v-model="item.apartment_no" :disabled="loading || saving" />
                                 </div>
                                 
-                                <div class="field col-12 md:col-3 sm:col-5 mb-2">
+                                <div class="field col-12 md:col-3 sm:col-5 mb-4">
                                     <label for="zip" v-required class="block text-900 font-medium mb-2">{{ $t('items.zip') }}</label>
                                     <InputText id="zip" type="text" :placeholder="$t('items.zip')" class="w-full" :class="{'p-invalid' : v$.item.zip.$error}" v-model="item.zip" :disabled="loading || saving" />
                                     <div v-if="v$.item.zip.$error">
@@ -166,7 +168,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-9 sm:col-7 mb-2">
+                                <div class="field col-12 md:col-9 sm:col-7 mb-4">
                                     <label for="city" v-required class="block text-900 font-medium mb-2">{{ $t('items.city') }}</label>
                                     <InputText id="city" type="text" :placeholder="$t('items.city')" class="w-full" :class="{'p-invalid' : v$.item.city.$error}" v-model="item.city" :disabled="loading || saving" />
                                     <div v-if="v$.item.city.$error">

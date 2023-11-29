@@ -1,14 +1,18 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
+    import { useI18n } from 'vue-i18n'
     import { useVuelidate } from '@vuelidate/core'
     import { required, email } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import UserService from '@/service/UserService';
     
     export default {
         setup() {
+            setMetaTitle('meta.title.signup');
+            
+            const { t } = useI18n();
             const userService = new UserService()
             const router = useRouter()
             

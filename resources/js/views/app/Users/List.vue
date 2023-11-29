@@ -2,13 +2,15 @@
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useI18n } from 'vue-i18n'
-    import { hasAccess } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
     import { appStore } from '@/store.js'
     import UsersService from '@/service/UsersService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.users_list')
+            
             const router = useRouter()
             const usersService = new UsersService()
             const { t } = useI18n();

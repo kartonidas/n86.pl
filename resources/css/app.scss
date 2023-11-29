@@ -25,5 +25,11 @@ DIV.auth-background {
 }
 
 A {
-    color: #127d51;
+    color: #3B82F6;
+}
+
+input::placeholder,
+.p-inputtext::placeholder {
+    color: #959595;
+    opacity: 0.6;
 }

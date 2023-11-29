@@ -3,12 +3,14 @@
     import { useRouter, useRoute } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
-    import { hasAccess } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import CustomerService from '@/service/CustomerService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.customers_list')
+            
             const router = useRouter()
             const route = useRoute()
             const customerService = new CustomerService()

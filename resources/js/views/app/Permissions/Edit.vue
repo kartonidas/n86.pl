@@ -5,13 +5,15 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import { appStore } from '@/store.js'
     import PermissionService from '@/service/PermissionService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.permissions_edit')
+            
             const route = useRoute()
             const permissionService = new PermissionService()
             const { t } = useI18n();
@@ -139,7 +141,7 @@
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
-                                <div class="field col-12">
+                                <div class="field col-12 mb-4">
                                     <label for="name" class="block text-900 font-medium mb-2">{{ $t('permissions.name') }}</label>
                                     <InputText id="name" type="text" :placeholder="$t('permissions.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving" />
                                     <div v-if="v$.permission.name.$error">
@@ -147,16 +149,16 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12">
+                                <div class="field col-12 mb-4">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="defaultCheck" name="is_default" value="1" v-model="permission.is_default" :binary="true" :disabled="loading || saving"/>
                                         <label for="defaultCheck">{{ $t('permissions.default') }}</label>
                                     </div>
                                 </div>
                                 
-                                <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3">
-                                    <div class="mb-2"><strong class="mb-3">{{ $t('permissions.' + module.name) }}</strong></div>
-                                    <div class="field-checkbox mb-1 mt-1" v-for="op in module.perm.operation">
+                                <div v-for="module in modules" class="field col-12 sm:col-6 md:col-3 mb-4">
+                                    <div class="mb-3"><strong class="mb-3">{{ $t('permissions.' + module.name) }}</strong></div>
+                                    <div class="field-checkbox mb-2 mt-1" v-for="op in module.perm.operation">
                                         <Checkbox :inputId="getCheckboxInputId(module.name, op)" value="1" v-model="permission_items[module.name][op]" :binary="true" :disabled="loading || saving"/>
                                         <label :for="getCheckboxInputId(module.name, op)">
                                             {{ $t('permissions.' + op) }}
@@ -178,7 +180,9 @@
                         <ProgressSpinner style="width: 25px; height: 25px"/>
                     </div>
                     
-                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                    <div class="text-right">
+                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    </div>
                 </form>
             </div>
         </div>

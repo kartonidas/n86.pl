@@ -1,5 +1,12 @@
 <script>
     import { ref } from 'vue'
+    import { setMetaTitle } from '@/utils/helper'
+    
+    export default {
+        setup() {
+            setMetaTitle('meta.title.signup_confirmed');
+        }
+    }
 </script>
 
 <template>

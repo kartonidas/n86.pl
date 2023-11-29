@@ -5,7 +5,7 @@
     <div class="signin-page">
         <div class="grid m-0">
             <div class="col-12 lg:col-5 xl:col-4 col-wrapper bg-white">
-                <div class="w-full py-6 px-5 sm:px-8">
+                <div class="w-full py-6 px-5 sm:px-6">
                     <div>
                         <div class="text-center mb-5">
                             <img src="/images/logo.svg" style="max-height: 50px">

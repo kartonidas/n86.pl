@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use App\Exceptions\ObjectNotExist;
 use App\Models\Customer;
 use App\Models\User;
 use App\Traits\Sortable;
@@ -28,7 +30,7 @@ class CustomerController extends Controller
         $page = $request->input("page", 1);
         
         $customers = Customer
-            ::apiFields();
+            ::apiFields()->customer();
             
         $total = $customers->count();
         
@@ -64,6 +66,7 @@ class CustomerController extends Controller
         ]);
         
         $customer = new Customer;
+        $customer->type = Customer::TYPE_CUSTOMER;
         $customer->name = $request->input("name");
         $customer->street = $request->input("street");
         $customer->house_no = $request->input("house_no");
@@ -80,7 +83,7 @@ class CustomerController extends Controller
     {
         User::checkAccess("customer:list");
         
-        $customer = Customer::apiFields()->find($customerId);
+        $customer = Customer::apiFields()->customer()->find($customerId);
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         
@@ -91,7 +94,7 @@ class CustomerController extends Controller
     {
         User::checkAccess("customer:update");
         
-        $customer = Customer::find($customerId);
+        $customer = Customer::customer()->find($customerId);
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         
@@ -133,7 +136,7 @@ class CustomerController extends Controller
     {
         User::checkAccess("customer:delete");
         
-        $customer = Customer::find($customerId);
+        $customer = Customer::customer()->find($customerId);
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         

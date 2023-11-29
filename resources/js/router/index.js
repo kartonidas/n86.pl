@@ -5,7 +5,7 @@ import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/AppLayout.vue';
 import SiteLayout from '@/layout/SiteLayout.vue';
 import Home from '@/views/Home.vue';
-import { hasAccess } from '@/utils/helper'
+import { hasAccess } from '@/utils/helper';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,6 +23,7 @@ const router = createRouter({
         {
             path: '/sign-in',
             component: AuthLayout,
+            meta: {noAuth: true},
             children: [
                 {
                     path: '/sign-in',
@@ -34,6 +35,7 @@ const router = createRouter({
         {
             path: '/sign-up',
             component: AuthLayout,
+            meta: {noAuth: true},
             children: [
                 {
                     path: '/sign-up',
@@ -60,6 +62,7 @@ const router = createRouter({
         {
             path: '/forgot-password',
             component: AuthLayout,
+            meta: {noAuth: true},
             children: [
                 {
                     path: '/forgot-password',
@@ -103,6 +106,11 @@ const router = createRouter({
                     path: '/app/profile',
                     name: 'profile',
                     component: () => import('@/views/app/Profile.vue'),
+                },
+                {
+                    path: '/app/firm-data',
+                    name: 'firm_data',
+                    component: () => import('@/views/app/FirmData.vue'),
                 },
                 {
                     path: '/app/users',
@@ -201,6 +209,18 @@ const router = createRouter({
                             component: () => import('@/views/app/Tenants/List.vue'),
                             meta: {permission: 'tenant:list'},
                         },
+                        {
+                            path: '/app/tenant/new',
+                            name: 'tenant_new',
+                            component: () => import('@/views/app/Tenants/New.vue'),
+                            meta: {permission: 'tenant:create'},
+                        },
+                        {
+                            path: '/app/tenant/edit/:tenantId',
+                            name: 'tenant_edit',
+                            component: () => import('@/views/app/Tenants/Edit.vue'),
+                            meta: {permission: 'tenant:update'},
+                        },
                     ]
                 },
                 {
@@ -275,23 +295,25 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const userService = new UserService();
-    if (to.meta.requiresAuth) {
-        if (!appStore().userId)
-            next({ name: 'signin' });
-        else {
-            userService.isLogin()
-                .then(
-                    () => {
-                        if (to.meta.permission != undefined && !hasAccess(to.meta.permission))
-                            next({ name: 'access_denied' });
-                        else
-                            next();
-                    },
-                    () => next({ name: 'signin' })
-                );
-        }
+    
+    if (to.meta.noAuth) {
+        if (appStore().userId)
+            next({ name: 'dashboard' });
+        else
+            next();
     } else {
-        next();
+        if (to.meta.requiresAuth) {
+            if (!appStore().userId)
+                next({ name: 'signin' });
+            else {
+                if (to.meta.permission != undefined && !hasAccess(to.meta.permission))
+                    next({ name: 'access_denied' });
+                else
+                    next();
+            }
+        } else {
+            next();
+        }
     }
 });
 

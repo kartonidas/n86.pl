@@ -3,12 +3,14 @@
     import { useRouter } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
-    import { hasAccess } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import PermissionService from '@/service/PermissionService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.permissions_list')
+            
             const router = useRouter()
             const permissionService = new PermissionService()
             const { t } = useI18n();

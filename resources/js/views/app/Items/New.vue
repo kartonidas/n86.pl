@@ -4,13 +4,15 @@
     import { useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf } from '@/utils/i18n-validators'
-    import { getResponseErrors, hasAccess } from '@/utils/helper'
+    import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     
     import { appStore } from '@/store.js'
     import ItemService from '@/service/ItemService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.items_new')
+            
             const router = useRouter()
             const itemService = new ItemService()
             const { t } = useI18n();

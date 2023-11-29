@@ -3,12 +3,14 @@
     import { useRoute, useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
     import { required, sameAs } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import UserService from '@/service/UserService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.signup_confirm');
+            
             const userService = new UserService()
             const router = useRouter()
             const route = useRoute()
@@ -36,8 +38,6 @@
             return {
                 firstname: { required },
                 lastname: { required },
-                phone: { required },
-                firm: { required },
                 password: { required },
                 confirm_password: { required, sameAsPassword: sameAs(this.password) },
             }
@@ -86,25 +86,6 @@
                         <InputText id="lastname" type="text" :placeholder="$t('register.lastname')" class="w-full" :class="{'p-invalid' : v$.lastname.$error}" v-model="lastname" :disabled="loading" />
                         <div v-if="v$.lastname.$dirty">
                             <p v-for="error of v$.lastname.$errors" :key="error.$uid">
-                                <small class="p-error">{{ error.$message }}</small>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="field col col-12 mb-3">
-                        <label for="phone" class="block text-900 text-lg font-medium mb-2" v-required>{{ $t('register.phone') }}</label>
-                        <InputText id="phone" type="text" :placeholder="$t('register.phone')" class="w-full" :class="{'p-invalid' : v$.phone.$error}" v-model="phone" :disabled="loading" />
-                        <div v-if="v$.phone.$dirty">
-                            <p v-for="error of v$.phone.$errors" :key="error.$uid">
-                                <small class="p-error">{{ error.$message }}</small>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="field col col-12 mb-3">
-                        <label for="firm" class="block text-900 text-lg font-medium mb-2" v-required>{{ $t('register.firm') }}</label>
-                        <InputText id="firm" type="text" :placeholder="$t('register.firm')" class="w-full" :class="{'p-invalid' : v$.firm.$error}" v-model="firm" :disabled="loading" />
-                        <div v-if="v$.firm.$dirty">
-                            <p v-for="error of v$.firm.$errors" :key="error.$uid">
                                 <small class="p-error">{{ error.$message }}</small>
                             </p>
                         </div>

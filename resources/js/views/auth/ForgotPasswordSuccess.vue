@@ -1,5 +1,12 @@
 <script>
     import { ref } from 'vue'
+    import { setMetaTitle } from '@/utils/helper'
+    
+    export default {
+        setup() {
+            setMetaTitle('meta.title.forgot_password_success');
+        }
+    }
 </script>
 
 <template>

@@ -68,7 +68,7 @@
 
 <template>
     <div class="layout-topbar">
-        <router-link to="/" class="layout-topbar-logo">
+        <router-link :to="{name: 'dashboard'}" class="layout-topbar-logo">
             <span><img src="/images/logo.svg" class="mr-3"></span>
             Moje nieruchomości
         </router-link>

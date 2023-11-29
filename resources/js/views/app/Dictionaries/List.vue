@@ -3,12 +3,14 @@
     import { useRouter, useRoute } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
-    import { hasAccess } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import DictionaryService from '@/service/DictionaryService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.dictionaries_list')
+            
             const router = useRouter()
             const route = useRoute()
             const dictionaryService = new DictionaryService()

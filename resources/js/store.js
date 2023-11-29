@@ -4,6 +4,7 @@ export const appStore = defineStore('store', {
     state: () => {
         return {
             userId: null,
+            isOwner: false,
             toastMessage: null,
             permissions: null,
             tableOrder: {},
@@ -12,6 +13,10 @@ export const appStore = defineStore('store', {
     actions: {
         setUserId (id) {
             this.userId = id;
+        },
+        
+        setIsOwner (state) {
+            this.isOwner = state;
         },
         
         setUserPermission (permissions) {

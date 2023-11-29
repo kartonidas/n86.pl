@@ -3,12 +3,14 @@
     import { useRouter } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
-    import { hasAccess } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import ItemService from '@/service/ItemService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.items_list')
+            
             const router = useRouter()
             const itemService = new ItemService()
             const { t } = useI18n();

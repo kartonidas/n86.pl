@@ -2,6 +2,7 @@ import './bootstrap';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createHead } from 'unhead'
 
 import App from './App.vue'
 import router from './router';
@@ -28,6 +29,8 @@ import Password from 'primevue/password';
 import ProgressSpinner from 'primevue/progressspinner';
 import RadioButton from 'primevue/radiobutton';
 import Sidebar from 'primevue/sidebar';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
@@ -42,6 +45,7 @@ import '@/assets/styles.scss';
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
+createHead()
 
 app.config.globalProperties.rowsPerPage = 25;
 
@@ -68,6 +72,8 @@ app.component('Password', Password);
 app.component('ProgressSpinner', ProgressSpinner);
 app.component('RadioButton', RadioButton);
 app.component('Sidebar', Sidebar);
+app.component('TabView', TabView);
+app.component('TabPanel', TabPanel);
 app.component('Toast', Toast);
 app.directive('tooltip', Tooltip);
 

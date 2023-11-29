@@ -5,7 +5,7 @@
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, sameAs, email } from '@/utils/i18n-validators'
-    import { getResponseErrors } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import { appStore } from '@/store.js'
     import UsersService from '@/service/UsersService'
@@ -13,6 +13,8 @@
     
     export default {
         setup() {
+            setMetaTitle('meta.title.users_edit')
+            
             const usersService = new UsersService()
             const permissionService = new PermissionService()
             const { t } = useI18n();
@@ -78,16 +80,7 @@
                     this.saving = true;
                     this.errors = []
                     
-                    this.usersService.update(
-                            this.route.params.userId,
-                            this.user.firstname,
-                            this.user.lastname,
-                            this.user.email,
-                            this.user.phone,
-                            this.changePassword ? this.user.password : null,
-                            this.user.superuser,
-                            this.user.user_permission_id,
-                        )
+                    this.usersService.update(this.route.params.userId, this.user)
                         .then(
                             (response) => {
                                 this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('users.updated'), life: 3000 });
@@ -111,7 +104,6 @@
                     firstname: { required },
                     lastname: { required },
                     email: { required, email },
-                    phone: { required },
                     password: { required: requiredIf(function() { return this.changePassword }) },
                     confirm_password: { required: requiredIf(function() { return this.changePassword }), sameAsRef: sameAs(this.getPasswordToCompare()) },
                 }
@@ -129,16 +121,16 @@
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
-                                <div class="field col-12 sm:col-6 mb-2">
-                                    <label for="firstname" class="block text-900 font-medium mb-2">{{ $t('users.firstname') }}</label>
+                                <div class="field col-12 sm:col-6 mb-4">
+                                    <label for="firstname" v-required class="block text-900 font-medium mb-2">{{ $t('users.firstname') }}</label>
                                     <InputText id="firstname" type="text" :placeholder="$t('users.firstname')" class="w-full" :class="{'p-invalid' : v$.user.firstname.$error}" v-model="user.firstname" :disabled="loading || saving" />
                                     <div v-if="v$.user.firstname.$error">
                                         <small class="p-error">{{ v$.user.firstname.$errors[0].$message }}</small>
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 sm:col-6">
-                                    <label for="lastname" class="block text-900 font-medium mb-2">{{ $t('users.lastname') }}</label>
+                                <div class="field col-12 sm:col-6 mb-4">
+                                    <label for="lastname" v-required class="block text-900 font-medium mb-2">{{ $t('users.lastname') }}</label>
                                     <InputText id="lastname" type="text" :placeholder="$t('users.lastname')" class="w-full" :class="{'p-invalid' : v$.user.lastname.$error}" v-model="user.lastname" :disabled="loading || saving" />
                                     <div v-if="v$.user.lastname.$error">
                                         <p v-for="error of v$.user.lastname.$errors" :key="error.$uid">
@@ -147,50 +139,47 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 sm:col-6">
-                                    <label for="email" class="block text-900 font-medium mb-2">{{ $t('users.email') }}</label>
+                                <div class="field col-12 sm:col-6 mb-4">
+                                    <label for="email" v-required class="block text-900 font-medium mb-2">{{ $t('users.email') }}</label>
                                     <InputText id="email" type="text" :placeholder="$t('users.email')" class="w-full" :class="{'p-invalid' : v$.user.email.$error}" v-model="user.email" :disabled="loading || saving" />
                                     <div v-if="v$.user.email.$error">
                                         <small class="p-error">{{ v$.user.email.$errors[0].$message }}</small>
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 sm:col-6">
+                                <div class="field col-12 sm:col-6 mb-4">
                                     <label for="phone" class="block text-900 font-medium mb-2">{{ $t('users.phone') }}</label>
-                                    <InputText id="phone" type="text" :placeholder="$t('users.phone')" class="w-full" :class="{'p-invalid' : v$.user.phone.$error}" v-model="user.phone" :disabled="loading || saving" />
-                                    <div v-if="v$.user.phone.$error">
-                                        <small class="p-error">{{ v$.user.phone.$errors[0].$message }}</small>
-                                    </div>
+                                    <InputText id="phone" type="text" :placeholder="$t('users.phone')" class="w-full" v-model="user.phone" :disabled="loading || saving" />
                                 </div>
                                 
-                                <div class="field col-12">
+                                <div class="field col-12 mb-4">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="superuserCheck" name="superuser" value="1" v-model="user.superuser" :binary="true" :disabled="loading || saving"/>
                                         <label for="superuserCheck">{{ $t('users.superuser') }}</label>
                                     </div>
                                 </div>
-                                <div class="field col-12" v-if="!user.superuser">
-                                    <label for="phone" class="block text-900 font-medium mb-2">{{ $t('users.user_group') }}</label>
-                                    <Dropdown v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id" :disabled="loading || saving"/>
+                                <div class="field col-12 mb-4" v-if="!user.superuser">
+                                    <label for="permission_id" class="block text-900 font-medium mb-2">{{ $t('users.user_group') }}</label>
+                                    <Dropdown id="permission_id" v-model="user.user_permission_id" :options="permissions" optionLabel="name" optionValue="id" :disabled="loading || saving"/>
                                 </div>
                                 
-                                <div class="field col-12">
+                                <div class="field col-12 mb-4">
                                     <div class="field-checkbox mb-0">
                                         <Checkbox inputId="changePasswordCheck" name="changePassword" value="1" v-model="changePassword" :binary="true" :disabled="loading || saving"/>
                                         <label for="changePasswordCheck">{{ $t('users.change_password') }}</label>
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 sm:col-6" v-if="changePassword">
-                                    <label for="password" class="block text-900 font-medium mb-2">{{ $t('users.password') }}</label>
+                                <div class="field col-12 sm:col-6 mb-4" v-if="changePassword">
+                                    <label for="password" v-required class="block text-900 font-medium mb-2">{{ $t('users.password') }}</label>
                                     <Password id="password" v-model="user.password" :placeholder="$t('users.password')" :feedback="false" :class="{'p-invalid' : v$.user.password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading || saving"></Password>
                                     <div v-if="v$.user.password.$error">
                                         <small class="p-error">{{ v$.user.password.$errors[0].$message }}</small>
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 sm:col-6" v-if="changePassword">
-                                    <label for="confirm_password" class="block text-900 font-medium mb-2">{{ $t('users.repeat_password') }}</label>
+                                <div class="field col-12 sm:col-6 mb-4" v-if="changePassword">
+                                    <label for="confirm_password" v-required class="block text-900 font-medium mb-2">{{ $t('users.repeat_password') }}</label>
                                     <Password id="confirm_password" v-model="user.confirm_password" :placeholder="$t('users.repeat_password')" :feedback="false" :class="{'p-invalid' : v$.user.confirm_password.$error}" :toggleMask="true" class="w-full" inputClass="w-full" :disabled="loading || saving"></Password>
                                     <div v-if="v$.user.confirm_password.$error">
                                         <small class="p-error">{{ v$.user.confirm_password.$errors[0].$message }}</small>
@@ -212,7 +201,9 @@
                         <ProgressSpinner style="width: 25px; height: 25px"/>
                     </div>
                     
-                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" class="w-auto text-center"></Button>
+                    <div class="text-right">
+                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    </div>
                 </form>
             </div>
         </div>

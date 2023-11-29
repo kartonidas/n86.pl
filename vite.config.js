@@ -11,7 +11,13 @@ export default defineConfig({
             input: ['resources/css/app.scss', 'resources/js/app.js'],
             refresh: true,
         }),
-        vue(),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    includeAbsolute: false,
+                },
+            },
+        }),
     ],
     server: {
         host: true,

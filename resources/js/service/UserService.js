@@ -37,6 +37,7 @@ export default class UserService {
                     .then(
                         (response) => {
                             appStore().setUserId(response.data.id);
+                            appStore().setIsOwner(response.data.owner);
                             appStore().setUserPermission(response.data.permission);
                             resolve(response.data);
                         },
@@ -63,15 +64,21 @@ export default class UserService {
     }
     
     logout() {
-        axios.get('api/v1/logout')
-            .then(() => {
-                appStore().setUserId(null);
-                appStore().setUserPermission(null);
-            })
-            .catch(function () {
-                appStore().setUserId(null);
-                appStore().setUserPermission(null);
-            });
+        return new Promise((resolve, reject) => {
+            return axios.get('api/v1/logout')
+                .then(() => {
+                    appStore().setUserId(null);
+                    appStore().setIsOwner(false);
+                    appStore().setUserPermission(null);
+                    resolve(true);
+                })
+                .catch(function () {
+                    appStore().setUserId(null);
+                    appStore().setIsOwner(false);
+                    appStore().setUserPermission(null);
+                    reject(false);
+                });
+        })
     }
     
     profile() {
@@ -94,13 +101,30 @@ export default class UserService {
         return new Promise((resolve, reject) => {
             return axios.get('api/v1/is-login')
                 .then((response) => {
-                    resolve(response);
                     appStore().setUserPermission(response.data.permission);
+                    resolve(response);
                 })
                 .catch(function () {
                     appStore().setUserId(null);
+                    appStore().setIsOwner(false);
                     reject(false);
                 });
         });
+    }
+    
+    firmData() {
+        return axios.get('api/v1/firm-data');
+    }
+    
+    updateFirmData(firmData) {
+        return axios.post('api/v1/firm-data', removeNullValues(firmData));
+    }
+    
+    invoiceData() {
+        return axios.get('api/v1/invoice-data');
+    }
+    
+    updateInvoiceData(invoiceData) {
+        return axios.post('api/v1/invoice-data', removeNullValues(invoiceData));
     }
 }

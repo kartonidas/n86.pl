@@ -3,12 +3,14 @@
     import { useI18n } from 'vue-i18n'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'primevue/usetoast';
-    import { getResponseErrors, hasAccess } from '@/utils/helper'
+    import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     
     import ItemService from '@/service/ItemService'
     
     export default {
         setup() {
+            setMetaTitle('meta.title.items_show')
+            
             const route = useRoute()
             const router = useRouter()
             const itemService = new ItemService()

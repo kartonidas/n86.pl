@@ -44,6 +44,7 @@ const model = ref([
                 ]
             },
             { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' } },
+            { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' } },
         ]
     },
 ]);
