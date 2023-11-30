@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
+import { useI18n } from 'vue-i18n';
 
 export default class CustomerService {
     list(size, page, sort, order) {
@@ -12,16 +13,7 @@ export default class CustomerService {
         return axios.get('api/v1/customers', { params : data });
     }
     
-    create(name, street, house_no, apartment_no, city, zip, nip) {
-        var customerData = {
-            name : name,
-            street : street,
-            house_no : house_no,
-            apartment_no : apartment_no,
-            city : city,
-            zip : zip,
-            nip : nip,
-        };
+    create(customerData) {
         return axios.put('api/v1/customer', customerData);
     }
     
@@ -29,21 +21,19 @@ export default class CustomerService {
         return axios.get('api/v1/customer/' + customerId);
     }
     
-    update(customerId, name, street, house_no, apartment_no, city, zip, nip) {
-        var customerData = {
-            name : name,
-            street : street,
-            house_no : house_no,
-            apartment_no : apartment_no,
-            city : city,
-            zip : zip,
-            nip : nip,
-        };
-        
+    update(customerId, customerData) {
         return axios.put('api/v1/customer/' + customerId, removeNullValues(customerData));
     }
     
     remove(customerId) {
         return axios.delete('api/v1/customer/' + customerId);
+    }
+    
+    types() {
+        const { t } = useI18n();
+        return [
+            {"id" : "person", "name" : t('customers.type_person')},
+            {"id" : "firm", "name" : t('customers.type_firm')},
+        ];
     }
 }

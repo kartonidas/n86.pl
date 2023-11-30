@@ -1,43 +1,79 @@
 <script>
-    import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
+    import { ref, reactive, computed } from 'vue'
     import { useRoute } from 'vue-router'
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
-    import { required } from '@/utils/i18n-validators'
+    import { required, email } from '@/utils/i18n-validators'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import CustomerService from '@/service/CustomerService'
+    import CustomerForm from './Form.vue'
     
     export default {
+        components: { CustomerForm },
         setup() {
             setMetaTitle('meta.title.customers_edit')
             
+            const customer = ref({
+                type : 'person',
+                contacts : {
+                    email : [],
+                    phone : []
+                },
+            })
+            const state = reactive({ 'customer' : customer})
+            const rules = computed(() => {
+                const rules = {
+                    customer: {
+                        name: { required },
+                        type: { required },
+                    }
+                }
+                
+                rules.customer.contacts = {}
+                if(state.customer.contacts.email.length)
+                {
+                    rules.customer.contacts.email = []
+                    
+                    for(var i = 0; i < state.customer.contacts.email.length; i++)
+                        rules.customer.contacts.email.push({ val : { required, email } })
+                }
+                
+                if(state.customer.contacts.phone.length)
+                {
+                    rules.customer.contacts.phone = []
+                    
+                    for(var i = 0; i < state.customer.contacts.phone.length; i++)
+                        rules.customer.contacts.phone.push({ val : { required } })
+                }
+                
+                return rules
+            })
+            
             const route = useRoute()
             const customerService = new CustomerService()
-            const { t } = useI18n();
             const toast = useToast();
             
             return {
-                t,
-                v$: useVuelidate(),
+                v$: useVuelidate(rules, state),
                 customerService,
                 route,
-                toast
+                toast,
+                customer
             }
         },
         data() {
             return {
+                types: this.customerService.types(),
                 saving: false,
                 loading: true,
                 errors: [],
-                customer: {},
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.estates'), disabled : true },
-                        {'label' : this.t('menu.customer_list'), route : { name : 'customers'} },
-                        {'label' : this.t('customers.edit_customer'), disabled : true },
+                        {'label' : this.$t('menu.estates'), disabled : true },
+                        {'label' : this.$t('menu.customer_list'), route : { name : 'customers'} },
+                        {'label' : this.$t('customers.edit_customer'), disabled : true },
                     ],
                 }
             }
@@ -55,7 +91,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -66,10 +102,10 @@
                     this.saving = true
                     this.errors = []
                     
-                    this.customerService.update(this.route.params.customerId, this.customer.name, this.customer.street, this.customer.house_no, this.customer.apartment_no, this.customer.city, this.customer.zip, this.customer.nip)
+                    this.customerService.update(this.route.params.customerId, this.customer)
                         .then(
                             (response) => {
-                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('customers.updated'), life: 3000 });
+                                this.toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('customers.updated'), life: 3000 });
                                 this.saving = false;
                             },
                             (response) => {
@@ -78,84 +114,24 @@
                             }
                     )
                 }
-            }
-        },
-        validations () {
-            return {
-                customer: {
-                    name: { required },
-                }
-            }
+            },
         },
     }
 </script>
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="grid mt-1">
-        <div class="col">
-            <div class="card p-fluid">
-                <form v-on:submit.prevent="updateCustomer">
-                    <div class="mb-4">
-                        <div class="p-fluid">
-                            <div class="formgrid grid">
-                                <div class="field col-12 md:col-6 mb-4">
-                                    <label for="name" v-required class="block text-900 font-medium mb-2">{{ $t('customers.name') }}</label>
-                                    <InputText id="name" type="text" :placeholder="$t('customers.name')" class="w-full" :class="{'p-invalid' : v$.customer.name.$error}" v-model="customer.name" :disabled="loading || saving"/>
-                                    <div v-if="v$.customer.name.$error">
-                                        <small class="p-error">{{ v$.customer.name.$errors[0].$message }}</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="field col-12 md:col-6 mb-4">
-                                    <label for="nip" class="block text-900 font-medium mb-2">{{ $t('customers.nip') }}</label>
-                                    <InputText id="nip" type="text" :placeholder="$t('customers.nip')" class="w-full" v-model="customer.nip" :disabled="loading || saving" />
-                                </div>
-                                
-                                <div class="field col-12 md:col-6 mb-4">
-                                    <label for="street" class="block text-900 font-medium mb-2">{{ $t('customers.street') }}</label>
-                                    <InputText id="street" type="text" :placeholder="$t('customers.street')" class="w-full" v-model="customer.street" :disabled="loading || saving" />
-                                </div>
-                                
-                                <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                    <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('customers.house_no') }}</label>
-                                    <InputText id="house_no" type="text" :placeholder="$t('customers.house_no')" class="w-full" v-model="customer.house_no" :disabled="loading || saving" />
-                                </div>
-                                
-                                <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                    <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('customers.apartment_no') }}</label>
-                                    <InputText id="apartment_no" type="text" :placeholder="$t('customers.apartment_no')" class="w-full" v-model="customer.apartment_no" :disabled="loading || saving" />
-                                </div>
-                                
-                                <div class="field col-12 md:col-3 sm:col-5 mb-4">
-                                    <label for="zip" class="block text-900 font-medium mb-2">{{ $t('customers.zip') }}</label>
-                                    <InputText id="zip" type="text" :placeholder="$t('customers.zip')" class="w-full" v-model="customer.zip" :disabled="loading || saving" />
-                                </div>
-                                
-                                <div class="field col-12 md:col-9 sm:col-7 mb-4">
-                                    <label for="city" class="block text-900 font-medium mb-2">{{ $t('customers.city') }}</label>
-                                    <InputText id="city" type="text" :placeholder="$t('customers.city')" class="w-full" v-model="customer.city" :disabled="loading || saving" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <Message severity="error" :closable="false" v-if="errors.length">
-                        <ul class="list-unstyled">
-                            <li v-for="error of errors">
-                                {{ error }}
-                            </li>
-                        </ul>
-                    </Message>
-                    
-                    <div v-if="loading">
-                        <ProgressSpinner style="width: 25px; height: 25px"/>
-                    </div>
-                    
-                    <div class="text-right">
-                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
-                    </div>
-                </form>
+    <div class="card p-fluid mt-4">
+        <form v-on:submit.prevent="updateCustomer">
+            <CustomerForm :customer="customer" :types="types" :saving="saving" :errors="errors" :v="v$" />
+            
+            <div v-if="loading">
+                <ProgressSpinner style="width: 25px; height: 25px"/>
             </div>
-        </div>
+            
+            <div class="text-right">
+                <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+            </div>
+        </form>
     </div>
 </template>

@@ -5,6 +5,7 @@
  */
 
 import axios from 'axios';
+import { appStore } from './store.js';
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -17,6 +18,9 @@ window.axios.interceptors.response.use(
         const {status} = error.response;
         if (status === 401) {
             window.location.href = '/sign-in';
+            appStore().setUserId(null);
+            appStore().setIsOwner(false);
+            appStore().setUserPermission(null);
         }
         return Promise.reject(error);
     }

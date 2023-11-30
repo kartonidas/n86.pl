@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
 use App\Models\Customer;
@@ -55,26 +56,37 @@ class CustomerController extends Controller
     {
         User::checkAccess("customer:create");
         
-        $request->validate([
+        $validated = $request->validate([
+            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "name" => "required|max:100",
-            "street" => "nullable|max:80",
-            "house_no" => "nullable|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "nullable|max:120",
-            "zip" => "nullable|max:10",
-            "nip" => ["nullable", "max:20", new \App\Rules\Nip],
+            "street" => "sometimes|max:80",
+            "house_no" => "sometimes|max:20",
+            "apartment_no" => "sometimes|max:20",
+            "city" => "sometimes|max:120",
+            "zip" => "sometimes|max:10",
+            "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
+            "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
         ]);
         
         $customer = new Customer;
-        $customer->type = Customer::TYPE_CUSTOMER;
-        $customer->name = $request->input("name");
-        $customer->street = $request->input("street");
-        $customer->house_no = $request->input("house_no");
-        $customer->apartment_no = $request->input("apartment_no");
-        $customer->city = $request->input("city");
-        $customer->zip = $request->input("zip");
-        $customer->nip = $request->input("nip");
+        $customer->role = Customer::ROLE_CUSTOMER;
+        $customer->name = $validated["name"];
+        $customer->street = $validated["street"] ?? null;
+        $customer->house_no = $validated["house_no"] ?? null;
+        $customer->apartment_no = $validated["apartment_no"] ?? null;
+        $customer->city = $validated["city"] ?? null;
+        $customer->zip = $validated["zip"] ?? null;
+        $customer->nip = $validated["nip"] ?? null;
+        $customer->pesel = $validated["pesel"] ?? null;
         $customer->save();
+        
+        $customerContactFields = $request->validate([
+            "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],
+            "contacts.phone" => ["sometimes", "array", new \App\Rules\ContactPhone]
+        ]);
+        
+        if(!empty($customerContactFields["contacts"]))
+            $customer->updateContact($customerContactFields["contacts"]);
         
         return $customer->id;
     }
@@ -87,6 +99,8 @@ class CustomerController extends Controller
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         
+        $customer->contacts = $customer->getContacts();
+        
         return $customer;
     }
     
@@ -98,36 +112,29 @@ class CustomerController extends Controller
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         
-        $rules = [
+        $updateFields = $request->validate([
+            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "name" => "required|max:100",
-            "street" => "nullable|max:80",
-            "house_no" => "nullable|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "nullable|max:120",
-            "zip" => "nullable|max:10",
-            "nip" => ["nullable", "max:20", new \App\Rules\Nip],
-        ];
+            "street" => "sometimes|max:80",
+            "house_no" => "sometimes|max:20",
+            "apartment_no" => "sometimes|max:20",
+            "city" => "sometimes|max:120",
+            "zip" => "sometimes|max:10",
+            "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
+            "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
+        ]);
         
-        $validate = [];
-        $updateFields = ["name", "street", "house_no", "apartment_no", "city", "zip", "nip"];
-        foreach($updateFields as $field)
-        {
-            if($request->has($field))
-            {
-                if(!empty($rules[$field]))
-                    $validate[$field] = $rules[$field];
-            }
-        }
+        $updateContactFields = $request->validate([
+            "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],
+            "contacts.phone" => ["sometimes", "array", new \App\Rules\ContactPhone]
+        ]);
         
-        if(!empty($validate))
-            $request->validate($validate);
-        
-        foreach($updateFields as $field)
-        {
-            if($request->has($field))
-                $customer->{$field} = $request->input($field);
-        }
+        foreach($updateFields as $field => $value)
+            $customer->{$field} = $value;
         $customer->save();
+        
+        if(!empty($updateContactFields["contacts"]))
+            $customer->updateContact($updateContactFields["contacts"]);
         
         return true;
     }

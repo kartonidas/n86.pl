@@ -66,7 +66,7 @@ class TenantController extends Controller
         ]);
         
         $customer = new Customer;
-        $customer->type = Customer::TYPE_TENANT;
+        $customer->role = Customer::ROLE_TENANT;
         $customer->name = $request->input("name");
         $customer->street = $request->input("street");
         $customer->house_no = $request->input("house_no");

@@ -1,10 +1,8 @@
-.p-inputtext
-{
-    padding: 1rem;
+.p-inputtext:not(.p-inputtext-sm) {
+    padding: .75rem;
 }
 
-.p-button-label
-{
+.p-button-label {
     font-weight: 500;
 }
 
@@ -32,4 +30,8 @@ input::placeholder,
 .p-inputtext::placeholder {
     color: #959595;
     opacity: 0.6;
+}
+
+.header-border-bottom {
+    border-bottom: 1px solid var(--surface-border);
 }
