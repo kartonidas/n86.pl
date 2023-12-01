@@ -1,24 +1,23 @@
 <script>
-    import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'primevue/usetoast';
     import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
+    import { appStore } from '@/store.js'
     
+    import Address from '@/views/app/_partials/Address.vue'
     import ItemService from '@/service/ItemService'
     
     export default {
+        components: { Address },
         setup() {
             setMetaTitle('meta.title.items_show')
             
             const route = useRoute()
             const router = useRouter()
             const itemService = new ItemService()
-            const { t } = useI18n();
             const toast = useToast();
             
             return {
-                t,
                 itemService,
                 route,
                 router,
@@ -29,17 +28,25 @@
         data() {
             return {
                 errors: [],
-                item: {},
+                item: {
+                    customer: {}
+                },
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.estates'), disabled : true },
-                        {'label' : this.t('menu.estate_list'), route : { name : 'items'} },
-                        {'label' : this.t('items.edit'), disabled : true },
+                        {'label' : this.$t('menu.estates'), disabled : true },
+                        {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
+                        {'label' : this.$t('items.edit'), disabled : true },
                     ],
                 }
             }
         },
         mounted() {
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
+                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                appStore().setToastMessage(null)
+            }
+            
             this.itemService.get(this.route.params.itemId)
                 .then(
                     (response) => {
@@ -47,7 +54,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -75,28 +82,32 @@
                 </template>
                 <template #content pt="item">
                     <p class="m-0">
-                        <strong>{{ $t('items.estate_type') }}: </strong> <i>{{ item.type }}</i>
+                        <span class="font-medium">{{ $t('items.estate_type') }}: </span> <i>{{ item.type }}</i>
                     </p>
                     <p class="m-0 mt-2">
-                        <strong>{{ $t('items.address') }}: </strong> <i>{{ item.street }}<span v-if="item.house_no">&nbsp;{{ item.house_no }}</span><span v-if="item.apartment_no"><span v-if="item.house_no">/</span><span v-else>&nbsp;</span>{{ item.apartment_no }}</span>, {{ item.zip }} {{ item.city }}</i>
+                        <span class="font-medium">{{ $t('items.address') }}: </span> <i><Address :object="item"/></i>
                     </p>
                     <p class="m-0 mt-2" v-if="item.area">
-                        <strong>{{ $t('items.area') }}: </strong> <i>{{ item.area }} (m2)</i>
+                        <span class="font-medium">{{ $t('items.area') }}: </span> <i>{{ numeralFormat(item.area, '0.00') }} (m2)</i>
                     </p>
                     <p class="m-0 mt-2" v-if="item.number_of_rooms">
-                        <strong>{{ $t('items.number_of_rooms') }}: </strong> <i>{{ item.number_of_rooms }}</i>
+                        <span class="font-medium">{{ $t('items.number_of_rooms') }}: </span> <i>{{ item.number_of_rooms }}</i>
                     </p>
                     <p class="m-0 mt-2" v-if="item.default_rent">
-                        <strong>{{ $t('items.default_rent_value') }}: </strong> <i>{{ item.default_rent }}</i>
+                        <span class="font-medium">{{ $t('items.default_rent_value') }}: </span> <i>{{ numeralFormat(item.default_rent, '0.00') }}</i>
                     </p>
                     <p class="m-0 mt-2" v-if="item.default_deposit">
-                        <strong>{{ $t('items.default_deposit_value') }}: </strong> <i>{{ item.default_deposit }}</i>
+                        <span class="font-medium">{{ $t('items.default_deposit_value') }}: </span> <i>{{ numeralFormat(item.default_deposit, '0.00') }}</i>
                     </p>
                     <p class="m-0 mt-2">
-                        <strong>Własność: </strong>
+                        <span class="font-medium">{{ $t('items.ownership') }}: </span>
                         <i>
-                            <span v-if="item.ownership">Moja</span>
-                            <span v-else>Nie moja</span>
+                            <span v-if="item.ownership">{{ $t('items.own') }}</span>
+                            <span v-else>
+                                <router-link v-if="item.customer.id" :to="{name: 'customer_show', params: { customerId : item.customer.id }}">
+                                    {{ item.customer.name }}
+                                </router-link>
+                            </span>
                         </i>
                     </p>
                 </template>

@@ -1,24 +1,23 @@
 <script>
-    import { ref } from 'vue'
     import { useRouter } from 'vue-router'
-    import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
+    
+    import Address from '@/views/app/_partials/Address.vue'
     import ItemService from '@/service/ItemService'
     
     export default {
+        components: { Address },
         setup() {
             setMetaTitle('meta.title.items_list')
             
             const router = useRouter()
             const itemService = new ItemService()
-            const { t } = useI18n();
             const toast = useToast();
             
             return {
                 router,
-                t,
                 itemService,
                 toast,
                 hasAccess
@@ -36,8 +35,8 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('menu.estates'), disabled : true },
-                        {'label' : this.t('menu.estate_list'), disabled : true },
+                        {'label' : this.$t('menu.estates'), disabled : true },
+                        {'label' : this.$t('menu.estate_list'), disabled : true },
                     ],
                 }
             }
@@ -62,7 +61,7 @@
                             this.loading = false
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     );
             },
@@ -90,10 +89,10 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('items.deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.deleted'), life: 3000 });
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -130,11 +129,10 @@
                             <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
                                 {{ data.name }}
                             </router-link>
+                            
                             <div>
                                 <small>
-                                    {{ data.street }} {{ data.house_no }}<span v-if="data.apartment_no">/{{ data.apartment_no }}</span>
-                                    <br/>
-                                    {{ data.zip }} {{ data.city }}
+                                    <Address :object="data" :newline="true" emptyChar=""/>
                                 </small>
                             </div>
                         </template>

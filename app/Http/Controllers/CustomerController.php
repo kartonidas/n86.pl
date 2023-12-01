@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
 use App\Traits\Sortable;
@@ -64,8 +65,12 @@ class CustomerController extends Controller
             "apartment_no" => "sometimes|max:20",
             "city" => "sometimes|max:120",
             "zip" => "sometimes|max:10",
+            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
             "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
+            "comments" => "sometimes|max:5000",
+            "send_sms" => "sometimes|boolean",
+            "send_email" => "sometimes|boolean",
         ]);
         
         $customer = new Customer;
@@ -76,8 +81,12 @@ class CustomerController extends Controller
         $customer->apartment_no = $validated["apartment_no"] ?? null;
         $customer->city = $validated["city"] ?? null;
         $customer->zip = $validated["zip"] ?? null;
+        $customer->country = $validated["country"] ?? null;
         $customer->nip = $validated["nip"] ?? null;
         $customer->pesel = $validated["pesel"] ?? null;
+        $customer->comments = $validated["comments"] ?? null;
+        $customer->send_sms = $validated["send_sms"] ?? 0;
+        $customer->send_email = $validated["send_email"] ?? 0;
         $customer->save();
         
         $customerContactFields = $request->validate([
@@ -120,8 +129,12 @@ class CustomerController extends Controller
             "apartment_no" => "sometimes|max:20",
             "city" => "sometimes|max:120",
             "zip" => "sometimes|max:10",
+            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
             "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
+            "comments" => "sometimes|max:5000",
+            "send_sms" => "sometimes|boolean",
+            "send_email" => "sometimes|boolean",
         ]);
         
         $updateContactFields = $request->validate([

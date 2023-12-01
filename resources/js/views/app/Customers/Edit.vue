@@ -1,6 +1,6 @@
 <script>
     import { ref, reactive, computed } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required, email } from '@/utils/i18n-validators'
@@ -8,7 +8,7 @@
     import { appStore } from '@/store.js'
     
     import CustomerService from '@/service/CustomerService'
-    import CustomerForm from './Form.vue'
+    import CustomerForm from './_Form.vue'
     
     export default {
         components: { CustomerForm },
@@ -52,6 +52,7 @@
             })
             
             const route = useRoute()
+            const router = useRouter()
             const customerService = new CustomerService()
             const toast = useToast();
             
@@ -59,13 +60,14 @@
                 v$: useVuelidate(rules, state),
                 customerService,
                 route,
+                router,
                 toast,
                 customer
             }
         },
         data() {
             return {
-                types: this.customerService.types(),
+                types: this.customerService.types(this.$t),
                 saving: false,
                 loading: true,
                 errors: [],
@@ -73,6 +75,7 @@
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.customer_list'), route : { name : 'customers'} },
+                        {'label' : this.$t('customers.card'), route : { name : 'customer_show'} },
                         {'label' : this.$t('customers.edit_customer'), disabled : true },
                     ],
                 }
@@ -115,6 +118,10 @@
                     )
                 }
             },
+            
+            back() {
+                this.router.push({name: 'customer_show', params: { customerId : this.customer.id }})
+            }
         },
     }
 </script>
@@ -122,14 +129,16 @@
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="card p-fluid mt-4">
+        <h4 class="mb-5 header-border-bottom pb-2">{{ $t('customers.basic_data') }}</h4>
         <form v-on:submit.prevent="updateCustomer">
-            <CustomerForm :customer="customer" :types="types" :saving="saving" :errors="errors" :v="v$" />
+            <CustomerForm :customer="customer" :types="types" :saving="saving" :loading="loading" :errors="errors" :v="v$" />
             
             <div v-if="loading">
                 <ProgressSpinner style="width: 25px; height: 25px"/>
             </div>
             
-            <div class="text-right">
+            <div class="flex justify-content-between align-items-center">
+                <Button type="button" :label="$t('app.cancel')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
                 <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
             </div>
         </form>

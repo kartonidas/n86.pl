@@ -13,18 +13,35 @@ export default class TenantService {
     }
     
     create(tenantData) {
-        return axios.put('api/v1/tenants', tenantData);
+        return axios.put('api/v1/tenant', tenantData);
     }
     
     get(tenantId) {
-        return axios.get('api/v1/tenants/' + tenantId);
+        return axios.get('api/v1/tenant/' + tenantId);
     }
     
     update(tenantId, tenantData) {
-        return axios.put('api/v1/tenants/' + tenantId, removeNullValues(tenantData));
+        return axios.put('api/v1/tenant/' + tenantId, removeNullValues(tenantData));
     }
     
     remove(tenantId) {
-        return axios.delete('api/v1/tenants/' + tenantId);
+        return axios.delete('api/v1/tenant/' + tenantId);
+    }
+    
+    types(t) {
+        return [
+            {"id" : "person", "name" : t('customers.type_person')},
+            {"id" : "firm", "name" : t('customers.type_firm')},
+        ];
+    }
+    
+    getTypeLabel(t, type) {
+        var label = '-';
+        this.types(t).forEach((elem) => {
+            if (elem.id == type) {
+                label = elem.name;
+            }
+        });
+        return label;
     }
 }

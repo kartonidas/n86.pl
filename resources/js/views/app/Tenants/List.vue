@@ -1,27 +1,26 @@
 <script>
-    import { ref } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
-    import { useI18n } from 'vue-i18n'
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { useToast } from 'primevue/usetoast';
     import { appStore } from '@/store.js'
+    
+    import Address from '@/views/app/_partials/Address.vue'
     import TenantService from '@/service/TenantService'
     
     export default {
+        components: { Address },
         setup() {
             setMetaTitle('meta.title.tenants_list')
             
             const router = useRouter()
             const route = useRoute()
             const tenantService = new TenantService()
-            const { t } = useI18n();
             const toast = useToast();
             
             return {
                 router,
                 route,
                 toast,
-                t,
                 tenantService,
                 hasAccess
             }
@@ -40,8 +39,8 @@
                     sortField: 'name',
                     sortOrder: 1,
                     breadcrumbItems: [
-                        {'label' : this.t('menu.estates'), disabled : true },
-                        {'label' : this.t('menu.tenant_list'), disabled : true },
+                        {'label' : this.$t('menu.estates'), disabled : true },
+                        {'label' : this.$t('menu.tenant_list'), disabled : true },
                     ],
                 }
             }
@@ -72,7 +71,7 @@
                             this.loading = false
                         },
                         (errors) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
             },
@@ -96,8 +95,8 @@
                 this.router.push({name: 'tenant_new'})
             },
             
-            editTenant(tenantId) {
-                this.router.push({name: 'tenant_edit', params: { tenantId : tenantId }})
+            showTenant(tenantId) {
+                this.router.push({name: 'tenant_show', params: { tenantId : tenantId }})
             },
             
             openConfirmation(id) {
@@ -110,10 +109,10 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('tenants.deleted'), life: 3000 });
+                            this.toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('tenants.deleted'), life: 3000 });
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -127,7 +126,7 @@
             
             rowClick(event) {
                 if (hasAccess('tenant:update')) 
-                    this.editTenant(event.data.id)
+                    this.showTenant(event.data.id)
             }
         },
     }
@@ -149,21 +148,16 @@
                 <DataTable :value="tenants" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <router-link :to="{name: 'tenant_edit', params: { tenantId : data.id }}" v-if="hasAccess('tenant:update')">
+                            <router-link :to="{name: 'tenant_show', params: { tenantId : data.id }}" v-if="hasAccess('tenant:update')">
                                 {{ data.name }}
                             </router-link>
                             <span v-else>
                                 {{ data.name }}
                             </span>
                             
-                            <div v-if="data.street || data.city">
+                            <div>
                                 <small>
-                                    <div v-if="data.street">
-                                        {{ data.street }} {{ data.house_no }}<span v-if="data.apartment_no">/{{ data.apartment_no }}</span>
-                                    </div>
-                                    <div v-if="data.city">
-                                        {{ data.zip }} {{ data.city }}
-                                    </div>
+                                    <Address :object="data" :newline="true" emptyChar=""/>
                                 </small>
                             </div>
                         </template>
@@ -185,7 +179,7 @@
                     </div>
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteTenant" class="p-button-text" autofocus />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteTenant" class="p-button-danger" autofocus />
                     </template>
                 </Dialog>
             </div>

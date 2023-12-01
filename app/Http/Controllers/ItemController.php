@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
 use App\Libraries\Helper;
+use App\Models\Country;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Tenant;
@@ -68,14 +69,15 @@ class ItemController extends Controller
     {
         User::checkAccess("item:create");
         
-        $request->validate([
-            "name" => "required|max:100",
+        $rule = [
             "type" => ["required", Rule::in(array_keys(Item::getTypes()))],
+            "name" => "required|max:100",
             "street" => "required|max:80",
             "house_no" => "nullable|max:20",
             "apartment_no" => "nullable|max:20",
             "city" => "required|max:120",
             "zip" => "required|max:10",
+            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "area" => "sometimes|required|numeric",
             "ownership" => "sometimes|required|boolean",
             "room_rental" => "sometimes|required|boolean",
@@ -83,33 +85,36 @@ class ItemController extends Controller
             "description" => "sometimes|max:5000",
             "default_rent" => "sometimes|required|numeric",
             "default_deposit" => "sometimes|required|numeric",
-        ]);
+            "comments" => "sometimes|max:5000",
+        ];
         
         $hasCustomerAccess = User::checkAccess("customer:list", false);
         if($hasCustomerAccess && !$request->input("ownership"))
         {
             $customers = Customer::pluck("id");
-            $request->validate([
-                "customer_id" => ["required", Rule::in($customers->all())]
-            ]);
+            $rule["customer_id"] = ["required", Rule::in($customers->all())];
         }
         
+        $validated = $request->validate($rule);
+        
         $item = new Item;
-        $item->type = $request->input("type");
-        $item->name = $request->input("name");
-        $item->street = $request->input("street");
-        $item->house_no = $request->input("house_no");
-        $item->apartment_no = $request->input("apartment_no");
-        $item->city = $request->input("city");
-        $item->zip = $request->input("zip");
-        $item->area = $request->input("area");
-        $item->ownership = $hasCustomerAccess ? $request->input("ownership", 1) : 1;
-        $item->customer_id = $hasCustomerAccess ? $request->input("customer_id", 0) : 0;
-        $item->room_rental = $request->input("room_rental", 0);
-        $item->num_rooms = $request->input("num_rooms");
-        $item->description = $request->input("description");
-        $item->default_rent = $request->input("default_rent");
-        $item->default_deposit = $request->input("default_deposit");
+        $item->type = $validated["type"];
+        $item->name = $validated["name"];
+        $item->street = $validated["street"];
+        $item->house_no = $validated["house_no"] ?? null;
+        $item->apartment_no = $validated["apartment_no"] ?? null;
+        $item->city = $validated["city"];
+        $item->zip = $validated["zip"];
+        $item->country = $validated["country"] ?? null;
+        $item->area = $validated["area"] ?? null;
+        $item->ownership = $hasCustomerAccess ? ($validated["ownership"] ?? 0) : 1;
+        $item->customer_id = $hasCustomerAccess ? ($validated["customer_id"] ?? 0) : 0;
+        $item->room_rental = $validated["room_rental"] ?? 0;
+        $item->num_rooms = $validated["num_rooms"] ?? null;
+        $item->description = $validated["description"] ?? null;
+        $item->default_rent = $validated["default_rent"] ?? null;
+        $item->default_deposit = $validated["default_deposit"] ?? null;
+        $item->comments = $validated["comments"] ?? null;
         $item->save();
         
         return $item->id;
@@ -122,6 +127,8 @@ class ItemController extends Controller
         $item = Item::apiFields()->find($estateId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
+        
+        $item->customer = $item->getCustomer();
         
         return $item;
     }
@@ -142,6 +149,7 @@ class ItemController extends Controller
             "apartment_no" => "sometimes|nullable|max:20",
             "city" => "required|max:120",
             "zip" => "required|max:10",
+            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "area" => "sometimes|required|numeric",
             "ownership" => "sometimes|required|boolean",
             "room_rental" => "sometimes|required|boolean",
@@ -149,6 +157,7 @@ class ItemController extends Controller
             "description" => "sometimes|max:5000",
             "default_rent" => "sometimes|required|numeric",
             "default_deposit" => "sometimes|required|numeric",
+            "comments" => "sometimes|max:5000",
         ];
         
         $hasCustomerAccess = User::checkAccess("customer:list", false);
@@ -160,10 +169,7 @@ class ItemController extends Controller
         
         $updateFields = $request->validate($rules);
         foreach($updateFields as $field => $value)
-        {
-            if($request->has($field))
-                $item->{$field} = $value;
-        }
+            $item->{$field} = $value;
         $item->save();
         
         return true;

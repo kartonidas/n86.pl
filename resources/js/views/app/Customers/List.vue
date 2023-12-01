@@ -1,13 +1,15 @@
 <script>
-    import { ref } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
     import { useI18n } from 'vue-i18n'
     import { useToast } from 'primevue/usetoast';
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
+    
+    import Address from '@/views/app/_partials/Address.vue'
     import CustomerService from '@/service/CustomerService'
     
     export default {
+        components: { Address },
         setup() {
             setMetaTitle('meta.title.customers_list')
             
@@ -100,8 +102,8 @@
                 this.router.push({name: 'customer_new'})
             },
             
-            editCustomer(customerId) {
-                this.router.push({name: 'customer_edit', params: { customerId : customerId }})
+            showCustomer(customerId) {
+                this.router.push({name: 'customer_show', params: { customerId : customerId }})
             },
             
             openConfirmation(id) {
@@ -130,8 +132,7 @@
             },
             
             rowClick(event) {
-                if (hasAccess('customer:update')) 
-                    this.editCustomer(event.data.id)
+                this.showCustomer(event.data.id)
             }
         },
     }
@@ -153,21 +154,16 @@
                 <DataTable :value="customers" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column field="name" sortable :header="$t('customers.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <router-link :to="{name: 'customer_edit', params: { customerId : data.id }}" v-if="hasAccess('customer:update')">
+                            <router-link :to="{name: 'customer_show', params: { customerId : data.id }}" v-if="hasAccess('customer:update')">
                                 {{ data.name }}
                             </router-link>
                             <span v-else>
                                 {{ data.name }}
                             </span>
                             
-                            <div v-if="data.street || data.city">
+                            <div>
                                 <small>
-                                    <div v-if="data.street">
-                                        {{ data.street }} {{ data.house_no }}<span v-if="data.apartment_no">/{{ data.apartment_no }}</span>
-                                    </div>
-                                    <div v-if="data.city">
-                                        {{ data.zip }} {{ data.city }}
-                                    </div>
+                                    <Address :object="data" :newline="true" emptyChar=""/>
                                 </small>
                             </div>
                         </template>
@@ -189,7 +185,7 @@
                     </div>
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteCustomer" class="p-button-text" autofocus />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteCustomer" class="p-button-danger" autofocus />
                     </template>
                 </Dialog>
             </div>

@@ -180,7 +180,7 @@
                     </div>
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteDictionary" class="p-button-text" autofocus />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteDictionary" class="p-button-danger" autofocus />
                     </template>
                 </Dialog>
             </div>

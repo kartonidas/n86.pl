@@ -198,6 +198,12 @@ const router = createRouter({
                             component: () => import('@/views/app/Customers/Edit.vue'),
                             meta: {permission: 'customer:update'},
                         },
+                        {
+                            path: '/app/customer/:customerId',
+                            name: 'customer_show',
+                            component: () => import('@/views/app/Customers/Show.vue'),
+                            meta: {permission: 'customer:list'},
+                        },
                     ]
                 },
                 {
@@ -220,6 +226,12 @@ const router = createRouter({
                             name: 'tenant_edit',
                             component: () => import('@/views/app/Tenants/Edit.vue'),
                             meta: {permission: 'tenant:update'},
+                        },
+                        {
+                            path: '/app/tenant/:tenantId',
+                            name: 'tenant_show',
+                            component: () => import('@/views/app/Tenants/Show.vue'),
+                            meta: {permission: 'tenant:list'},
                         },
                     ]
                 },

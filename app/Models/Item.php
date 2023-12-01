@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Exceptions\ObjectNotExist;
+
+use App\Models\Customer;
 use App\Models\ItemTenant;
 use App\Models\Tenant;
 
@@ -49,6 +52,7 @@ class Item extends Model
             "apartment_no",
             "city",
             "zip",
+            "country",
             "area",
             "ownership",
             "room_rental",
@@ -56,6 +60,7 @@ class Item extends Model
             "description",
             "default_rent",
             "default_deposit",
+            "comments",
             "hidden",
             "created_at"
         );
@@ -103,5 +108,17 @@ class Item extends Model
         $itemTenant->save();
         
         return $tenant;
+    }
+    
+    public function getCustomer()
+    {
+        if(!$this->ownership)
+            return $this->customer()->apiFields()->first();
+        return null;
+    }
+    
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 }

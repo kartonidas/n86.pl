@@ -26,7 +26,26 @@ class Customer extends Model
     
     public function scopeApiFields(Builder $query): void
     {
-        $query->select("id", "type", "name", "street", "house_no", "apartment_no", "city", "zip", "nip", "created_at");
+        $query->select(
+            "id",
+            "type",
+            "name",
+            "street",
+            "house_no",
+            "apartment_no",
+            "city",
+            "zip",
+            "country",
+            "nip",
+            "pesel",
+            "document_type",
+            "document_number",
+            "comments",
+            "send_sms",
+            "send_email",
+            "hidden",
+            "created_at"
+        );
     }
     
     public function scopeCustomer(Builder $query): void

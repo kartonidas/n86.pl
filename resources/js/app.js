@@ -9,6 +9,7 @@ import router from './router';
 import i18n from "./i18n"
 import globalDirectives from './directives'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import VueNumerals from 'vue-numerals';
 
 import PrimeVue from 'primevue/config';
 
@@ -33,6 +34,7 @@ import RadioButton from 'primevue/radiobutton';
 import Sidebar from 'primevue/sidebar';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
@@ -57,6 +59,7 @@ app.use(globalDirectives)
 app.use(pinia);
 app.use(PrimeVue);
 app.use(ToastService);
+app.use(VueNumerals, { locale: 'pl' });
 
 app.component('Breadcrumb', AppBreadcrumb);
 app.component('Button', Button);
@@ -78,6 +81,7 @@ app.component('RadioButton', RadioButton);
 app.component('Sidebar', Sidebar);
 app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
+app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.directive('tooltip', Tooltip);
 

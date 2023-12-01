@@ -2,12 +2,12 @@
     import { ref, reactive, computed } from 'vue'
     import { useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
-    import { required } from '@/utils/i18n-validators'
+    import { required, email } from '@/utils/i18n-validators'
     import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
-    
     import { appStore } from '@/store.js'
+    
+    import CustomerForm from './_Form.vue'
     import CustomerService from '@/service/CustomerService'
-    import CustomerForm from './Form.vue'
     
     export default {
         components: { CustomerForm },
@@ -20,6 +20,7 @@
                     email : [],
                     phone : []
                 },
+                country : 'PL'
             })
             const state = reactive({ 'customer' : customer})
             const rules = computed(() => {
@@ -62,7 +63,7 @@
         },
         data() {
             return {
-                types: this.customerService.types(),
+                types: this.customerService.types(this.$t),
                 saving: false,
                 errors: [],
                 meta: {
@@ -90,10 +91,7 @@
                                     detail : this.$t('customers.added'),
                                 });
                                 
-                                if(hasAccess('customer:update'))
-                                    this.router.push({name: 'customer_edit', params: { customerId : response.data }})
-                                else
-                                    this.router.push({name: 'customers'})
+                                this.router.push({name: 'customer_show', params: { customerId : response.data }})
                             },
                             (response) => {
                                 this.errors = getResponseErrors(response)

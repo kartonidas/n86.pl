@@ -195,32 +195,32 @@
                                 </div>
                             </div>
                             
-                            <div class="field col-12 sm:col-4 mb-4">
-                                <label for="country" class="block text-900 font-medium mb-2">{{ $t('profile.country') }}</label>
-                                <Dropdown id="country" v-model="firmdata.country" filter :options="countries" optionLabel="name" optionValue="code" :placeholder="$t('profile.select_country')" class="w-full" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 sm:col-4 mb-4">
+                            <div class="field col-12 md:col-6 mb-4">
                                 <label for="street" class="block text-900 font-medium mb-2">{{ $t('profile.street') }}</label>
                                 <InputText id="street" type="text" :placeholder="$t('profile.street')" class="w-full" v-model="firmdata.street" :disabled="loading || saving"/>
                             </div>
                             
-                            <div class="field col-12 sm:col-2 mb-4">
+                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                 <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('profile.house_no') }}</label>
                                 <InputText id="house_no" type="text" :placeholder="$t('profile.house_no')" class="w-full" v-model="firmdata.house_no" :disabled="loading || saving"/>
                             </div>
                             
-                            <div class="field col-12 sm:col-2 mb-4">
+                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                 <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('profile.apartment_no') }}</label>
                                 <InputText id="apartment_no" type="text" :placeholder="$t('profile.apartment_no')" class="w-full" v-model="firmdata.apartment_no" :disabled="loading || saving"/>
                             </div>
                             
-                            <div class="field col-12 sm:col-3 mb-4">
+                            <div class="field col-12 md:col-4 sm:col-12 mb-4">
+                                <label for="country" class="block text-900 font-medium mb-2">{{ $t('profile.country') }}</label>
+                                <Dropdown id="country" v-model="firmdata.country" filter :options="countries" optionLabel="name" optionValue="code" :placeholder="$t('profile.select_country')" class="w-full" :disabled="loading || saving"/>
+                            </div>
+                            
+                            <div class="field col-12 md:col-3 sm:col-4 mb-4">
                                 <label for="zip" class="block text-900 font-medium mb-2">{{ $t('profile.zip') }}</label>
                                 <InputText id="zip" type="text" :placeholder="$t('profile.zip')" class="w-full" v-model="firmdata.zip" :disabled="loading || saving"/>
                             </div>
                             
-                            <div class="field col-12 sm:col-9 mb-4">
+                            <div class="field col-12 md:col-5 sm:col-8 mb-4">
                                 <label for="city" class="block text-900 font-medium mb-2">{{ $t('profile.city') }}</label>
                                 <InputText id="city" type="text" :placeholder="$t('profile.city')" class="w-full" v-model="firmdata.city" :disabled="loading || saving"/>
                             </div>
@@ -280,33 +280,32 @@
                                     <small class="p-error">{{ v$.invoicedata.name.$errors[0].$message }}</small>
                                 </div>
                             </div>
-                            <div class="field col-12 sm:col-4 mb-4">
-                                <label for="invoice_country" v-required class="block text-900 font-medium mb-2">{{ $t('profile.country') }}</label>
-                                <Dropdown id="invoice_country" v-model="invoicedata.country" filter :options="countries" optionLabel="name" optionValue="code" :class="{'p-invalid' : v$.invoicedata.country.$error}" :placeholder="$t('profile.select_country')" class="w-full" :disabled="loading || saving"/>
-                                <div v-if="v$.invoicedata.country.$error">
-                                    <small class="p-error">{{ v$.invoicedata.country.$errors[0].$message }}</small>
-                                </div>
-                            </div>
-                            <div class="field col-12 sm:col-4 mb-4">
+                            <div class="field col-12 md:col-6 mb-4">
                                 <label for="invoice_street" v-required class="block text-900 font-medium mb-2">{{ $t('profile.street') }}</label>
                                 <InputText id="invoice_street" type="text" :placeholder="$t('profile.street')" :class="{'p-invalid' : v$.invoicedata.street.$error}" class="w-full" v-model="invoicedata.street" :disabled="loading || saving"/>
                                 <div v-if="v$.invoicedata.street.$error">
                                     <small class="p-error">{{ v$.invoicedata.street.$errors[0].$message }}</small>
                                 </div>
                             </div>
-                            <div class="field col-12 sm:col-2 mb-4">
+                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                 <label for="invoice_house_no" v-required class="block text-900 font-medium mb-2">{{ $t('profile.house_no') }}</label>
                                 <InputText id="invoice_house_no" type="text" :placeholder="$t('profile.house_no')" :class="{'p-invalid' : v$.invoicedata.house_no.$error}" class="w-full" v-model="invoicedata.house_no" :disabled="loading || saving"/>
                                 <div v-if="v$.invoicedata.house_no.$error">
                                     <small class="p-error">{{ v$.invoicedata.house_no.$errors[0].$message }}</small>
                                 </div>
                             </div>
-                            <div class="field col-12 sm:col-2 mb-4">
+                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
                                 <label for="invoice_apartment_no" class="block text-900 font-medium mb-2">{{ $t('profile.apartment_no') }}</label>
                                 <InputText id="invoice_apartment_no" type="text" :placeholder="$t('profile.apartment_no')" class="w-full" v-model="invoicedata.apartment_no" :disabled="loading || saving"/>
                             </div>
-                            
-                            <div class="field col-12 sm:col-3 mb-4">
+                            <div class="field col-12 md:col-4 sm:col-12 mb-4">
+                                <label for="invoice_country" v-required class="block text-900 font-medium mb-2">{{ $t('profile.country') }}</label>
+                                <Dropdown id="invoice_country" v-model="invoicedata.country" filter :options="countries" optionLabel="name" optionValue="code" :class="{'p-invalid' : v$.invoicedata.country.$error}" :placeholder="$t('profile.select_country')" class="w-full" :disabled="loading || saving"/>
+                                <div v-if="v$.invoicedata.country.$error">
+                                    <small class="p-error">{{ v$.invoicedata.country.$errors[0].$message }}</small>
+                                </div>
+                            </div>
+                            <div class="field col-12 md:col-3 sm:col-4 mb-4">
                                 <label for="invoice_zip" v-required class="block text-900 font-medium mb-2">{{ $t('profile.zip') }}</label>
                                 <InputText id="invoice_zip" type="text" :placeholder="$t('profile.zip')" :class="{'p-invalid' : v$.invoicedata.zip.$error}" class="w-full" v-model="invoicedata.zip" :disabled="loading || saving"/>
                                 <div v-if="v$.invoicedata.zip.$error">
@@ -314,7 +313,7 @@
                                 </div>
                             </div>
                             
-                            <div class="field col-12 sm:col-9 mb-4">
+                            <div class="field col-12 md:col-5 sm:col-8 mb-4">
                                 <label for="invoice_city" v-required  class="block text-900 font-medium mb-2">{{ $t('profile.city') }}</label>
                                 <InputText id="invoice_city" type="text" :placeholder="$t('profile.city')" :class="{'p-invalid' : v$.invoicedata.city.$error}" class="w-full" v-model="invoicedata.city" :disabled="loading || saving"/>
                                 <div v-if="v$.invoicedata.city.$error">
