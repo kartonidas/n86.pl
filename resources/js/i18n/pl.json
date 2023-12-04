@@ -12,7 +12,9 @@
         "save" : "Zapisz",
         "success" : "Sukces",
         "yes" : "Tak",
-        "register_title" : "Zarządzaj nieruchomościami"
+        "register_title" : "Zarządzaj nieruchomościami",
+        "form_error_title" : "Formularz zawiera błędy",
+        "form_error_message" : "Popraw błędy i spróbuj ponownie"
     },
     "customers": {
         "account_type" : "Rodzaj konta",
@@ -71,6 +73,7 @@
         "updated" : "Wartość została zaktualizowana"
     },
     "items" : {
+        "add_customer" : "Dodaj klienta",
         "add_estate" : "Dodaj nieruchomość",
         "added" : "Nieruchomość została dodana",
         "add_new_reservation" : "Dodaj rezerwację",

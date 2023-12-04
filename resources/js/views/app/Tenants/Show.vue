@@ -1,6 +1,5 @@
 <script>
     import { useRoute, useRouter } from 'vue-router'
-    import { useToast } from 'primevue/usetoast';
     import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -15,13 +14,11 @@
             const route = useRoute()
             const router = useRouter()
             const tenantService = new TenantService()
-            const toast = useToast();
             
             return {
                 tenantService,
                 route,
                 router,
-                toast,
                 hasAccess
             }
         },
@@ -38,10 +35,10 @@
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null)
             }
             
@@ -53,7 +50,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -72,7 +69,7 @@
         <div class="col col-12">
              <Card class="mb-3">
                 <template #title>
-                    <div class="flex justify-content-between align-items-center mb-3">
+                    <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                         {{ tenant.name }}
                         <div v-if="hasAccess('tenant:update')">
                             <Button icon="pi pi-pencil" @click="editTenant" v-tooltip.left="$t('app.edit')"></Button>

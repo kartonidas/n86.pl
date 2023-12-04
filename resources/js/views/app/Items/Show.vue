@@ -1,6 +1,5 @@
 <script>
     import { useRoute, useRouter } from 'vue-router'
-    import { useToast } from 'primevue/usetoast';
     import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -15,13 +14,11 @@
             const route = useRoute()
             const router = useRouter()
             const itemService = new ItemService()
-            const toast = useToast();
             
             return {
                 itemService,
                 route,
                 router,
-                toast,
                 hasAccess
             }
         },
@@ -40,10 +37,10 @@
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null)
             }
             
@@ -54,7 +51,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -73,7 +70,7 @@
         <div class="col col-12">
              <Card class="mb-3">
                 <template #title>
-                    <div class="flex justify-content-between align-items-center mb-3">
+                    <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                         {{ item.name }}
                         <div v-if="hasAccess('item:update')">
                             <Button icon="pi pi-pencil" @click="editItem" v-tooltip.left="$t('app.edit')"></Button>
@@ -118,7 +115,7 @@
                 <div class="col col-12 sm:col-6">
                     <Card class="mb-3">
                         <template #title>
-                            <div class="flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                                 Najemca
                                 <div v-if="hasAccess('item:update')">
                                     <Button icon="pi pi-plus" @click="editItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
@@ -134,7 +131,7 @@
                 <div class="col col-12 sm:col-6">
                     <Card class="mb-3">
                         <template #title>
-                            <div class="flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                                 Rezerwacja
                                 <div v-if="hasAccess('item:update')">
                                     <Button icon="pi pi-plus" @click="editItem" v-tooltip.left="$t('items.add_new_reservation')"></Button>

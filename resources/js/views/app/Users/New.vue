@@ -1,6 +1,5 @@
 <script>
     import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
     import { useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, sameAs, email } from '@/utils/i18n-validators'
@@ -17,10 +16,8 @@
             const router = useRouter()
             const usersService = new UsersService()
             const permissionService = new PermissionService()
-            const { t } = useI18n();
             
             return {
-                t,
                 v$: useVuelidate(),
                 usersService,
                 permissionService,
@@ -35,14 +32,14 @@
                 permissions: [],
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.users'), disabled : true },
-                        {'label' : this.t('menu.users_list'), route : { name : 'users'} },
-                        {'label' : this.t('users.new_user'), route : { name : 'users'}, disabled : true },
+                        {'label' : this.$t('menu.users'), disabled : true },
+                        {'label' : this.$t('menu.users_list'), route : { name : 'users'} },
+                        {'label' : this.$t('users.new_user'), route : { name : 'users'}, disabled : true },
                     ],
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             this.permissionService.list(9999, 1)
                 .then(
                     (response) => {
@@ -70,8 +67,8 @@
                             (response) => {
                                 appStore().setToastMessage({
                                     severity : 'success',
-                                    summary : this.t('app.success'),
-                                    detail : this.t('users.added'),
+                                    summary : this.$t('app.success'),
+                                    detail : this.$t('users.added'),
                                 });
                                 
                                 if(hasAccess('user:update'))
@@ -80,11 +77,13 @@
                                     this.router.push({name: 'users'})
                             },
                             (response) => {
-                                this.saving = false
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                                 this.errors = getResponseErrors(response);
+                                this.saving = false
                             }
                         )
-                }
+                } else
+                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
         },
         validations () {
@@ -106,7 +105,15 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <form v-on:submit.prevent="createUser">
+                <form v-on:submit.prevent="createUser" class="sticky-footer-form">
+                    <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
@@ -171,16 +178,10 @@
                         </div>
                     </div>
                     
-                    <Message severity="error" :closable="false" v-if="errors.length">
-                        <ul class="list-unstyled">
-                            <li v-for="error of errors">
-                                {{ error }}
-                            </li>
-                        </ul>
-                    </Message>
-                    
-                    <div class="text-right">
-                        <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    <div class="form-footer">
+                        <div class="text-right">
+                            <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                        </div>
                     </div>
                 </form>
             </div>

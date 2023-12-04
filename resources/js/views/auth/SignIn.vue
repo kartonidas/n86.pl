@@ -1,7 +1,6 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
-    import { useI18n } from 'vue-i18n'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, email } from '@/utils/i18n-validators'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
@@ -12,7 +11,6 @@
         setup() {
             setMetaTitle('meta.title.signin')
             
-            const { t } = useI18n();
             const userService = new UserService()
             const router = useRouter()
             

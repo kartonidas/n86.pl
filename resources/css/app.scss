@@ -35,3 +35,23 @@ input::placeholder,
 .header-border-bottom {
     border-bottom: 1px solid var(--surface-border);
 }
+
+.p-breadcrumb-list {
+    text-wrap: nowrap;
+}
+
+@media screen and (max-width: 991px) {
+    .sticky-footer-form {
+        margin-bottom: 70px;
+        
+        .form-footer {
+            position: fixed;
+            bottom: 0;
+            background: white;
+            width: 100vw;
+            left: 0;
+            padding: 1rem 4rem 1rem 4rem;
+            border-top: 1px solid var(--surface-border);
+        }
+    }
+}

@@ -1,6 +1,5 @@
 <script>
     import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
     import { useRouter } from 'vue-router'
     import { useVuelidate } from '@vuelidate/core'
     import { required } from '@/utils/i18n-validators'
@@ -15,10 +14,8 @@
             
             const router = useRouter()
             const permissionService = new PermissionService()
-            const { t } = useI18n();
             
             return {
-                t,
                 v$: useVuelidate(),
                 permissionService,
                 router
@@ -34,14 +31,14 @@
                 permission_items: [],
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.users'), disabled : true },
-                        {'label' : this.t('menu.permissions'), route : { name : 'permissions'} },
-                        {'label' : this.t('permissions.new'), route : { name : 'permissions'}, disabled : true },
+                        {'label' : this.$t('menu.users'), disabled : true },
+                        {'label' : this.$t('menu.permissions'), route : { name : 'permissions'} },
+                        {'label' : this.$t('permissions.new'), route : { name : 'permissions'}, disabled : true },
                     ],
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             this.permissionService.modules()
                 .then(
                     (response) => {
@@ -84,8 +81,8 @@
                             (response) => {
                                 appStore().setToastMessage({
                                     severity : 'success',
-                                    summary : this.t('app.success'),
-                                    detail : this.t('permissions.added'),
+                                    summary : this.$t('app.success'),
+                                    detail : this.$t('permissions.added'),
                                 });
                                 
                                 if(hasAccess('permission:update'))
@@ -94,11 +91,13 @@
                                     this.router.push({name: 'permissions'})
                             },
                             (response) => {
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                                 this.errors = getResponseErrors(response)
                                 this.saving = false
                             }
                         )
-                }
+                } else
+                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             getCheckboxInputId(a, b) {
                 return "permission-" + a + "-" + b
@@ -119,12 +118,20 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <form v-on:submit.prevent="createGroup">
+                <form v-on:submit.prevent="createGroup" class="sticky-footer-form">
+                    <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
                                 <div class="field col-12 mb-4">
-                                    <label for="name" class="block text-900 font-medium mb-2">{{ $t('permissions.name') }}</label>
+                                    <label for="name" class="block text-900 font-medium mb-2" v-required>{{ $t('permissions.name') }}</label>
                                     <InputText id="name" type="text" :placeholder="$t('permissions.name')" class="w-full" :class="{'p-invalid' : v$.permission.name.$error}" v-model="permission.name" :disabled="loading || saving"/>
                                     <div v-if="v$.permission.name.$error">
                                         <small class="p-error">{{ v$.permission.name.$errors[0].$message }}</small>
@@ -150,20 +157,15 @@
                             </div>
                         </div>
                     </div>
-                    <Message severity="error" :closable="false" v-if="errors.length">
-                        <ul class="list-unstyled">
-                            <li v-for="error of errors">
-                                {{ error }}
-                            </li>
-                        </ul>
-                    </Message>
                     
-                    <div class="" v-if="loading">
-                        <ProgressSpinner style="width: 25px; height: 25px"/>
-                    </div>
-                    
-                    <div class="text-right">
-                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    <div class="form-footer">
+                        <div class="" v-if="loading">
+                            <ProgressSpinner style="width: 25px; height: 25px"/>
+                        </div>
+                        
+                        <div class="text-right">
+                            <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                        </div>
                     </div>
                 </form>
             </div>

@@ -1,7 +1,6 @@
 <script>
     import { useRouter, useRoute } from 'vue-router'
     import { hasAccess, setMetaTitle } from '@/utils/helper'
-    import { useToast } from 'primevue/usetoast';
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -15,12 +14,10 @@
             const router = useRouter()
             const route = useRoute()
             const tenantService = new TenantService()
-            const toast = useToast();
             
             return {
                 router,
                 route,
-                toast,
                 tenantService,
                 hasAccess
             }
@@ -45,7 +42,7 @@
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             let order = appStore().getTableOrder('tenants');
             if (order != undefined) {
                 this.meta.sortField = order.col;
@@ -54,7 +51,7 @@
             
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null)
             }
             this.getList()
@@ -71,7 +68,7 @@
                             this.loading = false
                         },
                         (errors) => {
-                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
             },
@@ -109,10 +106,10 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('tenants.deleted'), life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('tenants.deleted'), life: 3000 });
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -139,7 +136,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-5">
-                    <h5 class="inline-flex mb-0">{{ $t('menu.tenant_list') }}</h5>
+                    <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.tenant_list') }}</h4>
                     <div class="text-right mb-0 inline-flex" v-if="hasAccess('tenant:create')">
                         <Button icon="pi pi-plus" v-tooltip.left="$t('tenants.add_tenant')" @click="newTenant" class="text-center"></Button>
                     </div>

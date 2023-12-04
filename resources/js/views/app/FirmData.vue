@@ -1,7 +1,5 @@
 <script>
     import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
-    import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { required, requiredIf, email } from '@/utils/i18n-validators'
@@ -13,15 +11,11 @@
         setup() {
             setMetaTitle('meta.title.firm_data')
             
-            const { t } = useI18n();
-            const toast = useToast();
             const userService = new UserService();
             
             return {
-                t,
                 v$: useVuelidate(),
                 userService,
-                toast
             }
         },
         data() {
@@ -38,21 +32,21 @@
                 accountTypes: [
                     {
                         "value" : "firm",
-                        "name" : this.t('profile.invoice_account_firm')
+                        "name" : this.$t('profile.invoice_account_firm')
                     },
                     {
                         "value" : "person",
-                        "name" : this.t('profile.invoice_account_person')
+                        "name" : this.$t('profile.invoice_account_person')
                     }
                 ],
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.firm_data'), disabled : true}
+                        {'label' : this.$t('menu.firm_data'), disabled : true}
                     ]
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             this.userService.firmData()
                 .then(
                     (response) => {
@@ -60,7 +54,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     },
                 )
                 
@@ -72,7 +66,7 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     },
                 )
         },
@@ -85,15 +79,17 @@
                     this.userService.updateFirmData(this.firmdata)
                         .then(
                             (response) => {
-                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('profile.firm_data_updated'), life: 3000 });
+                                this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('profile.firm_data_updated'), life: 3000 });
                                 this.saving = false;
                             },
                             (response) => {
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                                 this.errors = getResponseErrors(response)
                                 this.saving = false
                             }
                     )
-                }
+                } else
+                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             
             async updateInvoiceData() {
@@ -104,19 +100,22 @@
                     this.userService.updateInvoiceData(this.invoicedata)
                         .then(
                             (response) => {
-                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('profile.invoice_data_updated'), life: 3000 });
+                                this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('profile.invoice_data_updated'), life: 3000 });
                                 this.saving = false;
                             },
                             (response) => {
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                                 this.errors = getResponseErrors(response)
                                 this.saving = false
                             }
                     )
-                }
+                } else
+                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             
             onTabChange(event) {
                 this.currentTabIndex = event.index
+                this.errors = []
                 this.v$.$reset()
             }
         },
@@ -149,7 +148,15 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <TabView @tab-change="onTabChange">
         <TabPanel :header="$t('profile.firm_data')">
-            <form v-on:submit.prevent="updateFirmData">
+            <form v-on:submit.prevent="updateFirmData" class="sticky-footer-form">
+                <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+                    <ul class="list-unstyled">
+                        <li v-for="error of errors">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </Message>
+                
                 <div class="mb-4">
                     <div class="p-fluid">
                         <div class="formgrid grid">
@@ -227,7 +234,17 @@
                         </div>
                     </div>
                 </div>
-                <Message severity="error" :closable="false" v-if="errors.length">
+                
+                <div class="form-footer">
+                    <div class="text-right">
+                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    </div>
+                </div>
+            </form>
+        </TabPanel>
+        <TabPanel :header="$t('profile.invoice_data')">
+            <form v-on:submit.prevent="updateInvoiceData" class="sticky-footer-form">
+                <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
                     <ul class="list-unstyled">
                         <li v-for="error of errors">
                             {{ error }}
@@ -235,13 +252,6 @@
                     </ul>
                 </Message>
                 
-                <div class="text-right">
-                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
-                </div>
-            </form>
-        </TabPanel>
-        <TabPanel :header="$t('profile.invoice_data')">
-            <form v-on:submit.prevent="updateInvoiceData">
                 <div class="mb-4">
                     <div class="p-fluid">
                         <div class="formgrid grid">
@@ -323,16 +333,11 @@
                         </div>
                     </div>
                 </div>
-                <Message severity="error" :closable="false" v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error of errors">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </Message>
                 
-                <div class="text-right">
-                    <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                <div class="form-footer">
+                    <div class="text-right">
+                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    </div>
                 </div>
             </form>
         </TabPanel>

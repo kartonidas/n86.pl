@@ -24,7 +24,7 @@
         </span>
         
         <span v-if="object.zip || object.city">
-            <span v-if="object.street">,<br v-if="newline"/></span>
+            <span v-if="object.street">, <br v-if="newline"/></span>
             <span v-if="object.zip">{{ object.zip }}</span> <span v-if="object.city">{{ object.city }}</span>
         </span>
         

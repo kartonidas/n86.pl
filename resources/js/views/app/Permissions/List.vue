@@ -1,8 +1,6 @@
 <script>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
-    import { useI18n } from 'vue-i18n'
-    import { useToast } from 'primevue/usetoast';
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import PermissionService from '@/service/PermissionService'
@@ -13,14 +11,10 @@
             
             const router = useRouter()
             const permissionService = new PermissionService()
-            const { t } = useI18n();
-            const toast = useToast();
             
             return {
                 router,
-                t,
                 permissionService,
-                toast,
                 hasAccess
             }
         },
@@ -36,16 +30,16 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
-                        {'label' : this.t('menu.users'), disabled : true },
-                        {'label' : this.t('menu.permissions'), route : { name : 'permissions'}, disabled : true },
+                        {'label' : this.$t('menu.users'), disabled : true },
+                        {'label' : this.$t('menu.permissions'), route : { name : 'permissions'}, disabled : true },
                     ],
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null);
             }
             this.getList()
@@ -62,7 +56,7 @@
                             this.loading = false
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                         }
                     )
             },
@@ -90,10 +84,10 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('permissions.deleted'), life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('permissions.deleted'), life: 3000 });
                         },
                         (response) => {
-                            this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                         },
                     )
                 
@@ -119,7 +113,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-5">
-                    <h5 class="inline-flex mb-0">{{ $t('menu.permissions') }}</h5>
+                    <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.permissions') }}</h4>
                     <div class="text-right mb-0 inline-flex" v-if="hasAccess('permission:create')">
                         <Button icon="pi pi-plus" v-tooltip.left="$t('permissions.add_group')" @click="newGroup" class="text-center"></Button>
                     </div>

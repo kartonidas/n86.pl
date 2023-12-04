@@ -1,8 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { useI18n } from 'vue-i18n'
     import { useRoute } from 'vue-router'
-    import { useToast } from 'primevue/usetoast';
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, sameAs, email } from '@/utils/i18n-validators'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
@@ -17,17 +15,13 @@
             
             const usersService = new UsersService()
             const permissionService = new PermissionService()
-            const { t } = useI18n();
             const route = useRoute()
-            const toast = useToast();
             
             return {
-                t,
                 v$: useVuelidate(),
                 usersService,
                 permissionService,
                 route,
-                toast
             }
         },
         data() {
@@ -40,17 +34,17 @@
                 permissions: [],
                 meta: {
                     breadcrumbItems: [
-                        {'label' : this.t('menu.users'), disabled : true },
-                        {'label' : this.t('menu.users_list'), route : { name : 'users'} },
-                        {'label' : this.t('users.edit_user'), disabled : true },
+                        {'label' : this.$t('menu.users'), disabled : true },
+                        {'label' : this.$t('menu.users_list'), route : { name : 'users'} },
+                        {'label' : this.$t('users.edit_user'), disabled : true },
                     ],
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null);
             }
             
@@ -61,7 +55,7 @@
                         this.loading = false
                     },
                     (errors) => {
-                        this.toast.add({ severity: 'error', summary: this.t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
                 
@@ -83,15 +77,17 @@
                     this.usersService.update(this.route.params.userId, this.user)
                         .then(
                             (response) => {
-                                this.toast.add({ severity: 'success', summary: this.t('app.success'), detail: this.t('users.updated'), life: 3000 });
+                                this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('users.updated'), life: 3000 });
                                 this.saving = false;
                             },
                             (response) => {
-                                this.saving = false;
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                                 this.errors = getResponseErrors(response);
+                                this.saving = false;
                             },
                         );
-                }
+                } else
+                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             
             getPasswordToCompare() {
@@ -117,7 +113,15 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <form v-on:submit.prevent="updateUser">
+                <form v-on:submit.prevent="updateUser" class="sticky-footer-form">
+                    <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+                        <ul class="list-unstyled">
+                            <li v-for="error of errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </Message>
+                    
                     <div class="mb-4">
                         <div class="p-fluid">
                             <div class="formgrid grid">
@@ -189,20 +193,14 @@
                         </div>
                     </div>
                     
-                    <Message severity="error" :closable="false" v-if="errors.length">
-                        <ul class="list-unstyled">
-                            <li v-for="error of errors">
-                                {{ error }}
-                            </li>
-                        </ul>
-                    </Message>
-                    
-                    <div class="" v-if="loading">
-                        <ProgressSpinner style="width: 25px; height: 25px"/>
-                    </div>
-                    
-                    <div class="text-right">
-                        <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                    <div class="form-footer">
+                        <div class="" v-if="loading">
+                            <ProgressSpinner style="width: 25px; height: 25px"/>
+                        </div>
+                        
+                        <div class="text-right">
+                            <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                        </div>
                     </div>
                 </form>
             </div>

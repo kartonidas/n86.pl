@@ -1,14 +1,11 @@
 <script>
-    import { ref, reactive, computed } from 'vue'
-    import { useRoute, useRouter } from 'vue-router'
-    import { useToast } from 'primevue/usetoast';
-    import { useVuelidate } from '@vuelidate/core'
-    import { required, email } from '@/utils/i18n-validators'
+    import { ref } from 'vue'
+    import { useRoute } from 'vue-router'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
-    import CustomerService from '@/service/CustomerService'
     import CustomerForm from './_Form.vue'
+    import CustomerService from '@/service/CustomerService'
     
     export default {
         components: { CustomerForm },
@@ -22,52 +19,18 @@
                     phone : []
                 },
             })
-            const state = reactive({ 'customer' : customer})
-            const rules = computed(() => {
-                const rules = {
-                    customer: {
-                        name: { required },
-                        type: { required },
-                    }
-                }
-                
-                rules.customer.contacts = {}
-                if(state.customer.contacts.email.length)
-                {
-                    rules.customer.contacts.email = []
-                    
-                    for(var i = 0; i < state.customer.contacts.email.length; i++)
-                        rules.customer.contacts.email.push({ val : { required, email } })
-                }
-                
-                if(state.customer.contacts.phone.length)
-                {
-                    rules.customer.contacts.phone = []
-                    
-                    for(var i = 0; i < state.customer.contacts.phone.length; i++)
-                        rules.customer.contacts.phone.push({ val : { required } })
-                }
-                
-                return rules
-            })
             
             const route = useRoute()
-            const router = useRouter()
             const customerService = new CustomerService()
-            const toast = useToast();
             
             return {
-                v$: useVuelidate(rules, state),
                 customerService,
+                customer,
                 route,
-                router,
-                toast,
-                customer
             }
         },
         data() {
             return {
-                types: this.customerService.types(this.$t),
                 saving: false,
                 loading: true,
                 errors: [],
@@ -81,10 +44,10 @@
                 }
             }
         },
-        mounted() {
+        beforeMount() {
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
-                this.toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null)
             }
             this.customerService.get(this.route.params.customerId)
@@ -94,34 +57,28 @@
                         this.loading = false
                     },
                     (response) => {
-                        this.toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
                     }
                 );
         },
         methods: {
             async updateCustomer() {
-                const result = await this.v$.$validate()
-                if (result) {
-                    this.saving = true
-                    this.errors = []
-                    
-                    this.customerService.update(this.route.params.customerId, this.customer)
-                        .then(
-                            (response) => {
-                                this.toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('customers.updated'), life: 3000 });
-                                this.saving = false;
-                            },
-                            (response) => {
-                                this.errors = getResponseErrors(response)
-                                this.saving = false
-                            }
-                    )
-                }
+                this.saving = true
+                this.errors = []
+                
+                this.customerService.update(this.route.params.customerId, this.customer)
+                    .then(
+                        (response) => {
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('customers.updated'), life: 3000 });
+                            this.saving = false;
+                        },
+                        (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
+                            this.errors = getResponseErrors(response)
+                            this.saving = false
+                        }
+                )
             },
-            
-            back() {
-                this.router.push({name: 'customer_show', params: { customerId : this.customer.id }})
-            }
         },
     }
 </script>
@@ -129,18 +86,7 @@
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="card p-fluid mt-4">
-        <h4 class="mb-5 header-border-bottom pb-2">{{ $t('customers.basic_data') }}</h4>
-        <form v-on:submit.prevent="updateCustomer">
-            <CustomerForm :customer="customer" :types="types" :saving="saving" :loading="loading" :errors="errors" :v="v$" />
-            
-            <div v-if="loading">
-                <ProgressSpinner style="width: 25px; height: 25px"/>
-            </div>
-            
-            <div class="flex justify-content-between align-items-center">
-                <Button type="button" :label="$t('app.cancel')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
-                <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
-            </div>
-        </form>
+        <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('customers.basic_data') }}</h4>
+        <CustomerForm @submit-form="updateCustomer" :customer="customer" :update="true" :saving="saving" :loading="loading" :errors="errors" />
     </div>
 </template>
