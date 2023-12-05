@@ -2,12 +2,13 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class TenantService {
-    list(size, page, sort, order) {
+    list(size, page, sort, order, search) {
         var data = {
             size: size,
             page: page,
             sort: sort,
             order: order,
+            search: search,
         };
         return axios.get('api/v1/tenants', { params : data });
     }
@@ -26,5 +27,9 @@ export default class TenantService {
     
     remove(tenantId) {
         return axios.delete('api/v1/tenant/' + tenantId);
+    }
+    
+    validate(tenantData) {
+        return axios.post('api/v1/tenant/validate', tenantData);
     }
 }

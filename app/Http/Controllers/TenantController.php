@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\StoreTenantRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
@@ -21,11 +22,14 @@ class TenantController extends Controller
     {
         User::checkAccess("tenant:list");
         
-        $request->validate([
+        $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
             "sort" => "nullable",
             "order" => "nullable|integer",
+            "search.name" => "nullable|string",
+            "search.type" => ["nullable", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
+            "search.pesel_nip" => "nullable|string",
         ]);
         
         $size = $request->input("size", config("api.list.size"));
@@ -33,6 +37,21 @@ class TenantController extends Controller
         
         $tenants = Customer
             ::apiFields()->tenant();
+            
+        if(!empty($validated["search"]))
+        {
+            if(!empty($validated["search"]["name"]))
+                $tenants->where("name", "LIKE", "%" . $validated["search"]["name"] . "%");
+            if(!empty($validated["search"]["type"]))
+                $tenants->where("type", $validated["search"]["type"]);
+            if(!empty($validated["search"]["pesel_nip"])) {
+                $tenants->where(function($q) use($validated) {
+                    $q
+                        ->where("pesel", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%")
+                        ->orWhere("nip", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%");
+                });
+            }
+        }
             
         $total = $tenants->count();
         
@@ -53,30 +72,16 @@ class TenantController extends Controller
         return $out;
     }
     
-    public function create(Request $request)
+    public function validateData(StoreTenantRequest $request)
+    {
+        return true;
+    }
+    
+    public function create(StoreTenantRequest $request)
     {
         User::checkAccess("tenant:create");
         
-        $rules = [
-            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
-            "name" => "required|max:100",
-            "street" => "nullable|max:80",
-            "house_no" => "nullable|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "nullable|max:120",
-            "zip" => "nullable|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "comments" => "sometimes|max:5000",
-            "send_sms" => "sometimes|boolean",
-            "send_email" => "sometimes|boolean",
-        ];
-        
-        if($request->input("type", null) == Customer::TYPE_PERSON)
-            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
-        elseif($request->input("type", null) == Customer::TYPE_FIRM)
-            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
-        
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
         
         $tenant = new Customer;
         $tenant->role = Customer::ROLE_TENANT;
@@ -95,6 +100,9 @@ class TenantController extends Controller
         $tenant->send_email = $validated["send_email"] ?? 0;
         $tenant->save();
         
+        if(!empty($validated["contacts"]))
+            $tenant->updateContact($validated["contacts"]);
+        
         return $tenant->id;
     }
     
@@ -111,7 +119,7 @@ class TenantController extends Controller
         return $tenant;
     }
     
-    public function update(Request $request, $tenantId)
+    public function update(StoreTenantRequest $request, $tenantId)
     {
         User::checkAccess("tenant:update");
         
@@ -119,38 +127,19 @@ class TenantController extends Controller
         if(!$tenant)
             throw new ObjectNotExist(__("Tenant does not exist"));
         
-        $rules = [
-            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
-            "name" => "required|max:100",
-            "street" => "sometimes|max:80",
-            "house_no" => "sometimes|max:20",
-            "apartment_no" => "sometimes|max:20",
-            "city" => "sometimes|max:120",
-            "zip" => "sometimes|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "comments" => "sometimes|max:5000",
-            "send_sms" => "sometimes|boolean",
-            "send_email" => "sometimes|boolean",
-        ];
+        $validated = $request->validated();
         
-        if($request->input("type", null) == Customer::TYPE_PERSON)
-            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
-        elseif($request->input("type", null) == Customer::TYPE_FIRM)
-            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
-        
-        $updateFields = $request->validate($rules);
-        
-        $updateContactFields = $request->validate([
-            "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],
-            "contacts.phone" => ["sometimes", "array", new \App\Rules\ContactPhone]
-        ]);
-        
-        foreach($updateFields as $field => $value)
+        foreach($validated as $field => $value)
+        {
+            if($field == "contacts")
+                continue;
+            
             $tenant->{$field} = $value;
+        }
         $tenant->save();
         
-        if(!empty($updateContactFields["contacts"]))
-            $tenant->updateContact($updateContactFields["contacts"]);
+        if(!empty($validated["contacts"]))
+            $tenant->updateContact($validated["contacts"]);
         
         return true;
     }

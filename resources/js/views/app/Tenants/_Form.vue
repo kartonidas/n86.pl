@@ -2,6 +2,7 @@
     import { ref, reactive, computed } from 'vue'
     import { useVuelidate } from '@vuelidate/core'
     import { required, email } from '@/utils/i18n-validators'
+    import { getValues } from '@/utils/helper'
     
     import Countries from '@/data/countries.json'
     import TenantService from '@/service/TenantService'
@@ -55,7 +56,7 @@
                 phoneCodes : PhoneCodes,
                 phoneCodesFilterFields : ['code', 'name'],
                 countries: Countries[this.$i18n.locale],
-                types: this.tenantService.types(),
+                types: getValues('tenant_types'),
                 v: useVuelidate(rules, state),
                 toValidate: toValidate
             }
@@ -65,7 +66,7 @@
             saving: { type: Boolean },
             loading: { type: Boolean },
             errors: { type: Array },
-            update: { type: Boolean },
+            source: { type: String, default: 'new' },
         },
         computed: {
             labelTenantTypeName: {
@@ -313,9 +314,14 @@
         </div>
         
         <div class="form-footer">
-            <div v-if="!update">
+            <div v-if="source == 'new'">
                 <div class="text-right">
                     <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                </div>
+            </div>
+            <div v-else-if="source == 'rent'">
+                <div class="text-right">
+                    <Button type="submit" :label="$t('app.next')" :loading="saving" iconPos="right" icon="pi pi-angle-right" class="w-auto text-center"></Button>
                 </div>
             </div>
             <div v-else>

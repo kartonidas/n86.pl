@@ -34,5 +34,9 @@ return [
             "module" => "Customers",
             "operation" => ["list", "create", "update", "delete"]
         ],
+        "rent" => [
+            "module" => "Rents",
+            "operation" => ["list", "create", "update", "delete"]
+        ],
     ]
 ];

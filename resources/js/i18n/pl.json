@@ -1,11 +1,13 @@
 {
     "META_APP_NAME" : "Zarządzenie nieruchomościami",
     "app": {
+        "back" : "Wstecz",
         "cancel" : "Anuluj",
         "confirmation" : "Potwierdzenie",
         "edit" : "Edytuj",
         "error" : "Błąd",
         "logout" : "Wyloguj się",
+        "next" : "Dalej",
         "no" : "Nie",
         "remove": "Usuń",
         "remove_object_confirmation" : "Wybrany element zostanie usunięty. Kontynuować?",
@@ -75,10 +77,12 @@
     "items" : {
         "add_customer" : "Dodaj klienta",
         "add_estate" : "Dodaj nieruchomość",
-        "added" : "Nieruchomość została dodana",
         "add_new_reservation" : "Dodaj rezerwację",
         "add_new_tenant" : "Dodaj najemcę",
+        "added" : "Nieruchomość została dodana",
+        "additional_data" : "Dodatkowe informacje",
         "address" : "Adres",
+        "address_data" : "Dane adresowe",
         "apartment_no" : "Numer lokalu",
         "area" : "Powierzchnia",
         "basic_data" : "Dane podstawowe",
@@ -172,7 +176,8 @@
             "permissions_new" : "Nowa grupa",
             "dictionaries_list" : "Wartości słownikowe",
             "dictionaries_edit" : "Edycja wartości słownikowej",
-            "dictionaries_new" : "Nowa wartość słownikowa"
+            "dictionaries_new" : "Nowa wartość słownikowa",
+            "rent_tenant" : "Wynajmij: dane najemcy"
         }
     },
     "permissions" : {
@@ -247,6 +252,29 @@
         "thank_for_registering" : "Dziękujemy za rejestrację. Na podany przez Ciebie adres e-mail zostało wysłane potwierdzenie rejestracji.",
         "thank_for_registering_2" : "Kliknij w otrzymany link aby dokończyć rejestrację i móc w pełni korzystać z serwisu."
     },
+    "rent" : {
+        "add_new_tenant" : "Dodaj nowego najemce",
+        "deposit" : "Kaucja",
+        "end_date" : "Data zakończenia wynajmu",
+        "first_payment_date" : "Data pierwszej płatności",
+        "months" : "Ilość miesięcy",
+        "new_rent" : "Rozpocznij wynajem",
+        "payment" : "Płatność",
+        "payments" : "Płatności",
+        "period" : "Czas trwania wynajmu",
+        "rent" : "Czynsz",
+        "select_payment" : "Wybierz płatność",
+        "select_period" : "Wybierz czas trwania najmu",
+        "select_tenant" : "Wybierz najemce z listy",
+        "select_termination_period" : "Wybierz okres wypowiedzenie",
+        "start_date" : "Data rozpoczęcia wynajmu",
+        "summary" : "Podsumowanie",
+        "rent_details" : "Szczegóły najmu",
+        "tenant_data" : "Dane najemcy",
+        "termination_days" : "Wypowiedzenie - ilość dni",
+        "termination_months" : "Wypowiedzenie - ilość miesięcy",
+        "termination_period" : "Okres wypowiedzenia"
+    },
     "tenants": {
         "account_type" : "Rodzaj konta",
         "add" : "Dodaj",
@@ -255,7 +283,7 @@
         "add_tenant" : "Dodaj najemce",
         "added" : "Najemca został utworzony",
         "address" : "Adres",
-        "agree_notifications" : "Klient wyraził zgodę na wysyłanie wiadomości",
+        "agree_notifications" : "Nejemca wyraził zgodę na wysyłanie wiadomości",
         "apartment_no" : "Numer lokalu",
         "basic_data" : "Dane podstawowe",
         "card" : "Wizytówka",
@@ -274,6 +302,7 @@
         "name" : "Nazwa",
         "new_tenant" : "Dodaj nowego najemce",
         "nip" : "NIP",
+        "nip_pesel" : "NIP / Pesel",
         "no_emails" : "Brak zdefiniowanych adresów e-mail",
         "no_phones" : "Brak zdefiniowanych numerów telefonu",
         "notifications" : "Powiadomienia",

@@ -75,6 +75,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/tenant/{id}', [TenantController::class, "get"])->where("id", "[0-9]+");
     $router->put('/tenant/{id}', [TenantController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/tenant/{id}', [TenantController::class, "delete"])->where("id", "[0-9]+");
+    $router->post('/tenant/validate', [TenantController::class, "validateData"]);
     $router->get('/tenant/{id}/history', [TenantController::class, "history"])->where("id", "[0-9]+");
     
     // SŁOWNIKI

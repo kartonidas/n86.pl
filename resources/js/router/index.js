@@ -242,6 +242,29 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/rent',
+                    children: [
+                        {
+                            path: '/app/rent/tenant/:tenantId',
+                            name: 'rent_source_tenant',
+                            component: () => import('@/views/app/Rent/SourceTenant.vue'),
+                            meta: {permission: 'rent:create'},
+                        },
+                        {
+                            path: '/app/rent/item/:itemId',
+                            name: 'rent_source_item',
+                            component: () => import('@/views/app/Rent/SourceItem.vue'),
+                            meta: {permission: 'rent:create'},
+                        },
+                        {
+                            path: '/app/rent/:tenantId',
+                            name: 'rent_source_direct',
+                            component: () => import('@/views/app/Rent/SourceDirect.vue'),
+                            meta: {permission: 'rent:create'},
+                        },
+                    ]
+                },
+                {
                     path: '/app/documents',
                     children: [
                         {

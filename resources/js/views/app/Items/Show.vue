@@ -54,6 +54,10 @@
         methods: {
             editItem() {
                 this.$router.push({name: 'item_edit', params: { itemId : this.$route.params.itemId }})
+            },
+            
+            rentItem() {
+                this.$router.push({name: 'rent_source_item', params: { itemId : this.$route.params.itemId }})
             }
         },
     }
@@ -113,8 +117,8 @@
                         <template #title>
                             <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                                 Najemca
-                                <div v-if="hasAccess('item:update')">
-                                    <Button icon="pi pi-plus" @click="editItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
+                                <div v-if="hasAccess('rent:create')">
+                                    <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
                                 </div>
                             </div>
                         </template>

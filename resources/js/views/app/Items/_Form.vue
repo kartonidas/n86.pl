@@ -179,7 +179,7 @@
                 <div class="formgrid grid ">
                     <div class="col-12">
                         <Divider align="left" class="mb-5">
-                            Dane adresowe
+                            {{ $t('items.address_data') }}
                         </Divider>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                 <div class="formgrid grid ">
                     <div class="col-12">
                         <Divider align="left" class="mb-5">
-                            Dodatkowe informacje
+                            {{ $t('items.additional_data') }}
                         </Divider>
                     </div>
                 </div>

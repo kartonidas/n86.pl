@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\StoreCustomerRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
@@ -53,30 +54,11 @@ class CustomerController extends Controller
         return $out;
     }
     
-    public function create(Request $request)
+    public function create(StoreCustomerRequest $request)
     {
         User::checkAccess("customer:create");
         
-        $rules = [
-            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
-            "name" => "required|max:100",
-            "street" => "sometimes|max:80",
-            "house_no" => "sometimes|max:20",
-            "apartment_no" => "sometimes|max:20",
-            "city" => "sometimes|max:120",
-            "zip" => "sometimes|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "comments" => "sometimes|max:5000",
-            "send_sms" => "sometimes|boolean",
-            "send_email" => "sometimes|boolean",
-        ];
-        
-        if($request->input("type", null) == Customer::TYPE_PERSON)
-            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
-        elseif($request->input("type", null) == Customer::TYPE_FIRM)
-            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
-            
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
         
         $customer = new Customer;
         $customer->role = Customer::ROLE_CUSTOMER;
@@ -95,13 +77,8 @@ class CustomerController extends Controller
         $customer->send_email = $validated["send_email"] ?? 0;
         $customer->save();
         
-        $customerContactFields = $request->validate([
-            "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],
-            "contacts.phone" => ["sometimes", "array", new \App\Rules\ContactPhone]
-        ]);
-        
-        if(!empty($customerContactFields["contacts"]))
-            $customer->updateContact($customerContactFields["contacts"]);
+        if(!empty($validated["contacts"]))
+            $customer->updateContact($validated["contacts"]);
         
         return $customer->id;
     }
@@ -119,7 +96,7 @@ class CustomerController extends Controller
         return $customer;
     }
     
-    public function update(Request $request, $customerId)
+    public function update(StoreCustomerRequest $request, $customerId)
     {
         User::checkAccess("customer:update");
         
@@ -127,38 +104,19 @@ class CustomerController extends Controller
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         
-        $rules = [
-            "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
-            "name" => "required|max:100",
-            "street" => "sometimes|max:80",
-            "house_no" => "sometimes|max:20",
-            "apartment_no" => "sometimes|max:20",
-            "city" => "sometimes|max:120",
-            "zip" => "sometimes|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "comments" => "sometimes|max:5000",
-            "send_sms" => "sometimes|boolean",
-            "send_email" => "sometimes|boolean",
-        ];
+        $validated = $request->validated();
         
-        if($request->input("type", null) == Customer::TYPE_PERSON)
-            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
-        elseif($request->input("type", null) == Customer::TYPE_FIRM)
-            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
-        
-        $updateFields = $request->validate($rules);
-        
-        $updateContactFields = $request->validate([
-            "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],
-            "contacts.phone" => ["sometimes", "array", new \App\Rules\ContactPhone]
-        ]);
-        
-        foreach($updateFields as $field => $value)
+        foreach($validated as $field => $value)
+        {
+            if($field == "contacts")
+                continue;
+            
             $customer->{$field} = $value;
+        }
         $customer->save();
         
-        if(!empty($updateContactFields["contacts"]))
-            $customer->updateContact($updateContactFields["contacts"]);
+        if(!empty($validated["contacts"]))
+            $customer->updateContact($validated["contacts"]);
         
         return true;
     }
