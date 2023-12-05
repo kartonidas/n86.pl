@@ -55,7 +55,7 @@
                 phoneCodes : PhoneCodes,
                 phoneCodesFilterFields : ['code', 'name'],
                 countries: Countries[this.$i18n.locale],
-                types: this.tenantService.types(this.$t),
+                types: this.tenantService.types(),
                 v: useVuelidate(rules, state),
                 toValidate: toValidate
             }

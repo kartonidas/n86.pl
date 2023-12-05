@@ -1,5 +1,5 @@
 <script>
-    import { useRouter, useRoute } from 'vue-router'
+    import { useRoute } from 'vue-router'
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -11,15 +11,13 @@
         setup() {
             setMetaTitle('meta.title.customers_list')
             
-            const router = useRouter()
             const route = useRoute()
             const customerService = new CustomerService()
             
             return {
-                router,
-                route,
                 customerService,
-                hasAccess
+                hasAccess,
+                route,
             }
         },
         data() {
@@ -93,11 +91,11 @@
             },
             
             newCustomer() {
-                this.router.push({name: 'customer_new'})
+                this.$router.push({name: 'customer_new'})
             },
             
             showCustomer(customerId) {
-                this.router.push({name: 'customer_show', params: { customerId : customerId }})
+                this.$router.push({name: 'customer_show', params: { customerId : customerId }})
             },
             
             openConfirmation(id) {

@@ -27,21 +27,4 @@ export default class TenantService {
     remove(tenantId) {
         return axios.delete('api/v1/tenant/' + tenantId);
     }
-    
-    types(t) {
-        return [
-            {"id" : "person", "name" : t('customers.type_person')},
-            {"id" : "firm", "name" : t('customers.type_firm')},
-        ];
-    }
-    
-    getTypeLabel(t, type) {
-        var label = '-';
-        this.types(t).forEach((elem) => {
-            if (elem.id == type) {
-                label = elem.name;
-            }
-        });
-        return label;
-    }
 }

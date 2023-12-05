@@ -52,10 +52,12 @@ class UserPermission extends Model
             $permissions = explode(";", $this->permissions);
             if($permissions)
             {
+                $allowedPermissionGroups = array_keys(config("permissions.permission"));
                 foreach($permissions as $permission)
                 {
                     list($group, $perm) = explode(":", $permission);
-                    $out[$group] = explode(",", $perm);
+                    if(in_array($group, $allowedPermissionGroups))
+                        $out[$group] = explode(",", $perm);
                 }
             }
         }

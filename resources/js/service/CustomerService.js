@@ -1,12 +1,7 @@
 import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
-import { useI18n } from 'vue-i18n';
 
 export default class CustomerService {
-    setup() {
-        console.log('xxx');
-    }
-    
     list(size, page, sort, order) {
         var data = {
             size: size,
@@ -31,22 +26,5 @@ export default class CustomerService {
     
     remove(customerId) {
         return axios.delete('api/v1/customer/' + customerId);
-    }
-    
-    types(t) {
-        return [
-            {"id" : "person", "name" : t('customers.type_person')},
-            {"id" : "firm", "name" : t('customers.type_firm')},
-        ];
-    }
-    
-    getTypeLabel(t, type) {
-        var label = '-';
-        this.types(t).forEach((elem) => {
-            if (elem.id == type) {
-                label = elem.name;
-            }
-        });
-        return label;
     }
 }

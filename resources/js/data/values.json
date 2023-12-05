@@ -1,0 +1,52 @@
+{
+    "pl": {
+        "customer_types": [
+            {
+                "id": "person",
+                "name": "Osoba fizyczna"
+            },
+            {
+                "id": "firm",
+                "name": "Firma"
+            }
+        ],
+        "tenant_types": [
+            {
+                "id": "person",
+                "name": "Osoba fizyczna"
+            },
+            {
+                "id": "firm",
+                "name": "Firma"
+            }
+        ],
+        "item_types": [
+            {
+                "id": "apartment",
+                "name": "Mieszkanie"
+            },
+            {
+                "id": "house",
+                "name": "Dom"
+            },
+            {
+                "id": "commercial",
+                "name": "Lokal u\u017cytkowy"
+            },
+            {
+                "id": "room",
+                "name": "Pomieszczenie"
+            }
+        ],
+        "ownership_types": [
+            {
+                "id": "property",
+                "name": "Moja w\u0142asno\u015b\u0107"
+            },
+            {
+                "id": "manage",
+                "name": "Zarz\u0105dzam w imieniu klienta"
+            }
+        ]
+    }
+}

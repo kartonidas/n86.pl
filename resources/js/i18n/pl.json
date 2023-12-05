@@ -100,9 +100,11 @@
         "number_of_rooms" : "Ilość pomieszczeń",
         "own" : "Moja własność",
         "ownership" : "Własność",
+        "ownership_type" : "Rodzaj własności",
         "select_country" : "Wybierz kraj",
         "select_customer" : "Wybierz klienta",
         "select_estate_type" : "Wybierz rodzaj nieruchomości",
+        "select_ownership_type" : "Wybierz rodzaj własności",
         "street" : "Ulica",
         "updated" : "Nieruchomość została zaktualizowana",
         "zip" : "Kod pocztowy"

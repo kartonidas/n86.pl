@@ -1,5 +1,4 @@
 <script>
-    import { useRouter } from 'vue-router'
     import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -11,11 +10,9 @@
         setup() {
             setMetaTitle('meta.title.items_list')
             
-            const router = useRouter()
             const itemService = new ItemService()
             
             return {
-                router,
                 itemService,
                 hasAccess
             }
@@ -64,11 +61,11 @@
             },
             
             newItem() {
-                this.router.push({name: 'item_new'})
+                this.$router.push({name: 'item_new'})
             },
             
             showItem(itemId) {
-                this.router.push({name: 'item_show', params: { itemId : itemId }})
+                this.$router.push({name: 'item_show', params: { itemId : itemId }})
             },
             
             changePage(event) {

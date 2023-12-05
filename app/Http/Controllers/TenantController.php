@@ -57,7 +57,7 @@ class TenantController extends Controller
     {
         User::checkAccess("tenant:create");
         
-        $validated = $request->validate([
+        $rules = [
             "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "name" => "required|max:100",
             "street" => "nullable|max:80",
@@ -66,15 +66,21 @@ class TenantController extends Controller
             "city" => "nullable|max:120",
             "zip" => "nullable|max:10",
             "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
-            "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
             "comments" => "sometimes|max:5000",
             "send_sms" => "sometimes|boolean",
             "send_email" => "sometimes|boolean",
-        ]);
+        ];
+        
+        if($request->input("type", null) == Customer::TYPE_PERSON)
+            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
+        elseif($request->input("type", null) == Customer::TYPE_FIRM)
+            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
+        
+        $validated = $request->validate($rules);
         
         $tenant = new Customer;
         $tenant->role = Customer::ROLE_TENANT;
+        $tenant->type = $validated["type"];
         $tenant->name = $validated["name"];
         $tenant->street = $validated["street"] ?? null;
         $tenant->house_no = $validated["house_no"] ?? null;
@@ -113,7 +119,7 @@ class TenantController extends Controller
         if(!$tenant)
             throw new ObjectNotExist(__("Tenant does not exist"));
         
-        $updateFields = $request->validate([
+        $rules = [
             "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "name" => "required|max:100",
             "street" => "sometimes|max:80",
@@ -122,12 +128,17 @@ class TenantController extends Controller
             "city" => "sometimes|max:120",
             "zip" => "sometimes|max:10",
             "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "pesel" => ["sometimes", "max:15", new \App\Rules\Pesel],
-            "nip" => ["sometimes", "max:20", new \App\Rules\Nip],
             "comments" => "sometimes|max:5000",
             "send_sms" => "sometimes|boolean",
             "send_email" => "sometimes|boolean",
-        ]);
+        ];
+        
+        if($request->input("type", null) == Customer::TYPE_PERSON)
+            $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
+        elseif($request->input("type", null) == Customer::TYPE_FIRM)
+            $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
+        
+        $updateFields = $request->validate($rules);
         
         $updateContactFields = $request->validate([
             "contacts.email" => ["sometimes", "array", new \App\Rules\ContactEmail],

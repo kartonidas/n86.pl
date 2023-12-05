@@ -1,6 +1,11 @@
 import { appStore } from '@/store.js';
 import { useI18n } from 'vue-i18n'
 import { useHead } from 'unhead'
+import AppValues from '@/data/values.json';
+
+export const getLocale = () => {
+    return 'pl';
+};
 
 export const removeNullValues = (data) => {
     let outData = {};
@@ -10,7 +15,7 @@ export const removeNullValues = (data) => {
         }
     });
     return outData;
-}
+};
 
 let __PERMISSIONS = null;
 export const hasAccess = (module) => {
@@ -35,7 +40,7 @@ export const hasAccess = (module) => {
     if (__PERMISSIONS.indexOf(module) !== -1)
         return true;
     return false;
-}
+};
 
 export const getResponseErrors = (errors) => {
     let outErrors = [];
@@ -54,7 +59,7 @@ export const getResponseErrors = (errors) => {
         }
     }
     return outErrors;
-}
+};
 
 export const setMetaTitle = (module) => {
     const { t } = useI18n();
@@ -62,4 +67,18 @@ export const setMetaTitle = (module) => {
     useHead({
         title: t(module) + " | " + t("META_APP_NAME")
     });
-}
+};
+
+export const getValues = (module) => {
+    return AppValues[getLocale()][module];
+};
+
+export const getValueLabel = (module, value, key = 'name') => {
+    var label = '-';
+    getValues(module).forEach((elem) => {
+        if (elem.id == value) {
+            label = elem[key];
+        }
+    });
+    return label;
+};

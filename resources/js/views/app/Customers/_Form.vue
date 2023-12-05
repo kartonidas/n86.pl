@@ -2,6 +2,7 @@
     import { ref, reactive, computed } from 'vue'
     import { useVuelidate } from '@vuelidate/core'
     import { required, email } from '@/utils/i18n-validators'
+    import { getValues } from '@/utils/helper'
     
     import Countries from '@/data/countries.json'
     import CustomerService from '@/service/CustomerService'
@@ -55,7 +56,7 @@
                 phoneCodes : PhoneCodes,
                 phoneCodesFilterFields : ['code', 'name'],
                 countries: Countries[this.$i18n.locale],
-                types: this.customerService.types(this.$t),
+                types: getValues('customer_types'),
                 v: useVuelidate(rules, state),
                 toValidate: toValidate
             }

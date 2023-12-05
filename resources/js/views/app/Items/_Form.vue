@@ -1,6 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { getResponseErrors, hasAccess } from '@/utils/helper'
+    import { getValues, getResponseErrors, hasAccess } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf } from '@/utils/i18n-validators'
     
@@ -37,7 +37,8 @@
                 countries: Countries[this.$i18n.locale],
                 savingCustomerForm: false,
                 settings: {
-                    showCustomers: false,
+                    types: getValues('item_types'),
+                    ownership_types: getValues('ownership_types'),
                 },
                 v: useVuelidate(),
                 customerErrors: [],
@@ -52,15 +53,14 @@
             loading: { type: Boolean },
             errors: { type: Array },
             update: { type: Boolean },
+            fromCustomer: { type: Boolean },
         },
         methods: {
             async getSettings() {
                 this.itemService.settings()
                     .then(
                         (response) => {
-                            this.settings.types = response.data.types
-                            this.settings.showCustomers = response.data.customer_access
-                            this.settings.customers = this.settings.showCustomers ? response.data.customers : []
+                            this.settings.customers = response.data.customers
                         },
                         (response) => {
                             this.$emit('set-errors', getResponseErrors(response))
@@ -104,6 +104,7 @@
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('customers.added'), life: 3000 });
                         },
                         (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
                             this.customerErrors = getResponseErrors(response)
                             this.savingCustomerForm = false
                         }
@@ -115,10 +116,11 @@
                 item: {
                     name: { required },
                     type: { required },
+                    ownership_type: { required },
                     street: { required },
                     city: { required },
                     zip: { required },
-                    customer_id: { required: requiredIf(function() { return !this.item.ownership }) },
+                    customer_id: { required: requiredIf(function() { return this.item.ownership_type == "manage" }) },
                 }
             }
         },
@@ -138,7 +140,7 @@
         <div class="mb-4">
             <div class="p-fluid">
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-6 mb-4">
+                    <div class="field col-12 mb-4">
                         <label for="name" v-required class="block text-900 font-medium mb-2">{{ $t('items.name') }}</label>
                         <InputText id="name" type="text" :placeholder="$t('items.name')" class="w-full" :class="{'p-invalid' : v.item.name.$error}" v-model="item.name" :disabled="loading || saving"/>
                         <div v-if="v.item.name.$error">
@@ -146,14 +148,43 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-6 mb-4">
-                        <label for="type" v-required class="block text-900 font-medium mb-2" sddsds>{{ $t('items.estate_type') }}</label>
+                    <div class="field col-12 md:col-4 mb-4">
+                        <label for="type" v-required class="block text-900 font-medium mb-2">{{ $t('items.estate_type') }}</label>
                         <Dropdown id="type" v-model="item.type" :options="settings.types" optionLabel="name" :class="{'p-invalid' : v.item.type.$error}" optionValue="id" :placeholder="$t('items.select_estate_type')" class="w-full" :disabled="loading || saving"/>
                         <div v-if="v.item.type.$error">
                             <small class="p-error">{{ v.item.type.$errors[0].$message }}</small>
                         </div>
                     </div>
                     
+                    <div class="field col-12 mb-4" :class="[item.ownership_type == 'manage' ? 'md:col-4 ' : 'md:col-8']">
+                        <label for="ownership_type" v-required class="block text-900 font-medium mb-2">{{ $t('items.ownership_type') }}</label>
+                        <Dropdown id="ownership_type" v-model="item.ownership_type" :class="{'p-invalid' : v.item.ownership_type.$error}" :options="settings.ownership_types" optionLabel="name" optionValue="id" :placeholder="$t('items.select_ownership_type')" class="w-full" :disabled="loading || saving || fromCustomer"/>
+                        <div v-if="v.item.ownership_type.$error">
+                            <small class="p-error">{{ v.item.ownership_type.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-4 mb-4" v-if="item.ownership_type == 'manage'">
+                        <label for="customer" v-required class="block text-900 font-medium mb-2">{{ $t('items.customer') }}</label>
+                        <div class="flex">
+                            <Dropdown v-model="item.customer_id" filter :options="settings.customers" :class="{'p-invalid' : v.item.customer_id.$error}" :style="[hasAccess('customer:create') ? 'width: calc(100% - 50px); margin-right: 10px;' : '']" optionLabel="name" optionValue="id" :placeholder="$t('items.select_customer')" class="w-full" :disabled="loading || saving || fromCustomer" />
+                            <Button type="button" :loading="saving" v-tooltip.left="$t('items.add_customer')"  v-if="hasAccess('customer:create')" iconPos="right" @click="addCustomer" icon="pi pi-plus" class="p-button-secondary w-full text-center" style="min-width: 40px; max-width: 40px" :disabled="loading || saving || fromCustomer"></Button>
+                        </div>
+                        <div v-if="v.item.customer_id.$error">
+                            <small class="p-error">{{ v.item.customer_id.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="formgrid grid ">
+                    <div class="col-12">
+                        <Divider align="left" class="mb-5">
+                            Dane adresowe
+                        </Divider>
+                    </div>
+                </div>
+                
+                <div class="formgrid grid ">
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="street" v-required class="block text-900 font-medium mb-2">{{ $t('items.street') }}</label>
                         <InputText id="street" type="text" :placeholder="$t('items.street')" class="w-full" :class="{'p-invalid' : v.item.street.$error}" v-model="item.street" :disabled="loading || saving" />
@@ -192,31 +223,17 @@
                             <small class="p-error">{{ v.item.city.$errors[0].$message }}</small>
                         </div>
                     </div>
-                    
-                    <div class="field col-12 mb-4" v-if="settings.showCustomers">
-                        <div class="field-checkbox mb-0">
-                            <Checkbox inputId="ownershipCheck" name="ownership" value="1" :falseValue="1" :trueValue="0" v-model="item.ownership" :binary="true" :disabled="loading || saving"/>
-                            <label for="ownershipCheck">{{ $t('items.i_managed') }}</label>
-                        </div>
+                </div>
+                
+                <div class="formgrid grid ">
+                    <div class="col-12">
+                        <Divider align="left" class="mb-5">
+                            Dodatkowe informacje
+                        </Divider>
                     </div>
-                    
-                    <div class="field col-12 mb-4" v-if="settings.showCustomers && !item.ownership">
-                        <div class="formgrid grid">
-                            <div class="col-12" :class="[hasAccess('customer:create') ? 'md:col-8 lg:col-8 xl:col-9' : '']">
-                                <label for="customer" v-required class="block text-900 font-medium mb-2">{{ $t('items.customer') }}</label>
-                                <Dropdown v-model="item.customer_id" filter :options="settings.customers" :class="{'p-invalid' : v.item.customer_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('items.select_customer')" class="w-full" :disabled="loading || saving" />
-                                <div v-if="v.item.customer_id.$error">
-                                    <small class="p-error">{{ v.item.customer_id.$errors[0].$message }}</small>
-                                </div>
-                            </div>
-                            
-                            <div class="col-12 md:col-4 lg:col-4 xl:col-3" v-if="hasAccess('customer:create')">
-                                <label class="block mb-2">&nbsp;</label>
-                                <Button type="button" :label="$t('items.add_customer')" :loading="saving" iconPos="right" @click="addCustomer" icon="pi pi-briefcase" class="p-button-secondary w-full text-center"></Button>
-                            </div>
-                        </div>
-                    </div>
-                    
+                </div>
+                
+                <div class="formgrid grid ">
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="area" class="block text-900 font-medium mb-2">{{ $t('items.area') }} (m2)</label>
                         <InputNumber id="area" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.area')" class="w-full" v-model="item.area" :disabled="loading || saving"/>

@@ -1,6 +1,6 @@
 <script>
     import { useRoute, useRouter } from 'vue-router'
-    import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -19,7 +19,8 @@
                 tenantService,
                 route,
                 router,
-                hasAccess
+                hasAccess,
+                getValueLabel
             }
         },
         data() {
@@ -46,7 +47,6 @@
                 .then(
                     (response) => {
                         this.tenant = response.data
-                        this.tenant.type_label = this.tenantService.getTypeLabel(this.$t, this.tenant.type)
                         this.loading = false
                     },
                     (response) => {
@@ -81,7 +81,7 @@
                     <div class="grid formgrid">
                         <div class="col-12 md:col-6">
                             <p class="m-0 mt-2">
-                                <span class="font-medium">{{ $t('tenants.account_type') }}: </span> <i>{{ tenant.type_label }}</i>
+                                <span class="font-medium">{{ $t('tenants.account_type') }}: </span> <i>{{ getValueLabel('tenant_types', tenant.type) }}</i>
                             </p>
                             <p class="m-0 mt-2">
                                 <span class="font-medium">{{ $t('tenants.address') }}: </span> <i><Address :object="tenant"/></i>

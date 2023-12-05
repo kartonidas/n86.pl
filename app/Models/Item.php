@@ -29,6 +29,8 @@ class Item extends Model
     const TYPE_HOUSE = "house";
     const TYPE_COMMERCIAL = "commercial";
     const TYPE_ROOM = "room";
+    const OWNERSHIP_PROPERTY = "property";
+    const OWNERSHIP_MANAGE = "manage";
     
     public static function getTypes()
     {
@@ -37,6 +39,14 @@ class Item extends Model
             self::TYPE_HOUSE => __("House"),
             self::TYPE_COMMERCIAL => __("Commercial"),
             self::TYPE_ROOM => __("Room"),
+        ];
+    }
+    
+    public static function getOwnershipTypes()
+    {
+        return [
+            self::OWNERSHIP_PROPERTY => __("My property"),
+            self::OWNERSHIP_MANAGE => __("I manage on behalf of the client"),
         ];
     }
     
@@ -54,7 +64,7 @@ class Item extends Model
             "zip",
             "country",
             "area",
-            "ownership",
+            "ownership_type",
             "room_rental",
             "num_rooms",
             "description",
@@ -112,7 +122,7 @@ class Item extends Model
     
     public function getCustomer()
     {
-        if(!$this->ownership)
+        if($this->ownership_type == self::OWNERSHIP_MANAGE)
             return $this->customer()->apiFields()->first();
         return null;
     }

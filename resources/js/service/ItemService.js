@@ -6,10 +6,11 @@ export default class ItemService {
         return axios.get('api/v1/items/settings');
     }
     
-    list(size, page) {
+    list(size, page, search) {
         var data = {
             size: size,
-            page: page
+            page: page,
+            search: search
         };
         return axios.get('api/v1/items', { params : data });
     }

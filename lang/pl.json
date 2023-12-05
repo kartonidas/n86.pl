@@ -136,5 +136,9 @@
     "You are receiving this email because we received a password reset request for your account.": "Otrzymujesz ten e-mail, ponieważ otrzymaliśmy prośbę o zresetowanie hasła dla Twojego konta.",
     "Your account has been activated": "Twoje konto zostało aktywowane",
     "Your premium package expired": "Twój pakiet premium wygasł",
-    "Your subscription expired": "Twoja subskrypcja wygasła"
+    "Your subscription expired": "Twoja subskrypcja wygasła",
+    "Person": "Osoba fizyczna",
+    "Firm": "Firma",
+    "My property": "Moja własność",
+    "I manage on behalf of the client" : "Zarządzam w imieniu klienta"
 }

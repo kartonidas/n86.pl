@@ -19,15 +19,9 @@ class ItemController extends Controller
 {
     public function settings(Request $request)
     {
-        $getCustomer = User::checkAccess("customer:list", false);
         $out = [
-            "types" => Helper::optionToArray(Item::getTypes()),
-            "default_type" => Item::TYPE_APARTMENT,
-            "customer_access" => $getCustomer,
+            "customers" => Customer::apiFields()->orderBy("name", "ASC")->get(),
         ];
-        
-        if($getCustomer)
-            $out["customers"] = Customer::apiFields()->orderBy("name", "ASC")->get();
         
         return $out;
     }
@@ -36,9 +30,10 @@ class ItemController extends Controller
     {
         User::checkAccess("item:list");
         
-        $request->validate([
+        $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
+            "search.customer_id" => "sometimes|integer"
         ]);
         
         $size = $request->input("size", config("api.list.size"));
@@ -46,7 +41,13 @@ class ItemController extends Controller
         
         $items = Item
             ::apiFields();
-            
+        
+        if(!empty($validated["search"]))
+        {
+            if(!empty($validated["search"]["customer_id"]))
+                $items->where("customer_id", $validated["search"]["customer_id"]);
+        }
+        
         $total = $items->count();
             
         $items = $items->take($size)
@@ -79,7 +80,7 @@ class ItemController extends Controller
             "zip" => "required|max:10",
             "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "area" => "sometimes|required|numeric",
-            "ownership" => "sometimes|required|boolean",
+            "ownership_type" => ["required", Rule::in(array_keys(Item::getOwnershipTypes()))],
             "room_rental" => "sometimes|required|boolean",
             "num_rooms" => "sometimes|required|integer",
             "description" => "sometimes|max:5000",
@@ -88,8 +89,7 @@ class ItemController extends Controller
             "comments" => "sometimes|max:5000",
         ];
         
-        $hasCustomerAccess = User::checkAccess("customer:list", false);
-        if($hasCustomerAccess && !$request->input("ownership"))
+        if($request->input("ownership_type", null) == Item::OWNERSHIP_MANAGE)
         {
             $customers = Customer::pluck("id");
             $rule["customer_id"] = ["required", Rule::in($customers->all())];
@@ -107,8 +107,8 @@ class ItemController extends Controller
         $item->zip = $validated["zip"];
         $item->country = $validated["country"] ?? null;
         $item->area = $validated["area"] ?? null;
-        $item->ownership = $hasCustomerAccess ? ($validated["ownership"] ?? 0) : 1;
-        $item->customer_id = $hasCustomerAccess ? ($validated["customer_id"] ?? 0) : 0;
+        $item->ownership_type = $validated["ownership_type"];
+        $item->customer_id = $validated["ownership_type"] == Item::OWNERSHIP_MANAGE ? ($validated["customer_id"] ?? null) : null;
         $item->room_rental = $validated["room_rental"] ?? 0;
         $item->num_rooms = $validated["num_rooms"] ?? null;
         $item->description = $validated["description"] ?? null;
@@ -151,7 +151,7 @@ class ItemController extends Controller
             "zip" => "required|max:10",
             "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
             "area" => "sometimes|required|numeric",
-            "ownership" => "sometimes|required|boolean",
+            "ownership_type" => ["required", Rule::in(array_keys(Item::getOwnershipTypes()))],
             "room_rental" => "sometimes|required|boolean",
             "num_rooms" => "sometimes|required|integer",
             "description" => "sometimes|max:5000",
@@ -160,8 +160,7 @@ class ItemController extends Controller
             "comments" => "sometimes|max:5000",
         ];
         
-        $hasCustomerAccess = User::checkAccess("customer:list", false);
-        if($hasCustomerAccess && !$request->input("ownership"))
+        if($request->input("ownership_type", null) == Item::OWNERSHIP_MANAGE)
         {
             $customers = Customer::pluck("id");
             $rules["customer_id"] = ["required", Rule::in($customers->all())];

@@ -1,18 +1,17 @@
 import './bootstrap';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { createHead } from 'unhead'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import { createHead } from 'unhead';
 
 import App from './App.vue'
 import router from './router';
-import i18n from "./i18n"
-import globalDirectives from './directives'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import i18n from "./i18n";
+import globalDirectives from './directives';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import VueNumerals from 'vue-numerals';
 
 import PrimeVue from 'primevue/config';
-
 import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -20,6 +19,7 @@ import Column from 'primevue/column';
 import Checkbox from 'primevue/checkbox';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
+import Divider from 'primevue/divider';
 import Dropdown from 'primevue/dropdown';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
@@ -41,7 +41,7 @@ import Tooltip from 'primevue/tooltip';
 
 axios.defaults.baseURL = 'https://estate.netextend.pl/';
 axios.defaults.params = {
-    '_locale': 'pl'
+    '_locale': i18n.global.locale.value
 }
 
 import '@/assets/styles.scss';
@@ -52,14 +52,13 @@ pinia.use(piniaPluginPersistedstate)
 createHead()
 
 app.config.globalProperties.rowsPerPage = 25;
-
 app.use(i18n);
 app.use(router);
-app.use(globalDirectives)
+app.use(globalDirectives);
 app.use(pinia);
 app.use(PrimeVue);
 app.use(ToastService);
-app.use(VueNumerals, { locale: 'pl' });
+app.use(VueNumerals, { locale: i18n.global.locale.value });
 
 app.component('Breadcrumb', AppBreadcrumb);
 app.component('Button', Button);
@@ -68,6 +67,7 @@ app.component('Checkbox', Checkbox);
 app.component('Column', Column);
 app.component('DataTable', DataTable);
 app.component('Dialog', Dialog);
+app.component('Divider', Divider);
 app.component('Dropdown', Dropdown);
 app.component('InputGroup', InputGroup);
 app.component('InputMask', InputMask);
@@ -86,4 +86,4 @@ app.component('Toast', Toast);
 app.directive('tooltip', Tooltip);
 
 
-app.mount("#app")
+app.mount("#app");

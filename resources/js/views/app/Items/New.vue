@@ -20,8 +20,9 @@
             return {
                 errors: [],
                 item : {
-                    ownership: true,
-                    country : 'PL'
+                    ownership_type: 'property',
+                    type: 'apartment',
+                    country : 'PL',
                 },
                 meta: {
                     breadcrumbItems: [
@@ -31,6 +32,15 @@
                     ],
                 },
                 saving: false,
+                fromCustomer: false
+            }
+        },
+        mounted() {
+            if(this.$route.name == "item_new_customer")
+            {
+                this.item.ownership_type = 'manage'
+                this.item.customer_id = parseInt(this.$route.params.customerId)
+                this.fromCustomer = true
             }
         },
         methods: {
@@ -47,7 +57,10 @@
                                 detail : this.$t('items.added'),
                             });
                             
-                            this.$router.push({name: 'item_show', params: { itemId : response.data }})
+                            if(this.$route.name == "item_new_customer")
+                                this.$router.push({name: 'customer_show', params: { customerId : this.$route.params.customerId }})
+                            else
+                                this.$router.push({name: 'item_show', params: { itemId : response.data }})
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
@@ -69,8 +82,8 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.basic_data') }}</h4>
-                <ItemForm @submit-form="createItem" @set-errors="setErrors" :item="item" :saving="saving" :errors="errors" />
+                <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.new_item') }}</h4>
+                <ItemForm @submit-form="createItem" @set-errors="setErrors" :item="item" :saving="saving" :errors="errors" :fromCustomer="fromCustomer"/>
             </div>
         </div>
     </div>

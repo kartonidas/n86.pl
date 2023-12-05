@@ -1,5 +1,4 @@
 <script>
-    import { useRoute } from 'vue-router'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -11,12 +10,10 @@
         setup() {
             setMetaTitle('meta.title.items_edit')
             
-            const route = useRoute()
             const itemService = new ItemService()
             
             return {
                 itemService,
-                route,
             }
         },
         data() {
@@ -41,7 +38,7 @@
                 appStore().setToastMessage(null);
             }
             
-            this.itemService.get(this.route.params.itemId)
+            this.itemService.get(this.$route.params.itemId)
                 .then(
                     (response) => {
                         this.item = response.data
@@ -57,7 +54,7 @@
                 this.saving = true
                 this.errors = []
                 
-                this.itemService.update(this.route.params.itemId, this.item)
+                this.itemService.update(this.$route.params.itemId, this.item)
                     .then(
                         (response) => {
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.updated'), life: 3000 });
@@ -83,7 +80,7 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.basic_data') }}</h4>
+                <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.edit') }}</h4>
                 <ItemForm @submit-form="updateItem" @set-errors="setErrors" :update="true" :item="item" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>

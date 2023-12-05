@@ -164,6 +164,12 @@ const router = createRouter({
                             meta: {permission: 'item:create'},
                         },
                         {
+                            path: '/app/item/new/customer/:customerId',
+                            name: 'item_new_customer',
+                            component: () => import('@/views/app/Items/New.vue'),
+                            meta: {permission: 'item:create'},
+                        },
+                        {
                             path: '/app/item/edit/:itemId',
                             name: 'item_edit',
                             component: () => import('@/views/app/Items/Edit.vue'),

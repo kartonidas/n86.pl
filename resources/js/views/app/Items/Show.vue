@@ -1,6 +1,5 @@
 <script>
-    import { useRoute, useRouter } from 'vue-router'
-    import { getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -11,15 +10,12 @@
         setup() {
             setMetaTitle('meta.title.items_show')
             
-            const route = useRoute()
-            const router = useRouter()
             const itemService = new ItemService()
             
             return {
                 itemService,
-                route,
-                router,
-                hasAccess
+                hasAccess,
+                getValueLabel
             }
         },
         data() {
@@ -44,7 +40,7 @@
                 appStore().setToastMessage(null)
             }
             
-            this.itemService.get(this.route.params.itemId)
+            this.itemService.get(this.$route.params.itemId)
                 .then(
                     (response) => {
                         this.item = response.data
@@ -57,7 +53,7 @@
         },
         methods: {
             editItem() {
-                this.router.push({name: 'item_edit', params: { itemId : this.route.params.itemId }})
+                this.$router.push({name: 'item_edit', params: { itemId : this.$route.params.itemId }})
             }
         },
     }
@@ -79,7 +75,7 @@
                 </template>
                 <template #content pt="item">
                     <p class="m-0">
-                        <span class="font-medium">{{ $t('items.estate_type') }}: </span> <i>{{ item.type }}</i>
+                        <span class="font-medium">{{ $t('items.estate_type') }}: </span> <i>{{ getValueLabel('item_types', item.type) }}</i>
                     </p>
                     <p class="m-0 mt-2">
                         <span class="font-medium">{{ $t('items.address') }}: </span> <i><Address :object="item"/></i>
@@ -99,8 +95,8 @@
                     <p class="m-0 mt-2">
                         <span class="font-medium">{{ $t('items.ownership') }}: </span>
                         <i>
-                            <span v-if="item.ownership">{{ $t('items.own') }}</span>
-                            <span v-else>
+                            {{ getValueLabel('ownership_types', item.ownership_type) }}
+                            <span v-if="item.ownership_type == 'manage'">:
                                 <router-link v-if="item.customer.id" :to="{name: 'customer_show', params: { customerId : item.customer.id }}">
                                     {{ item.customer.name }}
                                 </router-link>
