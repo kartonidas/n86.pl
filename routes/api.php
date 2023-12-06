@@ -13,6 +13,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RentalController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TenantController;
@@ -50,24 +51,25 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/item/{id}', [ItemController::class, "get"])->where("id", "[0-9]+");
     $router->put('/item/{id}', [ItemController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/item/{id}', [ItemController::class, "delete"])->where("id", "[0-9]+");
-    $router->get('/item/{id}/tenants', [ItemController::class, "tenants"])->where("id", "[0-9]+");
-    $router->put('/item/{id}/tenant', [ItemController::class, "tenantCreate"])->where("id", "[0-9]+");
-    $router->get('/item/{id}/tenant/{tid}', [ItemController::class, "tenantGet"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    $router->put('/item/{id}/tenant/{tid}', [ItemController::class, "tenantUpdate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    $router->delete('/item/{id}/tenant/{tid}', [ItemController::class, "tenantDelete"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    $router->post('/item/{id}/tenant/{tid}/terminate', [ItemController::class, "tenantTerminate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    $router->get('/item/{id}/bills', [ItemController::class, "bills"])->where("id", "[0-9]+");
-    $router->put('/item/{id}/bill', [ItemController::class, "billCreate"])->where("id", "[0-9]+");
-    $router->get('/item/{id}/bill/{bid}', [ItemController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->put('/item/{id}/bill/{bid}', [ItemController::class, "billUpdate"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->delete('/item/{id}/bill/{bid}', [ItemController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
-    $router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
-    $router->get('/item/{id}/fee/{fid}', [ItemController::class, "feeGet"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
-    $router->put('/item/{id}/fee/{fid}', [ItemController::class, "feeUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
-    $router->delete('/item/{id}/fee/{fid}', [ItemController::class, "feeDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    $router->post('/item/validate', [ItemController::class, "validateData"]);
+    //$router->get('/item/{id}/tenants', [ItemController::class, "tenants"])->where("id", "[0-9]+");
+    //$router->put('/item/{id}/tenant', [ItemController::class, "tenantCreate"])->where("id", "[0-9]+");
+    //$router->get('/item/{id}/tenant/{tid}', [ItemController::class, "tenantGet"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
+    //$router->put('/item/{id}/tenant/{tid}', [ItemController::class, "tenantUpdate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
+    //$router->delete('/item/{id}/tenant/{tid}', [ItemController::class, "tenantDelete"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
+    //$router->post('/item/{id}/tenant/{tid}/terminate', [ItemController::class, "tenantTerminate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
+    //$router->get('/item/{id}/bills', [ItemController::class, "bills"])->where("id", "[0-9]+");
+    //$router->put('/item/{id}/bill', [ItemController::class, "billCreate"])->where("id", "[0-9]+");
+    //$router->get('/item/{id}/bill/{bid}', [ItemController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->put('/item/{id}/bill/{bid}', [ItemController::class, "billUpdate"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->delete('/item/{id}/bill/{bid}', [ItemController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
+    //$router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
+    //$router->get('/item/{id}/fee/{fid}', [ItemController::class, "feeGet"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    //$router->put('/item/{id}/fee/{fid}', [ItemController::class, "feeUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    //$router->delete('/item/{id}/fee/{fid}', [ItemController::class, "feeDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
     
     // NAJEMCY
     $router->get('/tenants', [TenantController::class, "list"]);
@@ -77,6 +79,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/tenant/{id}', [TenantController::class, "delete"])->where("id", "[0-9]+");
     $router->post('/tenant/validate', [TenantController::class, "validateData"]);
     $router->get('/tenant/{id}/history', [TenantController::class, "history"])->where("id", "[0-9]+");
+    
+    // WYNAJEM
+    $router->post('/rental/validate', [RentalController::class, "validateData"]);
+    $router->put('/rental/rent', [RentalController::class, "rent"]);
     
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);
@@ -93,7 +99,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/customer/{id}', [CustomerController::class, "get"])->where("id", "[0-9]+");
     $router->put('/customer/{id}', [CustomerController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/customer/{id}', [CustomerController::class, "delete"])->where("id", "[0-9]+");
-    
     
     // PRACOWNICY
     $router->get('/users', [UserController::class, "list"]);

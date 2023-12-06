@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\Rental;
 
 class GenAppValues extends Command
 {
@@ -53,6 +54,18 @@ class GenAppValues extends Command
                 
             foreach(Item::getOwnershipTypes() as $type => $name)
                 $toJson[$lang]["ownership_types"][] = ["id" => $type, "name" => $name];
+                
+            foreach(Rental::getPeriods() as $type => $name)
+                $toJson[$lang]["rental"]["periods"][] = ["id" => $type, "name" => $name];
+            
+            foreach(Rental::getTerminationPeriods() as $type => $name)
+                $toJson[$lang]["rental"]["termination_periods"][] = ["id" => $type, "name" => $name];
+            
+            foreach(Rental::getPaymentsType() as $type => $name)
+                $toJson[$lang]["rental"]["payments"][] = ["id" => $type, "name" => $name];
+            
+            foreach(Rental::getPaymentDays() as $type => $name)
+                $toJson[$lang]["rental"]["payment_days"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

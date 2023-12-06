@@ -8,19 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\UpdateItemRequest;
 use App\Libraries\Helper;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Traits\Sortable;
 
 class ItemController extends Controller
 {
+    use Sortable;
+    
     public function settings(Request $request)
     {
         $out = [
-            "customers" => Customer::apiFields()->orderBy("name", "ASC")->get(),
+            "customers" => Customer::apiFields()->customer()->orderBy("name", "ASC")->get(),
         ];
         
         return $out;
@@ -33,26 +38,36 @@ class ItemController extends Controller
         $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
-            "search.customer_id" => "sometimes|integer"
+            "sort" => "nullable",
+            "order" => "nullable|integer",
+            "search.customer_id" => "sometimes|integer",
+            "search.name" => "nullable|string",
+            "search.type" => ["nullable", Rule::in(array_keys(Item::getTypes()))],
         ]);
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
         
         $items = Item
             ::apiFields();
         
         if(!empty($validated["search"]))
         {
+            if(!empty($validated["search"]["name"]))
+                $items->where("name", "LIKE", "%" . $validated["search"]["name"] . "%");
+            if(!empty($validated["search"]["type"]))
+                $items->where("type", $validated["search"]["type"]);
+                
             if(!empty($validated["search"]["customer_id"]))
                 $items->where("customer_id", $validated["search"]["customer_id"]);
         }
         
         $total = $items->count();
-            
+        
+        $orderBy = $this->getOrderBy($request, Item::class, "name,asc");
         $items = $items->take($size)
             ->skip(($page-1)*$size)
-            ->orderBy("name", "ASC")
+            ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
         $out = [
@@ -66,36 +81,16 @@ class ItemController extends Controller
         return $out;
     }
     
-    public function create(Request $request)
+    public function validateData(StoreItemRequest $request)
+    {
+        return true;
+    }
+    
+    public function create(StoreItemRequest $request)
     {
         User::checkAccess("item:create");
         
-        $rule = [
-            "type" => ["required", Rule::in(array_keys(Item::getTypes()))],
-            "name" => "required|max:100",
-            "street" => "required|max:80",
-            "house_no" => "nullable|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "required|max:120",
-            "zip" => "required|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "area" => "sometimes|required|numeric",
-            "ownership_type" => ["required", Rule::in(array_keys(Item::getOwnershipTypes()))],
-            "room_rental" => "sometimes|required|boolean",
-            "num_rooms" => "sometimes|required|integer",
-            "description" => "sometimes|max:5000",
-            "default_rent" => "sometimes|required|numeric",
-            "default_deposit" => "sometimes|required|numeric",
-            "comments" => "sometimes|max:5000",
-        ];
-        
-        if($request->input("ownership_type", null) == Item::OWNERSHIP_MANAGE)
-        {
-            $customers = Customer::pluck("id");
-            $rule["customer_id"] = ["required", Rule::in($customers->all())];
-        }
-        
-        $validated = $request->validate($rule);
+        $validated = $request->validated();
         
         $item = new Item;
         $item->type = $validated["type"];
@@ -133,7 +128,7 @@ class ItemController extends Controller
         return $item;
     }
     
-    public function update(Request $request, int $estateId)
+    public function update(UpdateItemRequest $request, int $estateId)
     {
         User::checkAccess("item:update");
         
@@ -141,33 +136,9 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $rules = [
-            "name" => "sometimes|required|max:100",
-            "type" => ["sometimes", "required", Rule::in(array_keys(Item::getTypes()))],
-            "street" => "sometimes|required|max:80",
-            "house_no" => "sometimes|nullable|max:20",
-            "apartment_no" => "sometimes|nullable|max:20",
-            "city" => "required|max:120",
-            "zip" => "required|max:10",
-            "country" => ["sometimes", Rule::in(Country::getAllowedCodes())],
-            "area" => "sometimes|required|numeric",
-            "ownership_type" => ["required", Rule::in(array_keys(Item::getOwnershipTypes()))],
-            "room_rental" => "sometimes|required|boolean",
-            "num_rooms" => "sometimes|required|integer",
-            "description" => "sometimes|max:5000",
-            "default_rent" => "sometimes|required|numeric",
-            "default_deposit" => "sometimes|required|numeric",
-            "comments" => "sometimes|max:5000",
-        ];
+        $validated = $request->validated();
         
-        if($request->input("ownership_type", null) == Item::OWNERSHIP_MANAGE)
-        {
-            $customers = Customer::pluck("id");
-            $rules["customer_id"] = ["required", Rule::in($customers->all())];
-        }
-        
-        $updateFields = $request->validate($rules);
-        foreach($updateFields as $field => $value)
+        foreach($validated as $field => $value)
             $item->{$field} = $value;
         $item->save();
         

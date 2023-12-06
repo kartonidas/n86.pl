@@ -177,7 +177,7 @@
             "dictionaries_list" : "Wartości słownikowe",
             "dictionaries_edit" : "Edycja wartości słownikowej",
             "dictionaries_new" : "Nowa wartość słownikowa",
-            "rent_tenant" : "Wynajmij: dane najemcy"
+            "rent_item" : "Wynajmij nieruchomość"
         }
     },
     "permissions" : {
@@ -253,17 +253,29 @@
         "thank_for_registering_2" : "Kliknij w otrzymany link aby dokończyć rejestrację i móc w pełni korzystać z serwisu."
     },
     "rent" : {
+        "add_new_item" : "Dodaj nową nieruchomość",
         "add_new_tenant" : "Dodaj nowego najemce",
+        "additional_data" : "Dodatkowe informacje",
+        "comments" : "Uwagi",
+        "days" : "Dni",
         "deposit" : "Kaucja",
         "end_date" : "Data zakończenia wynajmu",
+        "first_month_different_amount" : "Inna kota w pierwszym miesiącu",
         "first_payment_date" : "Data pierwszej płatności",
-        "months" : "Ilość miesięcy",
-        "new_rent" : "Rozpocznij wynajem",
+        "indeterminate" : "Nieokreślony",
+        "last_month_different_amount" : "Inna kwota w ostatnim miesiącu",
+        "months" : "miesięcy",
+        "new_rent" : "Nowy wynajem",
+        "number_of_months" : "Ilość miesięcy",
+        "number_of_people" : "Ilość osób",
         "payment" : "Płatność",
+        "payment_day" : "Dzień płatności",
         "payments" : "Płatności",
         "period" : "Czas trwania wynajmu",
         "rent" : "Czynsz",
+        "select_item" : "Wybierz nieruchomość z listy",
         "select_payment" : "Wybierz płatność",
+        "select_payment_day" : "Wybierz dzień płatności",
         "select_period" : "Wybierz czas trwania najmu",
         "select_tenant" : "Wybierz najemce z listy",
         "select_termination_period" : "Wybierz okres wypowiedzenie",
@@ -271,6 +283,7 @@
         "summary" : "Podsumowanie",
         "rent_details" : "Szczegóły najmu",
         "tenant_data" : "Dane najemcy",
+        "termination" : "Okres wypowiedzenia",
         "termination_days" : "Wypowiedzenie - ilość dni",
         "termination_months" : "Wypowiedzenie - ilość miesięcy",
         "termination_period" : "Okres wypowiedzenia"

@@ -30,6 +30,6 @@ export default class TenantService {
     }
     
     validate(tenantData) {
-        return axios.post('api/v1/tenant/validate', tenantData);
+        return axios.post('api/v1/tenant/validate', removeNullValues(tenantData));
     }
 }

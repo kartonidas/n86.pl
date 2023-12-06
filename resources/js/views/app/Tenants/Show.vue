@@ -1,5 +1,4 @@
 <script>
-    import { useRoute, useRouter } from 'vue-router'
     import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -11,14 +10,10 @@
         setup() {
             setMetaTitle('meta.title.tenants_show')
             
-            const route = useRoute()
-            const router = useRouter()
             const tenantService = new TenantService()
             
             return {
                 tenantService,
-                route,
-                router,
                 hasAccess,
                 getValueLabel
             }
@@ -43,7 +38,7 @@
                 appStore().setToastMessage(null)
             }
             
-            this.tenantService.get(this.route.params.tenantId)
+            this.tenantService.get(this.$route.params.tenantId)
                 .then(
                     (response) => {
                         this.tenant = response.data
@@ -56,8 +51,12 @@
         },
         methods: {
             editTenant() {
-                this.router.push({name: 'tenant_edit', params: { tenantId : this.route.params.tenantId }})
+                this.$router.push({name: 'tenant_edit', params: { tenantId : this.$route.params.tenantId }})
             },
+            
+            rentItem() {
+                this.$router.push({name: 'rent_source_tenant', params: { tenantId : this.$route.params.tenantId }})
+            }
         },
     }
 </script>
@@ -125,5 +124,27 @@
                 </template>
             </Card>
         </div>
+        
+        
+        <div class="col col-12">
+            <div class="grid mt-1">
+                <div class="col col-12">
+                    <Card class="mb-3">
+                        <template #title>
+                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
+                                Najemca
+                                <div v-if="hasAccess('rent:create')">
+                                    <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
+                                </div>
+                            </div>
+                        </template>
+                        <template #content pt="item">
+                            <p>Lorem ipsum dolor sit amet</p>
+                        </template>
+                    </Card>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </template>

@@ -9,7 +9,7 @@
     import PhoneCodes from '@/data/phone_codes.json'
     
     export default {
-        emits: ['submit-form'],
+        emits: ['submit-form', 'back'],
         setup() {
             const tenantService = new TenantService()
             return {
@@ -319,7 +319,7 @@
                     <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
                 </div>
             </div>
-            <div v-else-if="source == 'rent'">
+            <div v-else-if="source == 'rent' || source == 'rent:direct'">
                 <div class="text-right">
                     <Button type="submit" :label="$t('app.next')" :loading="saving" iconPos="right" icon="pi pi-angle-right" class="w-auto text-center"></Button>
                 </div>

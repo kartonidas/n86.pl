@@ -81,7 +81,7 @@
         <div class="col">
             <div class="card p-fluid">
                 <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.edit') }}</h4>
-                <ItemForm @submit-form="updateItem" @set-errors="setErrors" :update="true" :item="item" :saving="saving" :loading="loading" :errors="errors" />
+                <ItemForm @submit-form="updateItem" @set-errors="setErrors" source="edit" :item="item" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>
     </div>

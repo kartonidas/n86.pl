@@ -6,10 +6,12 @@ export default class ItemService {
         return axios.get('api/v1/items/settings');
     }
     
-    list(size, page, search) {
+    list(size, page, sort, order, search) {
         var data = {
             size: size,
             page: page,
+            sort: sort,
+            order: order,
             search: search
         };
         return axios.get('api/v1/items', { params : data });
@@ -29,5 +31,9 @@ export default class ItemService {
     
     remove(itemId) {
         return axios.delete('api/v1/item/' + itemId);
+    }
+    
+    validate(itemData) {
+        return axios.post('api/v1/item/validate', removeNullValues(itemData));
     }
 }

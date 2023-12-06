@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
@@ -96,7 +97,7 @@ class CustomerController extends Controller
         return $customer;
     }
     
-    public function update(StoreCustomerRequest $request, $customerId)
+    public function update(UpdateCustomerRequest $request, $customerId)
     {
         User::checkAccess("customer:update");
         

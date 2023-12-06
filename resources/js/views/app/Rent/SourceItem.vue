@@ -2,16 +2,18 @@
     import { ref } from 'vue'
     import { getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
     import ItemService from '@/service/ItemService'
+    import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
     
     import Address from '@/views/app/_partials/Address.vue'
     import TenantForm from './../Tenants/_Form.vue'
     import RentForm from './_RentForm.vue'
+    import Summary from './_Summary.vue'
     
     export default {
-        components: { Address, RentForm, TenantForm },
+        components: { Address, RentForm, Summary, TenantForm },
         setup() {
-            setMetaTitle('meta.title.rent_tenant')
+            setMetaTitle('meta.title.rent_item')
             
             const tenant = ref({
                 type : 'person',
@@ -24,9 +26,12 @@
             
             const itemService = new ItemService()
             const tenantService = new TenantService();
+            const rentalService = new RentalService();
+            
             return {
                 itemService,
                 tenantService,
+                rentalService,
                 tenant,
                 getValueLabel
             }
@@ -34,11 +39,12 @@
         data() {
             return {
                 activeStep: 0,
+                errors: [],
                 item: {},
                 loading: true,
+                rent: {},
                 saving: false,
                 selectTenantModalVisible: false,
-                errors: [],
                 selectedTenant: false,
                 stepsItems: [
                     { label : this.$t('rent.tenant_data'), icon : 'pi pi-user'},
@@ -50,7 +56,6 @@
                 meta: {
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
-                        {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
                         {'label' : this.$t('rent.new_rent'), disabled : true },
                     ],
                     tenants: {
@@ -83,16 +88,9 @@
                 );
         },
         methods: {
-            setTenantData() {
-                this.tenantService.validate(this.tenant)
-                    .then(
-                        (response) => {
-                            this.activeStep = 1
-                        },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
-                        }
-                    )
+            changeStep(step) {
+                this.activeStep = step
+                scroll(0,0)
             },
             
             addNewTenant() {
@@ -170,9 +168,46 @@
                     )
             },
             
+            setTenantData() {
+                this.tenantService.validate(this.tenant)
+                    .then(
+                        (response) => {
+                            this.changeStep(1)
+                        },
+                        (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        }
+                    )
+            },
+            
+            setRentalData(rent) {
+                this.rent = rent
+                this.rentalService.validate(this.rent)
+                    .then(
+                        (response) => {
+                            this.changeStep(2)
+                        },
+                        (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        }
+                    )
+            },
+            
+            confirmRental() {
+                this.rentalService.rent(this.tenant, this.item, this.rent)
+                    .then(
+                        (response) => {
+                            console.log(response);
+                        },
+                        (response) => {
+                            console.log(response);
+                        },
+                    )
+            },
+            
             back() {
                 if (this.activeStep > 0) 
-                    this.activeStep--
+                    this.changeStep(this.activeStep - 1)
             }
         }
     }
@@ -201,12 +236,15 @@
                 <TenantForm @submit-form="setTenantData" :tenant="tenant" source="rent" :saving="saving" :loading="loading" :errors="errors" />
             </div>
             <div v-else-if="activeStep == 1">
-                <RentForm :item="item" @back="back"/>
+                <RentForm @submit-form="setRentalData" :r="rent" :item="item" @back="back"/>
+            </div>
+            <div v-else-if="activeStep == 2">
+                <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" @back="back"/>
             </div>
         </div>
     </div>
     
-    <Dialog v-model:visible="selectTenantModalVisible" modal :header="$t('rent.select_tenant')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '90vw' }">
+    <Dialog v-model:visible="selectTenantModalVisible" modal :header="$t('rent.select_tenant')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw', '999px': '95vw' }">
         <form v-on:submit.prevent="searchTenants">
             <div class="formgrid grid mb-1">
                 <div class="col-12 md:col mb-3">
@@ -228,27 +266,21 @@
         <DataTable :value="tenants" class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
             <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                 <template #body="{ data }">
-                    {{ data.name }}
-                    <div>
-                        <small>
-                            <Address :object="data" emptyChar="-"/>
-                        </small>
+                    <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>
+                    <div class="mt-1">
+                        {{ data.name }}
+                        <div>
+                            <small>
+                                <Address :object="data" emptyChar="-"/>
+                            </small>
+                        </div>
                     </div>
-                </template>
-            </Column>
-            <Column :header="$t('tenants.account_type')">
-                <template #body="{ data }">
-                    {{ getValueLabel('tenant_types', data.type) }}
-                </template>
-            </Column>
-            <Column :header="$t('tenants.nip_pesel')">
-                <template #body="{ data }">
-                    <span v-if="data.type == 'person'">
-                        {{ data.pesel }}
-                    </span>
-                    <span v-else>
-                        {{ data.nip }}
-                    </span>
+                    <div class="mt-2" v-if="data.type == 'person' && data.pesel">
+                        {{ $t('tenants.pesel') }}: {{ data.pesel }}
+                    </div>
+                    <div class="mt-2" v-if="data.type == 'firm' && data.nip">
+                        {{ $t('tenants.nip') }}: {{ data.nip }}
+                    </div>
                 </template>
             </Column>
             <template #empty>

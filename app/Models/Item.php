@@ -32,6 +32,9 @@ class Item extends Model
     const OWNERSHIP_PROPERTY = "property";
     const OWNERSHIP_MANAGE = "manage";
     
+    public static $sortable = ["name"];
+    public static $defaultSortable = ["name", "asc"];
+    
     public static function getTypes()
     {
         return [

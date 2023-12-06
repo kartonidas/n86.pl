@@ -80,7 +80,7 @@
                 const search = {
                     customer_id : this.route.params.customerId
                 };
-                this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, search)
+                this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, null, null, search)
                     .then(
                         (response) => {
                             this.items = response.data.data

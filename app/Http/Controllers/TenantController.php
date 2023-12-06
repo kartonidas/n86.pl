@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\StoreTenantRequest;
+use App\Http\Requests\UpdateTenantRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
@@ -119,7 +120,7 @@ class TenantController extends Controller
         return $tenant;
     }
     
-    public function update(StoreTenantRequest $request, $tenantId)
+    public function update(UpdateTenantRequest $request, $tenantId)
     {
         User::checkAccess("tenant:update");
         

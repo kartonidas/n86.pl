@@ -1,5 +1,6 @@
 <script>
-    import { ref } from 'vue'
+    import { ref, computed } from 'vue'
+    import { getValueLabel, getValues } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf } from '@/utils/i18n-validators'
     import moment from 'moment'
@@ -17,28 +18,22 @@
                 deposit: this.item.default_deposit,
                 payment: 'cyclical',
                 rent: this.item.default_rent,
+                payment_day: 5, // to można dać z konfuguracji
+                first_payment_date: moment().add(10, 'days').toDate(),
+                first_month_different_amount: false,
+                last_month_different_amount: false,
             })
             
-            const period = [
-                {"id" : "month", "name" : "W miesiącach"},
-                {"id" : "indeterminate", "name" : "Nieokreślony"},
-                {"id" : "date", "name" : "Konkretna data"},
-            ];
-            
-            const termination_period = [
-                {"id" : "months", "name" : "Liczony w miesiącach"},
-                {"id" : "days", "name" : "Liczony w dniach"},
-            ];
-            
-            const payment = [
-                {"id" : "cyclical", "name" : "Cykliczna"},
-                {"id" : "onetime", "name" : "Jednorazowa"},
-            ];
+            const period = getValues('rental.periods');
+            const termination_period = getValues('rental.termination_periods');
+            const payment = getValues('rental.payments');
+            const payment_days = getValues('rental.payment_days');
             
             return {
                 period,
                 termination_period,
                 payment,
+                payment_days,
                 rent,
                 v: useVuelidate(),
             }
@@ -48,8 +43,25 @@
             loading: { type: Boolean },
             errors: { type: Array },
             item: { type: Object },
+            r: { type: Object },
+        },
+        mounted() {
+            Object.assign(this.rent, this.r);
+            
+            if(this.rent.start_date && !(this.rent.start_date instanceof Date))
+                this.rent.start_date = new Date(this.rent.start_date)
+                
+            if(this.rent.end_date && !(this.rent.end_date instanceof Date))
+                this.rent.end_date = moment(this.rent.end_date).toDate()
+                
+            if(this.rent.first_payment_date && !(this.rent.first_payment_date instanceof Date))
+                this.rent.first_payment_date = moment(this.rent.first_payment_date).toDate()
         },
         methods: {
+            onChangeStartDate(date) {
+                this.rent.first_payment_date = moment(date).add(10, 'days').toDate()
+            },
+            
             back() {
                 this.$emit('back')
             },
@@ -57,7 +69,17 @@
             async submitForm() {
                 const result = await this.v.$validate()
                 if (result) {
-                    console.log(this.rent)
+                    let rent = Object.assign({}, this.rent);
+                    if(rent.start_date && rent.start_date instanceof Date)
+                        rent.start_date = moment(rent.start_date).format("YYYY-MM-DD")
+                    
+                    if(rent.end_date && rent.end_date instanceof Date)
+                        rent.end_date = moment(rent.end_date).format("YYYY-MM-DD")
+                        
+                    if(rent.first_payment_date && rent.first_payment_date instanceof Date)
+                        rent.first_payment_date = moment(rent.first_payment_date).format("YYYY-MM-DD")
+                        
+                    this.$emit('submit-form', rent)
                 }
                 else
                     this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
@@ -67,15 +89,19 @@
             return {
                 rent: {
                     start_date: { required },
-                    end_date: { required },
                     period: { required },
-                    months: { required },
+                    end_date: { required: requiredIf(function() { return this.rent.period == "date" }) },
+                    months: { required: requiredIf(function() { return this.rent.period == "month" }) },
                     termination_period: { required },
-                    termination_months: { required },
-                    termination_days: { required },
+                    termination_months: { required: requiredIf(function() { return this.rent.termination_period == "months" }) },
+                    termination_days: { required: requiredIf(function() { return this.rent.termination_period == "days" }) },
                     payment: { required },
                     rent: { required },
-                    first_payment_date: { required },
+                    first_payment_date: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
+                    payment_day: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
+                    
+                    first_month_different_amount_value: { required: requiredIf(function() { return this.rent.first_month_different_amount }) },
+                    last_month_different_amount_value: { required: requiredIf(function() { return this.rent.last_month_different_amount }) },
                 }
             }
         },
@@ -89,7 +115,7 @@
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-4 mb-4">
                         <label for="start_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.start_date') }}</label>
-                        <Calendar id="start_date" v-model="rent.start_date" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="start_date" v-model="rent.start_date" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.start_date.$error">
                             <small class="p-error">{{ v.rent.start_date.$errors[0].$message }}</small>
                         </div>
@@ -104,8 +130,8 @@
                     </div>
                     
                     <div class="field col-12 md:col-4 mb-4" v-if="rent.period == 'month'">
-                        <label for="months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.months') }}</label>
-                        <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.months.$error}" :placeholder="$t('rent.months')" class="w-full" v-model="rent.months" :disabled="saving || loading"/>
+                        <label for="months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.number_of_months') }}</label>
+                        <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.months.$error}" :placeholder="$t('rent.number_of_months')" class="w-full" v-model="rent.months" :disabled="saving || loading"/>
                         <div v-if="v.rent.months.$error">
                             <small class="p-error">{{ v.rent.months.$errors[0].$message }}</small>
                         </div>
@@ -147,12 +173,12 @@
                         {{ $t('rent.payments') }}
                     </Divider>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="deposit" class="block text-900 font-medium mb-2">{{ $t('rent.deposit') }}</label>
                         <InputNumber id="deposit" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('rent.deposit')" class="w-full" v-model="rent.deposit" :disabled="loading || saving"/>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="payment" v-required class="block text-900 font-medium mb-2">{{ $t('rent.payment') }}</label>
                         <Dropdown id="payment" v-model="rent.payment" :options="payment" optionLabel="name" :class="{'p-invalid' : v.rent.payment.$error}" optionValue="id" :placeholder="$t('rent.select_payment')" class="w-full" :disabled="loading || saving"/>
                         <div v-if="v.rent.payment.$error">
@@ -160,7 +186,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 mb-4" :class="[rent.payment == 'cyclical' ? 'md:col-4' : 'md:col-6']">
                         <label for="rent" v-required class="block text-900 font-medium mb-2">{{ $t('rent.rent') }}</label>
                         <InputNumber id="rent" :useGrouping="false" locale="pl-PL" :class="{'p-invalid' : v.rent.rent.$error}" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('rent.rent')" class="w-full" v-model="rent.rent" :disabled="loading || saving"/>
                         <div v-if="v.rent.rent.$error">
@@ -168,26 +194,60 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-4 mb-4" v-if="rent.payment == 'cyclical'">
+                        <label for="firstMonthDifferentAmount" class="block text-900 font-medium mb-2">{{ $t('rent.first_month_different_amount') }}</label>
+                        <div class="field-checkbox mb-0">
+                            <Checkbox inputId="firstMonthDifferentAmount" name="superuser" value="1" v-model="rent.first_month_different_amount" class="mr-2" :binary="true" :disabled="loading || saving"/>
+                            <InputNumber :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" class="w-full" :class="{'p-invalid' : v.rent.first_month_different_amount_value.$error}" v-model="rent.first_month_different_amount_value" :disabled="loading || saving || !rent.first_month_different_amount"/>
+                        </div>
+                        <div v-if="v.rent.first_month_different_amount_value.$error">
+                            <small class="p-error">{{ v.rent.first_month_different_amount_value.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-4 mb-4" v-if="rent.payment == 'cyclical'">
+                        <label for="lastMonthDifferentAmount" class="block text-900 font-medium mb-2">{{ $t('rent.last_month_different_amount') }}</label>
+                        <div class="field-checkbox mb-0">
+                            <Checkbox inputId="lastMonthDifferentAmount" name="superuser" value="1" v-model="rent.last_month_different_amount" class="mr-2" :binary="true" :disabled="loading || saving"/>
+                            <InputNumber :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" class="w-full" :class="{'p-invalid' : v.rent.last_month_different_amount_value.$error}" v-model="rent.last_month_different_amount_value" :disabled="loading || saving || !rent.last_month_different_amount"/>
+                        </div>
+                        <div v-if="v.rent.last_month_different_amount_value.$error">
+                            <small class="p-error">{{ v.rent.last_month_different_amount_value.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4" v-if="rent.payment == 'cyclical'">
+                        <label for="payment_day" v-required class="block text-900 font-medium mb-2">{{ $t('rent.payment_day') }}</label>
+                        <Dropdown id="payment_day" v-model="rent.payment_day" :options="payment_days" optionLabel="name" :class="{'p-invalid' : v.rent.payment_day.$error}" optionValue="id" :placeholder="$t('rent.select_payment_day')" class="w-full" :disabled="loading || saving"/>
+                        <div v-if="v.rent.payment_day.$error">
+                            <small class="p-error">{{ v.rent.payment_day.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="first_payment_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.first_payment_date') }}</label>
                         <Calendar id="first_payment_date" v-model="rent.first_payment_date" :class="{'p-invalid' : v.rent.first_payment_date.$error}" :placeholder="$t('rent.first_payment_date')" :minDate="rent.start_date" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.first_payment_date.$error">
                             <small class="p-error">{{ v.rent.first_payment_date.$errors[0].$message }}</small>
                         </div>
                     </div>
+                    
+                    <Divider align="left" class="mt-3 mb-5">
+                        {{ $t('rent.additional_data') }}
+                    </Divider>
+                    
+                    <div class="field col-12 mb-4">
+                        <label for="number_of_people" v-required class="block text-900 font-medium mb-2">{{ $t('rent.number_of_people') }}</label>
+                        <InputMask id="number_of_people" mask="9?9" slotChar="" :placeholder="$t('rent.number_of_people')" class="w-full" v-model="rent.number_of_people" :disabled="saving || loading"/>
+                    </div>
+                    
+                    <div class="field col-12 mb-4">
+                        <label for="comments" class="block text-900 font-medium mb-2">{{ $t('rent.comments') }}</label>
+                        <Textarea id="comments" type="text" :placeholder="$t('rent.comments')" rows="3" class="w-full" v-model="rent.comments" :disabled="loading || saving"/>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <ul>
-            <li>Do którego dnia miesiąca płatność (to można by było ustawiać domyślnie w konfiguracji)</li>
-            <li>Data pierwszej płatności (domyślnie np liczyć + 14 dni od daty rozpoczęcia)</li>
-            <li>Inna kwota pierwszego miesiąca (jeśli np zaczynamy w połowie i jest to płatność cykliczna)</li>
-            <li>Inna kwota ostatniego miesiąca (jeśli np kończymy w połowie i jest to płatność cykliczna)</li>
-            <li>Ilość osób</li>
-            <li>Uwagi</li>
-            <li>Numer dowodu / paszportu najemcy?</li>
-        </ul>
         
         <div class="form-footer">
             <div class="flex justify-content-between align-items-center">

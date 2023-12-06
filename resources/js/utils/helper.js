@@ -70,7 +70,10 @@ export const setMetaTitle = (module) => {
 };
 
 export const getValues = (module) => {
-    return AppValues[getLocale()][module];
+    try {
+        let keys = module.split(".");
+        return keys.reduce((a, c) => a[c], AppValues[getLocale()]);
+    } catch (err) {}
 };
 
 export const getValueLabel = (module, value, key = 'name') => {

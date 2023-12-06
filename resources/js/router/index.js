@@ -257,7 +257,7 @@ const router = createRouter({
                             meta: {permission: 'rent:create'},
                         },
                         {
-                            path: '/app/rent/:tenantId',
+                            path: '/app/rent/new',
                             name: 'rent_source_direct',
                             component: () => import('@/views/app/Rent/SourceDirect.vue'),
                             meta: {permission: 'rent:create'},

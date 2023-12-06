@@ -13,6 +13,8 @@ import VueNumerals from 'vue-numerals';
 
 import PrimeVue from 'primevue/config';
 import AppBreadcrumb from '@/layout/app/AppBreadcrumb.vue';
+import Badge from 'primevue/badge';
+import BadgeDirective from 'primevue/badgedirective';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import Card from 'primevue/card';
@@ -62,6 +64,7 @@ app.use(PrimeVue);
 app.use(ToastService);
 app.use(VueNumerals, { locale: i18n.global.locale.value });
 
+app.component('Badge', Badge);
 app.component('Breadcrumb', AppBreadcrumb);
 app.component('Button', Button);
 app.component('Calendar', Calendar);
@@ -88,6 +91,6 @@ app.component('TabPanel', TabPanel);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
 app.directive('tooltip', Tooltip);
-
+app.directive('badge', BadgeDirective);
 
 app.mount("#app");

@@ -87,8 +87,8 @@
                     <p class="m-0 mt-2" v-if="item.area">
                         <span class="font-medium">{{ $t('items.area') }}: </span> <i>{{ numeralFormat(item.area, '0.00') }} (m2)</i>
                     </p>
-                    <p class="m-0 mt-2" v-if="item.number_of_rooms">
-                        <span class="font-medium">{{ $t('items.number_of_rooms') }}: </span> <i>{{ item.number_of_rooms }}</i>
+                    <p class="m-0 mt-2" v-if="item.num_rooms">
+                        <span class="font-medium">{{ $t('items.number_of_rooms') }}: </span> <i>{{ item.num_rooms }}</i>
                     </p>
                     <p class="m-0 mt-2" v-if="item.default_rent">
                         <span class="font-medium">{{ $t('items.default_rent_value') }}: </span> <i>{{ numeralFormat(item.default_rent, '0.00') }}</i>

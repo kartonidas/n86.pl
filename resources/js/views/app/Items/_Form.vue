@@ -10,7 +10,7 @@
     import ItemService from '@/service/ItemService'
     
     export default {
-        emits: ['submit-form', 'set-errors'],
+        emits: ['submit-form', 'set-errors', 'back'],
         components: { CustomerForm },
         setup() {
             const customer = ref({
@@ -54,6 +54,7 @@
             errors: { type: Array },
             update: { type: Boolean },
             fromCustomer: { type: Boolean },
+            source: { type: String, default: 'new' },
         },
         methods: {
             async getSettings() {
@@ -77,6 +78,10 @@
             
             back() {
                 this.$router.push({name: 'item_show', params: { itemId : this.item.id }})
+            },
+            
+            backFromRent() {
+                this.$emit('back')
             },
             
             addCustomer() {
@@ -268,9 +273,18 @@
         </div>
         
         <div class="form-footer">
-            <div v-if="!update">
+            <div v-if="source == 'new'">
                 <div class="text-right">
                     <Button type="submit" :label="$t('app.save')" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                </div>
+            </div>
+            <div v-else-if="source == 'rent' || source == 'rent:direct'">
+                <div class="text-right" v-if="source == 'rent'">
+                    <Button type="submit" :label="$t('app.next')" :loading="saving" iconPos="right" icon="pi pi-angle-right" class="w-auto text-center"></Button>
+                </div>
+                <div class="flex justify-content-between align-items-center" v-else>
+                    <Button type="button" :label="$t('app.back')" iconPos="left" icon="pi pi-angle-left" @click="backFromRent" class="p-button-secondary w-auto text-center"></Button>
+                    <Button type="submit" :label="$t('app.next')" :loading="saving" iconPos="right" icon="pi pi-angle-right" class="w-auto text-center"></Button>
                 </div>
             </div>
             <div v-else>
