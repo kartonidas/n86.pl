@@ -34,14 +34,21 @@ class StoreRentalRequest extends FormRequest
         if(($this->termination_period ?? null) == Rental::PERIOD_TERM_DAYS)
             $rules["termination_days"] = "required|min:1|max:99";
         
+        $rules["deposit"] = "nullable|numeric";
         $rules["payment"] = ["required", Rule::in(array_keys(Rental::getPaymentsType()))];
         $rules["rent"] = "required|numeric|min:1";
         
         if(($this->payment ?? null) == Rental::PAYMENT_CYCLICAL)
         {
-            $rules["first_payment_date"] = "required|date_format:Y-m-d";
+            $rules["first_month_different_amount_value"] = "nullable|numeric";
+            $rules["last_month_different_amount_value"] = "nullable|numeric";
             $rules["payment_day"] = ["required", Rule::in(array_keys(Rental::getPaymentDays()))];
         }
+            
+        $rules["first_payment_date"] = "required|date_format:Y-m-d";
+        
+        $rules["number_of_people"] = "required|integer|min:1";
+        $rules["comments"] = "nullable";
                     
         return $rules;
     }

@@ -25,14 +25,20 @@
             {{ $t('tenants.address') }}: <Address :object="object"/>
         </div>
         
-        <span v-if="object.type == 'person' && object.pesel">
-            <div class="mb-1">
+        <span v-if="object.type == 'person' && (object.pesel || object.document_number)">
+            <div class="mb-1" v-if="object.pesel">
                 {{ $t('tenants.pesel') }}: {{ object.pesel }}
             </div>
+            <div class="mb-1" v-if="object.document_number">
+                {{ $t('tenants.document_number') }}: {{ object.document_number }} <span v-if="object.document_type || object.document_extra" style="text-transform: lowercase">({{ getValueLabel('customer.documents', object.document_type) }}<span v-if="object.document_type && object.document_extra">, </span>{{ object.document_extra }})</span>
+            </div>
         </span>
-        <span v-if="object.type == 'firm' && object.nip">
-            <div class="mb-1">
-                {{ $t('tenants.nip') }}: {{ object.pesel }}
+        <span v-if="object.type == 'firm' && (object.nip || object.regon)">
+            <div class="mb-1" v-if="object.nip">
+                {{ $t('tenants.nip') }}: {{ object.nip }}
+            </div>
+            <div class="mb-1" v-if="object.regon">
+                {{ $t('tenants.regon') }}: {{ object.regon }}
             </div>
         </span>
     </div>

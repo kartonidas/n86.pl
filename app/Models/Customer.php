@@ -20,9 +20,19 @@ class Customer extends Model
     public const ROLE_TENANT = "tenant";
     public const TYPE_FIRM = "firm";
     public const TYPE_PERSON = "person";
+    public const DOCUMENT_TYPE_ID = "id";
+    public const DOCUMENT_TYPE_PASSPORT = "passport";
     
     public static $sortable = ["name", "nip"];
     public static $defaultSortable = ["name", "asc"];
+    
+    public static function getDocumentTypes()
+    {
+        return [
+            self::DOCUMENT_TYPE_ID => __("Identification"),
+            self::DOCUMENT_TYPE_PASSPORT => __("Passport"),
+        ];
+    }
     
     public function scopeApiFields(Builder $query): void
     {
@@ -37,9 +47,11 @@ class Customer extends Model
             "zip",
             "country",
             "nip",
+            "regon",
             "pesel",
             "document_type",
             "document_number",
+            "document_extra",
             "comments",
             "send_sms",
             "send_email",

@@ -1,6 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
+    import { getResponseErrors, getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
     import ItemService from '@/service/ItemService'
     import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
@@ -40,6 +40,7 @@
                 loading: true,
                 rent: {},
                 tenant: {},
+                tenantExists: true,
                 saving: false,
                 selectItemModalVisible: false,
                 selectedItem: false,
@@ -80,6 +81,7 @@
                     },
                     (response) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.tenantExists = false
                     }
                 );
         },
@@ -162,13 +164,19 @@
             },
             
             setItemData() {
+                this.saving = true
+                this.errors = []
+                
                 this.itemService.validate(this.item)
                     .then(
                         (response) => {
+                            this.saving = false
                             this.changeStep(1)
                         },
                         (response) => {
+                            this.saving = false
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         }
                     )
             },
@@ -187,7 +195,16 @@
             },
             
             confirmRental() {
-                console.log("confirmRental")
+                this.rentalService.rent(this.tenant, this.item, this.rent)
+                    .then(
+                        (response) => {
+                            console.log(response);
+                        },
+                        (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
+                        },
+                    )
             },
             
             back() {
@@ -199,69 +216,74 @@
 </script>
 
 <template>
-    <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
-        <Steps :model="stepsItems" :activeStep="activeStep">
-            <template #item="{ item, active }">
-                <span :class="['inline-flex align-items-center justify-content-center align-items-center border-circle border-primary border-1 h-3rem w-3rem z-1 cursor-pointer', { 'bg-primary': active, 'surface-overlay text-primary': !active }]">
-                    <i :class="[item.icon, 'text-xl']" />
-                </span>
-            </template>
-        </Steps>
-        <div class="mt-4">
-            <div v-if="activeStep == 0">
-                <div class="formgrid grid mb-5">
-                    <div class="col-12 sm:col-6 mt-3">
-                        <Button :label="$t('rent.add_new_item')" :severity="!selectedItem ? 'info' : 'secondary'" :outlined="selectedItem ? true : false" @click="addNewItem"/>
-                    </div>
-                    <div class="col-12 sm:col-6 mt-3">
-                        <Button :label="$t('rent.select_item')" :severity="selectedItem ? 'info' : 'secondary'" :outlined="!selectedItem ? true : false" @click="selectItemModal"/>
-                    </div>
-                </div>
-                <ItemForm @submit-form="setItemData" :item="item" source="rent" :saving="saving" :loading="loading" :errors="errors" />
-            </div>
-            <div v-else-if="activeStep == 1">
-                <RentForm @submit-form="setRentalData" :item="item" @back="back"/>
-            </div>
-            <div v-else-if="activeStep == 2">
-                <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" @back="back"/>
-            </div>
-        </div>
-    </div>
-    
-    <Dialog v-model:visible="selectItemModalVisible" modal :header="$t('rent.select_item')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw' }">
-        <form v-on:submit.prevent="searchItems">
-            <div class="formgrid grid mb-1">
-                <div class="col-12 md:col mb-3">
-                    <InputText type="text" :placeholder="$t('items.name')" class="w-full" v-model="meta.items.search.name"/>
-                </div>
-                <div class="col-12 md:col mb-3">
-                    <Dropdown v-model="meta.items.search.type" :showClear="this.meta.items.search.type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('items.estate_type')" class="w-full" />
-                </div>
-                <div class="col-12  mb-3" style="width: 120px;">
-                    <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
-                    <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearchItems"/>
-                </div>
-            </div>
-        </form>
-    
-        <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
-            <Column field="name" sortable :header="$t('items.name')" style="min-width: 300px;">
-                <template #body="{ data }">
-                    <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
-                    <div class="mt-1">
-                        {{ data.name }}
-                        <div>
-                            <small>
-                                <Address :object="data" emptyChar="-"/>
-                            </small>
+    <div v-if="tenantExists">
+        <Breadcrumb :model="meta.breadcrumbItems"/>
+        <div class="card p-fluid mt-4">
+            <Steps :model="stepsItems" :activeStep="activeStep">
+                <template #item="{ item, active }">
+                    <span :class="['inline-flex align-items-center justify-content-center align-items-center border-circle border-primary border-1 h-3rem w-3rem z-1 cursor-pointer', { 'bg-primary': active, 'surface-overlay text-primary': !active }]">
+                        <i :class="[item.icon, 'text-xl']" />
+                    </span>
+                </template>
+            </Steps>
+            <div class="mt-4">
+                <div v-if="activeStep == 0">
+                    <div class="formgrid grid mb-5">
+                        <div class="col-12 sm:col-6 mt-3">
+                            <Button :label="$t('rent.add_new_item')" :severity="!selectedItem ? 'info' : 'secondary'" :outlined="selectedItem ? true : false" @click="addNewItem"/>
+                        </div>
+                        <div class="col-12 sm:col-6 mt-3">
+                            <Button :label="$t('rent.select_item')" :severity="selectedItem ? 'info' : 'secondary'" :outlined="!selectedItem ? true : false" @click="selectItemModal"/>
                         </div>
                     </div>
+                    <ItemForm @submit-form="setItemData" :item="item" source="rent" :saving="saving" :loading="loading" :errors="errors" />
+                </div>
+                <div v-else-if="activeStep == 1">
+                    <RentForm @submit-form="setRentalData" :r="rent" :item="item" :errors="errors" @back="back"/>
+                </div>
+                <div v-else-if="activeStep == 2">
+                    <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" :errors="errors" @back="back"/>
+                </div>
+            </div>
+        </div>
+        
+        <Dialog v-model:visible="selectItemModalVisible" modal :header="$t('rent.select_item')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw', '999px': '95vw' }">
+            <form v-on:submit.prevent="searchItems">
+                <div class="formgrid grid mb-1">
+                    <div class="col-12 md:col mb-3">
+                        <InputText type="text" :placeholder="$t('items.name')" class="w-full" v-model="meta.items.search.name"/>
+                    </div>
+                    <div class="col-12 md:col mb-3">
+                        <Dropdown v-model="meta.items.search.type" :showClear="this.meta.items.search.type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('items.estate_type')" class="w-full" />
+                    </div>
+                    <div class="col-12  mb-3" style="width: 120px;">
+                        <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
+                        <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearchItems"/>
+                    </div>
+                </div>
+            </form>
+        
+            <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
+                <Column field="name" sortable :header="$t('items.name')" style="min-width: 300px;">
+                    <template #body="{ data }">
+                        <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
+                        <div class="mt-1">
+                            {{ data.name }}
+                            <div>
+                                <small>
+                                    <Address :object="data" emptyChar="-"/>
+                                </small>
+                            </div>
+                        </div>
+                    </template>
+                </Column>
+                <template #empty>
+                    {{ $t('items.empty_list') }}
                 </template>
-            </Column>
-            <template #empty>
-                {{ $t('items.empty_list') }}
-            </template>
-        </DataTable>
-    </Dialog>
+            </DataTable>
+        </Dialog>
+    </div>
+    <div v-else>
+        <Message severity="error">{{ $t("tenants.no_exists") }}</Message>
+    </div>
 </template>

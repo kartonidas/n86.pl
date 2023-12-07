@@ -12,7 +12,7 @@ class Pesel implements Rule
         if(empty($value))
             return true;
         
-        if(!preg_match("/^[0-9]+$/", $value))
+        if(!preg_match("/^[0-9]+$/", $value) || mb_strlen($value) != 11)
            return false;
         
         $sum = 0;

@@ -1,6 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
+    import { getResponseErrors, getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
     import ItemService from '@/service/ItemService'
     import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
@@ -178,13 +178,19 @@
             },
             
             setItemData() {
+                this.saving = true
+                this.errors = []
+                
                 this.itemService.validate(this.item)
                     .then(
                         (response) => {
+                            this.saving = false
                             this.changeStep(2)
                         },
                         (response) => {
+                            this.saving = false
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         }
                     )
             },
@@ -265,13 +271,19 @@
             },
             
             setTenantData() {
+                this.saving = true
+                this.errors = []
+                
                 this.tenantService.validate(this.tenant)
                     .then(
                         (response) => {
+                            this.saving = false
                             this.changeStep(1)
                         },
                         (response) => {
+                            this.saving = false
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         }
                     )
             },
@@ -290,7 +302,16 @@
             },
             
             confirmRental() {
-                console.log("confirmRental")
+                this.rentalService.rent(this.tenant, this.item, this.rent)
+                    .then(
+                        (response) => {
+                            console.log(response);
+                        },
+                        (response) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
+                        },
+                    )
             },
             
             back() {
@@ -335,10 +356,10 @@
                 <ItemForm @submit-form="setItemData" :item="item" source="rent:direct" @back="back" :saving="saving" :loading="loading" :errors="errors" />
             </div>
             <div v-else-if="activeStep == 2">
-                <RentForm @submit-form="setRentalData" :item="item" @back="back"/>
+                <RentForm @submit-form="setRentalData" :r="rent" :item="item" :errors="errors" @back="back"/>
             </div>
             <div v-else-if="activeStep == 3">
-                <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" @back="back"/>
+                <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" :errors="errors" @back="back"/>
             </div>
         </div>
     </div>
@@ -388,7 +409,7 @@
         </DataTable>
     </Dialog>
     
-    <Dialog v-model:visible="selectItemModalVisible" modal :header="$t('rent.select_item')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw' }">
+    <Dialog v-model:visible="selectItemModalVisible" modal :header="$t('rent.select_item')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw', '999px': '95vw' }">
         <form v-on:submit.prevent="searchItems">
             <div class="formgrid grid mb-1">
                 <div class="col-12 md:col mb-3">

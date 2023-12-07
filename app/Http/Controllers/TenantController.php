@@ -95,7 +95,11 @@ class TenantController extends Controller
         $tenant->zip = $validated["zip"] ?? null;
         $tenant->country = $validated["country"] ?? null;
         $tenant->nip = $validated["nip"] ?? null;
+        $tenant->regon = $validated["regon"] ?? null;
         $tenant->pesel = $validated["pesel"] ?? null;
+        $tenant->document_type = $validated["document_type"] ?? null;
+        $tenant->document_number = $validated["document_number"] ?? null;
+        $tenant->document_extra = $validated["document_extra"] ?? null;
         $tenant->comments = $validated["comments"] ?? null;
         $tenant->send_sms = $validated["send_sms"] ?? 0;
         $tenant->send_email = $validated["send_email"] ?? 0;

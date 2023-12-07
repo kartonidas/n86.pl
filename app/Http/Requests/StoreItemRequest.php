@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Validation\Rule;
 use App\Models\Customer;
@@ -19,6 +21,7 @@ class StoreItemRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            "id" => "sometimes|integer",
             "type" => ["required", Rule::in(array_keys(Item::getTypes()))],
             "name" => "required|max:100",
             "street" => "required|max:80",
@@ -37,6 +40,13 @@ class StoreItemRequest extends FormRequest
             "comments" => "sometimes|max:5000",
         ];
         
+        if(!empty($this->id))
+        {
+            $rules["id"] = Rule::exists('items', 'id')->where(function(Builder $query) {
+                return $query->where('uuid', Auth::user()->getUuid());
+            });
+        }
+        
         if(($this->ownership_type ?? "") == Item::OWNERSHIP_MANAGE)
         {
             $customers = Customer::pluck("id");
@@ -44,5 +54,12 @@ class StoreItemRequest extends FormRequest
         }
         
         return $rules;
+    }
+    
+    public function messages()
+    {
+        return [
+            'id' => ['exists' => __('Selected item does not exists')]
+        ];
     }
 }

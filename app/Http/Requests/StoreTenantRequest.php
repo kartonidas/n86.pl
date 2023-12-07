@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Customer;
 use App\Models\Country;
@@ -17,6 +19,7 @@ class StoreTenantRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            "id" => "sometimes|integer",
             "type" => ["required", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "name" => "required|max:100",
             "street" => "sometimes|max:80",
@@ -30,14 +33,36 @@ class StoreTenantRequest extends FormRequest
             "send_email" => "sometimes|boolean",
         ];
         
+        if(!empty($this->id))
+        {
+            $rules["id"] = Rule::exists('customers', 'id')->where(function(Builder $query) {
+                return $query->where('role', Customer::ROLE_TENANT)->where('uuid', Auth::user()->getUuid());
+            });
+        }
+        
         if(($this->type ?? "") == Customer::TYPE_PERSON)
+        {
             $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
+            $rules["document_type"] = ["sometimes", Rule::in(array_keys(Customer::getDocumentTypes()))];
+            $rules["document_number"] = ["sometimes", "max:100"];
+            $rules["document_extra"] = ["sometimes", "max:250"];
+        }
         elseif(($this->type ?? "") == Customer::TYPE_FIRM)
+        {
             $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
+            $rules["regon"] = ["sometimes", "max:15", new \App\Rules\Regon];
+        }
             
         $rules["contacts.email"] = ["sometimes", "array", new \App\Rules\ContactEmail];
         $rules["contacts.phone"] = ["sometimes", "array", new \App\Rules\ContactPhone];
             
         return $rules;
+    }
+    
+    public function messages()
+    {
+        return [
+            'id' => ['exists' => __('Selected tenant does not exists')]
+        ];
     }
 }

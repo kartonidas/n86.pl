@@ -42,10 +42,18 @@
         <InfoRentalObj type="rent" :object="rent"/>
     </div>
     
+    <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+        <ul class="list-unstyled">
+            <li v-for="error of errors">
+                {{ error }}
+            </li>
+        </ul>
+    </Message>
+    
     <div class="form-footer">
         <div class="flex justify-content-between align-items-center">
             <Button type="button" :label="$t('app.back')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
-            <Button type="submit" :label="$t('app.save')" :loading="saving" @click="rentConfirm" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+            <Button type="submit" :label="$t('app.rent')" :loading="saving" @click="rentConfirm" iconPos="right" icon="pi pi-briefcase" class="w-auto text-center"></Button>
         </div>
     </div>
 </template>

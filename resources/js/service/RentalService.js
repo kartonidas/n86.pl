@@ -5,9 +5,9 @@ export default class RentalService {
     rent(tenant, item, rent) {
         
         var rentData = {
-            tenant : tenant,
-            item : item,
-            rent : rent
+            tenant : removeNullValues(tenant),
+            item : removeNullValues(item),
+            rent : removeNullValues(rent)
         };
         
         return axios.put('api/v1/rental/rent', rentData);

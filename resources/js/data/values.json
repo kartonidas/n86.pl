@@ -20,6 +20,18 @@
                 "name": "Firma"
             }
         ],
+        "customer": {
+            "documents": [
+                {
+                    "id": "id",
+                    "name": "Dokument to\u017csamo\u015bci"
+                },
+                {
+                    "id": "passport",
+                    "name": "Paszport"
+                }
+            ]
+        },
         "item_types": [
             {
                 "id": "apartment",

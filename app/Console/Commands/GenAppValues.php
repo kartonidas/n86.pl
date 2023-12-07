@@ -49,6 +49,9 @@ class GenAppValues extends Command
                 ["id" => Customer::TYPE_FIRM, "name" => __("Firm")],
             ];
             
+            foreach(Customer::getDocumentTypes() as $type => $name)
+                $toJson[$lang]["customer"]["documents"][] = ["id" => $type, "name" => $name];
+            
             foreach(Item::getTypes() as $type => $name)
                 $toJson[$lang]["item_types"][] = ["id" => $type, "name" => $name];
                 

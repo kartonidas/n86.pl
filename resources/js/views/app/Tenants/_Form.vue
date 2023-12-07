@@ -57,6 +57,7 @@
                 phoneCodesFilterFields : ['code', 'name'],
                 countries: Countries[this.$i18n.locale],
                 types: getValues('tenant_types'),
+                documentTypes: getValues('customer.documents'),
                 v: useVuelidate(rules, state),
                 toValidate: toValidate
             }
@@ -127,7 +128,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 mb-4" :class="[tenant.type == 'firm' ? 'md:col-8' : 'md:col-4']">
                         <label for="name" v-required class="block text-900 font-medium mb-2">{{ labelTenantTypeName }}</label>
                         <InputText id="name" type="text" :placeholder="$t('tenants.name')" class="w-full" :class="{'p-invalid' : v.tenant.name.$error}" v-model="tenant.name" :disabled="saving || loading"/>
                         <div v-if="v.tenant.name.$error">
@@ -135,14 +136,32 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4" v-if="tenant.type == 'firm'">
+                    <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'firm'">
                         <label for="nip" class="block text-900 font-medium mb-2">{{ $t('tenants.nip') }}</label>
                         <InputText id="nip" type="text" :placeholder="$t('tenants.nip')" class="w-full" v-model="tenant.nip" :disabled="saving || loading" />
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'firm'">
+                        <label for="regon" class="block text-900 font-medium mb-2">{{ $t('tenants.regon') }}</label>
+                        <InputText id="regon" type="text" :placeholder="$t('tenants.regon')" class="w-full" v-model="tenant.regon" :disabled="saving || loading" />
                     </div>
                     
                     <div class="field col-12 md:col-4 mb-4" v-if="tenant.type == 'person'">
                         <label for="pesel" class="block text-900 font-medium mb-2">{{ $t('tenants.pesel') }}</label>
                         <InputText id="pesel" type="text" :placeholder="$t('tenants.pesel')" class="w-full" v-model="tenant.pesel" :disabled="saving || loading" />
+                    </div>
+                    <div class="field col-12 md:col-3 mb-4" v-if="tenant.type == 'person'">
+                        <label for="document_type" class="block text-900 font-medium mb-2">{{ $t('tenants.document_type') }}</label>
+                        <Dropdown id="type" v-model="tenant.document_type" showClear :options="documentTypes" optionLabel="name" optionValue="id" :placeholder="$t('tenants.document_type')" class="w-full" :disabled="saving || loading"/>
+                    </div>
+                    <div class="field col-12 md:col-3 mb-4" v-if="tenant.type == 'person'">
+                        <label for="document_number" class="block text-900 font-medium mb-2">{{ $t('tenants.document_number') }}</label>
+                        <InputText id="document_number" type="text" :placeholder="$t('tenants.document_number')" class="w-full" v-model="tenant.document_number" :disabled="saving || loading" />
+                    </div>
+                    <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'person'">
+                        <label for="document_extra" class="block text-900 font-medium mb-2">{{ $t('tenants.document_extra') }}</label>
+                        <InputText id="document_extra" type="text" :placeholder="$t('tenants.document_extra')" class="w-full" v-model="tenant.document_extra" :disabled="saving || loading" />
+                        <small>{{ $t("tenants.document_extra_help") }}</small>
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4">

@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use DateTime;
+use DateInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Libraries\Helper;
 
 class Rental extends Model
 {
@@ -52,5 +55,17 @@ class Rental extends Model
         for($i = 1; $i <= 25; $i++)
             $days[$i] = $i;
         return $days;
+    }
+    
+    public function setEndDate()
+    {
+        if($this->period == self::PERIOD_MONTH)
+        {
+            $start = new DateTime();
+            $start->setTimestamp($this->start);
+            
+            $start->add(new DateInterval("P" . $this->months . "M"));
+            $this->end = strtotime(Helper::setDateTime($start->format("Y-m-d"), "23:59:59"));
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -367,5 +368,11 @@ class Helper
         }
         
         return $out;
+    }
+    
+    public static function setDateTime($date, $time = "00:00:00")
+    {
+        $date = new DateTime($date);
+        return $date->format("Y-m-d") . " " . $time;
     }
 }

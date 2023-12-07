@@ -2,7 +2,7 @@
     import { ref, computed } from 'vue'
     import { getValueLabel, getValues } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
-    import { required, requiredIf } from '@/utils/i18n-validators'
+    import { required, requiredIf, minValue } from '@/utils/i18n-validators'
     import moment from 'moment'
 
     export default {
@@ -22,6 +22,7 @@
                 first_payment_date: moment().add(10, 'days').toDate(),
                 first_month_different_amount: false,
                 last_month_different_amount: false,
+                number_of_people: 1,
             })
             
             const period = getValues('rental.periods');
@@ -46,7 +47,7 @@
             r: { type: Object },
         },
         mounted() {
-            Object.assign(this.rent, this.r);
+            this.rent = Object.assign(this.rent, this.r);
             
             if(this.rent.start_date && !(this.rent.start_date instanceof Date))
                 this.rent.start_date = new Date(this.rent.start_date)
@@ -96,12 +97,12 @@
                     termination_months: { required: requiredIf(function() { return this.rent.termination_period == "months" }) },
                     termination_days: { required: requiredIf(function() { return this.rent.termination_period == "days" }) },
                     payment: { required },
-                    rent: { required },
+                    rent: { required, minValue: minValue(1) },
                     first_payment_date: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
                     payment_day: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
-                    
                     first_month_different_amount_value: { required: requiredIf(function() { return this.rent.first_month_different_amount }) },
                     last_month_different_amount_value: { required: requiredIf(function() { return this.rent.last_month_different_amount }) },
+                    number_of_people: { required },
                 }
             }
         },
@@ -110,6 +111,14 @@
 
 <template>
     <form v-on:submit.prevent="submitForm" class="sticky-footer-form">
+        <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
+            <ul class="list-unstyled">
+                <li v-for="error of errors">
+                    {{ error }}
+                </li>
+            </ul>
+        </Message>
+        
         <div class="mb-4">
             <div class="p-fluid">
                 <div class="formgrid grid">
@@ -238,7 +247,10 @@
                     
                     <div class="field col-12 mb-4">
                         <label for="number_of_people" v-required class="block text-900 font-medium mb-2">{{ $t('rent.number_of_people') }}</label>
-                        <InputMask id="number_of_people" mask="9?9" slotChar="" :placeholder="$t('rent.number_of_people')" class="w-full" v-model="rent.number_of_people" :disabled="saving || loading"/>
+                        <InputMask id="number_of_people" mask="9?9" slotChar="" :placeholder="$t('rent.number_of_people')" class="w-full" :class="{'p-invalid' : v.rent.number_of_people.$error}" v-model="rent.number_of_people" :disabled="saving || loading"/>
+                        <div v-if="v.rent.number_of_people.$error">
+                            <small class="p-error">{{ v.rent.number_of_people.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 mb-4">

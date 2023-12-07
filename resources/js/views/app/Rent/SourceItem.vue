@@ -1,6 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
+    import { getResponseErrors, getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
     import ItemService from '@/service/ItemService'
     import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
@@ -41,6 +41,7 @@
                 activeStep: 0,
                 errors: [],
                 item: {},
+                itemExists: true,
                 loading: true,
                 rent: {},
                 saving: false,
@@ -84,6 +85,7 @@
                     },
                     (response) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        this.itemExists = false
                     }
                 );
         },
@@ -169,26 +171,38 @@
             },
             
             setTenantData() {
+                this.saving = true
+                this.errors = []
+                
                 this.tenantService.validate(this.tenant)
                     .then(
                         (response) => {
+                            this.saving = false
                             this.changeStep(1)
                         },
                         (response) => {
+                            this.saving = false
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         }
                     )
             },
             
             setRentalData(rent) {
-                this.rent = rent
-                this.rentalService.validate(this.rent)
+                this.saving = true
+                this.errors = []
+                
+                this.rentalService.validate(rent)
                     .then(
                         (response) => {
+                            this.saving = false
+                            this.rent = rent
                             this.changeStep(2)
                         },
                         (response) => {
+                            this.saving = false
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         }
                     )
             },
@@ -200,7 +214,8 @@
                             console.log(response);
                         },
                         (response) => {
-                            console.log(response);
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(response)
                         },
                     )
             },
@@ -215,77 +230,83 @@
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
-        <Steps :model="stepsItems" :activeStep="activeStep">
-            <template #item="{ item, active }">
-                <span :class="['inline-flex align-items-center justify-content-center align-items-center border-circle border-primary border-1 h-3rem w-3rem z-1 cursor-pointer', { 'bg-primary': active, 'surface-overlay text-primary': !active }]">
-                    <i :class="[item.icon, 'text-xl']" />
-                </span>
-            </template>
-        </Steps>
-        <div class="mt-4">
-            <div v-if="activeStep == 0">
-                <div class="formgrid grid mb-5">
-                    <div class="col-12 sm:col-6 mt-3">
-                        <Button :label="$t('rent.add_new_tenant')" :severity="!selectedTenant ? 'info' : 'secondary'" :outlined="selectedTenant ? true : false" @click="addNewTenant"/>
-                    </div>
-                    <div class="col-12 sm:col-6 mt-3">
-                        <Button :label="$t('rent.select_tenant')" :severity="selectedTenant ? 'info' : 'secondary'" :outlined="!selectedTenant ? true : false" @click="selectTenantModal"/>
-                    </div>
-                </div>
-                <TenantForm @submit-form="setTenantData" :tenant="tenant" source="rent" :saving="saving" :loading="loading" :errors="errors" />
-            </div>
-            <div v-else-if="activeStep == 1">
-                <RentForm @submit-form="setRentalData" :r="rent" :item="item" @back="back"/>
-            </div>
-            <div v-else-if="activeStep == 2">
-                <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" @back="back"/>
-            </div>
-        </div>
-    </div>
     
-    <Dialog v-model:visible="selectTenantModalVisible" modal :header="$t('rent.select_tenant')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw', '999px': '95vw' }">
-        <form v-on:submit.prevent="searchTenants">
-            <div class="formgrid grid mb-1">
-                <div class="col-12 md:col mb-3">
-                    <InputText type="text" :placeholder="$t('tenants.name')" class="w-full" v-model="meta.tenants.search.name"/>
-                </div>
-                <div class="col-12 md:col mb-3">
-                    <Dropdown v-model="meta.tenants.search.type" :showClear="this.meta.tenants.search.type ? true : false" :options="tenant_types" optionLabel="name" optionValue="id" :placeholder="$t('tenants.account_type')" class="w-full" />
-                </div>
-                <div class="col-12 md:col mb-3">
-                    <InputText type="text" :placeholder="$t('tenants.nip_pesel')" class="w-full" v-model="meta.tenants.search.pesel_nip"/>
-                </div>
-                <div class="col-12  mb-3" style="width: 120px;">
-                    <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
-                    <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearchTenants"/>
-                </div>
-            </div>
-        </form>
-    
-        <DataTable :value="tenants" class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
-            <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
-                <template #body="{ data }">
-                    <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>
-                    <div class="mt-1">
-                        {{ data.name }}
-                        <div>
-                            <small>
-                                <Address :object="data" emptyChar="-"/>
-                            </small>
+    <div v-if="itemExists">
+        <div class="card p-fluid mt-4">
+            <Steps :model="stepsItems" :activeStep="activeStep">
+                <template #item="{ item, active }">
+                    <span :class="['inline-flex align-items-center justify-content-center align-items-center border-circle border-primary border-1 h-3rem w-3rem z-1 cursor-pointer', { 'bg-primary': active, 'surface-overlay text-primary': !active }]">
+                        <i :class="[item.icon, 'text-xl']" />
+                    </span>
+                </template>
+            </Steps>
+            <div class="mt-4">
+                <div v-if="activeStep == 0">
+                    <div class="formgrid grid mb-5">
+                        <div class="col-12 sm:col-6 mt-3">
+                            <Button :label="$t('rent.add_new_tenant')" :severity="!selectedTenant ? 'info' : 'secondary'" :outlined="selectedTenant ? true : false" @click="addNewTenant"/>
+                        </div>
+                        <div class="col-12 sm:col-6 mt-3">
+                            <Button :label="$t('rent.select_tenant')" :severity="selectedTenant ? 'info' : 'secondary'" :outlined="!selectedTenant ? true : false" @click="selectTenantModal"/>
                         </div>
                     </div>
-                    <div class="mt-2" v-if="data.type == 'person' && data.pesel">
-                        {{ $t('tenants.pesel') }}: {{ data.pesel }}
+                    <TenantForm @submit-form="setTenantData" :tenant="tenant" source="rent" :saving="saving" :loading="loading" :errors="errors" />
+                </div>
+                <div v-else-if="activeStep == 1">
+                    <RentForm @submit-form="setRentalData" :r="rent" :item="item" :errors="errors" @back="back"/>
+                </div>
+                <div v-else-if="activeStep == 2">
+                    <Summary @submit-form="confirmRental" :item="item" :tenant="tenant" :rent="rent" :errors="errors" @back="back"/>
+                </div>
+            </div>
+        </div>
+        
+        <Dialog v-model:visible="selectTenantModalVisible" modal :header="$t('rent.select_tenant')" style="{ width: '50rem' }" :breakpoints="{ '1499px': '75vw', '999px': '95vw' }">
+            <form v-on:submit.prevent="searchTenants">
+                <div class="formgrid grid mb-1">
+                    <div class="col-12 md:col mb-3">
+                        <InputText type="text" :placeholder="$t('tenants.name')" class="w-full" v-model="meta.tenants.search.name"/>
                     </div>
-                    <div class="mt-2" v-if="data.type == 'firm' && data.nip">
-                        {{ $t('tenants.nip') }}: {{ data.nip }}
+                    <div class="col-12 md:col mb-3">
+                        <Dropdown v-model="meta.tenants.search.type" :showClear="this.meta.tenants.search.type ? true : false" :options="tenant_types" optionLabel="name" optionValue="id" :placeholder="$t('tenants.account_type')" class="w-full" />
                     </div>
+                    <div class="col-12 md:col mb-3">
+                        <InputText type="text" :placeholder="$t('tenants.nip_pesel')" class="w-full" v-model="meta.tenants.search.pesel_nip"/>
+                    </div>
+                    <div class="col-12  mb-3" style="width: 120px;">
+                        <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
+                        <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearchTenants"/>
+                    </div>
+                </div>
+            </form>
+        
+            <DataTable :value="tenants" class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
+                <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
+                    <template #body="{ data }">
+                        <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>
+                        <div class="mt-1">
+                            {{ data.name }}
+                            <div>
+                                <small>
+                                    <Address :object="data" emptyChar="-"/>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="mt-2" v-if="data.type == 'person' && data.pesel">
+                            {{ $t('tenants.pesel') }}: {{ data.pesel }}
+                        </div>
+                        <div class="mt-2" v-if="data.type == 'firm' && data.nip">
+                            {{ $t('tenants.nip') }}: {{ data.nip }}
+                        </div>
+                    </template>
+                </Column>
+                <template #empty>
+                    {{ $t('tenants.empty_list') }}
                 </template>
-            </Column>
-            <template #empty>
-                {{ $t('tenants.empty_list') }}
-            </template>
-        </DataTable>
-    </Dialog>
+            </DataTable>
+        </Dialog>
+    </div>
+    <div v-else>
+        <Message severity="error">{{ $t("items.no_exists") }}</Message>
+    </div>
 </template>

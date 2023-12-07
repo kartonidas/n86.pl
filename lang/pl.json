@@ -141,11 +141,16 @@
     "Firm": "Firma",
     "My property": "Moja w\u0142asno\u015b\u0107",
     "I manage on behalf of the client": "Zarz\u0105dzam w imieniu klienta",
-    "In months": "W miesiącach",
-    "Indeterminate": "Nieokreślona",
-    "Specific date": "Konkretny dzień",
-    "Counted in months": "Liczone w miesiącach",
+    "In months": "W miesi\u0105cach",
+    "Indeterminate": "Nieokre\u015blona",
+    "Specific date": "Konkretny dzie\u0144",
+    "Counted in months": "Liczone w miesi\u0105cach",
     "Counted in days": "Liczone w dniach",
     "Cyclical": "Cykliczna",
-    "One time": "Jednorazowa"
+    "One time": "Jednorazowa",
+    "Identification": "Dokument to\u017csamo\u015bci",
+    "Passport": "Paszport",
+    "Invalid REGON number": "Nieprawid\u0142owy numer REGON",
+    "Selected item does not exists": "Wybrana nieruchomość nie istnieje",
+    "Selected tenant does not exists": "Wybrany najemca nie istnieje"
 }
