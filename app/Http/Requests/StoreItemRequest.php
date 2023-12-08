@@ -30,13 +30,13 @@ class StoreItemRequest extends FormRequest
             "city" => "required|max:120",
             "zip" => "required|max:10",
             "country" => ["sometimes", "nullable", Rule::in(Country::getAllowedCodes())],
-            "area" => "sometimes|nullable|numeric",
+            "area" => "sometimes|nullable|numeric|max:999999.99",
             "ownership_type" => ["required", Rule::in(array_keys(Item::getOwnershipTypes()))],
             "room_rental" => "sometimes|required|boolean",
-            "num_rooms" => "sometimes|nullable|integer",
+            "num_rooms" => "sometimes|nullable|integer|max:99",
             "description" => "sometimes|max:5000",
-            "default_rent" => "sometimes|nullable|numeric",
-            "default_deposit" => "sometimes|nullable|numeric",
+            "default_rent" => "sometimes|nullable|numeric|max:999999.99",
+            "default_deposit" => "sometimes|nullable|numeric|max:999999.99",
             "comments" => "sometimes|max:5000",
         ];
         

@@ -1,8 +1,9 @@
 <script>
     import { ref, reactive, computed } from 'vue'
     import { useVuelidate } from '@vuelidate/core'
-    import { required, email } from '@/utils/i18n-validators'
+    import { required, email, helpers, maxLength } from '@/utils/i18n-validators'
     import { getValues } from '@/utils/helper'
+    import { pesel, nip, regon } from '@/utils/validators'
     
     import Countries from '@/data/countries.json'
     import TenantService from '@/service/TenantService'
@@ -27,10 +28,22 @@
             const rules = computed(() => {
                 const rules = {
                     tenant: {
-                        name: { required },
+                        name: { required, maxLengthValue: maxLength(100) },
                         type: { required },
+                        street: { maxLengthValue: maxLength(80) },
+                        house_no: { maxLengthValue: maxLength(20) },
+                        apartment_no: { maxLengthValue: maxLength(20) },
+                        city: { maxLengthValue: maxLength(120) },
+                        zip: { maxLengthValue: maxLength(10) },
+                        comments: { maxLengthValue: maxLength(5000) },
+                        document_number: { maxLengthValue: maxLength(100) },
+                        document_extra: { maxLengthValue: maxLength(250) },
                     }
                 }
+                
+                rules.tenant.nip = state.tenant.type == "firm" ? { nip: helpers.withMessage(this.$t('validations.nip'), nip) } : {};
+                rules.tenant.regon = state.tenant.type == "firm" ? { regon: helpers.withMessage(this.$t('validations.regon'), regon) } : {};
+                rules.tenant.pesel = state.tenant.type == "person" ? { pesel: helpers.withMessage(this.$t('validations.pesel'), pesel) } : {};
                 
                 rules.tenant.contacts = {}
                 if(state.tenant.contacts.email.length)
@@ -38,7 +51,7 @@
                     rules.tenant.contacts.email = []
                     
                     for(var i = 0; i < state.tenant.contacts.email.length; i++)
-                        rules.tenant.contacts.email.push({ val : { required, email } })
+                        rules.tenant.contacts.email.push({ val : { required, email, maxLengthValue: maxLength(50) } })
                 }
                 
                 if(state.tenant.contacts.phone.length)
@@ -122,7 +135,7 @@
                 <div class="formgrid grid">
                     <div class="field col-12  md:col-4 mb-4">
                         <label for="type" v-required class="block text-900 font-medium mb-2">{{ $t('tenants.account_type') }}</label>
-                        <Dropdown id="type" v-model="tenant.type" :options="types" optionLabel="name" optionValue="id" :placeholder="$t('tenants.account_type')" class="w-full" :disabled="saving || loading"/>
+                        <Dropdown id="type" v-model="tenant.type" :options="types" :class="{'p-invalid' : v.tenant.type.$error}" optionLabel="name" optionValue="id" :placeholder="$t('tenants.account_type')" class="w-full" :disabled="saving || loading"/>
                         <div v-if="v.tenant.type.$error">
                             <small class="p-error">{{ v.tenant.type.$errors[0].$message }}</small>
                         </div>
@@ -138,17 +151,26 @@
                     
                     <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'firm'">
                         <label for="nip" class="block text-900 font-medium mb-2">{{ $t('tenants.nip') }}</label>
-                        <InputText id="nip" type="text" :placeholder="$t('tenants.nip')" class="w-full" v-model="tenant.nip" :disabled="saving || loading" />
+                        <InputText id="nip" type="text" :placeholder="$t('tenants.nip')" :class="{'p-invalid' : v.tenant.nip.$error}" class="w-full" v-model="tenant.nip" :disabled="saving || loading" />
+                        <div v-if="v.tenant.nip.$error">
+                            <small class="p-error">{{ v.tenant.nip.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'firm'">
                         <label for="regon" class="block text-900 font-medium mb-2">{{ $t('tenants.regon') }}</label>
-                        <InputText id="regon" type="text" :placeholder="$t('tenants.regon')" class="w-full" v-model="tenant.regon" :disabled="saving || loading" />
+                        <InputText id="regon" type="text" :placeholder="$t('tenants.regon')" :class="{'p-invalid' : v.tenant.regon.$error}" class="w-full" v-model="tenant.regon" :disabled="saving || loading" />
+                        <div v-if="v.tenant.regon.$error">
+                            <small class="p-error">{{ v.tenant.regon.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-4 mb-4" v-if="tenant.type == 'person'">
                         <label for="pesel" class="block text-900 font-medium mb-2">{{ $t('tenants.pesel') }}</label>
-                        <InputText id="pesel" type="text" :placeholder="$t('tenants.pesel')" class="w-full" v-model="tenant.pesel" :disabled="saving || loading" />
+                        <InputText id="pesel" type="text" :placeholder="$t('tenants.pesel')" :class="{'p-invalid' : v.tenant.pesel.$error}" class="w-full" v-model="tenant.pesel" :disabled="saving || loading" />
+                        <div v-if="v.tenant.pesel.$error">
+                            <small class="p-error">{{ v.tenant.pesel.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     <div class="field col-12 md:col-3 mb-4" v-if="tenant.type == 'person'">
                         <label for="document_type" class="block text-900 font-medium mb-2">{{ $t('tenants.document_type') }}</label>
@@ -156,27 +178,42 @@
                     </div>
                     <div class="field col-12 md:col-3 mb-4" v-if="tenant.type == 'person'">
                         <label for="document_number" class="block text-900 font-medium mb-2">{{ $t('tenants.document_number') }}</label>
-                        <InputText id="document_number" type="text" :placeholder="$t('tenants.document_number')" class="w-full" v-model="tenant.document_number" :disabled="saving || loading" />
+                        <InputText id="document_number" type="text" :placeholder="$t('tenants.document_number')" class="w-full" :class="{'p-invalid' : v.tenant.document_number.$error}" v-model="tenant.document_number" :disabled="saving || loading" />
+                        <div v-if="v.tenant.document_number.$error">
+                            <small class="p-error">{{ v.tenant.document_number.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     <div class="field col-12 md:col-6 mb-4" v-if="tenant.type == 'person'">
                         <label for="document_extra" class="block text-900 font-medium mb-2">{{ $t('tenants.document_extra') }}</label>
-                        <InputText id="document_extra" type="text" :placeholder="$t('tenants.document_extra')" class="w-full" v-model="tenant.document_extra" :disabled="saving || loading" />
+                        <InputText id="document_extra" type="text" :placeholder="$t('tenants.document_extra')" class="w-full" :class="{'p-invalid' : v.tenant.document_extra.$error}" v-model="tenant.document_extra" :disabled="saving || loading" />
+                        <div v-if="v.tenant.document_extra.$error">
+                            <small class="p-error">{{ v.tenant.document_extra.$errors[0].$message }}</small>
+                        </div>
                         <small>{{ $t("tenants.document_extra_help") }}</small>
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="street" class="block text-900 font-medium mb-2">{{ $t('tenants.street') }}</label>
-                        <InputText id="street" type="text" :placeholder="$t('tenants.street')" class="w-full" v-model="tenant.street" :disabled="saving || loading" />
+                        <InputText id="street" type="text" :placeholder="$t('tenants.street')" class="w-full" :class="{'p-invalid' : v.tenant.street.$error}" v-model="tenant.street" :disabled="saving || loading" />
+                        <div v-if="v.tenant.street.$error">
+                            <small class="p-error">{{ v.tenant.street.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('tenants.house_no') }}</label>
-                        <InputText id="house_no" type="text" :placeholder="$t('tenants.house_no')" class="w-full" v-model="tenant.house_no" :disabled="saving || loading" />
+                        <InputText id="house_no" type="text" :placeholder="$t('tenants.house_no')" class="w-full" :class="{'p-invalid' : v.tenant.house_no.$error}" v-model="tenant.house_no" :disabled="saving || loading" />
+                        <div v-if="v.tenant.house_no.$error">
+                            <small class="p-error">{{ v.tenant.house_no.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('tenants.apartment_no') }}</label>
-                        <InputText id="apartment_no" type="text" :placeholder="$t('tenants.apartment_no')" class="w-full" v-model="tenant.apartment_no" :disabled="saving || loading" />
+                        <InputText id="apartment_no" type="text" :placeholder="$t('tenants.apartment_no')" class="w-full" :class="{'p-invalid' : v.tenant.apartment_no.$error}" v-model="tenant.apartment_no" :disabled="saving || loading" />
+                        <div v-if="v.tenant.apartment_no.$error">
+                            <small class="p-error">{{ v.tenant.apartment_no.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-4 sm:col-12 mb-4">
@@ -186,17 +223,26 @@
                     
                     <div class="field col-12 md:col-3 sm:col-4 mb-4">
                         <label for="zip" class="block text-900 font-medium mb-2">{{ $t('tenants.zip') }}</label>
-                        <InputText id="zip" type="text" :placeholder="$t('tenants.zip')" class="w-full" v-model="tenant.zip" :disabled="saving || loading" />
+                        <InputText id="zip" type="text" :placeholder="$t('tenants.zip')" class="w-full" v-model="tenant.zip" :class="{'p-invalid' : v.tenant.zip.$error}" :disabled="saving || loading" />
+                        <div v-if="v.tenant.zip.$error">
+                            <small class="p-error">{{ v.tenant.zip.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-5 sm:col-8 mb-4">
                         <label for="city" class="block text-900 font-medium mb-2">{{ $t('tenants.city') }}</label>
-                        <InputText id="city" type="text" :placeholder="$t('tenants.city')" class="w-full" v-model="tenant.city" :disabled="saving || loading"/>
+                        <InputText id="city" type="text" :placeholder="$t('tenants.city')" class="w-full" v-model="tenant.city" :class="{'p-invalid' : v.tenant.city.$error}" :disabled="saving || loading"/>
+                        <div v-if="v.tenant.city.$error">
+                            <small class="p-error">{{ v.tenant.city.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 mb-4">
                         <label for="comments" class="block text-900 font-medium mb-2">{{ $t('tenants.comments') }}</label>
-                        <Textarea id="comments" type="text" :placeholder="$t('tenants.comments')" rows="3" class="w-full" v-model="tenant.comments" :disabled="saving || loading"/>
+                        <Textarea id="comments" type="text" :placeholder="$t('tenants.comments')" rows="3" class="w-full" :class="{'p-invalid' : v.tenant.comments.$error}" v-model="tenant.comments" :disabled="saving || loading"/>
+                        <div v-if="v.tenant.comments.$error">
+                            <small class="p-error">{{ v.tenant.comments.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 mb-4">

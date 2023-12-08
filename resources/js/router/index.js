@@ -262,6 +262,12 @@ const router = createRouter({
                             component: () => import('@/views/app/Rent/SourceDirect.vue'),
                             meta: {permission: 'rent:create'},
                         },
+                        {
+                            path: '/app/rent/success/:rentId',
+                            name: 'rent_success',
+                            component: () => import('@/views/app/Rent/Success.vue'),
+                            meta: {permission: 'rent:create'},
+                        },
                     ]
                 },
                 {

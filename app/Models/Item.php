@@ -10,6 +10,7 @@ use App\Exceptions\ObjectNotExist;
 
 use App\Models\Customer;
 use App\Models\ItemTenant;
+use App\Models\Rental;
 use App\Models\Tenant;
 
 class Item extends Model
@@ -133,5 +134,14 @@ class Item extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+    
+    public function getCurrentRental()
+    {
+        $rental = Rental::apiFields()->where("item_id", $this->id)->where("status", Rental::STATUS_CURRENT)->first();
+        if($rental)
+            $rental->tenant = $rental->getTenant();
+        
+        return $rental;
     }
 }

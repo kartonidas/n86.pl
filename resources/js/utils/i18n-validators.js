@@ -10,3 +10,6 @@ export const email = withI18nMessage(validators.email)
 export const sameAs = withI18nMessage(validators.sameAs, { withArguments: true })
 export const requiredIf = withI18nMessage(validators.requiredIf, { withArguments: true })
 export const minValue = withI18nMessage(validators.minValue, { withArguments: true })
+export const maxLength = withI18nMessage(validators.maxLength, { withArguments: true })
+export const maxValue = withI18nMessage(validators.maxValue, { withArguments: true })
+export const helpers = validators.helpers

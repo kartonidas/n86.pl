@@ -117,7 +117,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'item_show', params: { itemId : data.id }}">

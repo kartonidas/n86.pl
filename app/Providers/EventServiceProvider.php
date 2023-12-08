@@ -12,6 +12,8 @@ use App\Models\File;
 use App\Observers\FileObserver;
 use App\Models\Firm;
 use App\Observers\FirmObserver;
+use App\Models\Rental;
+use App\Observers\RentalObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -34,6 +36,7 @@ class EventServiceProvider extends ServiceProvider
         UserInvitation::observe(UserInvitationObserver::class);
         File::observe(FileObserver::class);
         Firm::observe(FirmObserver::class);
+        Rental::observe(RentalObserver::class);
     }
 
     /**

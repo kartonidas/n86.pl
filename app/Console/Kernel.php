@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:clear-unused-access-token')->daily();
         $schedule->command('app:expire-subscriptions')->everyFiveMinutes();
         $schedule->command('app:expiration-subscription')->everyFifteenMinutes();
+        $schedule->command('app:check-waiting-rentals')->hourly();
+        $schedule->command('app:check-current-rentals')->hourly();
     }
 
     /**

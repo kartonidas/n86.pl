@@ -17,16 +17,79 @@ use App\Libraries\Helper;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Rental;
+use App\Traits\Sortable;
+use App\Models\User;
 
 class RentalController extends Controller
 {
+    use Sortable;
+    
+    public function list(Request $request)
+    {
+        User::checkAccess("rent:list");
+        
+        $validated = $request->validate([
+            "size" => "nullable|integer|gt:0",
+            "page" => "nullable|integer|gt:0",
+            "sort" => "nullable",
+            "order" => "nullable|integer",
+            "search.item_id" => "sometimes|integer",
+            "search.tenant_id" => "sometimes|integer",
+            "search.status" => "sometimes|string",
+        ]);
+        
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $rentals = Rental
+            ::apiFields();
+        
+        if(!empty($validated["search"]))
+        {
+            if(!empty($validated["search"]["item_id"]))
+                $rentals->where("item_id", $validated["search"]["item_id"]);
+            if(!empty($validated["search"]["tenant_id"]))
+                $rentals->where("tenant_id", $validated["search"]["tenant_id"]);
+            if(!empty($validated["search"]["status"]))
+                $rentals->where("status", $validated["search"]["status"]);
+        }
+        
+        $total = $rentals->count();
+        
+        $orderBy = $this->getOrderBy($request, Rental::class, "start,desc");
+        $rentals = $rentals->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+        
+        foreach($rentals as $i => $rental)
+        {
+            $rentals[$i]->tenant = $rental->getTenant();
+            $rentals[$i]->item = $rental->getItem();
+        }
+        
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $rentals,
+        ];
+            
+        return $out;
+    }
+    
     public function validateData(StoreRentalRequest $request)
     {
+        $validated = $request->validated();
+        Rental::checkDates($validated, $validated["item_id"] ?? null);
         return true;
     }
     
     public function rent(StoreRentRequest $request)
     {
+        User::checkAccess("rent:create");
+        
         $rentData = $request->all();
         
         $request->replace($rentData["item"]);
@@ -41,8 +104,8 @@ class RentalController extends Controller
         $storeRentalRequest = app(StoreRentalRequest::class);
         $rentData = $storeRentalRequest->validated();
         
-        // TODO: zapis wynajmu
-        // Trzeba pamiętac o walidacji dat!!!!! nie może być data przeszła, daty wynajmu nie moga się pokrywać
+        Rental::checkDates($rentData, $itemData["id"] ?? null);
+        
         $rental = DB::transaction(function () use($itemData, $tenantData, $rentData) {
             if(empty($itemData["id"]))
                 $itemData["id"] = $this->createItem($itemData);
@@ -76,6 +139,17 @@ class RentalController extends Controller
         });
         
         return $rental->id;
+    }
+    
+    public function get(Request $request, int $rentalId)
+    {
+        User::checkAccess("rent:list");
+        
+        $rental = Rental::apiFields()->find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        return $rental;
     }
     
     private function createItem($data)

@@ -143,7 +143,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="customers" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="customers" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column field="name" sortable :header="$t('customers.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'customer_show', params: { customerId : data.id }}" v-if="hasAccess('customer:update')">

@@ -212,5 +212,8 @@ return [
         'updated_at'               => 'zaktualizowano',
         'username'                 => 'nazwa użytkownika',
         'year'                     => 'rok',
+        
+        'first_payment_date'       => 'data pierwszej płatności',
+        'today'                    => 'dzisiaj',
     ],
 ];

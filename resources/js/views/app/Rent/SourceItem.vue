@@ -82,6 +82,7 @@
                     (response) => {
                         this.item = response.data
                         this.loading = false
+                        this.rent.item_id = response.data.id
                     },
                     (response) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -211,7 +212,7 @@
                 this.rentalService.rent(this.tenant, this.item, this.rent)
                     .then(
                         (response) => {
-                            console.log(response);
+                            this.$router.push({name: 'rent_success', params: { rentId : response.data }})
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -280,7 +281,7 @@
                 </div>
             </form>
         
-            <DataTable :value="tenants" class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
+            <DataTable :value="tenants" stripedRows class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
                 <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                     <template #body="{ data }">
                         <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>

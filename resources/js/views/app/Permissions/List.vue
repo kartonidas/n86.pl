@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="permissions" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="permissions" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                      <Column :header="$t('permissions.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'permission_edit', params: { permissionId : data.id }}" v-if="hasAccess('permission:update')">

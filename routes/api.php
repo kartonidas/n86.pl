@@ -52,12 +52,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->put('/item/{id}', [ItemController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/item/{id}', [ItemController::class, "delete"])->where("id", "[0-9]+");
     $router->post('/item/validate', [ItemController::class, "validateData"]);
-    //$router->get('/item/{id}/tenants', [ItemController::class, "tenants"])->where("id", "[0-9]+");
-    //$router->put('/item/{id}/tenant', [ItemController::class, "tenantCreate"])->where("id", "[0-9]+");
-    //$router->get('/item/{id}/tenant/{tid}', [ItemController::class, "tenantGet"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    //$router->put('/item/{id}/tenant/{tid}', [ItemController::class, "tenantUpdate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    //$router->delete('/item/{id}/tenant/{tid}', [ItemController::class, "tenantDelete"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
-    //$router->post('/item/{id}/tenant/{tid}/terminate', [ItemController::class, "tenantTerminate"])->where("id", "[0-9]+")->where("tid", "[0-9]+");
     //$router->get('/item/{id}/bills', [ItemController::class, "bills"])->where("id", "[0-9]+");
     //$router->put('/item/{id}/bill', [ItemController::class, "billCreate"])->where("id", "[0-9]+");
     //$router->get('/item/{id}/bill/{bid}', [ItemController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
@@ -81,6 +75,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/tenant/{id}/history', [TenantController::class, "history"])->where("id", "[0-9]+");
     
     // WYNAJEM
+    $router->get('/rentals', [RentalController::class, "list"]);
+    $router->get('/rental/{id}', [RentalController::class, "get"])->where("id", "[0-9]+");
     $router->post('/rental/validate', [RentalController::class, "validateData"]);
     $router->put('/rental/rent', [RentalController::class, "rent"]);
     

@@ -2,8 +2,18 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class RentalService {
+    list(size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get('api/v1/rentals', { params : data });
+    }
+    
     rent(tenant, item, rent) {
-        
         var rentData = {
             tenant : removeNullValues(tenant),
             item : removeNullValues(item),

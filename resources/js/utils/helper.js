@@ -2,6 +2,7 @@ import { appStore } from '@/store.js';
 import { useI18n } from 'vue-i18n'
 import { useHead } from 'unhead'
 import AppValues from '@/data/values.json';
+import moment from 'moment'
 
 export const getLocale = () => {
     return 'pl';
@@ -84,4 +85,21 @@ export const getValueLabel = (module, value, key = 'name') => {
         }
     });
     return label;
+};
+
+
+export const p = (i, w1, w2, w3) => {
+    if(i == 1) return w1;
+
+    let div1 = i % 10;
+    if(div1 <= 1 || div1 >= 5) return w3;
+
+    let div2 = (i - div1) / 10 % 10;
+    if(div2 == 1) return w3;
+
+    return w2;
+};
+
+export const timeToDate = (value)  => {
+    return moment.unix(value).format("YYYY-MM-DD");
 };

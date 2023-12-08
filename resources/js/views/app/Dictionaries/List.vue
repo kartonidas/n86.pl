@@ -147,7 +147,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="dictionaries" class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="dictionaries" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('dictionaries.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'dictionary_edit', params: { type : data.type, dictionaryId : data.id }}" v-if="hasAccess('dictionary:update')">

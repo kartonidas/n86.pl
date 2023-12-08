@@ -2,7 +2,7 @@
     import { ref } from 'vue'
     import { getValues, getResponseErrors, hasAccess } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
-    import { required, requiredIf } from '@/utils/i18n-validators'
+    import { required, requiredIf, maxLength, maxValue } from '@/utils/i18n-validators'
     
     import Countries from '@/data/countries.json'
     import CustomerForm from './../Customers/_Form.vue'
@@ -119,13 +119,21 @@
         validations () {
             return {
                 item: {
-                    name: { required },
+                    name: { required, maxLengthValue: maxLength(100) },
                     type: { required },
                     ownership_type: { required },
-                    street: { required },
-                    city: { required },
-                    zip: { required },
+                    street: { required, maxLengthValue: maxLength(80) },
+                    house_no: { maxLengthValue: maxLength(20) },
+                    apartment_no: { maxLengthValue: maxLength(20) },
+                    city: { required, maxLengthValue: maxLength(120) },
+                    zip: { required, maxLengthValue: maxLength(10) },
                     customer_id: { required: requiredIf(function() { return this.item.ownership_type == "manage" }) },
+                    description: { maxLengthValue: maxLength(5000) },
+                    comments: { maxLengthValue: maxLength(5000) },
+                    area: { maxValueValue: maxValue(999999.99) },
+                    default_rent: { maxValueValue: maxValue(999999.99) },
+                    default_deposit: { maxValueValue: maxValue(999999.99) },
+                    num_rooms: { maxValueValue: maxValue(99) },
                 }
             }
         },
@@ -200,12 +208,18 @@
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('items.house_no') }}</label>
-                        <InputText id="house_no" type="text" :placeholder="$t('items.house_no')" class="w-full" v-model="item.house_no" :disabled="loading || saving" />
+                        <InputText id="house_no" type="text" :placeholder="$t('items.house_no')" class="w-full" :class="{'p-invalid' : v.item.house_no.$error}" v-model="item.house_no" :disabled="loading || saving" />
+                        <div v-if="v.item.house_no.$error">
+                            <small class="p-error">{{ v.item.house_no.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('items.apartment_no') }}</label>
-                        <InputText id="apartment_no" type="text" :placeholder="$t('items.apartment_no')" class="w-full" v-model="item.apartment_no" :disabled="loading || saving" />
+                        <InputText id="apartment_no" type="text" :placeholder="$t('items.apartment_no')" class="w-full" :class="{'p-invalid' : v.item.apartment_no.$error}" v-model="item.apartment_no" :disabled="loading || saving" />
+                        <div v-if="v.item.apartment_no.$error">
+                            <small class="p-error">{{ v.item.apartment_no.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-4 sm:col-12 mb-4">
@@ -241,32 +255,50 @@
                 <div class="formgrid grid ">
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="area" class="block text-900 font-medium mb-2">{{ $t('items.area') }} (m2)</label>
-                        <InputNumber id="area" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.area')" class="w-full" v-model="item.area" :disabled="loading || saving"/>
+                        <InputNumber id="area" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.area')" class="w-full" :class="{'p-invalid' : v.item.area.$error}" v-model="item.area" :disabled="loading || saving"/>
+                        <div v-if="v.item.area.$error">
+                            <small class="p-error">{{ v.item.area.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="number_of_rooms" class="block text-900 font-medium mb-2">{{ $t('items.number_of_rooms') }}</label>
-                        <InputNumber id="number_of_rooms" :useGrouping="false" locale="pl-PL" :placeholder="$t('items.number_of_rooms')" class="w-full" v-model="item.num_rooms" :disabled="loading || saving"/>
+                        <InputNumber id="number_of_rooms" :useGrouping="false" locale="pl-PL" :placeholder="$t('items.number_of_rooms')" class="w-full" v-model="item.num_rooms" :class="{'p-invalid' : v.item.num_rooms.$error}" :disabled="loading || saving"/>
+                        <div v-if="v.item.num_rooms.$error">
+                            <small class="p-error">{{ v.item.num_rooms.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="default_rent_value" class="block text-900 font-medium mb-2">{{ $t('items.default_rent_value') }}</label>
-                        <InputNumber id="default_rent_value" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.default_rent_value')" class="w-full" v-model="item.default_rent" :disabled="loading || saving"/>
+                        <InputNumber id="default_rent_value" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.default_rent_value')" class="w-full" :class="{'p-invalid' : v.item.default_rent.$error}" v-model="item.default_rent" :disabled="loading || saving"/>
+                        <div v-if="v.item.default_rent.$error">
+                            <small class="p-error">{{ v.item.default_rent.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-3 sm:col-6 mb-4">
                         <label for="default_deposit_value" class="block text-900 font-medium mb-2">{{ $t('items.default_deposit_value') }}</label>
-                        <InputNumber id="default_deposit_value" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.default_deposit_value')" class="w-full" v-model="item.default_deposit" :disabled="loading || saving"/>
+                        <InputNumber id="default_deposit_value" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.default_deposit_value')" class="w-full" :class="{'p-invalid' : v.item.default_deposit.$error}" v-model="item.default_deposit" :disabled="loading || saving"/>
+                        <div v-if="v.item.default_deposit.$error">
+                            <small class="p-error">{{ v.item.default_deposit.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 mb-4">
                         <label for="description" class="block text-900 font-medium mb-2">{{ $t('items.description') }}</label>
-                        <Textarea id="description" type="text" :placeholder="$t('items.description')" rows="3" class="w-full" v-model="item.description" :disabled="loading || saving"/>
+                        <Textarea id="description" type="text" :placeholder="$t('items.description')" rows="3" class="w-full" :class="{'p-invalid' : v.item.description.$error}" v-model="item.description" :disabled="loading || saving"/>
+                        <div v-if="v.item.description.$error">
+                            <small class="p-error">{{ v.item.description.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 mb-4">
                         <label for="comments" class="block text-900 font-medium mb-2">{{ $t('items.comments') }}</label>
-                        <Textarea id="comments" type="text" :placeholder="$t('items.comments')" rows="3" class="w-full" v-model="item.comments" :disabled="loading || saving"/>
+                        <Textarea id="comments" type="text" :placeholder="$t('items.comments')" rows="3" class="w-full" :class="{'p-invalid' : v.item.comments.$error}" v-model="item.comments" :disabled="loading || saving"/>
+                        <div v-if="v.item.comments.$error">
+                            <small class="p-error">{{ v.item.comments.$errors[0].$message }}</small>
+                        </div>
                     </div>
                 </div>
             </div>

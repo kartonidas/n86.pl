@@ -27,6 +27,10 @@ return new class extends Migration
             $table->integer('first_payment_date')->after('payment_day');
             $table->integer('number_of_people')->after('first_payment_date');
             $table->text('comments')->nullable()->default(null)->after('number_of_people');
+            $table->enum('status', ['archive', 'current', 'waiting'])->default('waiting')->change();
+            $table->tinyInteger('termination')->default(0)->after('status');
+            
+            $table->index('status');
         });
     }
 
@@ -51,6 +55,10 @@ return new class extends Migration
             $table->dropColumn('first_payment_date');
             $table->dropColumn('number_of_people');
             $table->dropColumn('comments');
+            $table->enum('status', ['archive', 'current', 'termination', 'waiting'])->default('waiting')->change();
+            $table->dropColumn('termination');
+            
+            $table->dropIndex('rentals_status_index');
         });
     }
 };

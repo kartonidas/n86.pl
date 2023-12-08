@@ -1,5 +1,4 @@
 <script>
-    import { useRoute } from 'vue-router'
     import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
@@ -12,14 +11,12 @@
         setup() {
             setMetaTitle('meta.title.customers_show')
             
-            const route = useRoute()
             const customerService = new CustomerService()
             const itemService = new ItemService()
             
             return {
                 customerService,
                 itemService,
-                route,
                 hasAccess,
                 getValueLabel
             }
@@ -54,7 +51,7 @@
                 appStore().setToastMessage(null)
             }
             
-            this.customerService.get(this.route.params.customerId)
+            this.customerService.get(this.$route.params.customerId)
                 .then(
                     (response) => {
                         this.customer = response.data
@@ -69,16 +66,16 @@
         },
         methods: {
             editCustomer() {
-                this.$router.push({name: 'customer_edit', params: { customerId : this.route.params.customerId }})
+                this.$router.push({name: 'customer_edit', params: { customerId : this.$route.params.customerId }})
             },
             
             addItem() {
-                this.$router.push({name: 'item_new_customer', params: { customerId : this.route.params.customerId }})
+                this.$router.push({name: 'item_new_customer', params: { customerId : this.$route.params.customerId }})
             },
             
             getItemsList() {
                 const search = {
-                    customer_id : this.route.params.customerId
+                    customer_id : this.$route.params.customerId
                 };
                 this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, null, null, search)
                     .then(
@@ -203,7 +200,7 @@
                     </div>
                 </template>
                 <template #content pt="item">
-                    <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
+                    <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
                         <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                             <template #body="{ data }">
                                 <router-link :to="{name: 'item_show', params: { itemId : data.id }}">

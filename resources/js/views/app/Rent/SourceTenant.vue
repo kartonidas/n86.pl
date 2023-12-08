@@ -94,6 +94,7 @@
             addNewItem() {
                 if (this.selectedItem !== false) {
                     this.selectedItem = false
+                    this.rent.item_id = null
                     this.item = {
                         ownership_type: 'property',
                         type: 'apartment',
@@ -111,6 +112,7 @@
                             this.meta.items.loading = false
                             this.selectItemModalVisible = false
                             this.selectedItem = response.data.id
+                            this.rent.item_id = response.data.id
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -198,7 +200,7 @@
                 this.rentalService.rent(this.tenant, this.item, this.rent)
                     .then(
                         (response) => {
-                            console.log(response);
+                            this.$router.push({name: 'rent_success', params: { rentId : response.data }})
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -263,7 +265,7 @@
                 </div>
             </form>
         
-            <DataTable :value="items" class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
+            <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
                 <Column field="name" sortable :header="$t('items.name')" style="min-width: 300px;">
                     <template #body="{ data }">
                         <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

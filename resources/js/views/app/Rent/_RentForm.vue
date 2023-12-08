@@ -1,8 +1,8 @@
 <script>
-    import { ref, computed } from 'vue'
+    import { ref, reactive, computed } from 'vue'
     import { getValueLabel, getValues } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
-    import { required, requiredIf, minValue } from '@/utils/i18n-validators'
+    import { required, requiredIf, minValue, maxLength, maxValue } from '@/utils/i18n-validators'
     import moment from 'moment'
 
     export default {
@@ -30,13 +30,42 @@
             const payment = getValues('rental.payments');
             const payment_days = getValues('rental.payment_days');
             
+            const toValidate = rent
+            const state = reactive({ 'rent' : toValidate })
+            const rules = computed(() => {
+                const rules = {
+                    rent: {
+                        start_date: { required },
+                        period: { required },
+                        end_date: { required: requiredIf(function() { return this.rent.period == "date" }) },
+                        termination_period: { required },
+                        payment: { required },
+                        rent: { required, minValue: minValue(1), maxValueValue: maxValue(999999.99) },
+                        deposit: { maxValueValue: maxValue(999999.99) },
+                        first_payment_date: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
+                        payment_day: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
+                        number_of_people: { required, maxValueValue: maxValue(99) },
+                        comments: { maxLengthValue: maxLength(5000) },
+                    }
+                }
+                
+                rules.rent.months = state.rent.period == "month" ? { required, maxValueValue: maxValue(120) } : {}
+                rules.rent.termination_months = state.rent.termination_period == "months" ? { required, maxValueValue: maxValue(24) } : {}
+                rules.rent.termination_days = state.rent.termination_period == "days" ? { required, maxValueValue: maxValue(99) } : {}
+                rules.rent.first_month_different_amount_value = state.rent.first_month_different_amount ? { required, maxValueValue: maxValue(99999.99) } : {}
+                rules.rent.last_month_different_amount_value = state.rent.last_month_different_amount ? { required, maxValueValue: maxValue(99999.99) } : {}
+                
+                return rules
+            });
+            
             return {
                 period,
                 termination_period,
                 payment,
                 payment_days,
                 rent,
-                v: useVuelidate(),
+                v: useVuelidate(rules, state),
+                toValidate
             }
         },
         props: {
@@ -86,26 +115,6 @@
                     this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             }
         },
-        validations () {
-            return {
-                rent: {
-                    start_date: { required },
-                    period: { required },
-                    end_date: { required: requiredIf(function() { return this.rent.period == "date" }) },
-                    months: { required: requiredIf(function() { return this.rent.period == "month" }) },
-                    termination_period: { required },
-                    termination_months: { required: requiredIf(function() { return this.rent.termination_period == "months" }) },
-                    termination_days: { required: requiredIf(function() { return this.rent.termination_period == "days" }) },
-                    payment: { required },
-                    rent: { required, minValue: minValue(1) },
-                    first_payment_date: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
-                    payment_day: { required: requiredIf(function() { return this.rent.payment == "cyclical" }) },
-                    first_month_different_amount_value: { required: requiredIf(function() { return this.rent.first_month_different_amount }) },
-                    last_month_different_amount_value: { required: requiredIf(function() { return this.rent.last_month_different_amount }) },
-                    number_of_people: { required },
-                }
-            }
-        },
     }
 </script>
 
@@ -140,7 +149,7 @@
                     
                     <div class="field col-12 md:col-4 mb-4" v-if="rent.period == 'month'">
                         <label for="months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.number_of_months') }}</label>
-                        <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.months.$error}" :placeholder="$t('rent.number_of_months')" class="w-full" v-model="rent.months" :disabled="saving || loading"/>
+                        <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.months.$error}" :placeholder="$t('rent.number_of_months')" class="w-full" v-model="rent.months" :disabled="saving || loading" />
                         <div v-if="v.rent.months.$error">
                             <small class="p-error">{{ v.rent.months.$errors[0].$message }}</small>
                         </div>
@@ -184,7 +193,10 @@
                     
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="deposit" class="block text-900 font-medium mb-2">{{ $t('rent.deposit') }}</label>
-                        <InputNumber id="deposit" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('rent.deposit')" class="w-full" v-model="rent.deposit" :disabled="loading || saving"/>
+                        <InputNumber id="deposit" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('rent.deposit')" class="w-full" :class="{'p-invalid' : v.rent.deposit.$error}" v-model="rent.deposit" :disabled="loading || saving"/>
+                        <div v-if="v.rent.deposit.$error">
+                            <small class="p-error">{{ v.rent.deposit.$errors[0].$message }}</small>
+                        </div>
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4">
@@ -255,7 +267,10 @@
                     
                     <div class="field col-12 mb-4">
                         <label for="comments" class="block text-900 font-medium mb-2">{{ $t('rent.comments') }}</label>
-                        <Textarea id="comments" type="text" :placeholder="$t('rent.comments')" rows="3" class="w-full" v-model="rent.comments" :disabled="loading || saving"/>
+                        <Textarea id="comments" type="text" :placeholder="$t('rent.comments')" rows="3" class="w-full" :class="{'p-invalid' : v.rent.comments.$error}" v-model="rent.comments" :disabled="loading || saving"/>
+                        <div v-if="v.rent.comments.$error">
+                            <small class="p-error">{{ v.rent.comments.$errors[0].$message }}</small>
+                        </div>
                     </div>
                 </div>
             </div>

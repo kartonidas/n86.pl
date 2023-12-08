@@ -1,11 +1,12 @@
 <script>
-    import { getValueLabel } from '@/utils/helper'
+    import { getValueLabel, p } from '@/utils/helper'
     import Address from '@/views/app/_partials/Address.vue'
     export default {
         components: { Address },
         setup() {
             return {
-                getValueLabel
+                getValueLabel,
+                p
             }
         },
         props: {
@@ -71,7 +72,7 @@
                 <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
             </span>
             <span v-if="object.period == 'month'">
-                {{ object.months }} {{ $t('rent.months') }}
+                {{ object.months }} {{ p(object.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
             </span>
             <span v-if="object.period == 'date'">
                 {{ object.end_date }}
@@ -80,7 +81,7 @@
         <div class="mb-1">
             {{ $t('rent.termination') }}:
             <span v-if="object.termination_period == 'months'" style="text-transform: lowercase">
-                {{ object.termination_months }} {{ $t('rent.months') }}
+                {{ object.termination_months }} {{ p(object.termination_months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
             </span>
             <span v-if="object.termination_period == 'days'" style="text-transform: lowercase">
                 {{ object.termination_days }} {{ $t('rent.days') }}
@@ -103,7 +104,7 @@
                 {{ $t('rent.last_month_different_amount') }}: {{ numeralFormat(object.last_month_different_amount_value, '0.00') }}
             </div>
             <div class="mb-1">
-                {{ $t('rent.payment_day') }}: {{ object.payment_day }}
+                {{ $t('rent.payment_day') }}: {{ object.payment_day }}{{ $t("rent.payment_day_postfix") }} {{ $t("rent.each_month") }}
             </div>
         </div>
         <div class="mb-1">

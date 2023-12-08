@@ -151,6 +151,8 @@
     "Identification": "Dokument to\u017csamo\u015bci",
     "Passport": "Paszport",
     "Invalid REGON number": "Nieprawid\u0142owy numer REGON",
-    "Selected item does not exists": "Wybrana nieruchomość nie istnieje",
-    "Selected tenant does not exists": "Wybrany najemca nie istnieje"
+    "Selected item does not exists": "Wybrana nieruchomo\u015b\u0107 nie istnieje",
+    "Selected tenant does not exists": "Wybrany najemca nie istnieje",
+    "Rental does not exist": "Wynajem nie istnieje",
+    "Cannot rented during the given time period": "Nie można wynająć nieruchomości w podanym okresie"
 }

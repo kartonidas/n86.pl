@@ -124,6 +124,7 @@ class ItemController extends Controller
             throw new ObjectNotExist(__("Item does not exist"));
         
         $item->customer = $item->getCustomer();
+        $item->current_rental = $item->getCurrentRental();
         
         return $item;
     }
@@ -155,104 +156,6 @@ class ItemController extends Controller
         
         $item->delete();
         return true;
-    }
-    
-    public function tenants(Request $request, int $estateId)
-    {
-        User::checkAccess("item:list");
-        
-        $item = Item::find($estateId);
-        if(!$item)
-            throw new ObjectNotExist(__("Item does not exist"));
-        
-        $request->validate([
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-        ]);
-        
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
-        
-        $tenants = $item->getTenantsQuery()->apiFields();
-        $total = $tenants->count();
-            
-        $tenants = $tenants->take($size)
-            ->skip(($page-1)*$size)
-            ->orderBy("name", "ASC")
-            ->get();
-            
-        $out = [
-            "total_rows" => $total,
-            "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
-            "data" => $tenants,
-        ];
-            
-        return $out;
-    }
-    
-    public function tenantCreate(Request $request, int $estateId)
-    {
-        User::checkAccess("tenant:create");
-        
-        $item = Item::find($estateId);
-        if(!$item)
-            throw new ObjectNotExist(__("Item does not exist"));
-        
-        $request->validate([
-            "active" => "required|boolean",
-            "name" => "required|max:100",
-            "street" => "required|max:80",
-            "house_no" => "required|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "required|max:120",
-            "zip" => "required|max:10",
-        ]);
-        
-        if(!empty(config("api.tenants.allowed_document_types", [])))
-        {
-            $request->validate([
-                "document_type" => ["nullable", Rule::in(array_keys(config("api.tenants.allowed_document_types")))],
-                "document_number" => "nullable|max:100",
-            ]);
-        }
-        
-        $tenant = $item->createTenant($request->all());
-        return $tenant->id;
-    }
-    
-    public function tenantGet(Request $request, int $estateId, int $tenantId)
-    {
-        User::checkAccess("item:list");
-        
-        $item = Item::find($estateId);
-        if(!$item)
-            throw new ObjectNotExist(__("Item does not exist"));
-        
-        return $item->getTenant();
-    }
-    
-    public function tenantUpdate(Request $request, int $estateId, int $tenantId)
-    {
-        User::checkAccess("item:list");
-        
-        $item = Item::find($estateId);
-        if(!$item)
-            throw new ObjectNotExist(__("Item does not exist"));
-    }
-    
-    public function tenantDelete(Request $request, int $estateId, int $tenantId)
-    {
-        User::checkAccess("item:list");
-        
-        $item = Item::find($estateId);
-        if(!$item)
-            throw new ObjectNotExist(__("Item does not exist"));
-    }
-    
-    public function tenantTerminate(Request $request, int $estateId, int $tenantId)
-    {
     }
     
     public function bills(Request $request, int $estateId)
