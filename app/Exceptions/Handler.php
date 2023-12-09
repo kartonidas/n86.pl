@@ -10,6 +10,7 @@ use Throwable;
 
 use App\Exceptions\AccessDenied;
 use App\Exceptions\Exception;
+use App\Exceptions\InvalidRentalDates;
 use App\Exceptions\ObjectNotExist;
 use App\Exceptions\Unauthorized;
 use App\Exceptions\UserExist;
@@ -33,6 +34,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         AccessDenied::class,
         Exception::class,
+        InvalidRentalDates::class,
         ObjectNotExist::class,
         Unauthorized::class,
         UserExist::class,

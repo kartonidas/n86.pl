@@ -196,6 +196,20 @@
                     "id": 25,
                     "name": 25
                 }
+            ],
+            "statuses": [
+                {
+                    "id": "archive",
+                    "name": "Archiwalny"
+                },
+                {
+                    "id": "current",
+                    "name": "W trakcie"
+                },
+                {
+                    "id": "waiting",
+                    "name": "Oczekuj\u0105cy"
+                }
             ]
         }
     }

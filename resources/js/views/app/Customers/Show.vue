@@ -203,20 +203,29 @@
                     <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
                         <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                             <template #body="{ data }">
-                                <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
-                                    {{ data.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data" :newline="true" emptyChar=""/>
-                                    </small>
+                                <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
+                                        {{ data.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
+                            </template>
+                        </Column>
+                        <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">
+                            <template #body="{ data }">
+                                <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
+                                <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
                             </template>
                         </Column>
                         <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
                             <template #body="{ data }">
-                                <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmationItem(data.id)"/>
+                                <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmationItem(data.id)"/>
                             </template>
                         </Column>
                         <template #empty>

@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValueLabel, getValues } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -14,7 +14,8 @@
             
             return {
                 itemService,
-                hasAccess
+                hasAccess,
+                getValueLabel
             }
         },
         data() {
@@ -23,7 +24,13 @@
                 items: [],
                 displayConfirmation: false,
                 deleteItemId: null,
+                item_types: getValues('item_types'),
+                rented: [
+                    {"id": 0, "name" : this.$t('items.free')},
+                    {"id": 1, "name" : this.$t('items.rented')},
+                ],
                 meta: {
+                    search: {},
                     currentPage: 1,
                     perPage: this.rowsPerPage,
                     totalRecords: null,
@@ -36,6 +43,10 @@
             }
         },
         beforeMount() {
+            let filter = appStore().getTableFilter('items');
+            if (filter != undefined)
+                this.meta.search = filter;
+                
             if(appStore().toastMessage) {
                 let m = appStore().toastMessage
                 this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
@@ -46,7 +57,7 @@
         methods: {
             getList() {
                 this.loading = true
-                this.itemService.list(this.meta.perPage, this.meta.currentPage)
+                this.itemService.list(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
                     .then(
                         (response) => {
                             this.items = response.data.data
@@ -100,6 +111,19 @@
             
             rowClick(event) {
                 this.showItem(event.data.id)
+            },
+            
+            search() {
+                this.meta.currentPage = 1
+                appStore().setTableFilter('items', this.meta.search)
+                this.getList()
+            },
+            
+            resetSearch() {
+                this.meta.currentPage = 1
+                this.meta.search = {}
+                appStore().setTableFilter('items', this.meta.search)
+                this.getList()
             }
         },
     }
@@ -117,23 +141,61 @@
                     </div>
                 </div>
                 
+                <form v-on:submit.prevent="search">
+                    <div class="formgrid grid mb-1">
+                        <div class="col-12 md:col-6 mb-3">
+                            <Dropdown v-model="meta.search.type" :showClear="this.meta.search.type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('items.estate_type')" class="w-full" />
+                        </div>
+                        
+                        <div class="col-12 md:col-6 mb-3">
+                            <InputText type="text" :placeholder="$t('items.name')" class="w-full" v-model="meta.search.name"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-3 mb-3">
+                            <InputText type="text" :placeholder="$t('items.city')" class="w-full" v-model="meta.search.city"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-3 mb-3">
+                            <InputText type="text" :placeholder="$t('items.street')" class="w-full" v-model="meta.search.street"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-4 mb-3">
+                            <Dropdown v-model="meta.search.rented" :showClear="this.meta.search.rented != undefined ? true : false" :options="rented" optionLabel="name" optionValue="id" :placeholder="$t('items.status')" class="w-full" />
+                        </div>
+                        
+                        <div class="col-12 mb-3" style="width: 120px;">
+                            <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
+                            <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearch"/>
+                        </div>
+                    </div>
+                </form>
+                
                 <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
-                                {{ data.name }}
-                            </router-link>
-                            
-                            <div>
-                                <small>
-                                    <Address :object="data" :newline="true" emptyChar=""/>
-                                </small>
+                            <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
+                            <div class="mt-1">
+                                <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
+                                    {{ data.name }}
+                                </router-link>
+                                
+                                <div>
+                                    <small>
+                                        <Address :object="data" :newline="true" emptyChar=""/>
+                                    </small>
+                                </div>
                             </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">
+                        <template #body="{ data }">
+                            <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
+                            <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
                     <template #empty>

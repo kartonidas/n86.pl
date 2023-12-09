@@ -166,6 +166,7 @@ Route::prefix('v1')->middleware(['locale'])->group(function () use($router) {
     
     // LOGOWANIE / PRZYPOMNIENIE HASŁA
     $router->post("/login", [UserController::class, "login"]);
+    $router->post("/get-token", [UserController::class, "getToken"]);
     $router->post("/forgot-password", [UserController::class, "forgotPassword"]);
     $router->get("/reset-password", [UserController::class, "resetPasswordGet"]);
     $router->post("/reset-password", [UserController::class, "resetPassword"]);

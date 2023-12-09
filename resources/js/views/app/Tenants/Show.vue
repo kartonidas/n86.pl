@@ -1,8 +1,9 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
+    import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
     
     export default {
@@ -11,18 +12,29 @@
             setMetaTitle('meta.title.tenants_show')
             
             const tenantService = new TenantService()
+            const rentalService = new RentalService()
             
             return {
                 tenantService,
+                rentalService,
                 hasAccess,
-                getValueLabel
+                getValueLabel,
+                timeToDate
             }
         },
         data() {
             return {
                 errors: [],
                 tenant: {},
+                rentals: [],
                 meta: {
+                    rentals: {
+                        currentPage: 1,
+                        perPage: this.rowsPerPage,
+                        totalRecords: null,
+                        totalPages: null,
+                        loading: true
+                    },
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.tenant_list'), route : { name : 'tenants'} },
@@ -43,6 +55,8 @@
                     (response) => {
                         this.tenant = response.data
                         this.loading = false
+                        
+                        this.getRentalsList()
                     },
                     (response) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
@@ -56,7 +70,29 @@
             
             rentItem() {
                 this.$router.push({name: 'rent_source_tenant', params: { tenantId : this.$route.params.tenantId }})
-            }
+            },
+            
+            getRentalsList() {
+                const search = {
+                    tenant_id : this.$route.params.tenantId
+                };
+                this.rentalService.list(this.meta.rentals.perPage, this.meta.rentals.currentPage, null, null, search)
+                    .then(
+                        (response) => {
+                            this.rentals = response.data.data
+                            this.meta.rentals.totalRecords = response.data.total_rows
+                            this.meta.rentals.totalPages = response.data.total_pages
+                            this.meta.rentals.loading = false
+                        },
+                        (errors) => {
+                        }
+                    )
+            },
+            
+            changeRentalsPage(event) {
+                this.meta.items.currentPage = event["page"] + 1;
+                this.getItemsList()
+            },
         },
     }
 </script>
@@ -123,6 +159,60 @@
                     </p>
                 </template>
             </Card>
+            
+            
+            <Card class="mb-3 mt-5">
+                <template #title>
+                    <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
+                        {{ $t('rent.rentals_list') }}
+                        <div v-if="hasAccess('rent:create')">
+                            <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('app.rent')"></Button>
+                        </div>
+                    </div>
+                </template>
+                <template #content pt="item">
+                    <DataTable :value="rentals" stripedRows class="p-datatable-gridlines" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
+                        <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
+                            <template #body="{ data }">
+                                <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <router-link :to="{name: 'item_show', params: { itemId : data.item.id }}">
+                                        {{ data.item.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.item" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column :header="$t('rent.status')">
+                            <template #body="{ data }">
+                                {{ getValueLabel('rental.statuses', data.status) }}
+                            </template>
+                        </Column>
+                        <Column :header="$t('rent.period_short')">
+                            <template #body="{ data }">
+                                {{ timeToDate(data.start) }} - 
+                                <span v-if="data.item.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
+                                <span v-else>{{ timeToDate(data.end) }}</span>
+                            </template>
+                        </Column>
+                        <Column :header="$t('rent.rent')">
+                            <template #body="{ data }">
+                                {{ numeralFormat(data.rent, '0.00') }}
+                            </template>
+                        </Column>
+                        
+                        <template #empty>
+                            {{ $t('rent.empty_list') }}
+                        </template>
+                    </DataTable>
+                </template>
+            </Card>
+            
         </div>
         
         

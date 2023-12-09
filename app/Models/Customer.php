@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Exceptions\InvalidStatus;
 use App\Models\CustomerContact;
+use App\Models\Item;
+use App\Models\Rental;
 
 class Customer extends Model
 {
@@ -23,7 +26,7 @@ class Customer extends Model
     public const DOCUMENT_TYPE_ID = "id";
     public const DOCUMENT_TYPE_PASSPORT = "passport";
     
-    public static $sortable = ["name", "nip"];
+    public static $sortable = ["name"];
     public static $defaultSortable = ["name", "asc"];
     
     public static function getDocumentTypes()
@@ -38,6 +41,7 @@ class Customer extends Model
     {
         $query->select(
             "id",
+            "role",
             "type",
             "name",
             "street",
@@ -56,6 +60,9 @@ class Customer extends Model
             "send_sms",
             "send_email",
             "hidden",
+            "total_items",
+            "total_active_rentals",
+            "total_waiting_rentals",
             "created_at"
         );
     }
@@ -68,6 +75,36 @@ class Customer extends Model
     public function scopeTenant(Builder $query): void
     {
         $query->where("role", self::ROLE_TENANT);
+    }
+    
+    public function canDelete()
+    {
+        switch($this->role)
+        {
+            case self::ROLE_CUSTOMER:
+                $c1 = Item::where("customer_id", $this->id)->count();
+            
+                if($c1)
+                    return false;
+            break;
+        
+            case self::ROLE_TENANT:
+                $c1 = Rental::where("tenant_id", $this->id)->count();
+            
+                if($c1)
+                    return false;
+            break;
+        }
+        
+        return true;
+    }
+    
+    public function delete()
+    {
+        if(!$this->canDelete())
+            throw new InvalidStatus(__("Cannot delete object"));
+        
+        return parent::delete();
     }
     
     public function contacts()

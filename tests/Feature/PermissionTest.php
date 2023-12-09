@@ -20,7 +20,7 @@ class PermissionTest extends TestCase
             'password' => $this->getAccount($accountUserId)['data']['password'],
             'device_name' => 'test',
         ];
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         return $response->token;
     }
@@ -35,7 +35,7 @@ class PermissionTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], $permission);
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         return $response->token;
     }

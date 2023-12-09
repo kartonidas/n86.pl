@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\TenantRequest;
 use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\UpdateTenantRequest;
 use App\Models\Country;
@@ -19,22 +20,14 @@ class TenantController extends Controller
 {
     use Sortable;
     
-    public function list(Request $request)
+    public function list(TenantRequest $request)
     {
         User::checkAccess("tenant:list");
         
-        $validated = $request->validate([
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-            "sort" => "nullable",
-            "order" => "nullable|integer",
-            "search.name" => "nullable|string",
-            "search.type" => ["nullable", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
-            "search.pesel_nip" => "nullable|string",
-        ]);
+        $validated = $request->validated();
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
         
         $tenants = Customer
             ::apiFields()->tenant();
@@ -52,6 +45,12 @@ class TenantController extends Controller
                         ->orWhere("nip", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%");
                 });
             }
+            if(!empty($validated["search"]["city"]))
+                $tenants->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
+            if(!empty($validated["search"]["pesel"]))
+                $tenants->where("pesel", "LIKE", "%" . $validated["search"]["pesel"] . "%");
+            if(!empty($validated["search"]["nip"]))
+                $tenants->where("nip", "LIKE", "%" . $validated["search"]["nip"] . "%");
         }
             
         $total = $tenants->count();
@@ -61,6 +60,9 @@ class TenantController extends Controller
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
+            
+        foreach($tenants as $i => $tenant)
+            $tenants[$i]->can_delete = $tenant->canDelete();
             
         $out = [
             "total_rows" => $total,

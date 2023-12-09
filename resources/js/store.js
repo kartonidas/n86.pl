@@ -8,6 +8,7 @@ export const appStore = defineStore('store', {
             toastMessage: null,
             permissions: null,
             tableOrder: {},
+            tableFilter: {},
         };
     },
     actions: {
@@ -39,6 +40,17 @@ export const appStore = defineStore('store', {
         
         getTableOrder(table) {
             return this.tableOrder[table];
+        },
+        
+        setTableFilter (table, filter) {
+            if (this.tableFilter[table] == undefined)
+                this.tableFilter[table] = {};
+            
+            this.tableFilter[table] = filter;
+        },
+        
+        getTableFilter(table) {
+            return this.tableFilter[table];
         },
     },
     persist: true,

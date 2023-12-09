@@ -16,9 +16,18 @@ class RentalObserver
     {
         $item = $rental->item()->first();
         if($item)
-        {
-            $item->rented = 1;
-            $item->save();
-        }
+            $item->setRentedFlag();
+            
+        Rental::recalculate($rental);
+    }
+    
+    public function updated(Rental $rental): void
+    {
+        Rental::recalculate($rental);
+    }
+    
+    public function deleted(Rental $rental): void
+    {
+        Rental::recalculate($rental);
     }
 }

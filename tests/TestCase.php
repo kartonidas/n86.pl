@@ -65,7 +65,7 @@ abstract class TestCase extends BaseTestCase
             $data["firm_id"] = $user->firm_id;
         }
         
-        $response = $this->post('/api/v1/login', $data);
+        $response = $this->post('/api/v1/get-token', $data);
         $response->assertStatus(200);
         
         $response = json_decode($response->getContent());

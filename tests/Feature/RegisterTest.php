@@ -118,7 +118,7 @@ class RegisterTest extends TestCase
             'password' => $this->getAccount(0)['data']['password'],
             'device_name' => 'test'
         ];
-        $response = $this->post('/api/v1/login', $data);
+        $response = $this->post('/api/v1/get-token', $data);
         $response->assertStatus(200);
         $response = json_decode($response->getContent());
         $loginToken = $response->token;

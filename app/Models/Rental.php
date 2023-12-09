@@ -58,6 +58,15 @@ class Rental extends Model
         ];
     }
     
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_ARCHIVE => __("Archive"),
+            self::STATUS_CURRENT => __("Current"),
+            self::STATUS_WAITING => __("Waiting"),
+        ];
+    }
+    
     public function scopeApiFields(Builder $query): void
     {
         $query->select(
@@ -116,12 +125,35 @@ class Rental extends Model
         $statuses = [self::STATUS_CURRENT, self::STATUS_WAITING];
         if($startDate && $endDate)
         {
-            $c1 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->where("end", ">=", $startDate)->count();
-            $c2 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $endDate)->where("end", ">=", $endDate)->count();
-            $c3 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->whereNull("end")->count();
-            $c4 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $endDate)->whereNull("end")->count();
+            $c1 = self
+                ::where("item_id", $itemId)
+                ->whereIn("status", $statuses)
+                ->where("start", "<=", $startDate)
+                ->where(function($q) use($startDate) {
+                    $q->where("end", ">=", $startDate)->orWhereNull("end");
+                })
+                ->count();
             
-            if($c1 || $c2 || $c3 || $c4)
+            $c2 = self
+                ::where("item_id", $itemId)
+                ->whereIn("status", $statuses)
+                ->where("start", "<=", $endDate)
+                ->where(function($q) use($endDate) {
+                    $q->where("end", ">=", $endDate)->orWhereNull("end");
+                })
+                ->count();
+            
+            $c3 = self
+                ::where("item_id", $itemId)
+                ->whereIn("status", $statuses)
+                ->where(function($q) use($startDate, $endDate) {
+                    $q
+                        ->whereBetween("start", [$startDate, $endDate])
+                        ->orWhereBetween("end", [$startDate, $endDate]);
+                })
+                ->count();
+            
+            if($c1 || $c2 || $c3)
                 throw new InvalidRentalDates(__("Cannot rented during the given time period"));
         }
         elseif($startDate)
@@ -176,9 +208,9 @@ class Rental extends Model
         $time = time();
         $rentals = self
             ::where("status", self::STATUS_WAITING)
-            ->where("start", ">=", $time)
+            ->where("start", "<=", $time)
             ->where(function($q) use($time) {
-                $q->where("end", "<=", $time)->orWhereNull("end");
+                $q->where("end", ">=", $time)->orWhereNull("end");
             })
             ->withoutGlobalScopes()
             ->get();
@@ -207,10 +239,7 @@ class Rental extends Model
         
         $item = $this->item()->withoutGlobalScopes()->first();
         if($item)
-        {
-            $item->rented = 1;
-            $item->saveQuietly();
-        }
+            $item->setRentedFlag();
     }
     
     private function setArchive()
@@ -220,10 +249,7 @@ class Rental extends Model
         
         $item = $this->item()->withoutGlobalScopes()->first();
         if($item)
-        {
-            $item->rented = 0;
-            $item->saveQuietly();
-        }
+            $item->setRentedFlag();
     }
     
     public function initStatus()
@@ -245,6 +271,20 @@ class Rental extends Model
                 return self::STATUS_WAITING;
             else
                 return self::STATUS_CURRENT;
+        }
+    }
+    
+    public static function recalculate(Rental $rental)
+    {
+        $tenant = Customer::find($rental->tenant_id);
+        if($tenant)
+        {
+            $totalActive = self::where("status", self::STATUS_CURRENT)->where("tenant_id", $rental->tenant_id)->count();
+            $totalWaiting = self::where("status", self::STATUS_WAITING)->where("tenant_id", $rental->tenant_id)->count();
+            
+            $tenant->total_active_rentals = $totalActive;
+            $tenant->total_waiting_rentals = $totalWaiting;
+            $tenant->saveQuietly();
         }
     }
 }

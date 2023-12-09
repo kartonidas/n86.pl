@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Exceptions\ObjectNotExist;
 
+use App\Exceptions\InvalidStatus;
+use App\Exceptions\ObjectNotExist;
 use App\Models\Customer;
 use App\Models\ItemTenant;
 use App\Models\Rental;
@@ -54,11 +55,30 @@ class Item extends Model
         ];
     }
     
+    public function canDelete()
+    {
+        $c1 = Rental::where("item_id", $this->id)->count();
+            
+        if($c1)
+            return false;
+        
+        return true;
+    }
+    
+    public function delete()
+    {
+        if(!$this->canDelete())
+            throw new InvalidStatus(__("Cannot delete object"));
+        
+        return parent::delete();
+    }
+    
     public function scopeApiFields(Builder $query): void
     {
         $query->select(
             "id",
             "type",
+            "rented",
             "customer_id",
             "name",
             "street",
@@ -143,5 +163,26 @@ class Item extends Model
             $rental->tenant = $rental->getTenant();
         
         return $rental;
+    }
+    
+    public function setRentedFlag()
+    {
+        $cnt = Rental::where("status", Rental::STATUS_CURRENT)->where("item_id", $this->id)->withoutGlobalScopes()->count();
+        $this->rented = $cnt > 0 ? 1 : 0;
+        $this->saveQuietly();
+    }
+    
+    public static function recalculate(Item $item)
+    {
+        if($item->customer_id > 0)
+        {
+            $totalItems = self::where("customer_id", $item->customer_id)->where("hidden", 0)->count();
+            $customer = Customer::find($item->customer_id);
+            if($customer)
+            {
+                $customer->total_items = $totalItems;
+                $customer->saveQuietly();
+            }
+        }
     }
 }

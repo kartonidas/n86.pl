@@ -27,7 +27,7 @@ class UserTest extends TestCase
                 'password' => $this->getAccount(0)['data']['password'],
                 'device_name' => 'test'
             ];
-            $response = $this->postJson('/api/v1/login', $data);
+            $response = $this->postJson('/api/v1/get-token', $data);
             $response->assertStatus(200);
             $response = json_decode($response->getContent());
             $token = $response->token;
@@ -54,7 +54,7 @@ class UserTest extends TestCase
                 'password' => 'INVALID:PASSWORD',
                 'device_name' => 'test'
             ];
-            $response = $this->postJson('/api/v1/login', $data);
+            $response = $this->postJson('/api/v1/get-token', $data);
             $response->assertStatus(422);
         }
     }
@@ -68,7 +68,7 @@ class UserTest extends TestCase
             'password' => $this->getAccount(0)['data']['password'],
             'device_name' => 'test'
         ];
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response->assertStatus(422);
     }
     
@@ -81,7 +81,7 @@ class UserTest extends TestCase
             'password' => $this->getAccount(0)['data']['password'],
             'device_name' => 'test',
         ];
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response->assertStatus(422);
     }
     
@@ -96,7 +96,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
             'firm_id' => $user->firm_id,
         ];
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response->assertStatus(200);
         $response = json_decode($response->getContent());
         $loginToken = $response->token;
@@ -846,7 +846,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -864,7 +864,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:create,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -882,7 +882,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:create");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -900,7 +900,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -918,7 +918,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:update");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -945,7 +945,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,create,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -972,7 +972,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,create,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -996,7 +996,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -1023,7 +1023,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,create,update");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -1050,7 +1050,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,create,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -1077,7 +1077,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -1105,7 +1105,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:create,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         
@@ -1133,7 +1133,7 @@ class UserTest extends TestCase
             'device_name' => 'test',
         ];
         $this->setUserPermission($data['email'], "user:list,create,update,delete");
-        $response = $this->postJson('/api/v1/login', $data);
+        $response = $this->postJson('/api/v1/get-token', $data);
         $response = json_decode($response->getContent());
         $token = $response->token;
         

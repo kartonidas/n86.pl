@@ -69,6 +69,9 @@ class GenAppValues extends Command
             
             foreach(Rental::getPaymentDays() as $type => $name)
                 $toJson[$lang]["rental"]["payment_days"][] = ["id" => $type, "name" => $name];
+                
+            foreach(Rental::getStatuses() as $type => $name)
+                $toJson[$lang]["rental"]["statuses"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

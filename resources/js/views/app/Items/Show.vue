@@ -132,7 +132,6 @@
             },
             
             rowRentalsClick(event) {
-                //this.showItem(event.data.id)
             }
         },
     }
@@ -144,7 +143,7 @@
     <div class="grid mt-1" v-if="!loading">
         <div class="col col-12">
             <div class="grid mt-1">
-                <div class="col col-12 sm:col-6">
+                <div class="col col-12 lg:col-6">
                     <Card class="mb-3">
                        <template #title>
                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
@@ -187,7 +186,7 @@
                        </template>
                    </Card>
                 </div>
-                <div class="col col-12 sm:col-6">
+                <div class="col col-12 lg:col-6">
                     <Card class="mb-3">
                         <template #title>
                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
@@ -227,14 +226,17 @@
                     <DataTable :value="rentals" stripedRows class="p-datatable-gridlines" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
                         <Column :header="$t('rent.tenant')" style="min-width: 300px;">
                             <template #body="{ data }">
-                                <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
-                                    {{ data.tenant.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.tenant" :newline="true" emptyChar=""/>
-                                    </small>
+                                <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
+                                        {{ data.tenant.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.tenant" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
                             </template>
                         </Column>
@@ -269,14 +271,17 @@
                     <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.perPage" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">
                         <Column :header="$t('rent.tenant')" style="min-width: 300px;">
                             <template #body="{ data }">
-                                <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
-                                    {{ data.tenant.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.tenant" :newline="true" emptyChar=""/>
-                                    </small>
+                                <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
+                                        {{ data.tenant.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.tenant" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
                             </template>
                         </Column>

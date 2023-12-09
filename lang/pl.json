@@ -154,5 +154,9 @@
     "Selected item does not exists": "Wybrana nieruchomo\u015b\u0107 nie istnieje",
     "Selected tenant does not exists": "Wybrany najemca nie istnieje",
     "Rental does not exist": "Wynajem nie istnieje",
-    "Cannot rented during the given time period": "Nie można wynająć nieruchomości w podanym okresie"
+    "Cannot rented during the given time period": "Nie mo\u017cna wynaj\u0105\u0107 nieruchomo\u015bci w podanym okresie",
+    "Cannot delete object": "Cannot delete object",
+    "Archive": "Archiwalny",
+    "Current": "W trakcie",
+    "Waiting": "Oczekujący"
 }

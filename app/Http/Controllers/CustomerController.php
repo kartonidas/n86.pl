@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\CustomerRequest;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Country;
@@ -19,22 +20,31 @@ class CustomerController extends Controller
 {
     use Sortable;
     
-    public function list(Request $request)
+    public function list(CustomerRequest $request)
     {
         User::checkAccess("customer:list");
         
-        $request->validate([
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-            "sort" => "nullable",
-            "order" => "nullable|integer",
-        ]);
+        $validated = $request->validated();
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
         
         $customers = Customer
             ::apiFields()->customer();
+            
+        if(!empty($validated["search"]))
+        {
+            if(!empty($validated["search"]["name"]))
+                $customers->where("name", "LIKE", "%" . $validated["search"]["name"] . "%");
+            if(!empty($validated["search"]["type"]))
+                $customers->where("type", $validated["search"]["type"]);
+            if(!empty($validated["search"]["city"]))
+                $customers->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
+            if(!empty($validated["search"]["pesel"]))
+                $customers->where("pesel", "LIKE", "%" . $validated["search"]["pesel"] . "%");
+            if(!empty($validated["search"]["nip"]))
+                $customers->where("nip", "LIKE", "%" . $validated["search"]["nip"] . "%");
+        }
             
         $total = $customers->count();
         
@@ -43,7 +53,10 @@ class CustomerController extends Controller
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
-            
+        
+        foreach($customers as $i => $customer)
+            $customers[$i]->can_delete = $customer->canDelete();
+        
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),

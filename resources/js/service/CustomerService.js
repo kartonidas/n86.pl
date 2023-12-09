@@ -2,12 +2,13 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class CustomerService {
-    list(size, page, sort, order) {
+    list(size, page, sort, order, search) {
         var data = {
             size: size,
             page: page,
             sort: sort,
             order: order,
+            search: search,
         };
         return axios.get('api/v1/customers', { params : data });
     }

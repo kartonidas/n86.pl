@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\ItemRequest;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Libraries\Helper;
@@ -31,20 +32,12 @@ class ItemController extends Controller
         return $out;
     }
     
-    public function list(Request $request)
+    public function list(ItemRequest $request)
     {
         User::checkAccess("item:list");
         
-        $validated = $request->validate([
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-            "sort" => "nullable",
-            "order" => "nullable|integer",
-            "search.customer_id" => "sometimes|integer",
-            "search.name" => "nullable|string",
-            "search.type" => ["nullable", Rule::in(array_keys(Item::getTypes()))],
-        ]);
-        
+        $validated = $request->validated();
+
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
         
@@ -57,9 +50,14 @@ class ItemController extends Controller
                 $items->where("name", "LIKE", "%" . $validated["search"]["name"] . "%");
             if(!empty($validated["search"]["type"]))
                 $items->where("type", $validated["search"]["type"]);
-                
             if(!empty($validated["search"]["customer_id"]))
                 $items->where("customer_id", $validated["search"]["customer_id"]);
+            if(!empty($validated["search"]["city"]))
+                $items->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
+            if(!empty($validated["search"]["street"]))
+                $items->where("street", "LIKE", "%" . $validated["search"]["street"] . "%");
+            if(isset($validated["search"]["rented"]))
+                $items->where("rented", !empty($validated["search"]["rented"]) ? 1 : 0);
         }
         
         $total = $items->count();
@@ -69,6 +67,9 @@ class ItemController extends Controller
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
+            
+        foreach($items as $i => $item)
+            $items[$i]->can_delete = $item->canDelete();
             
         $out = [
             "total_rows" => $total,

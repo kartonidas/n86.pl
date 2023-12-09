@@ -49,7 +49,7 @@
                 <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
             </span>
             <span v-if="object.period == 'month'">
-                {{ object.months }} {{ p(object.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
+                {{ timeToDate(object.end) }} ({{ object.months }} {{ p(object.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
             </span>
             <span v-if="object.period == 'date'">
                 {{ timeToDate(object.end) }}
