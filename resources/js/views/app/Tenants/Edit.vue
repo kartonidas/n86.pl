@@ -56,8 +56,8 @@
                         this.tenant = response.data
                         this.loading = false
                     },
-                    (response) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                    (errors) => {
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -72,9 +72,9 @@
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('tenants.updated'), life: 3000 });
                             this.saving = false;
                         },
-                        (response) => {
+                        (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
-                            this.errors = getResponseErrors(response)
+                            this.errors = getResponseErrors(errors)
                             this.saving = false
                         }
                 )

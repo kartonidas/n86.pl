@@ -181,6 +181,12 @@ const router = createRouter({
                             component: () => import('@/views/app/Items/Show.vue'),
                             meta: {permission: 'item:list'},
                         },
+                        {
+                            path: '/app/item/:itemId/bills',
+                            name: 'item_show_bills',
+                            component: () => import('@/views/app/Items/Bills/List.vue'),
+                            meta: {permission: 'item:list'},
+                        },
                     ]
                 },
                 {
@@ -271,6 +277,23 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/rentals',
+                    children: [
+                        {
+                            path: '/app/rentals',
+                            name: 'rentals',
+                            component: () => import('@/views/app/Rentals/List.vue'),
+                            meta: {permission: 'rent:list'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId',
+                            name: 'rental_show',
+                            component: () => import('@/views/app/Rentals/Show.vue'),
+                            meta: {permission: 'rent:list'},
+                        },
+                    ]
+                },
+                {
                     path: '/app/documents',
                     children: [
                         {
@@ -344,8 +367,16 @@ router.beforeEach((to, from, next) => {
     const userService = new UserService();
     
     if (to.meta.noAuth) {
-        if (appStore().userId)
-            next({ name: 'dashboard' });
+        if (appStore().userId) {
+            userService.isLogin()
+                .then(
+                    () => {
+                        next({ name: 'dashboard' });
+                    },
+                    () => {
+                    }
+                );
+        }
         else
             next();
     } else {

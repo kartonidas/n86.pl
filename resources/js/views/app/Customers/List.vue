@@ -117,8 +117,8 @@
                             this.getList()
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('customers.deleted'), life: 3000 });
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -165,24 +165,20 @@
                 
                 <form v-on:submit.prevent="search">
                     <div class="formgrid grid mb-1">
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-6 mb-3">
                             <Dropdown v-model="meta.search.type" :showClear="this.meta.search.type ? true : false" :options="customer_types" optionLabel="name" optionValue="id" :placeholder="$t('customers.account_type')" class="w-full" />
                         </div>
                         
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-6 mb-3">
                             <InputText type="text" :placeholder="$t('customers.name')" class="w-full" v-model="meta.search.name"/>
                         </div>
                         
+                        <div class="col-12 md:col-6 mb-3">
+                            <InputText type="text" :placeholder="$t('customers.address')" class="w-full" v-model="meta.search.address"/>
+                        </div>
+                        
                         <div class="col-12 md:col-4 mb-3">
-                            <InputText type="text" :placeholder="$t('customers.city')" class="w-full" v-model="meta.search.city"/>
-                        </div>
-                        
-                        <div class="col-12 md:col-5 mb-3">
-                            <InputText type="text" :placeholder="$t('customers.pesel')" class="w-full" v-model="meta.search.pesel"/>
-                        </div>
-                        
-                        <div class="col-12 md:col-5 mb-3">
-                            <InputText type="text" :placeholder="$t('customers.nip')" class="w-full" v-model="meta.search.nip"/>
+                            <InputText type="text" :placeholder="$t('customers.nip_pesel')" class="w-full" v-model="meta.search.pesel_nip"/>
                         </div>
                         
                         <div class="col-12 mb-3" style="width: 120px;">
@@ -192,7 +188,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="customers" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="customers" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column field="name" sortable :header="$t('customers.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('customer_types', data.type)" class="font-normal" severity="info"></Badge>

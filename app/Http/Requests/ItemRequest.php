@@ -23,8 +23,7 @@ class ItemRequest extends FormRequest
             "search.customer_id" => "sometimes|integer",
             "search.name" => "nullable|string",
             "search.type" => ["nullable", Rule::in(array_keys(Item::getTypes()))],
-            "search.city" => "nullable|string",
-            "search.street" => "nullable|string",
+            "search.address" => "nullable|string",
             "search.rented" => "nullable|boolean",
         ];
     }

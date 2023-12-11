@@ -40,6 +40,18 @@ input::placeholder,
     text-wrap: nowrap;
 }
 
+TABLE.p-datatable-table {
+    TR TD {
+        white-space: nowrap;
+    }
+}
+
+.clickable TABLE.p-datatable-table {
+    TR:not(.p-datatable-emptymessage) TD {
+        cursor: pointer;
+    }
+}
+
 @media screen and (max-width: 991px) {
     .sticky-footer-form {
         margin-bottom: 70px;

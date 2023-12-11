@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="users" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="users" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('users.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'user_edit', params: { userId : data.id }}" v-if="hasAccess('user:update')">

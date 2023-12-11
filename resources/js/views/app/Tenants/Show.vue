@@ -58,8 +58,8 @@
                         
                         this.getRentalsList()
                     },
-                    (response) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                    (errors) => {
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -93,6 +93,10 @@
                 this.meta.items.currentPage = event["page"] + 1;
                 this.getItemsList()
             },
+            
+            rowRentalsClick(event) {
+                this.$router.push({name: 'rental_show', params: { rentalId : event.data.id }})
+            }
         },
     }
 </script>
@@ -171,7 +175,7 @@
                     </div>
                 </template>
                 <template #content pt="item">
-                    <DataTable :value="rentals" stripedRows class="p-datatable-gridlines" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
+                    <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
                         <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                             <template #body="{ data }">
                                 <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
@@ -212,29 +216,6 @@
                     </DataTable>
                 </template>
             </Card>
-            
         </div>
-        
-        
-        <div class="col col-12">
-            <div class="grid mt-1">
-                <div class="col col-12">
-                    <Card class="mb-3">
-                        <template #title>
-                            <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
-                                Najemca
-                                <div v-if="hasAccess('rent:create')">
-                                    <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
-                                </div>
-                            </div>
-                        </template>
-                        <template #content pt="item">
-                            <p>Lorem ipsum dolor sit amet</p>
-                        </template>
-                    </Card>
-                </div>
-            </div>
-        </div>
-        
     </div>
 </template>

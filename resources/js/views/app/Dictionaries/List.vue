@@ -113,8 +113,8 @@
                             this.getList()
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('dictionaries.deleted'), life: 3000 });
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -147,7 +147,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="dictionaries" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="dictionaries" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('dictionaries.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'dictionary_edit', params: { type : data.type, dictionaryId : data.id }}" v-if="hasAccess('dictionary:update')">

@@ -16,6 +16,7 @@ const model = ref([
         access: hasAccess('item:list'),
         items: [
             { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' } },
+            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' } },
             { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' } },
             { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' } },
             { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' } },

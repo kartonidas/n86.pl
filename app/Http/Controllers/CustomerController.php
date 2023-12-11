@@ -38,12 +38,22 @@ class CustomerController extends Controller
                 $customers->where("name", "LIKE", "%" . $validated["search"]["name"] . "%");
             if(!empty($validated["search"]["type"]))
                 $customers->where("type", $validated["search"]["type"]);
-            if(!empty($validated["search"]["city"]))
-                $customers->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
-            if(!empty($validated["search"]["pesel"]))
-                $customers->where("pesel", "LIKE", "%" . $validated["search"]["pesel"] . "%");
-            if(!empty($validated["search"]["nip"]))
-                $customers->where("nip", "LIKE", "%" . $validated["search"]["nip"] . "%");
+            if(!empty($validated["search"]["pesel_nip"])) {
+                $customers->where(function($q) use($validated) {
+                    $q
+                        ->where("pesel", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%")
+                        ->orWhere("nip", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%");
+                });
+            }
+            if(!empty($validated["search"]["address"]))
+            {
+                $searchItemAddress = array_filter(explode(" ", $validated["search"]["address"]));
+                $customers->where(function($q) use($searchItemAddress) {
+                    $q
+                        ->where("street", "REGEXP", implode("|", $searchItemAddress))
+                        ->orWhere("city", "REGEXP", implode("|", $searchItemAddress));
+                });
+            }
         }
             
         $total = $customers->count();

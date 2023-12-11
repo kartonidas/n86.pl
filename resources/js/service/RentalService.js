@@ -10,7 +10,7 @@ export default class RentalService {
             order: order,
             search: search
         };
-        return axios.get('api/v1/rentals', { params : data });
+        return axios.get('api/v1/rentals', { params : removeNullValues(data) });
     }
     
     rent(tenant, item, rent) {
@@ -21,6 +21,10 @@ export default class RentalService {
         };
         
         return axios.put('api/v1/rental/rent', rentData);
+    }
+    
+    get(rentalId) {
+        return axios.get('api/v1/rental/' + rentalId);
     }
     
     validate(rentalData) {

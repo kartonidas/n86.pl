@@ -128,8 +128,8 @@
                             this.selectedItem = response.data.id
                             this.rent.item_id = response.data.id
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                             this.meta.items.loading = false
                         }
                     )
@@ -189,10 +189,10 @@
                             this.saving = false
                             this.changeStep(2)
                         },
-                        (response) => {
+                        (errors) => {
                             this.saving = false
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
-                            this.errors = getResponseErrors(response)
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(errors)
                         }
                     )
             },
@@ -221,8 +221,8 @@
                             this.selectTenantModalVisible = false
                             this.selectedTenant = response.data.id
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                             this.meta.tenants.loading = false
                         }
                     )
@@ -282,10 +282,10 @@
                             this.saving = false
                             this.changeStep(1)
                         },
-                        (response) => {
+                        (errors) => {
                             this.saving = false
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
-                            this.errors = getResponseErrors(response)
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(errors)
                         }
                     )
             },
@@ -297,8 +297,8 @@
                         (response) => {
                             this.changeStep(3)
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
             },
@@ -309,9 +309,9 @@
                         (response) => {
                             this.$router.push({name: 'rent_success', params: { rentId : response.data }})
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
-                            this.errors = getResponseErrors(response)
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.errors = getResponseErrors(errors)
                         },
                     )
             },
@@ -385,7 +385,7 @@
             </div>
         </form>
     
-        <DataTable :value="tenants" stripedRows class="p-datatable-gridlines" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
+        <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
             <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                 <template #body="{ data }">
                     <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>
@@ -427,7 +427,7 @@
             </div>
         </form>
     
-        <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
+        <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
             <Column field="name" sortable :header="$t('items.name')" style="min-width: 300px;">
                 <template #body="{ data }">
                     <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

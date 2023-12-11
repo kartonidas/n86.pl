@@ -9,12 +9,16 @@ use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\ItemRequest;
+use App\Http\Requests\ItemBillRequest;
 use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\StoreItemBillRequest;
+use App\Http\Requests\UpdateItemBillRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Libraries\Helper;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\ItemBill;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\Sortable;
@@ -52,10 +56,15 @@ class ItemController extends Controller
                 $items->where("type", $validated["search"]["type"]);
             if(!empty($validated["search"]["customer_id"]))
                 $items->where("customer_id", $validated["search"]["customer_id"]);
-            if(!empty($validated["search"]["city"]))
-                $items->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
-            if(!empty($validated["search"]["street"]))
-                $items->where("street", "LIKE", "%" . $validated["search"]["street"] . "%");
+            if(!empty($validated["search"]["address"]))
+            {
+                $searchItemAddress = array_filter(explode(" ", $validated["search"]["address"]));
+                $items->where(function($q) use($searchItemAddress) {
+                    $q
+                        ->where("street", "REGEXP", implode("|", $searchItemAddress))
+                        ->orWhere("city", "REGEXP", implode("|", $searchItemAddress));
+                });
+            }
             if(isset($validated["search"]["rented"]))
                 $items->where("rented", !empty($validated["search"]["rented"]) ? 1 : 0);
         }
@@ -116,11 +125,11 @@ class ItemController extends Controller
         return $item->id;
     }
     
-    public function get(Request $request, int $estateId)
+    public function get(Request $request, int $itemId)
     {
         User::checkAccess("item:list");
         
-        $item = Item::apiFields()->find($estateId);
+        $item = Item::apiFields()->find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
@@ -130,11 +139,11 @@ class ItemController extends Controller
         return $item;
     }
     
-    public function update(UpdateItemRequest $request, int $estateId)
+    public function update(UpdateItemRequest $request, int $itemId)
     {
         User::checkAccess("item:update");
         
-        $item = Item::find($estateId);
+        $item = Item::find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
@@ -147,11 +156,11 @@ class ItemController extends Controller
         return true;
     }
     
-    public function delete(Request $request, int $estateId)
+    public function delete(Request $request, int $itemId)
     {
         User::checkAccess("item:delete");
         
-        $item = Item::find($estateId);
+        $item = Item::find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
@@ -159,51 +168,151 @@ class ItemController extends Controller
         return true;
     }
     
-    public function bills(Request $request, int $estateId)
+    public function bills(ItemBillRequest $request, int $itemId)
     {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $validated = $request->validated();
+
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $itemBills = ItemBill
+            ::apiFields();
+        
+        if(!empty($validated["search"]))
+        {
+            // todo
+        }
+        
+        $total = $itemBills->count();
+        
+        $orderBy = $this->getOrderBy($request, ItemBill::class, "payment_date,desc");
+        $itemBills = $itemBills->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+            
+        foreach($itemBills as $i => $itemBill)
+            $itemBills[$i]->can_delete = $itemBill->canDelete();
+            
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $itemBills,
+        ];
+            
+        return $out;
+        
     }
     
-    public function billCreate(Request $request, int $estateId)
+    public function billCreate(StoreItemBillRequest $request, int $itemId)
     {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $validated = $request->validated();
+        $bill = $item->addBill($validated);
+        
+        return $bill->id;
     }
     
-    public function billGet(Request $request, int $estateId, int $billId)
+    public function billGet(Request $request, int $itemId, int $billId)
     {
+        User::checkAccess("item:update");
+        
+        $item = Item::apiFields()->find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find("id");
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        return $item;
     }
     
-    public function billUpdate(Request $request, int $estateId, int $billId)
+    public function billUpdate(UpdateItemBillRequest $request, int $itemId, int $billId)
     {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find("id");
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        $validated = $request->validated();
+        
+        foreach($validated as $field => $value)
+            $bill->{$field} = $value;
+        $bill->save();
+        
+        return true;
     }
     
-    public function billDelete(Request $request, int $estateId, int $billId)
+    public function billDelete(Request $request, int $itemId, int $billId)
     {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find("id");
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        $bill->delete();
+        return true;
     }
     
-    public function billPaid(Request $request, int $estateId, int $billId)
-    {
-    }
-    
-    public function billUnpaid(Request $request, int $estateId, int $billId)
-    {
-    }
-    
-    public function fees(Request $request, int $estateId)
-    {
-    }
-    
-    public function feeCreate(Request $request, int $estateId)
-    {
-    }
-    
-    public function feeGet(Request $request, int $estateId, int $feeId)
-    {
-    }
-    
-    public function feeUpdate(Request $request, int $estateId, int $feeId)
-    {
-    }
-    
-    public function feeDelete(Request $request, int $estateId, int $feeId)
-    {
-    }
+    //public function billPaid(Request $request, int $itemId, int $billId)
+    //{
+    //    User::checkAccess("item:update");
+    //    
+    //    $item = Item::find($itemId);
+    //    if(!$item)
+    //        throw new ObjectNotExist(__("Item does not exist"));
+    //}
+    //
+    //public function billUnpaid(Request $request, int $itemId, int $billId)
+    //{
+    //    User::checkAccess("item:update");
+    //    
+    //    $item = Item::find($itemId);
+    //    if(!$item)
+    //        throw new ObjectNotExist(__("Item does not exist"));
+    //}
+    //
+    //public function fees(Request $request, int $itemId)
+    //{
+    //}
+    //
+    //public function feeCreate(Request $request, int $itemId)
+    //{
+    //}
+    //
+    //public function feeGet(Request $request, int $itemId, int $feeId)
+    //{
+    //}
+    //
+    //public function feeUpdate(Request $request, int $itemId, int $feeId)
+    //{
+    //}
+    //
+    //public function feeDelete(Request $request, int $itemId, int $feeId)
+    //{
+    //}
 }

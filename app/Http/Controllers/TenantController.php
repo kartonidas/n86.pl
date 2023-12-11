@@ -45,12 +45,15 @@ class TenantController extends Controller
                         ->orWhere("nip", "LIKE", "%" . $validated["search"]["pesel_nip"] . "%");
                 });
             }
-            if(!empty($validated["search"]["city"]))
-                $tenants->where("city", "LIKE", "%" . $validated["search"]["city"] . "%");
-            if(!empty($validated["search"]["pesel"]))
-                $tenants->where("pesel", "LIKE", "%" . $validated["search"]["pesel"] . "%");
-            if(!empty($validated["search"]["nip"]))
-                $tenants->where("nip", "LIKE", "%" . $validated["search"]["nip"] . "%");
+            if(!empty($validated["search"]["address"]))
+            {
+                $searchItemAddress = array_filter(explode(" ", $validated["search"]["address"]));
+                $tenants->where(function($q) use($searchItemAddress) {
+                    $q
+                        ->where("street", "REGEXP", implode("|", $searchItemAddress))
+                        ->orWhere("city", "REGEXP", implode("|", $searchItemAddress));
+                });
+            }
         }
             
         $total = $tenants->count();

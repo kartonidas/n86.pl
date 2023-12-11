@@ -23,9 +23,7 @@ class TenantRequest extends FormRequest
             "search.name" => "nullable|string",
             "search.type" => ["nullable", Rule::in(Customer::TYPE_PERSON, Customer::TYPE_FIRM)],
             "search.pesel_nip" => "nullable|string",
-            "search.city" => "nullable|string",
-            "search.pesel" => "nullable|string",
-            "search.nip" => "nullable|string",
+            "search.address" => "nullable|string",
         ];
     }
 }

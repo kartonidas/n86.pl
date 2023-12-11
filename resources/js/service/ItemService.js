@@ -36,4 +36,31 @@ export default class ItemService {
     validate(itemData) {
         return axios.post('api/v1/item/validate', removeNullValues(itemData));
     }
+    
+    bills(itemId, size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get('api/v1/item/' + itemId + "/bills", { params : data });
+    }
+    
+    createBill(itemId, billData) {
+        return axios.put('api/v1/item/' + itemId + "/bill", removeNullValues(billData));
+    }
+    
+    getBill(itemId, billId) {
+        return axios.get('api/v1/item/' + itemId + "/bill/" + billId);
+    }
+    
+    updateBill(itemId, billId, billData) {
+        return axios.put('api/v1/item/' + itemId + "/bill/" + billId, removeNullValues(billData));
+    }
+    
+    removeBill(itemId, billId) {
+        return axios.delete('api/v1/item/' + itemId + "/bill/" + billId);
+    }
 }

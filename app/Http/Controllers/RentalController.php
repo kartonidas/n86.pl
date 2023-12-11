@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\RentalRequest;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\StoreRentRequest;
 use App\Http\Requests\StoreRentalRequest;
@@ -24,19 +25,11 @@ class RentalController extends Controller
 {
     use Sortable;
     
-    public function list(Request $request)
+    public function list(RentalRequest $request)
     {
         User::checkAccess("rent:list");
         
-        $validated = $request->validate([
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-            "sort" => "nullable",
-            "order" => "nullable|integer",
-            "search.item_id" => "sometimes|integer",
-            "search.tenant_id" => "sometimes|integer",
-            "search.status" => "sometimes|string",
-        ]);
+        $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
@@ -52,6 +45,66 @@ class RentalController extends Controller
                 $rentals->where("tenant_id", $validated["search"]["tenant_id"]);
             if(!empty($validated["search"]["status"]))
                 $rentals->where("status", $validated["search"]["status"]);
+                
+            if(!empty($validated["search"]["item_name"]) || !empty($validated["search"]["item_address"]) || !empty($validated["search"]["item_type"]))
+            {
+                $items = Item::select("id");
+                
+                if(!empty($validated["search"]["item_name"]))
+                    $items->where("name", "LIKE", "%" . $validated["search"]["item_name"] . "%");
+                
+                if(!empty($validated["search"]["item_address"]))
+                {
+                    $searchItemAddress = array_filter(explode(" ", $validated["search"]["item_address"]));
+                    $items->where(function($q) use($searchItemAddress) {
+                        $q
+                            ->where("street", "REGEXP", implode("|", $searchItemAddress))
+                            ->orWhere("city", "REGEXP", implode("|", $searchItemAddress));
+                    });
+                }
+                
+                if(!empty($validated["search"]["item_type"]))
+                    $items->where("type", $validated["search"]["item_type"]);
+                
+                $itemIds = $items->pluck("id")->all();
+                $rentals->whereIn("item_id", !empty($itemIds) ? $itemIds : [-1]);
+            }
+            
+            if(!empty($validated["search"]["tenant_name"]) || !empty($validated["search"]["tenant_address"]) || !empty($validated["search"]["tenant_type"]))
+            {
+                $tenants = Customer::tenant();
+                
+                if(!empty($validated["search"]["tenant_name"]))
+                    $tenants->where("name", "LIKE", "%" . $validated["search"]["tenant_name"] . "%");
+                
+                if(!empty($validated["search"]["tenant_address"]))
+                {
+                    $searchCustomerAddress = array_filter(explode(" ", $validated["search"]["tenant_address"]));
+                    $tenants->where(function($q) use($searchCustomerAddress) {
+                        $q
+                            ->where("street", "REGEXP", implode("|", $searchCustomerAddress))
+                            ->orWhere("city", "REGEXP", implode("|", $searchCustomerAddress));
+                    });
+                }
+                
+                if(!empty($validated["search"]["tenant_type"]))
+                    $tenants->where("type", $validated["search"]["tenant_type"]);
+                
+                $tenantIds = $tenants->pluck("id")->all();
+                $rentals->whereIn("tenant_id", !empty($tenantIds) ? $tenantIds : [-1]);
+            }
+            
+            if(!empty($validated["search"]["start"]))
+            {
+                $start = Helper::setDateTime($validated["search"]["start"], "00:00:00", true);
+                $rentals->where("start", ">=", $start);
+            }
+            
+            if(!empty($validated["search"]["end"]))
+            {
+                $end = Helper::setDateTime($validated["search"]["end"], "23:59:59", true);
+                $rentals->where("end", "<=", $end);
+            }
         }
         
         $total = $rentals->count();
@@ -149,6 +202,8 @@ class RentalController extends Controller
         if(!$rental)
             throw new ObjectNotExist(__("Rental does not exist"));
         
+        $rental->tenant = $rental->getTenant();
+        $rental->item = $rental->getItem();
         return $rental;
     }
     

@@ -12,7 +12,7 @@
         },
         props: {
             object: { type: Object },
-        },
+        }
     };
 </script>
 
@@ -65,6 +65,4 @@
             <span class="font-medium">{{ $t('rent.payment_day') }}: </span> <i>{{ object.payment_day }}{{ $t("rent.payment_day_postfix") }} {{ $t("rent.each_month") }}</i>
         </div>
     </div>
-    
-    <Button severity="secondary" :label="$t('rent.go_to_details')" class="w-full align-center mt-5"></Button>
 </template>

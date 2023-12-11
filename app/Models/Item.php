@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Models\Customer;
+use App\Models\ItemBill;
 use App\Models\ItemTenant;
 use App\Models\Rental;
 use App\Models\Tenant;
@@ -184,5 +185,23 @@ class Item extends Model
                 $customer->saveQuietly();
             }
         }
+    }
+    
+    public function addBill(array $data) : ItemBill
+    {
+        $bill = new ItemBill;
+        $bill->item_id = $this->id;
+        $bill->bill_type_id = $data["bill_type_id"];
+        $bill->payment_date = $data["payment_date"];
+        $bill->paid = $data["paid_date"] ?? 0;
+        $bill->paid_date = $data["paid_date"] ?? null;
+        $bill->cost = $data["cost"];
+        $bill->recipient_name = $data["recipient_name"] ?? null;
+        $bill->recipient_desciption = $data["recipient_desciption"] ?? null;
+        $bill->recipient_bank_account = $data["recipient_bank_account"] ?? null;
+        $bill->comments = $data["comments"] ?? null;
+        $bill->save();
+        
+        return $bill;
     }
 }

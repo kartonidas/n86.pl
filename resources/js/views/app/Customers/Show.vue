@@ -59,8 +59,8 @@
                         
                         this.getItemsList()
                     },
-                    (response) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                    (errors) => {
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -107,8 +107,8 @@
                             this.getItemsList()
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.deleted'), life: 3000 });
                         },
-                        (response) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: response.response.data.message, life: 3000 });
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                         }
                     )
                 
@@ -121,7 +121,7 @@
             },
             
             rowItemsClick(event) {
-                //this.showItem(event.data.id)
+                this.$router.push({name: 'item_show', params: { itemId : event.data.id }})
             }
         },
     }
@@ -200,7 +200,7 @@
                     </div>
                 </template>
                 <template #content pt="item">
-                    <DataTable :value="items" stripedRows class="p-datatable-gridlines" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
+                    <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
                         <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                             <template #body="{ data }">
                                 <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

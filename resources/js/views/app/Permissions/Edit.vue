@@ -105,9 +105,9 @@
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('permissions.updated'), life: 3000 });
                             this.saving = false;
                         },
-                        (response) => {
+                        (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
-                            this.errors = getResponseErrors(response)
+                            this.errors = getResponseErrors(errors)
                             this.saving = false
                         }
                     )
