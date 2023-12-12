@@ -7,7 +7,7 @@
     const props = defineProps({
         model: {
             type: Array,
-            default: () => ({})
+            default: () => ([])
         },
     });
     

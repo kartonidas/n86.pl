@@ -33,6 +33,13 @@ class Rental extends Model
     public static $sortable = ["start", "status", "end"];
     public static $defaultSortable = ["start", "desc"];
     
+    protected $casts = [
+        "deposit" => "float",
+        "rent" => "float",
+        "first_month_different_amount" => "float",
+        "last_month_different_amount" => "float",
+    ];
+    
     public static function getPeriods()
     {
         return [

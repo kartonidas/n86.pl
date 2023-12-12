@@ -65,6 +65,11 @@ const itemClick = (event, item) => {
 };
 
 const checkActiveRoute = (item) => {
+    if (item.regex != undefined) {
+        if ((route.path).match(item.regex)) 
+            return true
+    }
+    
     return route.path === item.to;
 };
 </script>

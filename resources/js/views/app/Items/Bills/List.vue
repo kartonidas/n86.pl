@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import TabMenu from './../_TabMenu.vue'
@@ -8,13 +8,14 @@
     export default {
         components: { TabMenu },
         setup() {
-            setMetaTitle('meta.title.items_list')
+            setMetaTitle('meta.title.items_bill_list')
             
             const itemService = new ItemService()
             
             return {
                 itemService,
                 hasAccess,
+                timeToDate
             }
         },
         data() {
@@ -30,11 +31,6 @@
                     perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
-                    breadcrumbItems: [
-                        {'label' : this.$t('menu.estates'), disabled : true },
-                        {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
-                        {'label' : this.$t('items.bills'), disabled : true },
-                    ],
                 }
             }
         },
@@ -45,21 +41,36 @@
                 appStore().setToastMessage(null)
             }
             this.getList()
+            
+            this.itemService.get(this.$route.params.itemId)
+                .then(
+                    (response) => {
+                        this.item = response.data
+                        this.loading = false
+                    },
+                    (errors) => {
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                    }
+                );
         },
         methods: {
+            getBreadcrumbs() {
+                let items = [
+                    {'label' : this.$t('menu.estates'), disabled : true },
+                    {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
+                ]
+                
+                if(this.item.name != undefined)
+                {
+                    items.push({'label' : this.item.name, route : { name : 'item_show'} })
+                    items.push({'label' : this.$t('items.bills'), disabled : true })
+                }
+                    
+                return items
+            },
+            
             getList() {
                 this.loading = true
-                
-                this.itemService.get(this.$route.params.itemId)
-                    .then(
-                        (response) => {
-                            this.item = response.data
-                            this.loading = false
-                        },
-                        (errors) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                        }
-                    );
                 
                 this.itemService.bills(this.$route.params.itemId, this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
                     .then(
@@ -76,11 +87,11 @@
             },
             
             newBill() {
-                //this.$router.push({name: 'item_new'})
+                this.$router.push({name: 'item_bill_new'})
             },
             
-            showBill(billId) {
-                //this.$router.push({name: 'item_show', params: { itemId : itemId }})
+            editBill(billId) {
+                this.$router.push({name: 'item_bill_edit', params: { billId : billId }})
             },
             
             changePage(event) {
@@ -94,11 +105,11 @@
             },
             
             confirmDeleteBill() {
-                this.itemService.removeBill(this.deleteBillId)
+                this.itemService.removeBill(this.$route.params.itemId, this.deleteBillId)
                     .then(
                         (response) => {
                             this.getList()
-                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.deleted'), life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.bill_deleted'), life: 3000 });
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -114,7 +125,7 @@
             },
             
             rowClick(event) {
-                this.showBill(event.data.id)
+                this.editBill(event.data.id)
             },
             
             search() {
@@ -132,28 +143,30 @@
 </script>
 
 <template>
-    <Breadcrumb :model="meta.breadcrumbItems"/>
+    <Breadcrumb :model="getBreadcrumbs()"/>
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <TabMenu activeIndex="2" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
+                <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
                 
-                <div class="flex justify-content-between align-items-center mb-5">
-                    <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('items.bills') }}</h4>
-                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('item:update')">
-                        <Button icon="pi pi-plus" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
-                    </div>
+                <div class="text-right mb-4" v-if="hasAccess('item:update')">
+                    <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
                 </div>
                 
                 <DataTable :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Badge :value="data.bill_type_id" class="font-normal" severity="info"></Badge>
+                            <Badge :value="data.bill_type.name" class="font-normal" severity="info"></Badge>
                             <div class="mt-1">
-                                <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
-                                    {{ data.cost }}
+                                <router-link :to="{name: 'item_bill_edit', params: { billId : data.id }}">
+                                    {{ numeralFormat(data.cost, '0.00') }}
                                 </router-link>
                             </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.payment_date')">
+                        <template #body="{ data }">
+                            {{ timeToDate(data.payment_date) }}
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">
@@ -162,7 +175,7 @@
                         </template>
                     </Column>
                     <template #empty>
-                        {{ $t('items.empty_list') }}
+                        {{ $t('items.empty_bills_list') }}
                     </template>
                 </DataTable>
                 <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
@@ -172,7 +185,7 @@
                     </div>
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-danger" autofocus />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
                     </template>
                 </Dialog>
             </div>

@@ -182,9 +182,33 @@ const router = createRouter({
                             meta: {permission: 'item:list'},
                         },
                         {
+                            path: '/app/item/:itemId/history',
+                            name: 'item_show_history',
+                            component: () => import('@/views/app/Items/Rental/History.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
+                            path: '/app/item/:itemId/reservations',
+                            name: 'item_show_reservation',
+                            component: () => import('@/views/app/Items/Rental/Reservation.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
                             path: '/app/item/:itemId/bills',
-                            name: 'item_show_bills',
+                            name: 'item_bills',
                             component: () => import('@/views/app/Items/Bills/List.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
+                            path: '/app/item/:itemId/bill/new',
+                            name: 'item_bill_new',
+                            component: () => import('@/views/app/Items/Bills/New.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
+                            path: '/app/item/:itemId/bill/:billId',
+                            name: 'item_bill_edit',
+                            component: () => import('@/views/app/Items/Bills/Edit.vue'),
                             meta: {permission: 'item:list'},
                         },
                     ]

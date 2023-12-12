@@ -192,13 +192,15 @@ class Item extends Model
         $bill = new ItemBill;
         $bill->item_id = $this->id;
         $bill->bill_type_id = $data["bill_type_id"];
-        $bill->payment_date = $data["payment_date"];
+        $bill->payment_date = strtotime($data["payment_date"]);
         $bill->paid = $data["paid_date"] ?? 0;
-        $bill->paid_date = $data["paid_date"] ?? null;
+        $bill->paid_date = !empty($data["paid_date"]) ? strtotime($data["paid_date"]) : null;
         $bill->cost = $data["cost"];
         $bill->recipient_name = $data["recipient_name"] ?? null;
         $bill->recipient_desciption = $data["recipient_desciption"] ?? null;
         $bill->recipient_bank_account = $data["recipient_bank_account"] ?? null;
+        $bill->source_document_number = $data["source_document_number"] ?? null;
+        $bill->source_document_date = !empty($data["source_document_date"]) ? strtotime($data["source_document_date"]) : null;
         $bill->comments = $data["comments"] ?? null;
         $bill->save();
         

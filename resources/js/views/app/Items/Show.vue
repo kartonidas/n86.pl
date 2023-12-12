@@ -1,59 +1,25 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
-    import TabMenu from './_TabMenu.vue'
-    import Address from '@/views/app/_partials/Address.vue'
+    import TabMenu from '@/views/app/Items/_TabMenu.vue'
     import Rental from '@/views/app/_partials/Rental.vue'
     import ItemService from '@/service/ItemService'
-    import RentalService from '@/service/RentalService'
     
     export default {
-        components: { Address, Rental, TabMenu },
+        components: { Rental, TabMenu },
         setup() {
             setMetaTitle('meta.title.items_show')
             
             const itemService = new ItemService()
-            const rentalService = new RentalService()
-            
             return {
-                itemService,
-                rentalService,
-                hasAccess,
-                getValueLabel,
-                timeToDate
+                itemService
             }
         },
         data() {
             return {
-                errors: [],
-                item: {
-                    customer: {}
-                },
+                item: {},
                 loading: true,
-                rentals: [],
-                archive_rentals: [],
-                meta: {
-                    rentals: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
-                        totalRecords: null,
-                        totalPages: null,
-                        loading: true
-                    },
-                    archive_rentals: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
-                        totalRecords: null,
-                        totalPages: null,
-                        loading: true
-                    },
-                    breadcrumbItems: [
-                        {'label' : this.$t('menu.estates'), disabled : true },
-                        {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
-                        {'label' : this.$t('items.details'), disabled : true },
-                    ],
-                }
             }
         },
         beforeMount() {
@@ -68,9 +34,6 @@
                     (response) => {
                         this.item = response.data
                         this.loading = false
-                        
-                        this.getReservationList()
-                        this.getArchiveList()
                     },
                     (errors) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -78,74 +41,38 @@
                 );
         },
         methods: {
+            getBreadcrumbs() {
+                let items = [
+                    {'label' : this.$t('menu.estates'), disabled : true },
+                    {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
+                ]
+                
+                if(this.item.name != undefined)
+                    items.push({'label' : this.item.name, disabled : true })
+                    
+                return items
+            },
+            
             rentItem() {
                 this.$router.push({name: 'rent_source_item', params: { itemId : this.$route.params.itemId }})
             },
             
-            getReservationList() {
-                const search = {
-                    item_id : this.$route.params.itemId,
-                    status : 'waiting',
-                };
-                this.rentalService.list(this.meta.rentals.perPage, this.meta.rentals.currentPage, 'start', 1, search)
-                    .then(
-                        (response) => {
-                            this.rentals = response.data.data
-                            this.meta.rentals.totalRecords = response.data.total_rows
-                            this.meta.rentals.totalPages = response.data.total_pages
-                            this.meta.rentals.loading = false
-                        },
-                        (errors) => {
-                        }
-                    )
-            },
-            
-            changeRentalsPage(event) {
-                this.meta.rentals.currentPage = event["page"] + 1;
-                this.getReservationList()
-            },
-            
-            getArchiveList() {
-                const search = {
-                    item_id : this.$route.params.itemId,
-                    status : 'archive',
-                };
-                this.rentalService.list(this.meta.archive_rentals.perPage, this.meta.archive_rentals.currentPage, 'end', -1, search)
-                    .then(
-                        (response) => {
-                            this.archive_rentals = response.data.data
-                            this.meta.archive_rentals.totalRecords = response.data.total_rows
-                            this.meta.archive_rentals.totalPages = response.data.total_pages
-                            this.meta.archive_rentals.loading = false
-                        },
-                        (errors) => {
-                        }
-                    )
-            },
-            
-            changeArchivePage(event) {
-                this.meta.archive_rentals.currentPage = event["page"] + 1;
-                this.getArchiveList()
-            },
-            
-            rowRentalsClick(event) {
-                this.$router.push({name: 'rental_show', params: { rentalId : event.data.id }})
-            },
-            
             showRental() {
-                
+                if (this.item.current_rental.id != undefined) {
+                    this.$router.push({name: 'rental_show', params: { rentalId : this.item.current_rental.id }})
+                }
             }
         },
     }
 </script>
 
 <template>
-    <Breadcrumb :model="meta.breadcrumbItems"/>
+    <Breadcrumb :model="getBreadcrumbs()"/>
     
     <div class="grid mt-1" v-if="!loading">
         <div class="col col-12">
             <div class="card">
-                <TabMenu active="TabMenu" :item="item" activeIndex="0" class="mb-5"/>
+                <TabMenu active="TabMenu" :item="item" activeIndex="base" class="mb-5"/>
                 
                 <div class="grid mt-4">
                     <div class="col text-center" v-if="item.area">
@@ -176,6 +103,9 @@
                                 <router-link v-if="item.customer.id" :to="{name: 'customer_show', params: { customerId : item.customer.id }}">
                                     {{ item.customer.name }}
                                 </router-link>
+                            </span>
+                            <span v-else>
+                                {{ $t('items.own') }}
                             </span>
                         </i>
                     </div>
@@ -208,90 +138,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col col-12">
-            <div class="card">
-                <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
-                    <h5 class="inline-flex mb-0 text-color font-medium">{{ $t("items.reservations") }}</h5>
-                    <div v-if="hasAccess('rent:create')">
-                        <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
-                    </div>
-                </div>
-                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
-                    <Column :header="$t('rent.tenant')" style="min-width: 300px;">
-                        <template #body="{ data }">
-                            <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
-                                    {{ data.tenant.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.tenant" :newline="true" emptyChar=""/>
-                                    </small>
-                                </div>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.period_short')">
-                        <template #body="{ data }">
-                            {{ timeToDate(data.start) }} - 
-                            <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ timeToDate(data.end) }}</span>
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.rent')">
-                        <template #body="{ data }">
-                            {{ numeralFormat(data.rent, '0.00') }}
-                        </template>
-                    </Column>
-                    <template #empty>
-                        {{ $t('rent.empty_reservation_list') }}
-                    </template>
-                </DataTable>
-            </div>
-        </div>
-        
-        <div class="col col-12">
-            <div class="card">
-                <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
-                    <h5 class="inline-flex mb-0 text-color font-medium">{{ $t("items.history_rentals") }}</h5>
-                </div>
-                <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.perPage" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">
-                    <Column :header="$t('rent.tenant')" style="min-width: 300px;">
-                        <template #body="{ data }">
-                            <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
-                                    {{ data.tenant.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.tenant" :newline="true" emptyChar=""/>
-                                    </small>
-                                </div>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.period_short')">
-                        <template #body="{ data }">
-                            {{ timeToDate(data.start) }} - 
-                            <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ timeToDate(data.end) }}</span>
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.rent')">
-                        <template #body="{ data }">
-                            {{ numeralFormat(data.rent, '0.00') }}
-                        </template>
-                    </Column>
-                    <template #empty>
-                        {{ $t('rent.empty_reservation_list') }}
-                    </template>
-                </DataTable>
             </div>
         </div>
     </div>

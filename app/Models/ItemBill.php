@@ -6,12 +6,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Exceptions\InvalidStatus;
+use App\Models\Dictionary;
 
 class ItemBill extends Model
 {
     use \App\Traits\UuidTrait {
         boot as traitBoot;
     }
+    
+    protected $casts = [
+        "cost" => "float",
+    ];
     
     public function canDelete()
     {
@@ -39,8 +44,19 @@ class ItemBill extends Model
             "recipient_name",
             "recipient_desciption",
             "recipient_bank_account",
+            "source_document_number",
+            "source_document_date",
             "comments",
             "created_at"
         );
+    }
+    
+    private static $cachedBillTypes = [];
+    public function getBillType()
+    {
+        if(!isset(self::$cachedBillTypes[$this->bill_type_id]))
+            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::apiFields()->find($this->bill_type_id);
+        
+        return self::$cachedBillTypes[$this->bill_type_id];
     }
 }

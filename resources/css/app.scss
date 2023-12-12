@@ -52,6 +52,10 @@ TABLE.p-datatable-table {
     }
 }
 
+A.active-route {
+    background-color: var(--surface-100);
+}
+
 @media screen and (max-width: 991px) {
     .sticky-footer-form {
         margin-bottom: 70px;

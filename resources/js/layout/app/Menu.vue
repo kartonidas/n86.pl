@@ -9,26 +9,26 @@ import { hasAccess } from '@/utils/helper.js'
 const model = ref([
     {
         label: t('menu.home'),
-        items: [{ label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: { name: 'dashboard' } }]
+        items: [{ label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: { name: 'dashboard' }, regex: /^\/app$/i }]
     },
     {
         label: t('menu.estates'),
         access: hasAccess('item:list'),
         items: [
-            { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' } },
-            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' } },
-            { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' } },
-            { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' } },
-            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' } },
-            { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' } },
+            { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' }, regex: /^\/app\/item(s?)(\/(.*))?$/i },
+            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' }, regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i },
+            { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' }, regex: /^\/app\/customer(s?)(\/(.*))?$/i },
+            { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' }, regex: /^\/app\/tenant(s?)(\/(.*))?$/i },
+            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, regex: /^\/app\/document(s?)(\/(.*))?$/i },
+            { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' }, regex: /^\/app\/fault(s?)(\/(.*))?$/i },
         ]
     },
     {
         label: t('menu.users'),
         access: hasAccess('user:list') || hasAccess('permission:list'),
         items: [
-            { label: t('menu.users_list'), icon: 'pi pi-fw pi-users', to: { name: 'users' }, access: hasAccess('user:list') },
-            { label: t('menu.permissions'), icon: 'pi pi-fw pi-key', to: { name: 'permissions' }, access: hasAccess('permission:list') },
+            { label: t('menu.users_list'), icon: 'pi pi-fw pi-users', to: { name: 'users' }, access: hasAccess('user:list'), regex: /^\/app\/user(s?)(\/(?!permission|permissions|config).*)?$/i },
+            { label: t('menu.permissions'), icon: 'pi pi-fw pi-key', to: { name: 'permissions' }, access: hasAccess('permission:list'), regex: /^\/app\/user\/permission(s?)(\/(.*))?$/i },
         ]
     },
     {
@@ -40,12 +40,12 @@ const model = ref([
                 icon: 'pi pi-fw pi-book',
                 access: hasAccess('dictionary:list'),
                 items: [
-                    { label: t('menu.fee_include_rent'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'fees'} } },
-                    { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} } },
+                    { label: t('menu.fee_include_rent'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'fees'} }, regex: /^\/app\/dictionary\/fee(s?)(\/(.*))?$/i },
+                    { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
                 ]
             },
-            { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' } },
-            { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' } },
+            { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, regex: /^\/app\/user\/config$/i },
+            { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' } , regex: /^\/app\/firm\-data(\/(.*))?$/i},
         ]
     },
 ]);

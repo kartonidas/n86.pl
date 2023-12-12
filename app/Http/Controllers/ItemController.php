@@ -182,7 +182,8 @@ class ItemController extends Controller
         $page = $validated["page"] ?? 1;
         
         $itemBills = ItemBill
-            ::apiFields();
+            ::apiFields()
+            ->where("item_id", $itemId);
         
         if(!empty($validated["search"]))
         {
@@ -198,7 +199,10 @@ class ItemController extends Controller
             ->get();
             
         foreach($itemBills as $i => $itemBill)
+        {
             $itemBills[$i]->can_delete = $itemBill->canDelete();
+            $itemBills[$i]->bill_type = $itemBill->getBillType();
+        }
             
         $out = [
             "total_rows" => $total,
@@ -234,11 +238,13 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $bill = ItemBill::find("id");
+        $bill = ItemBill::apiFields()->find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
-        return $item;
+        $bill->bill_type = $bill->getBillType();
+        
+        return $bill;
     }
     
     public function billUpdate(UpdateItemBillRequest $request, int $itemId, int $billId)
@@ -249,14 +255,18 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $bill = ItemBill::find("id");
+        $bill = ItemBill::find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
         $validated = $request->validated();
         
         foreach($validated as $field => $value)
+        {
+            if(!empty($value) && ($field == "payment_date" || $field == "source_document_date"))
+                $value = strtotime($value);
             $bill->{$field} = $value;
+        }
         $bill->save();
         
         return true;
@@ -270,7 +280,7 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $bill = ItemBill::find("id");
+        $bill = ItemBill::find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         

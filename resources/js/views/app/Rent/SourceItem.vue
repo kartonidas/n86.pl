@@ -6,12 +6,13 @@
     import TenantService from '@/service/TenantService'
     
     import Address from '@/views/app/_partials/Address.vue'
+    import Header from '@/views/app/_partials/Header.vue'
     import TenantForm from './../Tenants/_Form.vue'
     import RentForm from './_RentForm.vue'
     import Summary from './_Summary.vue'
     
     export default {
-        components: { Address, RentForm, Summary, TenantForm },
+        components: { Address, Header, RentForm, Summary, TenantForm },
         setup() {
             setMetaTitle('meta.title.rent_item')
             
@@ -234,6 +235,23 @@
     
     <div v-if="itemExists">
         <div class="card p-fluid mt-4">
+            <div class="mb-5">
+                <div class="grid align-items-center">
+                    <div class="col-12 md:col-5" v-if="activeStep > 0">
+                        <Header :object="tenant" type="tenant"/>
+                    </div>
+                    
+                    <div class="col-12 md:col-2 text-center" v-if="activeStep > 0">
+                        <i class="pi pi-angle-double-right text-5xl hidden md:block"></i>
+                        <i class="pi pi-angle-double-down text-5xl md:hidden"></i>
+                    </div>
+                    
+                    <div class="col-12 md:col-5">
+                        <Header :object="item" type="item"/>
+                    </div>
+                </div>
+            </div>
+            
             <Steps :model="stepsItems" :activeStep="activeStep">
                 <template #item="{ item, active }">
                     <span :class="['inline-flex align-items-center justify-content-center align-items-center border-circle border-primary border-1 h-3rem w-3rem z-1 cursor-pointer', { 'bg-primary': active, 'surface-overlay text-primary': !active }]">
