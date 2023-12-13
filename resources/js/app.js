@@ -7,6 +7,7 @@ import { createHead } from 'unhead';
 import App from './App.vue'
 import router from './router';
 import i18n from "./i18n";
+import primevueLocale from "./i18n/primevue.json";
 import globalDirectives from './directives';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import VueNumerals from 'vue-numerals';
@@ -61,7 +62,9 @@ app.use(i18n);
 app.use(router);
 app.use(globalDirectives);
 app.use(pinia);
-app.use(PrimeVue);
+app.use(PrimeVue, {
+    locale : primevueLocale[i18n.global.locale.value]
+});
 app.use(ToastService);
 app.use(VueNumerals, { locale: i18n.global.locale.value });
 

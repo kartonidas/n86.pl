@@ -6,6 +6,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 use App\Exceptions\AccessDenied;
@@ -81,5 +82,12 @@ class Handler extends ExceptionHandler
             ], JsonResponse::HTTP_UNAUTHORIZED);
         });
         
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => __('Object not found.')
+                ], 404);
+            }
+        });
     }
 }

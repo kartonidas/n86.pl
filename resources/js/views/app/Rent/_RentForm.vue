@@ -133,7 +133,7 @@
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-4 mb-4">
                         <label for="start_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.start_date') }}</label>
-                        <Calendar id="start_date" v-model="rent.start_date" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="start_date" v-model="rent.start_date" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.start_date.$error">
                             <small class="p-error">{{ v.rent.start_date.$errors[0].$message }}</small>
                         </div>
@@ -157,7 +157,7 @@
                     
                     <div class="field col-12 md:col-4 mb-4" v-if="rent.period == 'date'">
                         <label for="end_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.end_date') }}</label>
-                        <Calendar id="end_date" v-model="rent.end_date" :class="{'p-invalid' : v.rent.end_date.$error}" :placeholder="$t('rent.end_date')" :minDate="rent.start_date" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="end_date" v-model="rent.end_date" :class="{'p-invalid' : v.rent.end_date.$error}" :placeholder="$t('rent.end_date')" :minDate="rent.start_date" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.end_date.$error">
                             <small class="p-error">{{ v.rent.end_date.$errors[0].$message }}</small>
                         </div>
@@ -247,7 +247,7 @@
                     
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="first_payment_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.first_payment_date') }}</label>
-                        <Calendar id="first_payment_date" v-model="rent.first_payment_date" :class="{'p-invalid' : v.rent.first_payment_date.$error}" :placeholder="$t('rent.first_payment_date')" :minDate="rent.start_date" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="first_payment_date" v-model="rent.first_payment_date" :class="{'p-invalid' : v.rent.first_payment_date.$error}" :placeholder="$t('rent.first_payment_date')" :minDate="rent.start_date" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.first_payment_date.$error">
                             <small class="p-error">{{ v.rent.first_payment_date.$errors[0].$message }}</small>
                         </div>

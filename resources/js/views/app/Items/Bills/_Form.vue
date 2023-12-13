@@ -101,7 +101,7 @@
                     </div>
                     
                     <div class="field col-12 md:col-4 mb-4">
-                        <label for="cost" class="block text-900 font-medium mb-2">{{ $t('items.cost') }}</label>
+                        <label for="cost" v-required class="block text-900 font-medium mb-2">{{ $t('items.cost') }}</label>
                         <InputNumber id="cost" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.cost')" class="w-full" :class="{'p-invalid' : v.bill.cost.$error}" v-model="bill.cost" :disabled="loading || saving"/>
                         <div v-if="v.bill.cost.$error">
                             <small class="p-error">{{ v.bill.cost.$errors[0].$message }}</small>
@@ -110,7 +110,7 @@
                     
                     <div class="field col-12 md:col-4 mb-4">
                         <label for="payment_date" v-required class="block text-900 font-medium mb-2">{{ $t('items.payment_date') }}</label>
-                        <Calendar id="payment_date" v-model="bill.payment_date" :class="{'p-invalid' : v.bill.payment_date.$error}" :placeholder="$t('items.payment_date')" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="payment_date" v-model="bill.payment_date" :class="{'p-invalid' : v.bill.payment_date.$error}" :placeholder="$t('items.payment_date')" showIcon :disabled="loading || saving"/>
                         <div v-if="v.bill.payment_date.$error">
                             <small class="p-error">{{ v.bill.payment_date.$errors[0].$message }}</small>
                         </div>
@@ -150,7 +150,7 @@
                     </div>
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="source_document_date" class="block text-900 font-medium mb-2">{{ $t('items.source_document_date') }}</label>
-                        <Calendar id="source_document_date" v-model="bill.source_document_date" :placeholder="$t('items.source_document_date')" dateFormat="yy-mm-dd" showIcon :disabled="loading || saving"/>
+                        <Calendar id="source_document_date" v-model="bill.source_document_date" :placeholder="$t('items.source_document_date')" showIcon :disabled="loading || saving"/>
                     </div>
                     
                     

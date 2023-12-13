@@ -8,6 +8,9 @@
     
     export default {
         components: { BillForm, TabMenu },
+        props: {
+            item: { type: Object },
+        },
         setup() {
             setMetaTitle('meta.title.items_new_bill')
             
@@ -20,22 +23,9 @@
             return {
                 errors: [],
                 bill : {},
-                item: {},
                 saving: false,
                 fromCustomer: false
             }
-        },
-        beforeMount() {
-            this.itemService.get(this.$route.params.itemId)
-                .then(
-                    (response) => {
-                        this.item = response.data
-                        this.loading = false
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
         },
         methods: {
             getBreadcrumbs() {

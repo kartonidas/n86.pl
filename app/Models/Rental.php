@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTime;
 use DateInterval;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,6 +40,27 @@ class Rental extends Model
         "first_month_different_amount" => "float",
         "last_month_different_amount" => "float",
     ];
+    
+    protected function start(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
+    
+    protected function end(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
+    
+    protected function firstPaymentDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
     
     public static function getPeriods()
     {

@@ -94,6 +94,7 @@
         "bill_deleted": "Rachunek został usunięty",
         "source_document_number" : "Numer dokumentu źródłowego",
         "source_document_date" : "Data dokumentu źródłowego",
+        "fees_const" : "Opłaty stałe",
         
         "add_bill" : "Dodaj nowy rachunek",
         "add_bill_short" : "Dodaj rachunek",
@@ -126,6 +127,7 @@
         "estate_type" : "Rodzaj nieruchomości",
         "fees" : "Opłaty",
         "fixed_fees" : "Opłaty stałe",
+        "cyclical_fees" : "Opłaty cykliczne",
         "free" : "Wolne",
         "history" : "Historia",
         "history_rentals" : "Historia wynajmów",

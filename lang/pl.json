@@ -158,5 +158,7 @@
     "Cannot delete object": "Cannot delete object",
     "Archive": "Archiwalny",
     "Current": "W trakcie",
-    "Waiting": "Oczekujący"
+    "Waiting": "Oczekuj\u0105cy",
+    "Bill does not exist": "Bill does not exist",
+    "Object not found.": "Element nie istnieje."
 }

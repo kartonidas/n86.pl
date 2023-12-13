@@ -10,15 +10,23 @@ use Illuminate\Validation\Rule;
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\ItemRequest;
 use App\Http\Requests\ItemBillRequest;
-use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\ItemCyclicalFeeCostRequest;
+use App\Http\Requests\ItemCyclicalFeeRequest;
 use App\Http\Requests\StoreItemBillRequest;
+use App\Http\Requests\StoreItemCyclicalFeeCostRequest;
+use App\Http\Requests\StoreItemCyclicalFeeRequest;
+use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemBillRequest;
+use App\Http\Requests\UpdateItemCyclicalFeeCostRequest;
+use App\Http\Requests\UpdateItemCyclicalFeeRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Libraries\Helper;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\ItemBill;
+use App\Models\ItemCyclicalFee;
+use App\Models\ItemCyclicalFeeCost;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\Sortable;
@@ -213,7 +221,6 @@ class ItemController extends Controller
         ];
             
         return $out;
-        
     }
     
     public function billCreate(StoreItemBillRequest $request, int $itemId)
@@ -264,7 +271,7 @@ class ItemController extends Controller
         foreach($validated as $field => $value)
         {
             if(!empty($value) && ($field == "payment_date" || $field == "source_document_date"))
-                $value = strtotime($value);
+                $value = Helper::setDateTime($value, $field == "source_document_date" ? "12:00:00" : "23:59:59", true);
             $bill->{$field} = $value;
         }
         $bill->save();
@@ -305,24 +312,267 @@ class ItemController extends Controller
     //    if(!$item)
     //        throw new ObjectNotExist(__("Item does not exist"));
     //}
-    //
-    //public function fees(Request $request, int $itemId)
-    //{
-    //}
-    //
-    //public function feeCreate(Request $request, int $itemId)
-    //{
-    //}
-    //
-    //public function feeGet(Request $request, int $itemId, int $feeId)
-    //{
-    //}
-    //
-    //public function feeUpdate(Request $request, int $itemId, int $feeId)
-    //{
-    //}
-    //
-    //public function feeDelete(Request $request, int $itemId, int $feeId)
-    //{
-    //}
+    
+    public function fees(ItemCyclicalFeeRequest $request, int $itemId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $validated = $request->validated();
+
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $itemFees = ItemCyclicalFee
+            ::apiFields()
+            ->where("item_id", $itemId);
+        
+        if(!empty($validated["search"]))
+        {
+            // todo
+        }
+        
+        $total = $itemFees->count();
+        
+        $orderBy = $this->getOrderBy($request, ItemCyclicalFee::class, "created_at,desc");
+        $itemFees = $itemFees->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+            
+        foreach($itemFees as $i => $itemFee)
+        {
+            $itemFees[$i]->can_delete = $itemFee->canDelete();
+            $itemFees[$i]->bill_type = $itemFee->getBillType();
+        }
+            
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $itemFees,
+        ];
+            
+        return $out;
+    }
+    
+    public function feeCreate(StoreItemCyclicalFeeRequest $request, int $itemId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $validated = $request->validated();
+        
+        $cyclicalFee = new ItemCyclicalFee;
+        $cyclicalFee->item_id = $validated["item_id"];
+        $cyclicalFee->bill_type_id = $validated["bill_type_id"];
+        $cyclicalFee->beginning = Helper::setDateTime($validated["beginning"], "00:00:00", true);
+        $cyclicalFee->payment_day = $validated["payment_day"];
+        $cyclicalFee->repeat_months = $validated["repeat_months"];
+        $cyclicalFee->tenant_cost = $validated["tenant_cost"];
+        $cyclicalFee->cost = $validated["cost"];
+        $cyclicalFee->recipient_name = $validated["recipient_name"] ?? null;
+        $cyclicalFee->recipient_desciption = $validated["recipient_desciption"] ?? null;
+        $cyclicalFee->recipient_bank_account = $validated["recipient_bank_account"] ?? null;
+        $cyclicalFee->source_document_number = $validated["source_document_number"] ?? null;
+        $cyclicalFee->source_document_date = !empty($validated["source_document_date"]) ? Helper::setDateTime($validated["source_document_date"], "12:00:00", true) : null;
+        $cyclicalFee->comments = $validated["comments"] ?? null;
+        $cyclicalFee->save();
+        
+        return $cyclicalFee->id;
+    }
+    
+    public function feeGet(Request $request, int $itemId, int $feeId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::apiFields()->find($feeId);
+        if(!$fee || $fee->item_id != $item->id)
+            throw new ObjectNotExist(__("Fee does not exist"));
+        
+        return $fee;
+    }
+    
+    public function feeUpdate(UpdateItemCyclicalFeeRequest $request, int $itemId, int $feeId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee || $fee->item_id != $item->id)
+            throw new ObjectNotExist(__("Fee does not exist"));
+        
+        $validated = $request->validated();
+        
+        foreach($validated as $field => $value)
+        {
+            if(!empty($value) && ($field == "beginning" || $field == "source_document_date"))
+                $value = Helper::setDateTime($value, $field == "source_document_date" ? "12:00:00" : "00:00:00", true);
+            $fee->{$field} = $value;
+        }
+        $fee->save();
+        
+        return true;
+    }
+    
+    public function feeDelete(Request $request, int $itemId, int $feeId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee || $fee->item_id != $item->id)
+            throw new ObjectNotExist(__("Fee does not exist"));
+        
+        $fee->delete();
+        return true;
+    }
+    
+    public function feeCosts(ItemCyclicalFeeCostRequest $request, int $itemId, int $feeId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee)
+            throw new ObjectNotExist(__("Cyclical fee does not exist"));
+        
+        $validated = $request->validated();
+
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $itemFeeCosts = ItemCyclicalFeeCost
+            ::apiFields()
+            ->where("item_cyclical_fee_id", $feeId);
+        
+        $total = $itemFeeCosts->count();
+        
+        $orderBy = $this->getOrderBy($request, ItemCyclicalFeeCost::class, "created_at,desc");
+        $itemFeeCosts = $itemFeeCosts->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+            
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $itemFeeCosts,
+        ];
+            
+        return $out;
+    }
+    
+    public function feeCostCreate(StoreItemCyclicalFeeCostRequest $request, int $itemId, int $feeId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee)
+            throw new ObjectNotExist(__("Cyclical fee does not exist"));
+        
+        $validated = $request->validated();
+        
+        $cost = new ItemCyclicalFeeCost;
+        $cost->item_cyclical_fee_id = $feeId;
+        $cost->from_time = Helper::setDateTime($validated["from_time"], "00:00:00", true);
+        $cost->cost = $validated["cost"];
+        $cost->save();
+        
+        return $cost->id;
+    }
+    
+    public function feeCostGet(Request $request, int $itemId, int $feeId, int $costId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee)
+            throw new ObjectNotExist(__("Cyclical fee does not exist"));
+        
+        $cost = ItemCyclicalFeeCost::apiFields()->find($costId);
+        if(!$cost || $cost->item_cyclical_fee_id != $feeId)
+            throw new ObjectNotExist(__("Cost does not exist"));
+        
+        return $cost;
+    }
+    
+    public function feeCostUpdate(UpdateItemCyclicalFeeCostRequest $request, int $itemId, int $feeId, int $costId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee)
+            throw new ObjectNotExist(__("Cyclical fee does not exist"));
+        
+        $cost = ItemCyclicalFeeCost::find($costId);
+        if(!$cost || $cost->item_cyclical_fee_id != $feeId)
+            throw new ObjectNotExist(__("Cost does not exist"));
+        
+        $validated = $request->validated();
+        
+        foreach($validated as $field => $value)
+        {
+            if(!empty($value) && $field == "from_time")
+                $value = Helper::setDateTime($value, "00:00:00", true);
+            $cost->{$field} = $value;
+        }
+        $cost->save();
+        
+        return true;
+    }
+    
+    public function feeCostDelete(Request $request, int $itemId, int $feeId, int $costId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $fee = ItemCyclicalFee::find($feeId);
+        if(!$fee)
+            throw new ObjectNotExist(__("Cyclical fee does not exist"));
+        
+        $cost = ItemCyclicalFeeCost::find($costId);
+        if(!$cost || $cost->item_cyclical_fee_id != $item->id)
+            throw new ObjectNotExist(__("Fee does not exist"));
+        
+        $cost->delete();
+        return true;
+    }
 }

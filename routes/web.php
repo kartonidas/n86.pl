@@ -18,4 +18,4 @@ $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
 
 Route::get('{any?}', function () {
     return view('welcome');
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');

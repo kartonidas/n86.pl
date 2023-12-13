@@ -1,6 +1,6 @@
 <script>
     import { appStore } from '@/store.js'
-    import { getResponseErrors, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import TabMenu from './../_TabMenu.vue'
     import BillForm from './_Form.vue'
@@ -8,6 +8,9 @@
     
     export default {
         components: { BillForm, TabMenu },
+        props: {
+            item: { type: Object },
+        },
         setup() {
             setMetaTitle('meta.title.items_update_bill')
             
@@ -21,7 +24,6 @@
                 loading: true,
                 errors: [],
                 bill : {},
-                item: {},
                 saving: false,
                 fromCustomer: false
             }
@@ -33,25 +35,15 @@
                 appStore().setToastMessage(null);
             }
             
-            this.itemService.get(this.$route.params.itemId)
-                .then(
-                    (response) => {
-                        this.item = response.data
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
-                
             this.itemService.getBill(this.$route.params.itemId, this.$route.params.billId)
                 .then(
                     (response) => {
                         this.bill = response.data
                         if(this.bill.payment_date && !(this.bill.payment_date instanceof Date))
-                            this.bill.payment_date = new Date(timeToDate(this.bill.payment_date))
+                            this.bill.payment_date = new Date(this.bill.payment_date)
                             
                         if(this.bill.source_document_date && !(this.bill.source_document_date instanceof Date))
-                            this.bill.source_document_date = new Date(timeToDate(this.bill.source_document_date))
+                            this.bill.source_document_date = new Date(this.bill.source_document_date)
                         
                         this.loading = false
                     },

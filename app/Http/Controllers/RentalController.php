@@ -169,10 +169,10 @@ class RentalController extends Controller
             $rental = new Rental;
             $rental->item_id = $itemData["id"];
             $rental->tenant_id = $tenantData["id"];
-            $rental->start = strtotime(Helper::setDateTime($rentData["start_date"], "00:00:00"));
+            $rental->start = Helper::setDateTime($rentData["start_date"], "00:00:00", true);
             $rental->period = $rentData["period"];
             $rental->months = $rentData["months"] ?? null;
-            $rental->end = $rentData["period"] == Rental::PERIOD_DATE ? strtotime(Helper::setDateTime($rentData["end_date"], "23:59:59")) : null;
+            $rental->end = $rentData["period"] == Rental::PERIOD_DATE ? Helper::setDateTime($rentData["end_date"], "23:59:59", true) : null;
             $rental->termination_period = $rentData["termination_period"];
             $rental->termination_months = $rentData["termination_months"] ?? null;
             $rental->termination_days = $rentData["termination_days"] ?? null;
@@ -182,7 +182,7 @@ class RentalController extends Controller
             $rental->first_month_different_amount = $rentData["first_month_different_amount_value"] ?? null;
             $rental->last_month_different_amount = $rentData["last_month_different_amount_value"] ?? null;
             $rental->payment_day = $rentData["payment_day"] ?? null;
-            $rental->first_payment_date = strtotime($rentData["first_payment_date"]);
+            $rental->first_payment_date = Helper::setDateTime($rentData["first_payment_date"], "23:59:59", true);
             $rental->number_of_people = $rentData["number_of_people"];
             $rental->comments = $rentData["comments"] ?? null;
             $rental->setEndDate();

@@ -1,35 +1,28 @@
 <script>
-    import { getValueLabel, getResponseErrors, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import TabMenu from '@/views/app/Items/_TabMenu.vue'
     import Address from '@/views/app/_partials/Address.vue'
-    import Rental from '@/views/app/_partials/Rental.vue'
-    import ItemService from '@/service/ItemService'
     import RentalService from '@/service/RentalService'
     
     export default {
-        components: { Address, Rental, TabMenu },
+        components: { Address, TabMenu },
+        props: {
+            item: { type: Object },
+        },
         setup() {
             setMetaTitle('meta.title.items_show')
             
-            const itemService = new ItemService()
             const rentalService = new RentalService()
             
             return {
-                itemService,
                 rentalService,
                 getValueLabel,
-                timeToDate
             }
         },
         data() {
             return {
-                errors: [],
-                item: {
-                    customer: {}
-                },
-                loading: true,
                 rentals: [],
                 archive_rentals: [],
                 meta: {
@@ -44,18 +37,7 @@
             }
         },
         beforeMount() {
-            this.itemService.get(this.$route.params.itemId)
-                .then(
-                    (response) => {
-                        this.item = response.data
-                        this.loading = false
-                        
-                        this.getArchiveList()
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
+            this.getArchiveList()
         },
         methods: {
             getBreadcrumbs() {
@@ -106,7 +88,7 @@
 <template>
     <Breadcrumb :model="getBreadcrumbs()"/>
     
-    <div class="grid mt-1" v-if="!loading">
+    <div class="grid mt-1">
         <div class="col col-12">
             <div class="card">
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="rent:history" class="mb-5"/>
@@ -130,9 +112,9 @@
                     </Column>
                     <Column :header="$t('rent.period_short')">
                         <template #body="{ data }">
-                            {{ timeToDate(data.start) }} - 
+                            {{ data.start }} - 
                             <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ timeToDate(data.end) }}</span>
+                            <span v-else>{{ data.end }}</span>
                         </template>
                     </Column>
                     <Column :header="$t('rent.rent')">

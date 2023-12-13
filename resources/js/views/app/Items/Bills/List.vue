@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import TabMenu from './../_TabMenu.vue'
@@ -7,6 +7,9 @@
     
     export default {
         components: { TabMenu },
+        props: {
+            item: { type: Object },
+        },
         setup() {
             setMetaTitle('meta.title.items_bill_list')
             
@@ -15,13 +18,10 @@
             return {
                 itemService,
                 hasAccess,
-                timeToDate
             }
         },
         data() {
             return {
-                loading: false,
-                item: {},
                 bills: [],
                 displayConfirmation: false,
                 deleteBillId: null,
@@ -29,6 +29,7 @@
                     search: {},
                     currentPage: 1,
                     perPage: this.rowsPerPage,
+                    loading: false,
                     totalRecords: null,
                     totalPages: null,
                 }
@@ -41,17 +42,6 @@
                 appStore().setToastMessage(null)
             }
             this.getList()
-            
-            this.itemService.get(this.$route.params.itemId)
-                .then(
-                    (response) => {
-                        this.item = response.data
-                        this.loading = false
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
         },
         methods: {
             getBreadcrumbs() {
@@ -70,7 +60,7 @@
             },
             
             getList() {
-                this.loading = true
+                this.meta.loading = true
                 
                 this.itemService.bills(this.$route.params.itemId, this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
                     .then(
@@ -78,7 +68,7 @@
                             this.bills = response.data.data
                             this.meta.totalRecords = response.data.total_rows
                             this.meta.totalPages = response.data.total_pages
-                            this.loading = false
+                            this.meta.loading = false
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -153,7 +143,7 @@
                     <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="data.bill_type.name" class="font-normal" severity="info"></Badge>
@@ -166,7 +156,7 @@
                     </Column>
                     <Column :header="$t('items.payment_date')">
                         <template #body="{ data }">
-                            {{ timeToDate(data.payment_date) }}
+                            {{ data.payment_date }}
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">

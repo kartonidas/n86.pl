@@ -1,5 +1,5 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -17,7 +17,6 @@
                 rentalService,
                 hasAccess,
                 getValueLabel,
-                timeToDate
             }
         },
         data() {

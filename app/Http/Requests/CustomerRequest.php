@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Customer;
 
-class CustomerRequest extends FormRequest
+class CustomerRequest extends ListRequest
 {
     public function authorize(): bool
     {
@@ -15,15 +15,11 @@ class CustomerRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            "size" => "nullable|integer|gt:0",
-            "page" => "nullable|integer|gt:0",
-            "sort" => "nullable",
-            "order" => "nullable|integer",
+        return array_merge(parent::rules(), [
             "search.name" => "nullable|string",
             "search.type" => ["nullable", Rule::in([Customer::TYPE_FIRM, Customer::TYPE_PERSON])],
             "search.pesel_nip" => "nullable|string",
             "search.address" => "nullable|string",
-        ];
+        ]);
     }
 }

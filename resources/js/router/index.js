@@ -3,6 +3,7 @@ import { appStore } from './../store.js';
 import UserService from '@/service/UserService';
 import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/AppLayout.vue';
+import AppItemLayout from '@/layout/AppItemLayout.vue'
 import SiteLayout from '@/layout/SiteLayout.vue';
 import Home from '@/views/Home.vue';
 import { hasAccess } from '@/utils/helper';
@@ -176,41 +177,56 @@ const router = createRouter({
                             meta: {permission: 'item:update'},
                         },
                         {
-                            path: '/app/item/:itemId',
-                            name: 'item_show',
-                            component: () => import('@/views/app/Items/Show.vue'),
-                            meta: {permission: 'item:list'},
+                            path: '/app/items',
+                            component: AppItemLayout,
+                            children: [
+                                {
+                                    path: '/app/item/:itemId',
+                                    name: 'item_show',
+                                    component: () => import('@/views/app/Items/Show.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/history',
+                                    name: 'item_show_history',
+                                    component: () => import('@/views/app/Items/Rental/History.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/reservations',
+                                    name: 'item_show_reservation',
+                                    component: () => import('@/views/app/Items/Rental/Reservation.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/bills',
+                                    name: 'item_bills',
+                                    component: () => import('@/views/app/Items/Bills/List.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/bill/new',
+                                    name: 'item_bill_new',
+                                    component: () => import('@/views/app/Items/Bills/New.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/bill/:billId',
+                                    name: 'item_bill_edit',
+                                    component: () => import('@/views/app/Items/Bills/Edit.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/fees',
+                                    name: 'item_fees',
+                                    component: () => import('@/views/app/Items/Fees/List.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                            ]
                         },
-                        {
-                            path: '/app/item/:itemId/history',
-                            name: 'item_show_history',
-                            component: () => import('@/views/app/Items/Rental/History.vue'),
-                            meta: {permission: 'item:list'},
-                        },
-                        {
-                            path: '/app/item/:itemId/reservations',
-                            name: 'item_show_reservation',
-                            component: () => import('@/views/app/Items/Rental/Reservation.vue'),
-                            meta: {permission: 'item:list'},
-                        },
-                        {
-                            path: '/app/item/:itemId/bills',
-                            name: 'item_bills',
-                            component: () => import('@/views/app/Items/Bills/List.vue'),
-                            meta: {permission: 'item:list'},
-                        },
-                        {
-                            path: '/app/item/:itemId/bill/new',
-                            name: 'item_bill_new',
-                            component: () => import('@/views/app/Items/Bills/New.vue'),
-                            meta: {permission: 'item:list'},
-                        },
-                        {
-                            path: '/app/item/:itemId/bill/:billId',
-                            name: 'item_bill_edit',
-                            component: () => import('@/views/app/Items/Bills/Edit.vue'),
-                            meta: {permission: 'item:list'},
-                        },
+                        
+                        
+                        
                     ]
                 },
                 {

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('item_bills', function (Blueprint $table) {
             $table->string('recipient_name', 250)->nullable()->default(null)->after('cost');
-            $table->text('recipient_desciption', 250)->nullable()->default(null)->after('recipient_name');
+            $table->text('recipient_desciption')->nullable()->default(null)->after('recipient_name');
             $table->string('recipient_bank_account', 50)->nullable()->default(null)->after('recipient_desciption');
             $table->text('comments')->nullable()->default(null)->after('recipient_bank_account');
             $table->softDeletes();

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
+use App\Libraries\Helper;
 use App\Models\Customer;
 use App\Models\ItemBill;
 use App\Models\ItemTenant;
@@ -80,6 +81,7 @@ class Item extends Model
             "id",
             "type",
             "rented",
+            "waiting_rentals",
             "customer_id",
             "name",
             "street",
@@ -170,6 +172,7 @@ class Item extends Model
     {
         $cnt = Rental::where("status", Rental::STATUS_CURRENT)->where("item_id", $this->id)->withoutGlobalScopes()->count();
         $this->rented = $cnt > 0 ? 1 : 0;
+        $this->waiting_rentals = Rental::where("status", Rental::STATUS_WAITING)->where("item_id", $this->id)->withoutGlobalScopes()->count();
         $this->saveQuietly();
     }
     
@@ -192,7 +195,7 @@ class Item extends Model
         $bill = new ItemBill;
         $bill->item_id = $this->id;
         $bill->bill_type_id = $data["bill_type_id"];
-        $bill->payment_date = strtotime($data["payment_date"]);
+        $bill->payment_date = Helper::setDateTime($data["payment_date"], "23:59:59", true);
         $bill->paid = $data["paid_date"] ?? 0;
         $bill->paid_date = !empty($data["paid_date"]) ? strtotime($data["paid_date"]) : null;
         $bill->cost = $data["cost"];
@@ -200,7 +203,7 @@ class Item extends Model
         $bill->recipient_desciption = $data["recipient_desciption"] ?? null;
         $bill->recipient_bank_account = $data["recipient_bank_account"] ?? null;
         $bill->source_document_number = $data["source_document_number"] ?? null;
-        $bill->source_document_date = !empty($data["source_document_date"]) ? strtotime($data["source_document_date"]) : null;
+        $bill->source_document_date = !empty($data["source_document_date"]) ? Helper::setDateTime($data["source_document_date"], "12:00:00", true) : null;
         $bill->comments = $data["comments"] ?? null;
         $bill->save();
         

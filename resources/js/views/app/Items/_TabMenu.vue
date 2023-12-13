@@ -30,7 +30,7 @@
                         index: 'fees',
                         items: [
                             { label: this.$t('items.bills'), icon: 'pi pi-fw pi-money-bill', route: { name: 'item_bills' }, index: 'fees:bills' },
-                            { label: this.$t('items.fixed_fees'), icon: 'pi pi-fw pi-wallet', route: { name: 'items' }, index: 'fees:const' },
+                            { label: this.$t('items.cyclical_fees'), icon: 'pi pi-fw pi-replay', route: { name: 'item_fees' }, index: 'fees:const' },
                         ]
                     },
                     
@@ -54,6 +54,14 @@
                         return true
                 }
                 return false
+            },
+            
+            getBadge(type) {
+                switch (type) {
+                    case 'rent:reservation':
+                        return { severity : 'success', cnt : this.item.waiting_rentals }
+                    break;
+                }
             }
         }
     }
@@ -69,11 +77,20 @@
                     <a :href="href" v-bind="props.action" @click="navigate" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
                         <span :class="item.icon" />
                         <span class="ml-2">{{ item.label }}</span>
+                        
+                        <span :set="badge = getBadge(item.index)">
+                            <Badge v-if="badge" class="ml-2" :severity="badge.severity">{{ badge.cnt }}</Badge>
+                        </span>
                     </a>
                 </router-link>
                 <a v-else  :href="item.url" :target="item.target" v-bind="props.action" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
                     <span :class="item.icon" />
                     <span class="ml-2">{{ item.label }}</span>
+                    
+                    <span :set="badge = getBadge(item.index)">
+                        <Badge v-if="badge" class="ml-2" :severity="badge.severity">{{ badge.cnt }}</Badge>
+                    </span>
+                    
                     <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
                 </a>
             </template>

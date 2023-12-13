@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-
-use App\Exceptions\InvalidStatus;
 use App\Models\Dictionary;
+use App\Models\ItemCyclicalFeeCost;
 
-class ItemBill extends Model
+class ItemCyclicalFee extends Model
 {
     use \App\Traits\UuidTrait {
         boot as traitBoot;
@@ -19,7 +18,7 @@ class ItemBill extends Model
         "cost" => "float",
     ];
     
-    protected function paymentDate(): Attribute
+    protected function beginning(): Attribute
     {
         return Attribute::make(
             get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
@@ -30,6 +29,13 @@ class ItemBill extends Model
     {
         return Attribute::make(
             get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
+    
+    protected function cost(): Attribute
+    {
+        return Attribute::make(
+            get: fn (float $value) => $this->getCurrentCost(),
         );
     }
     
@@ -52,9 +58,10 @@ class ItemBill extends Model
             "id",
             "item_id",
             "bill_type_id",
-            "payment_date",
-            "paid",
-            "paid_date",
+            "beginning",
+            "payment_day",
+            "repeat_months",
+            "tenant_cost",
             "cost",
             "recipient_name",
             "recipient_desciption",
@@ -73,5 +80,14 @@ class ItemBill extends Model
             self::$cachedBillTypes[$this->bill_type_id] = Dictionary::apiFields()->find($this->bill_type_id);
         
         return self::$cachedBillTypes[$this->bill_type_id];
+    }
+    
+    public function getCurrentCost()
+    {
+        $cost = ItemCyclicalFeeCost::where("item_cyclical_fee_id", $this->id)->where("from_time", "<=", time())->orderBy("from_time", "DESC")->first();
+        if($cost)
+            return $cost->cost;
+        
+        return $this->cost;
     }
 }

@@ -1,5 +1,5 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, timeToDate } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -19,8 +19,7 @@
                 tenantService,
                 rentalService,
                 hasAccess,
-                getValueLabel,
-                timeToDate
+                getValueLabel
             }
         },
         data() {
@@ -182,9 +181,9 @@
                     </Column>
                     <Column :header="$t('rent.period_short')">
                         <template #body="{ data }">
-                            {{ timeToDate(data.start) }} - 
+                            {{ data.start }} - 
                             <span v-if="data.item.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ timeToDate(data.end) }}</span>
+                            <span v-else>{{ data.end }}</span>
                         </template>
                     </Column>
                     <Column :header="$t('rent.rent')">

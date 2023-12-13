@@ -75,38 +75,8 @@
                 <Address :object="object" />
             </div>
         </div>
-        <div class="text-right" v-if="showEdit">
+        <div class="text-right" v-if="showEdit()">
             <Button icon="pi pi-pencil" @click="edit" v-tooltip.left="$t('app.edit')"></Button>
-        </div>
-    </div>
-    
-    <div v-if="type == 'customexxr'">
-        <div class="flex align-items-center">
-            <div class="w-full">
-                <Badge :value="getValueLabel('customer_types', customer.type)" class="font-normal" severity="info"></Badge>
-                <h3 class="mt-2 mb-1 text-color">{{ customer.name }}</h3>
-                <div>
-                    <Address :object="customer" />
-                </div>
-            </div>
-            <div class="text-right" v-if="showEditButton && hasAccess('customer:update')">
-                <Button icon="pi pi-pencil" @click="editCustomer" v-tooltip.left="$t('app.edit')"></Button>
-            </div>
-        </div>
-    </div>
-    
-    <div v-if="type == 'tenanxxt'">
-        <div class="flex align-items-center">
-            <div class="w-full">
-                <Badge :value="getValueLabel('tenant_types', object.type)" class="font-normal" severity="info"></Badge>
-                <h3 class="mt-2 mb-1 text-color">{{ object.name }}</h3>
-                <div>
-                    <Address :object="object" />
-                </div>
-            </div>
-            <div class="text-right" v-if="showEditButton && hasAccess('tenant:update')">
-                <Button icon="pi pi-pencil" @click="editTenant" v-tooltip.left="$t('app.edit')"></Button>
-            </div>
         </div>
     </div>
 </template>

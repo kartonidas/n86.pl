@@ -20,7 +20,6 @@
         },
         data() {
             return {
-                loading: false,
                 items: [],
                 displayConfirmation: false,
                 deleteItemId: null,
@@ -31,6 +30,7 @@
                 ],
                 meta: {
                     search: {},
+                    loading: false,
                     currentPage: 1,
                     perPage: this.rowsPerPage,
                     totalRecords: null,
@@ -56,14 +56,14 @@
         },
         methods: {
             getList() {
-                this.loading = true
+                this.meta.loading = true
                 this.itemService.list(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
                     .then(
                         (response) => {
                             this.items = response.data.data
                             this.meta.totalRecords = response.data.total_rows
                             this.meta.totalPages = response.data.total_pages
-                            this.loading = false
+                            this.meta.loading = false
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -166,7 +166,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

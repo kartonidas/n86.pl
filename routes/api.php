@@ -57,13 +57,20 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/item/{id}/bill/{bid}', [ItemController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->put('/item/{id}/bill/{bid}', [ItemController::class, "billUpdate"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->delete('/item/{id}/bill/{bid}', [ItemController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    $router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    //$router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
-    //$router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
-    //$router->get('/item/{id}/fee/{fid}', [ItemController::class, "feeGet"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
-    //$router->put('/item/{id}/fee/{fid}', [ItemController::class, "feeUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
-    //$router->delete('/item/{id}/fee/{fid}', [ItemController::class, "feeDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    //$router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    //$router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
+    $router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
+    
+    $router->get('/item/{id}/fee/{fid}/costs', [ItemController::class, "feeCosts"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    $router->put('/item/{id}/fee/{fid}/cost', [ItemController::class, "feeCostCreate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    $router->get('/item/{id}/fee/{fid}/cost/{cid}', [ItemController::class, "feeCostGet"])->where("id", "[0-9]+")->where("fid", "[0-9]+")->where("cid", "[0-9]+");
+    $router->put('/item/{id}/fee/{fid}/cost/{cid}', [ItemController::class, "feeCostUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+")->where("cid", "[0-9]+");
+    $router->delete('/item/{id}/fee/{fid}/cost/{cid}', [ItemController::class, "feeCostDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+")->where("cid", "[0-9]+");
+    
+    $router->get('/item/{id}/fee/{fid}', [ItemController::class, "feeGet"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    $router->put('/item/{id}/fee/{fid}', [ItemController::class, "feeUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
+    $router->delete('/item/{id}/fee/{fid}', [ItemController::class, "feeDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
     
     // NAJEMCY
     $router->get('/tenants', [TenantController::class, "list"]);

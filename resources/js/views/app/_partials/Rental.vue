@@ -1,13 +1,12 @@
 <script>
     import Address from '@/views/app/_partials/Address.vue'
-    import { getValueLabel, getValues, p, timeToDate } from '@/utils/helper'
+    import { getValueLabel, getValues, p } from '@/utils/helper'
     export default {
         components: { Address },
         data() {
             return {
                 getValueLabel,
                 p,
-                timeToDate
             }
         },
         props: {
@@ -17,8 +16,9 @@
 </script>
 
 <template>
-    <div class="font-medium text-lg mb-2">
-        {{ object.tenant.name }} (<span style="text-transform: lowercase">{{ getValueLabel('tenant_types', object.tenant.type) }}</span>),
+    <Badge :value="getValueLabel('tenant_types', object.tenant.type)" class="font-normal" severity="info"></Badge>
+    <div class="font-medium text-lg mb-2 mt-1">
+        {{ object.tenant.name }}
     </div>
     <div class="mb-2">
         <span class="font-medium">{{ $t('tenants.address') }}: </span> <i><Address :object="object.tenant"/></i>
@@ -44,15 +44,15 @@
     <div class="mb-2">
         <span class="font-medium">{{ $t('rent.period') }}: </span>
         <i>
-            {{ timeToDate(object.start) }} - 
+            {{ object.start }} - 
             <span v-if="object.period == 'indeterminate'">
                 <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
             </span>
             <span v-if="object.period == 'month'">
-                {{ timeToDate(object.end) }} ({{ object.months }} {{ p(object.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
+                {{ object.end }} ({{ object.months }} {{ p(object.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
             </span>
             <span v-if="object.period == 'date'">
-                {{ timeToDate(object.end) }}
+                {{ object.end }}
             </span>
         </i>
     </div>

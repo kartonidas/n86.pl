@@ -1,26 +1,17 @@
 <script>
-    import { getResponseErrors, setMetaTitle } from '@/utils/helper'
+    import { setMetaTitle } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import TabMenu from '@/views/app/Items/_TabMenu.vue'
     import Rental from '@/views/app/_partials/Rental.vue'
-    import ItemService from '@/service/ItemService'
     
     export default {
         components: { Rental, TabMenu },
         setup() {
             setMetaTitle('meta.title.items_show')
-            
-            const itemService = new ItemService()
-            return {
-                itemService
-            }
         },
-        data() {
-            return {
-                item: {},
-                loading: true,
-            }
+        props: {
+            item: { type: Object },
         },
         beforeMount() {
             if(appStore().toastMessage) {
@@ -28,17 +19,6 @@
                 this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
                 appStore().setToastMessage(null)
             }
-            
-            this.itemService.get(this.$route.params.itemId)
-                .then(
-                    (response) => {
-                        this.item = response.data
-                        this.loading = false
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
         },
         methods: {
             getBreadcrumbs() {
@@ -58,9 +38,8 @@
             },
             
             showRental() {
-                if (this.item.current_rental.id != undefined) {
+                if (this.item.current_rental.id != undefined)
                     this.$router.push({name: 'rental_show', params: { rentalId : this.item.current_rental.id }})
-                }
             }
         },
     }
@@ -69,7 +48,7 @@
 <template>
     <Breadcrumb :model="getBreadcrumbs()"/>
     
-    <div class="grid mt-1" v-if="!loading">
+    <div class="grid mt-1">
         <div class="col col-12">
             <div class="card">
                 <TabMenu active="TabMenu" :item="item" activeIndex="base" class="mb-5"/>

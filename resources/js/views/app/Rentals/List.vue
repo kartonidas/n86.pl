@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle, getValueLabel, getValues, timeToDate } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValueLabel, getValues } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import moment from 'moment'
     
@@ -16,8 +16,7 @@
             return {
                 rentalService,
                 hasAccess,
-                getValueLabel,
-                timeToDate
+                getValueLabel
             }
         },
         data() {
@@ -153,10 +152,10 @@
                         <div class="col-12 md:col-6 sm:col-9 mb-3">
                             <div class="flex">
                                 <div class="col-6 p-0 pr-1">
-                                    <Calendar id="start" v-model="meta.search.start" :placeholder="$t('rent.start_date')" class="w-auto" dateFormat="yy-mm-dd" showIcon/>
+                                    <Calendar id="start" v-model="meta.search.start" :placeholder="$t('rent.start_date')" class="w-auto" showIcon/>
                                 </div>
                                 <div class="col-6 p-0 pl-1">
-                                    <Calendar id="end" v-model="meta.search.end" :placeholder="$t('rent.end_date')" dateFormat="yy-mm-dd" showIcon/>
+                                    <Calendar id="end" v-model="meta.search.end" :placeholder="$t('rent.end_date')" showIcon/>
                                 </div>
                             </div>
                         </div>
@@ -212,9 +211,9 @@
                     </Column>
                     <Column :header="$t('rent.period_short')">
                         <template #body="{ data }">
-                            {{ timeToDate(data.start) }} - 
+                            {{ data.start }} - 
                             <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ timeToDate(data.end) }}</span>
+                            <span v-else>{{ data.end }}</span>
                         </template>
                     </Column>
                     <template #empty>
