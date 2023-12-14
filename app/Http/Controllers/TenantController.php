@@ -29,8 +29,7 @@ class TenantController extends Controller
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
         
-        $tenants = Customer
-            ::apiFields()->tenant();
+        $tenants = Customer::tenant();
             
         if(!empty($validated["search"]))
         {
@@ -120,7 +119,7 @@ class TenantController extends Controller
     {
         User::checkAccess("tenant:list");
         
-        $tenant = Customer::apiFields()->tenant()->find($tenantId);
+        $tenant = Customer::tenant()->find($tenantId);
         if(!$tenant)
             throw new ObjectNotExist(__("Tenant does not exist"));
         

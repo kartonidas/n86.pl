@@ -18,10 +18,7 @@ class Invoice extends Model
         boot as traitBoot;
     }
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "order_id", "full_number", "date", "nip", "name", "street", "house_no", "apartment_no", "zip","city", "amount", "gross", "items", "generated", "created_at");
-    }
+    protected $hidden = ["uuid"];
     
     private static function getActiveInvoiceDataId()
     {

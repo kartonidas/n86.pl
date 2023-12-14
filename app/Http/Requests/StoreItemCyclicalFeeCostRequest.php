@@ -15,7 +15,6 @@ class StoreItemCyclicalFeeCostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "id" => "sometimes|integer",
             "from_time" => "required|date_format:Y-m-d",
             "cost" => "required|numeric|gt:0",
         ];

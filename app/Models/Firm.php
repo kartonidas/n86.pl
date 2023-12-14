@@ -11,10 +11,7 @@ class Firm extends Model
 {
     use SoftDeletes;
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("identifier", "firstname", "lastname", "email", "nip", "name", "street", "house_no", "apartment_no", "city", "zip", "country", "phone");
-    }
+    protected $hidden = ["uuid"];
     
     public function getOwner()
     {

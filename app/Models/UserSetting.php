@@ -16,9 +16,4 @@ class UserSetting extends Model
         $obj->mobile_notifications = implode(",", config("api.mobile_notifications_default"));
         return $obj;
     }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("locale", "notifications", "mobile_notifications");
-    }
 }

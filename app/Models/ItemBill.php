@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Exceptions\InvalidStatus;
 use App\Models\Dictionary;
+use App\Models\Item;
 
 class ItemBill extends Model
 {
@@ -18,6 +20,7 @@ class ItemBill extends Model
     protected $casts = [
         "cost" => "float",
     ];
+    protected $hidden = ["uuid"];
     
     protected function paymentDate(): Attribute
     {
@@ -46,32 +49,17 @@ class ItemBill extends Model
         return parent::delete();
     }
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "item_id",
-            "bill_type_id",
-            "payment_date",
-            "paid",
-            "paid_date",
-            "cost",
-            "recipient_name",
-            "recipient_desciption",
-            "recipient_bank_account",
-            "source_document_number",
-            "source_document_date",
-            "comments",
-            "created_at"
-        );
-    }
-    
     private static $cachedBillTypes = [];
     public function getBillType()
     {
         if(!isset(self::$cachedBillTypes[$this->bill_type_id]))
-            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::apiFields()->find($this->bill_type_id);
+            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::find($this->bill_type_id);
         
         return self::$cachedBillTypes[$this->bill_type_id];
+    }
+    
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(Item::class);
     }
 }

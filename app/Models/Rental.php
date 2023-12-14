@@ -40,6 +40,7 @@ class Rental extends Model
         "first_month_different_amount" => "float",
         "last_month_different_amount" => "float",
     ];
+    protected $hidden = ["uuid"];
     
     protected function start(): Attribute
     {
@@ -94,34 +95,6 @@ class Rental extends Model
             self::STATUS_CURRENT => __("Current"),
             self::STATUS_WAITING => __("Waiting"),
         ];
-    }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "item_id",
-            "tenant_id",
-            "start",
-            "period",
-            "months",
-            "end",
-            "termination_period",
-            "termination_months",
-            "termination_days",
-            "deposit",
-            "payment",
-            "rent",
-            "first_month_different_amount",
-            "last_month_different_amount",
-            "payment_day",
-            "first_payment_date",
-            "number_of_people",
-            "comments",
-            "finished",
-            "status",
-            "created_at"
-        );
     }
     
     public static function getPaymentDays()
@@ -214,22 +187,22 @@ class Rental extends Model
     
     public function getTenant()
     {
-        return $this->tenant()->apiFields()->first();
+        return $this->tenant()->first();
     }
     
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->where("uuid", $this->uuid)->withoutGlobalScopes();
     }
     
     public function getItem()
     {
-        return $this->item()->apiFields()->first();
+        return $this->item()->first();
     }
     
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->where("uuid", $this->uuid)->withoutGlobalScopes();
     }
     
     public static function checkWaitingRentals()

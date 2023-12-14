@@ -32,11 +32,6 @@ class Notification extends Model
 {
     use DbTimestamp, SoftDeletes;
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "added_user_id", "object_id", "type", "object_name", "read", "read_time", "created_at", "extra_object_id");
-    }
-    
     public static function notify($user_id, $added_user_id, $object_id, $type, $extra_object_id = null)
     {
         $row = new self;

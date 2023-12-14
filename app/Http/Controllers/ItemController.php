@@ -38,7 +38,7 @@ class ItemController extends Controller
     public function settings(Request $request)
     {
         $out = [
-            "customers" => Customer::apiFields()->customer()->orderBy("name", "ASC")->get(),
+            "customers" => Customer::customer()->orderBy("name", "ASC")->get(),
         ];
         
         return $out;
@@ -53,8 +53,7 @@ class ItemController extends Controller
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
         
-        $items = Item
-            ::apiFields();
+        $items = Item::whereRaw("1=1");
         
         if(!empty($validated["search"]))
         {
@@ -137,7 +136,7 @@ class ItemController extends Controller
     {
         User::checkAccess("item:list");
         
-        $item = Item::apiFields()->find($itemId);
+        $item = Item::find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
@@ -190,8 +189,7 @@ class ItemController extends Controller
         $page = $validated["page"] ?? 1;
         
         $itemBills = ItemBill
-            ::apiFields()
-            ->where("item_id", $itemId);
+            ::where("item_id", $itemId);
         
         if(!empty($validated["search"]))
         {
@@ -241,11 +239,11 @@ class ItemController extends Controller
     {
         User::checkAccess("item:update");
         
-        $item = Item::apiFields()->find($itemId);
+        $item = Item::find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $bill = ItemBill::apiFields()->find($billId);
+        $bill = ItemBill::find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
@@ -327,8 +325,7 @@ class ItemController extends Controller
         $page = $validated["page"] ?? 1;
         
         $itemFees = ItemCyclicalFee
-            ::apiFields()
-            ->where("item_id", $itemId);
+            ::where("item_id", $itemId);
         
         if(!empty($validated["search"]))
         {
@@ -397,7 +394,7 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
-        $fee = ItemCyclicalFee::apiFields()->find($feeId);
+        $fee = ItemCyclicalFee::find($feeId);
         if(!$fee || $fee->item_id != $item->id)
             throw new ObjectNotExist(__("Fee does not exist"));
         
@@ -463,8 +460,7 @@ class ItemController extends Controller
         $page = $validated["page"] ?? 1;
         
         $itemFeeCosts = ItemCyclicalFeeCost
-            ::apiFields()
-            ->where("item_cyclical_fee_id", $feeId);
+            ::where("item_cyclical_fee_id", $feeId);
         
         $total = $itemFeeCosts->count();
         
@@ -520,7 +516,7 @@ class ItemController extends Controller
         if(!$fee)
             throw new ObjectNotExist(__("Cyclical fee does not exist"));
         
-        $cost = ItemCyclicalFeeCost::apiFields()->find($costId);
+        $cost = ItemCyclicalFeeCost::find($costId);
         if(!$cost || $cost->item_cyclical_fee_id != $feeId)
             throw new ObjectNotExist(__("Cost does not exist"));
         

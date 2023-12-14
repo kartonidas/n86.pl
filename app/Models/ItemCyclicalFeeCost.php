@@ -18,15 +18,4 @@ class ItemCyclicalFeeCost extends Model
             get: fn (int $value) => date("Y-m-d", $value),
         );
     }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "item_cyclical_fee_id",
-            "from_time",
-            "cost",
-            "created_at"
-        );
-    }
 }

@@ -29,8 +29,7 @@ class CustomerController extends Controller
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
         
-        $customers = Customer
-            ::apiFields()->customer();
+        $customers = Customer::customer();
             
         if(!empty($validated["search"]))
         {
@@ -111,7 +110,7 @@ class CustomerController extends Controller
     {
         User::checkAccess("customer:list");
         
-        $customer = Customer::apiFields()->customer()->find($customerId);
+        $customer = Customer::customer()->find($customerId);
         if(!$customer)
             throw new ObjectNotExist(__("Customer does not exist"));
         

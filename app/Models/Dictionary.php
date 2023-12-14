@@ -13,17 +13,14 @@ class Dictionary extends Model
         boot as traitBoot;
     }
     
+    protected $hidden = ["uuid"];
+    
     public static function getAllowedTypes()
     {
         return [
             "fees" => __("Fee included in the rent"),
             "bills" => __("Type of bill")
         ];
-    }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "type", "active", "name", "val");
     }
     
     public static function createDefaultDictionaries(User $user)

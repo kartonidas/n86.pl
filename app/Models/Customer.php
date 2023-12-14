@@ -29,42 +29,14 @@ class Customer extends Model
     public static $sortable = ["name"];
     public static $defaultSortable = ["name", "asc"];
     
+    protected $hidden = ["uuid"];
+    
     public static function getDocumentTypes()
     {
         return [
             self::DOCUMENT_TYPE_ID => __("Identification"),
             self::DOCUMENT_TYPE_PASSPORT => __("Passport"),
         ];
-    }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "role",
-            "type",
-            "name",
-            "street",
-            "house_no",
-            "apartment_no",
-            "city",
-            "zip",
-            "country",
-            "nip",
-            "regon",
-            "pesel",
-            "document_type",
-            "document_number",
-            "document_extra",
-            "comments",
-            "send_sms",
-            "send_email",
-            "hidden",
-            "total_items",
-            "total_active_rentals",
-            "total_waiting_rentals",
-            "created_at"
-        );
     }
     
     public function scopeCustomer(Builder $query): void
@@ -118,7 +90,7 @@ class Customer extends Model
             CustomerContact::TYPE_EMAIL => [],
             CustomerContact::TYPE_PHONE => [],
         ];
-        foreach($this->contacts()->apiFields()->get() as $contact)
+        foreach($this->contacts()->get() as $contact)
             $contacts[$contact->type][] = $contact;
         return $contacts;
     }

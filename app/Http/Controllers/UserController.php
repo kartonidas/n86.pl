@@ -292,8 +292,7 @@ class UserController extends Controller
         $searchPermission = $request->input("permission", null);
         
         $users = User
-            ::apiFields()
-            ->byFirm();
+            ::byFirm();
             
         if($searchLastname)
             $users->where("lastname", "LIKE", "%" . $searchLastname . "%");
@@ -534,7 +533,7 @@ class UserController extends Controller
     {
         User::checkAccess("user:list");
         
-        $user = User::byFirm()->apiFields()->find($id);
+        $user = User::byFirm()->find($id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -655,7 +654,7 @@ class UserController extends Controller
     */
     public function profile(Request $request)
     {
-        $user = User::byFirm()->apiFields()->find(Auth::user()->id);
+        $user = User::byFirm()->find(Auth::user()->id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -690,7 +689,7 @@ class UserController extends Controller
     */
     public function profileUpdate(Request $request)
     {
-        $user = User::byFirm()->apiFields()->find(Auth::user()->id);
+        $user = User::byFirm()->find(Auth::user()->id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -749,7 +748,7 @@ class UserController extends Controller
     */
     public function profileAvatarUpdate(Request $request)
     {
-        $user = User::byFirm()->apiFields()->find(Auth::user()->id);
+        $user = User::byFirm()->find(Auth::user()->id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -804,7 +803,7 @@ class UserController extends Controller
     */
     public function settings(Request $request)
     {
-        $user = User::byFirm()->apiFields()->find(Auth::user()->id);
+        $user = User::byFirm()->find(Auth::user()->id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -825,7 +824,7 @@ class UserController extends Controller
     */
     public function settingsUpdate(Request $request)
     {
-        $user = User::byFirm()->apiFields()->find(Auth::user()->id);
+        $user = User::byFirm()->find(Auth::user()->id);
         if(!$user)
             throw new ObjectNotExist(__("User does not exist"));
         
@@ -956,7 +955,7 @@ class UserController extends Controller
     */
     public function getFirmData()
     {
-        return Firm::apiFields()->where("id", Auth::user()->firm_id)->first();
+        return Firm::where("id", Auth::user()->firm_id)->first();
     }
     
     /**

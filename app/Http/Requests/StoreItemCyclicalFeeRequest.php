@@ -22,7 +22,6 @@ class StoreItemCyclicalFeeRequest extends FormRequest
         $allowedDictionaryIds = Dictionary::where("type", "bills")->pluck("id")->all();
         
         return [
-            "id" => "sometimes|integer",
             "item_id" => ["required", Rule::in($items->all())],
             "bill_type_id" => ["required", "integer", "gt:0", Rule::in($allowedDictionaryIds ?? [])],
             "beginning" => "required|date_format:Y-m-d",

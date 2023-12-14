@@ -148,8 +148,7 @@ class IndexController extends Controller
         }
 
         $tasks = Task
-            ::apiFields()
-            ->whereIn("id", $taskIds)
+            ::whereIn("id", $taskIds)
             ->where("completed", 0);
             
         $total = $tasks->count();

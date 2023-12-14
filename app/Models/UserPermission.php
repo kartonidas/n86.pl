@@ -14,6 +14,8 @@ class UserPermission extends Model
         boot as traitBoot;
     }
     
+    protected $hidden = ["uuid"];
+    
     public function canDelete($exception = false)
     {
         if($this->is_default)
@@ -37,11 +39,6 @@ class UserPermission extends Model
     {
         $this->canDelete(true);
         return parent::delete();
-    }
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "name", "permissions", "is_default");
     }
     
     public function getPermission()

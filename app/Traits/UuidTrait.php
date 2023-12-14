@@ -10,7 +10,8 @@ trait UuidTrait
         parent::boot();
 
         self::creating(function($row) {
-            $row->uuid = Auth::user()->getUuid();
+            if(empty($row->uuid))
+                $row->uuid = Auth::user()->getUuid();
         });
 
         static::addGlobalScope(function ($query) {

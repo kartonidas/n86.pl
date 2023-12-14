@@ -34,8 +34,7 @@ class RentalController extends Controller
         $size = $validated["size"] ?? config("api.list.size");
         $page = $validated["page"] ?? 1;
         
-        $rentals = Rental
-            ::apiFields();
+        $rentals = Rental::whereRaw("1=1");
         
         if(!empty($validated["search"]))
         {
@@ -198,7 +197,7 @@ class RentalController extends Controller
     {
         User::checkAccess("rent:list");
         
-        $rental = Rental::apiFields()->find($rentalId);
+        $rental = Rental::find($rentalId);
         if(!$rental)
             throw new ObjectNotExist(__("Rental does not exist"));
         

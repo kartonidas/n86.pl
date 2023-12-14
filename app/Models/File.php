@@ -14,14 +14,11 @@ class File extends Model
         boot as traitBoot;
     }
     
+    protected $hidden = ["uuid"];
+    
     const PROJECT = "project";
     const TASK = "task";
     const COMMENT = "comment";
-    
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "user_id", "type", "filename", "orig_name", "extension", "size", "description", "created_at");
-    }
     
     public function delete()
     {

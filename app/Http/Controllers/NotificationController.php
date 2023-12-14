@@ -36,8 +36,7 @@ class NotificationController extends Controller
         $unread = $request->input("only_unread", false);
         
         $notifications = Notification
-            ::apiFields()
-            ->where("user_id", Auth::user()->id);
+            ::where("user_id", Auth::user()->id);
         
         if($unread)
             $notifications->where("read", 0);

@@ -132,8 +132,6 @@ trait File
         $files = FileModel::where("type", $type)->where("object_id", $this->id)->orderBy("created_at", "DESC");
         if($withoutUuidScope)
             $files->withoutGlobalscopes();
-        else
-            $files->apiFields();
     
         return $files->get();
     }

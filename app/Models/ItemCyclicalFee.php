@@ -17,6 +17,7 @@ class ItemCyclicalFee extends Model
     protected $casts = [
         "cost" => "float",
     ];
+    protected $hidden = ["uuid"];
     
     protected function beginning(): Attribute
     {
@@ -52,32 +53,11 @@ class ItemCyclicalFee extends Model
         return parent::delete();
     }
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "item_id",
-            "bill_type_id",
-            "beginning",
-            "payment_day",
-            "repeat_months",
-            "tenant_cost",
-            "cost",
-            "recipient_name",
-            "recipient_desciption",
-            "recipient_bank_account",
-            "source_document_number",
-            "source_document_date",
-            "comments",
-            "created_at"
-        );
-    }
-    
     private static $cachedBillTypes = [];
     public function getBillType()
     {
         if(!isset(self::$cachedBillTypes[$this->bill_type_id]))
-            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::apiFields()->find($this->bill_type_id);
+            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::find($this->bill_type_id);
         
         return self::$cachedBillTypes[$this->bill_type_id];
     }

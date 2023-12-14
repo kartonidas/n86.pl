@@ -35,8 +35,7 @@ class StatusController extends Controller
         $page = $request->input("page", 1);
         
         $statuses = Status
-            ::apiFields()
-            ->take($size)
+            ::take($size)
             ->skip(($page-1)*$size)
             ->orderBy("name", "ASC")
             ->get();
@@ -74,7 +73,7 @@ class StatusController extends Controller
     {
         User::checkAccess("status:list");
         
-        $status = Status::apiFields()->find($id);
+        $status = Status::find($id);
         if(!$status)
             throw new ObjectNotExist(__("Status does not exist"));
         

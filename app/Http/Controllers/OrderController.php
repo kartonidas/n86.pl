@@ -96,8 +96,7 @@ class OrderController extends Controller
         $page = $request->input("page", 1);
         
         $invoices = Invoice
-            ::apiFields()
-            ->where("generated", 1)
+            ::where("generated", 1)
             ->take($size)
             ->skip(($page-1)*$size)
             ->orderBy("id", "DESC")

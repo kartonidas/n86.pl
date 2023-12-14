@@ -28,6 +28,7 @@ class Item extends Model
         "default_rent" => "float",
         "default_deposit" => "float",
     ];
+    protected $hidden = ["uuid"];
     
     const TYPE_APARTMENT = "apartment";
     const TYPE_HOUSE = "house";
@@ -75,34 +76,6 @@ class Item extends Model
         return parent::delete();
     }
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select(
-            "id",
-            "type",
-            "rented",
-            "waiting_rentals",
-            "customer_id",
-            "name",
-            "street",
-            "house_no",
-            "apartment_no",
-            "city",
-            "zip",
-            "country",
-            "area",
-            "ownership_type",
-            "room_rental",
-            "num_rooms",
-            "description",
-            "default_rent",
-            "default_deposit",
-            "comments",
-            "hidden",
-            "created_at"
-        );
-    }
-    
     public function getTenantsQuery()
     {
         $tenantIds = [-1];
@@ -122,7 +95,7 @@ class Item extends Model
         if(!$itemTenant)
             throw new ObjectNotExist(__("Tenant does not exist"));
         
-        return Tenant::where("id", $tenantId)->apiFields()->first();
+        return Tenant::where("id", $tenantId)->first();
     }
     
     public function createTenant($tenantData)
@@ -150,7 +123,7 @@ class Item extends Model
     public function getCustomer()
     {
         if($this->ownership_type == self::OWNERSHIP_MANAGE)
-            return $this->customer()->apiFields()->first();
+            return $this->customer()->first();
         return null;
     }
     
@@ -161,7 +134,13 @@ class Item extends Model
     
     public function getCurrentRental()
     {
-        $rental = Rental::apiFields()->where("item_id", $this->id)->where("status", Rental::STATUS_CURRENT)->first();
+        $rental = Rental
+            ::where("uuid", $this->uuid)
+            ->where("item_id", $this->id)
+            ->where("status", Rental::STATUS_CURRENT)
+            ->withoutGlobalScopes()
+            ->first();
+            
         if($rental)
             $rental->tenant = $rental->getTenant();
         

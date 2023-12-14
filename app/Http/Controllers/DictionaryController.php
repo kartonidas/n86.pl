@@ -28,7 +28,7 @@ class DictionaryController extends Controller
         foreach($types as $type => $tmp)
         {
             $out[$type] = [];
-            $dictionaries = Dictionary::apiFields()->where("type", $type)->orderBy("name", "ASC")->take($size)->get();
+            $dictionaries = Dictionary::where("type", $type)->orderBy("name", "ASC")->take($size)->get();
             foreach($dictionaries as $dictionary)
                 $out[$type][] = $dictionary;
         }
@@ -49,8 +49,7 @@ class DictionaryController extends Controller
         $page = $request->input("page", 1);
         
         $dictionaries = Dictionary
-            ::apiFields()
-            ->where("type", $type);
+            ::where("type", $type);
             
         $total = $dictionaries->count();
             
@@ -92,7 +91,7 @@ class DictionaryController extends Controller
     {
         User::checkAccess("dictionary:list");
         
-        $dictionary = Dictionary::apiFields()->find($dictionaryId);
+        $dictionary = Dictionary::find($dictionaryId);
         if(!$dictionary)
             throw new ObjectNotExist(__("Dictionary does not exist"));
         

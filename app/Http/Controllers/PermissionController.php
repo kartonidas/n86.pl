@@ -37,8 +37,7 @@ class PermissionController extends Controller
         $page = $request->input("page", 1);
         
         $permissions = UserPermission
-            ::apiFields()
-            ->take($size)
+            ::take($size)
             ->skip(($page-1)*$size)
             ->orderBy("name", "ASC")
             ->get();
@@ -119,7 +118,7 @@ class PermissionController extends Controller
     {
         User::checkAccess("permission:list");
         
-        $permission = UserPermission::apiFields()->find($id);
+        $permission = UserPermission::find($id);
         if(!$permission)
             throw new ObjectNotExist(__("Permission does not exist"));
         
@@ -144,7 +143,7 @@ class PermissionController extends Controller
     {
         User::checkAccess("permission:update");
         
-        $permission = UserPermission::apiFields()->find($id);
+        $permission = UserPermission::find($id);
         if(!$permission)
             throw new ObjectNotExist(__("Permission does not exist"));
         
@@ -217,7 +216,7 @@ class PermissionController extends Controller
     {
         User::checkAccess("permission:update");
         
-        $permission = UserPermission::apiFields()->find($id);
+        $permission = UserPermission::find($id);
         if(!$permission)
             throw new ObjectNotExist(__("Permission does not exist"));
         
@@ -252,7 +251,7 @@ class PermissionController extends Controller
     {
         User::checkAccess("permission:update");
         
-        $permission = UserPermission::apiFields()->find($id);
+        $permission = UserPermission::find($id);
         if(!$permission)
             throw new ObjectNotExist(__("Permission does not exist"));
         

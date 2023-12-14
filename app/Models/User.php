@@ -130,11 +130,6 @@ class User extends Authenticatable
         $query->where("firm_id", $firm->id);
     }
     
-    public function scopeApiFields(Builder $query): void
-    {
-        $query->select("id", "firstname", "lastname", "phone", "email", "activated", "owner", "superuser", "user_permission_id", "default_locale", "avatar");
-    }
-    
     public function scopeNoDelete(Builder $query): void
     {
         $query->where("deleted", 0);
@@ -322,7 +317,7 @@ class User extends Authenticatable
     
     public function getAccountSettings()
     {
-        $settings = UserSetting::apiFields()->where("user_id", $this->id)->first();
+        $settings = UserSetting::where("user_id", $this->id)->first();
         
         if(!$settings)
         {
