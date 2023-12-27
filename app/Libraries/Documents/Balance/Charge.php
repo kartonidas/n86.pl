@@ -62,7 +62,7 @@ class Charge extends BalanceAbstract
             if(!$balance)
                 throw new Exception(__("Balance row does not exists"));
             
-            $balance->amount = $objectData["amount"];
+            $balance->amount = -$objectData["amount"];
             $balance->save();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\ObjectNotExist;
@@ -27,6 +28,7 @@ use App\Models\Item;
 use App\Models\ItemBill;
 use App\Models\ItemCyclicalFee;
 use App\Models\ItemCyclicalFeeCost;
+use App\Models\Rental;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\Sortable;
@@ -230,7 +232,17 @@ class ItemController extends Controller
             throw new ObjectNotExist(__("Item does not exist"));
         
         $validated = $request->validated();
-        $bill = $item->addBill($validated);
+        
+        if(!empty($validated["charge_current_tenant"]))
+        {
+            $rental = $item->getCurrentRental();
+            if($rental)
+                $validated["rental_id"] = $rental->id;
+        }
+        
+        $bill = DB::transaction(function () use($item, $validated) {
+            return $item->addBill($validated);
+        });
         
         return $bill->id;
     }
@@ -293,23 +305,35 @@ class ItemController extends Controller
         return true;
     }
     
-    //public function billPaid(Request $request, int $itemId, int $billId)
-    //{
-    //    User::checkAccess("item:update");
-    //    
-    //    $item = Item::find($itemId);
-    //    if(!$item)
-    //        throw new ObjectNotExist(__("Item does not exist"));
-    //}
-    //
-    //public function billUnpaid(Request $request, int $itemId, int $billId)
-    //{
-    //    User::checkAccess("item:update");
-    //    
-    //    $item = Item::find($itemId);
-    //    if(!$item)
-    //        throw new ObjectNotExist(__("Item does not exist"));
-    //}
+    public function billPaid(Request $request, int $itemId, int $billId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        return $bill->paid();
+    }
+    
+    public function billUnpaid(Request $request, int $itemId, int $billId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        return $bill->unpaid();
+    }
     
     public function fees(ItemCyclicalFeeRequest $request, int $itemId)
     {

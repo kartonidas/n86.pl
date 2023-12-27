@@ -21,10 +21,19 @@ abstract class BalanceAbstract
         
         $balanceDocument = new BalanceDocument;
         $balanceDocument->time = time();
+        $balanceDocument->refer = $objectData["refer"];
+        $balanceDocument->refer_id = $objectData["refer_id"];
         $balanceDocument->object_type = $this->object->getType();
         $balanceDocument->object_id = $this->object->getId();
         $balanceDocument->amount = $objectData["amount"];
         $balanceDocument->operation_type = $this->getOperation();
+        
+        if($this->getOperation() == "+")
+        {
+            $balanceDocument->paid = 1;
+            $balanceDocument->paid_date = time();
+        }
+        
         $balanceDocument->save();
         
         return $balanceDocument;

@@ -20,6 +20,7 @@ class StoreItemBillRequest extends FormRequest
         return [
             "bill_type_id" => ["required", "integer", "gt:0", Rule::in($allowedDictionaryIds ?? [])],
             "payment_date" => "required|date_format:Y-m-d",
+            "charge_current_tenant" => "nullable|boolean",
             "paid" => "nullable|boolean",
             "paid_date" => "nullable|date_format:Y-m-d",
             "cost" => "required|numeric|gt:0",

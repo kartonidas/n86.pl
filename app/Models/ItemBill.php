@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Exceptions\InvalidStatus;
+use App\Models\BalanceDocument;
 use App\Models\Dictionary;
 use App\Models\Item;
 
@@ -43,6 +44,10 @@ class ItemBill extends Model
     
     public function delete()
     {
+        $balanceDocument = $this->getBalanceDocument();
+        if($balanceDocument)
+            $balanceDocument->delete();
+        
         if(!$this->canDelete())
             throw new InvalidStatus(__("Cannot delete object"));
         
@@ -61,5 +66,55 @@ class ItemBill extends Model
     public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
+    }
+    
+    public function getBalanceDocument()
+    {
+        return BalanceDocument::where("object_type", BalanceDocument::OBJECT_TYPE_BILL)->where("object_id", $this->id)->first();
+    }
+    
+    public function paid(int|null $paidDate = null, string $paymentMethod = BalanceDocument::PAYMENT_CASH)
+    {
+        if($this->paid)
+            throw new InvalidStatus(__("Bill is already paid"));
+        
+        if($paidDate === null)
+            $paidDate = time();
+        
+        $balanceDocument = $this->getBalanceDocument();
+        if($balanceDocument)
+        {
+            $balanceDocument->paid = 1;
+            $balanceDocument->paid_date = $paidDate;
+            $balanceDocument->payment_method = $paymentMethod;
+            $balanceDocument->saveQuietly();
+        }
+        
+        $this->paid = 1;
+        $this->paid_date = $paidDate;
+        $this->saveQuietly();
+        
+        return true;
+    }
+    
+    public function unpaid()
+    {
+        if(!$this->paid)
+            throw new InvalidStatus(__("Bill is already unpaid"));
+        
+        $balanceDocument = $this->getBalanceDocument();
+        if($balanceDocument)
+        {
+            $balanceDocument->paid = 0;
+            $balanceDocument->paid_date = null;
+            $balanceDocument->payment_method = null;
+            $balanceDocument->saveQuietly();
+        }
+        
+        $this->paid = 0;
+        $this->paid_date = null;
+        $this->saveQuietly();
+        
+        return true;
     }
 }

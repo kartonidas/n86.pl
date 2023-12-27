@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\ItemController;
@@ -57,8 +58,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/item/{id}/bill/{bid}', [ItemController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->put('/item/{id}/bill/{bid}', [ItemController::class, "billUpdate"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->delete('/item/{id}/bill/{bid}', [ItemController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    //$router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
-    //$router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
     $router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
     
@@ -102,6 +103,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/customer/{id}', [CustomerController::class, "get"])->where("id", "[0-9]+");
     $router->put('/customer/{id}', [CustomerController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/customer/{id}', [CustomerController::class, "delete"])->where("id", "[0-9]+");
+    
+    $router->put('/item/deposit', [BalanceController::class, "itemDeposit"]);
+    $router->put('/item/deposit/{id}', [BalanceController::class, "updateItemDeposit"])->where("id", "[0-9]+");
+    $router->delete('/item/deposit/{id}', [BalanceController::class, "deleteItemDeposit"])->where("id", "[0-9]+");
     
     // PRACOWNICY
     $router->get('/users', [UserController::class, "list"]);

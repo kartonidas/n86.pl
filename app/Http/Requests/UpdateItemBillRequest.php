@@ -12,6 +12,8 @@ class UpdateItemBillRequest extends StoreItemBillRequest
     
     public function rules(): array
     {
-        return $this->addSometimesToRules(parent::rules());
+        $rules = $this->addSometimesToRules(parent::rules());
+        unset($rules["charge_current_tenant"]);
+        return $rules;
     }
 }

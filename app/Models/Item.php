@@ -173,10 +173,9 @@ class Item extends Model
     {
         $bill = new ItemBill;
         $bill->item_id = $this->id;
+        $bill->rental_id = $data["rental_id"] ?? 0;
         $bill->bill_type_id = $data["bill_type_id"];
         $bill->payment_date = Helper::setDateTime($data["payment_date"], "23:59:59", true);
-        $bill->paid = $data["paid_date"] ?? 0;
-        $bill->paid_date = !empty($data["paid_date"]) ? strtotime($data["paid_date"]) : null;
         $bill->cost = $data["cost"];
         $bill->recipient_name = $data["recipient_name"] ?? null;
         $bill->recipient_desciption = $data["recipient_desciption"] ?? null;

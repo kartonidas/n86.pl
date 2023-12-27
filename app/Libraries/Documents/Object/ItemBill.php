@@ -5,6 +5,7 @@ namespace App\Libraries\Documents\Object;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\Exception;
 use App\Libraries\Documents\Object\ObjectAbstract;
+use App\Models\BalanceDocument;
 
 class ItemBill extends ObjectAbstract
 {
@@ -38,6 +39,8 @@ class ItemBill extends ObjectAbstract
         
         return [
             "uuid" => $this->object->uuid,
+            "refer" => BalanceDocument::REFER_ITEM,
+            "refer_id" => $this->object->item_id,
             "amount" => $this->object->cost,
             "item_id" => $this->object->item_id,
             "rental_id" => $rental ? $rental->id : 0,

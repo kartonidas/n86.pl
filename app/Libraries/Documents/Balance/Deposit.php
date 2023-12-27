@@ -19,8 +19,12 @@ class Deposit extends BalanceAbstract
     
     public static function make(ObjectAbstract $object, ?BalanceDocument $document)
     {
-        print_r($object);
-        print_r($document);
+        $balance = new self($object, $document);
+        
+        if(!$document)
+            $balance->onCreate();
+        else
+            $balance->onUpdate();
     }
     
     protected function getOperation()
@@ -30,7 +34,10 @@ class Deposit extends BalanceAbstract
     
     protected function onCreate()
     {
-        
+        DB::transaction(function () {
+            $balanceDocument = $this->createBalanceDocument();
+            $this->createBalance($balanceDocument);
+        });
     }
     
     protected function onUpdate()

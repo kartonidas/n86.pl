@@ -20,6 +20,8 @@ use App\Models\ItemBill;
 use App\Observers\ItemBillObserver;
 use App\Models\ItemCyclicalFee;
 use App\Observers\ItemCyclicalFeeObserver;
+use App\Models\BalanceDocument;
+use App\Observers\BalanceDocumentObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,7 @@ class EventServiceProvider extends ServiceProvider
         Item::observe(ItemObserver::class);
         ItemBill::observe(ItemBillObserver::class);
         ItemCyclicalFee::observe(ItemCyclicalFeeObserver::class);
+        BalanceDocument::observe(BalanceDocumentObserver::class);
     }
 
     /**
