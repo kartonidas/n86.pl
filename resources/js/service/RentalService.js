@@ -30,4 +30,8 @@ export default class RentalService {
     validate(rentalData) {
         return axios.post('api/v1/rental/validate', removeNullValues(rentalData));
     }
+    
+    remove(rentalId) {
+        return axios.delete('api/v1/rental/' + rentalId);
+    }
 }

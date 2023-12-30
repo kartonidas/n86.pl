@@ -24,6 +24,8 @@
                 loading: false,
                 errors: [],
                 rentals: [],
+                displayConfirmation: false,
+                deleteRentalId: null,
                 item_types: getValues('item_types'),
                 tenant_types: getValues('tenant_types'),
                 statuses: getValues('rental.statuses'),
@@ -106,7 +108,32 @@
                 this.meta.search = {}
                 appStore().setTableFilter('rentals', this.meta.search)
                 this.getList()
-            }
+            },
+            
+            openConfirmation(id) {
+                this.displayConfirmation = true
+                this.deleteRentalId = id
+            },
+            
+            confirmDeleteRental() {
+                this.rentalService.remove(this.deleteRentalId)
+                    .then(
+                        (response) => {
+                            this.getList()
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.deleted'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    )
+                
+                this.displayConfirmation = false
+                this.deleteRentalId = null
+            },
+            
+            closeConfirmation() {
+                this.displayConfirmation = false
+            },
         },
     }
 </script>
@@ -216,10 +243,25 @@
                             <span v-else>{{ data.end }}</span>
                         </template>
                     </Column>
+                    <Column field="delete" v-if="hasAccess('rent:delete')" style="min-width: 60px; width: 60px" class="text-center">
+                        <template #body="{ data }">
+                            <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                        </template>
+                    </Column>
                     <template #empty>
                         {{ $t('rent.empty_list') }}
                     </template>
                 </DataTable>
+                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmation" :style="{ width: '450px' }" :modal="true">
+                    <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                        <span>{{ $t('app.remove_object_confirmation') }}</span>
+                    </div>
+                    <template #footer>
+                        <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
+                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteRental" class="p-button-danger" autofocus />
+                    </template>
+                </Dialog>
             </div>
         </div>
     </div>

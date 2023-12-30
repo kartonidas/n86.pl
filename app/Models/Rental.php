@@ -9,9 +9,14 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 use App\Exceptions\InvalidRentalDates;
 use App\Exceptions\InvalidStatus;
+use App\Exceptions\ObjectNotExist;
+use App\Libraries\Data;
 use App\Libraries\Helper;
+use App\Models\Balances;
+use App\Models\ItemBill;
 
 class Rental extends Model
 {
@@ -97,6 +102,25 @@ class Rental extends Model
         ];
     }
     
+    public function canDelete()
+    {
+        if($this->status == self::STATUS_WAITING)
+            return true;
+        
+        return false;
+    }
+    
+    public function delete()
+    {
+        if(!$this->canDelete())
+            throw new InvalidStatus(__("Cannot delete rental"));
+        
+        ItemBill::where("rental_id", $this->id)->delete();
+        Balance::where("rental_id", $this->id)->delete();
+        
+        return parent::delete();
+    }
+    
     public static function getPaymentDays()
     {
         $days = [];
@@ -173,7 +197,7 @@ class Rental extends Model
     public function setEndDate()
     {
         if($this->period == self::PERIOD_MONTH)
-            $this->end = self::calculateEndDate($this->start, $this->months);
+            $this->end = self::calculateEndDate(strtotime($this->start), $this->months);
     }
     
     public static function calculateEndDate(int $start, int $months)
@@ -287,6 +311,58 @@ class Rental extends Model
             $tenant->total_active_rentals = $totalActive;
             $tenant->total_waiting_rentals = $totalWaiting;
             $tenant->saveQuietly();
+        }
+    }
+    
+    public function setCurrentRentalImmediately()
+    {
+        if(!self::where("item_id", $this->item_id)->where("status", self::STATUS_CURRENT)->count())
+        {
+            if($this->getRawOriginal("start") <= time())
+                $this->setCurrent();
+        }
+    }
+    
+    private function calculateNextRental(int $time)
+    {
+        $date = (new DateTime())
+            ->setTimestamp($time)
+            ->modify("first day of this month")
+            ->add(new DateInterval("P1M"))
+            ->add(new DateInterval("P" . ($this->payment_day-1) . "D"));
+        
+        return Helper::setDateTime($date, "23:59:59", true);
+    }
+    
+    public function generateInitialItemBills()
+    {
+        if($this->deposit > 0)
+        {
+            $deposit = new ItemBill;
+            $deposit->item_id = $this->item_id;
+            $deposit->rental_id = $this->id;
+            $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
+            $deposit->payment_date = $this->getRawOriginal("first_payment_date");
+            $deposit->cost = $this->deposit;
+            $deposit->save();
+        }
+        
+        $cost = $this->rent;
+        if($this->first_month_different_amount)
+            $cost = $this->first_month_different_amount;
+        
+        $rent = new ItemBill;
+        $rent->item_id = $this->item_id;
+        $rent->rental_id = $this->id;
+        $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
+        $rent->payment_date = $this->getRawOriginal("first_payment_date");
+        $rent->cost = $cost;
+        $rent->save();
+        
+        if($this->payment == self::PAYMENT_CYCLICAL)
+        {
+            $this->next_rental = $this->calculateNextRental($this->getRawOriginal("start"));
+            $this->save();
         }
     }
 }

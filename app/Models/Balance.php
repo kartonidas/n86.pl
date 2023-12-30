@@ -12,14 +12,17 @@ use App\Exceptions\ObjectNotExist;
 class Balance extends Model
 {
     use SoftDeletes;
-    use \App\Traits\UuidTrait {
-        boot as traitBoot;
-    }
     
-    public static function ensureBalance($itemId, $rentalId = 0)
+    public static function ensureBalance(int $itemId, int $rentalId = 0)
     {
         return DB::transaction(function () use($itemId, $rentalId) {
-            $balance = Balance::where("item_id", $itemId)->where("rental_id", $rentalId)->lockForUpdate()->first();
+            $balance = Balance
+                ::withoutGlobalScopes()
+                ->where("item_id", $itemId)
+                ->where("rental_id", $rentalId)
+                ->lockForUpdate()
+                ->first();
+                
             if(!$balance)
             {
                 $balance = new self;

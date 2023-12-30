@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rental_tenants', function (Blueprint $table) {
-            $table->id();
-            $table->integer('rental_id')->index();
-            $table->integer('tenant_id');
+        Schema::table('balances', function (Blueprint $table) {
+            $table->dropColumn('uuid');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rental_tenants');
+        Schema::table('balances', function (Blueprint $table) {
+            $table->string('uuid', 64)->after('id');
+        });
     }
 };

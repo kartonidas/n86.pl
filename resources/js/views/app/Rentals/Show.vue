@@ -64,28 +64,43 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="grid mt-1" v-if="!loading">
         <div class="col col-12">
-            <div class="grid mt-1">
-                <div class="col col-12">
-                    <Card class="mb-3">
-                        <template #content pt="item">
-                            <Rental :object="rental" />
-                            
-                            <div class="mt-5">
-                                <strong>TODO</strong>
-                                <ul>
-                                    <li>Komponen Rental - dodać opcję source=details i nie wyswietlac 'przejdz do szczegółów'</li>
-                                    <li>Uzupełnienie informacji</li>
-                                    <li>Generowanie dokumentów (umowa, aneks, protokół zdawczo odbiorczy)</li>
-                                    <li>Wypowiedzenie (umowa cykliczna)</li>
-                                    <li>Lista wpłat / rachunków</li>
-                                    <li>Edycja danych (tylko podstwawoe informacje, jak czynsz, data trwania, okres wypowiedzenia)</li>
-                                    <li>Historia edycji?</li>
-                                </ul>
-                            </div>
-                        </template>
-                    </Card>
+            <div class="card">
+                <div class="grid">
+                    <div class="col-12 xl:col-6">
+                        <div class="flex justify-content-between align-items-center mb-5">
+                            <h4 class="inline-flex mb-0 text-color font-medium">Nieruchomość</h4>
+                        </div>
+                        
+                        <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal" severity="info"></Badge>
+                        <div class="font-medium text-lg mb-2 mt-1">{{ rental.item.name }}</div>
+                        <Address :object="rental.item" :newline="true"/>
+                    </div>
+                    <div class="col-12 xl:col-6">
+                        <div class="flex justify-content-between align-items-center mb-5">
+                            <h4 class="inline-flex mb-0 text-color font-medium">Najemca</h4>
+                        </div>
+                        
+                        <Rental :object="rental" />
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div v-if="rental.status == 'current'">
+        WYPOWIEDZ UMOWE!
+    </div>
+    
+    
+    <div class="mt-5">
+        <strong>TODO</strong>
+        <ul>
+            <li>Uzupełnienie informacji</li>
+            <li>Generowanie dokumentów (umowa, aneks, protokół zdawczo odbiorczy)</li>
+            <li>Wypowiedzenie (umowa cykliczna)</li>
+            <li>Lista wpłat / rachunków</li>
+            <li>Edycja danych (tylko podstwawoe informacje, jak czynsz, data trwania, okres wypowiedzenia)</li>
+            <li>Historia edycji?</li>
+        </ul>
     </div>
 </template>

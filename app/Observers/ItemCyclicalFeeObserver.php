@@ -12,7 +12,7 @@ class ItemCyclicalFeeObserver
     {
         $cost = new ItemCyclicalFeeCost;
         $cost->item_cyclical_fee_id = $item->id;
-        $cost->from_time = $item->beginning;
+        $cost->from_time = time();
         $cost->cost = $item->cost;
         $cost->save();
     }

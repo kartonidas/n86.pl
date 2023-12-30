@@ -37,6 +37,10 @@ class ChargeObject extends ObjectAbstract
         switch(get_class($object))
         {
             case ItemBill::class:
+                $balanceDocument = $object->getBalanceDocument();
+                if($balanceDocument)
+                    $this->id = $balanceDocument->id;
+                
                 $this->itemId = $object->item_id;
                 $this->rentalId = $object->rental_id;
                 $this->objectType = BalanceDocument::OBJECT_TYPE_BILL;

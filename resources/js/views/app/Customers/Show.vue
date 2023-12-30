@@ -130,7 +130,7 @@
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card">
-                <Header :object="customer" type="customer"/>
+                <Header :object="customer" type="customer" :showEditButton="true"/>
                 
                 <div class="mt-3">
                     <p class="m-0 mt-2" v-if="customer.type == 'person'">

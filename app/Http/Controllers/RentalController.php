@@ -118,6 +118,7 @@ class RentalController extends Controller
         {
             $rentals[$i]->tenant = $rental->getTenant();
             $rentals[$i]->item = $rental->getItem();
+            $rentals[$i]->can_delete = $rental->canDelete();
         }
         
         $out = [
@@ -186,6 +187,9 @@ class RentalController extends Controller
             $rental->comments = $rentData["comments"] ?? null;
             $rental->setEndDate();
             $rental->save();
+            
+            $rental->setCurrentRentalImmediately();
+            $rental->generateInitialItemBills();
             
             return $rental;
         });
@@ -258,5 +262,17 @@ class RentalController extends Controller
             $tenant->updateContact($data["contacts"]);
             
         return $tenant->id;
+    }
+    
+    public function delete(Request $request, int $rentalId)
+    {
+        User::checkAccess("rent:delete");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $rental->delete();
+        return true;
     }
 }

@@ -15,6 +15,7 @@ class UpdateItemCyclicalFeeRequest extends StoreItemCyclicalFeeRequest
         $rules = $this->addSometimesToRules(parent::rules());
         
         unset($rules["cost"]);
+        unset($rules["repeat_months"]);
         
         return $rules;
     }

@@ -372,7 +372,8 @@ class Helper
     
     public static function setDateTime($date, $time = "00:00:00", $timestamp = false)
     {
-        $date = new DateTime($date);
+        if(!($date instanceof DateTime))
+            $date = new DateTime($date);
         return $timestamp ? strtotime($date->format("Y-m-d") . " " . $time) : $date->format("Y-m-d") . " " . $time;
     }
 }

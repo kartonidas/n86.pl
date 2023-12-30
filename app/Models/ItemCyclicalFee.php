@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use App\Libraries\Helper;
 use App\Models\Dictionary;
 use App\Models\ItemCyclicalFeeCost;
 
@@ -19,11 +20,20 @@ class ItemCyclicalFee extends Model
     ];
     protected $hidden = ["uuid"];
     
-    protected function beginning(): Attribute
+    public static function getPaymentDays()
     {
-        return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
-        );
+        $days = [];
+        for($i = 1; $i <= 25; $i++)
+            $days[$i] = $i;
+        return $days;
+    }
+    
+    public static function getRepeatMonths()
+    {
+        $days = [];
+        for($i = 1; $i <= 3; $i++)
+            $days[$i] = $i . " " . Helper::plurals($i, __("month"), __("months"), __("months"));
+        return $days;
     }
     
     protected function sourceDocumentDate(): Attribute
@@ -36,7 +46,7 @@ class ItemCyclicalFee extends Model
     protected function cost(): Attribute
     {
         return Attribute::make(
-            get: fn (float $value) => $this->getCurrentCost(),
+            get: fn (float $value) => $this->getCurrentCost($value),
         );
     }
     
@@ -62,12 +72,12 @@ class ItemCyclicalFee extends Model
         return self::$cachedBillTypes[$this->bill_type_id];
     }
     
-    public function getCurrentCost()
+    public function getCurrentCost($defaultCost)
     {
         $cost = ItemCyclicalFeeCost::where("item_cyclical_fee_id", $this->id)->where("from_time", "<=", time())->orderBy("from_time", "DESC")->first();
         if($cost)
             return $cost->cost;
         
-        return $this->cost;
+        return $defaultCost;
     }
 }

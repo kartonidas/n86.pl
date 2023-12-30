@@ -21,6 +21,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:expiration-subscription')->everyFifteenMinutes();
         $schedule->command('app:check-waiting-rentals')->hourly();
         $schedule->command('app:check-current-rentals')->hourly();
+        $schedule->command('app:generate-cyclical-fees')->monthlyOn(1, '00:10');
+        $schedule->command('app:generate-rental-bills')->monthlyOn(1, '00:20');
     }
 
     /**

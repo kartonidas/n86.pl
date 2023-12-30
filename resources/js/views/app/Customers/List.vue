@@ -208,6 +208,7 @@
                             </div>
                         </template>
                     </Column>
+                    <Column :header="$t('customers.total_items')" sortable field="total_items" class="text-center"></Column>
                     <Column :header="$t('customers.nip_pesel')">
                         <template #body="{ data }">
                             <span v-if="data.type == 'firm' && data.nip">{{ data.nip }}</span>

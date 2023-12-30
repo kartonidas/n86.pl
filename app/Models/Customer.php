@@ -26,7 +26,7 @@ class Customer extends Model
     public const DOCUMENT_TYPE_ID = "id";
     public const DOCUMENT_TYPE_PASSPORT = "passport";
     
-    public static $sortable = ["name"];
+    public static $sortable = ["name", "total_items"];
     public static $defaultSortable = ["name", "asc"];
     
     protected $hidden = ["uuid"];

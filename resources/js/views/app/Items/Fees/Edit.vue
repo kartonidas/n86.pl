@@ -3,16 +3,16 @@
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
     import TabMenu from './../_TabMenu.vue'
-    import BillForm from './_Form.vue'
+    import CyclicalFeeForm from './_Form.vue'
     import ItemService from '@/service/ItemService'
     
     export default {
-        components: { BillForm, TabMenu },
+        components: { CyclicalFeeForm, TabMenu },
         props: {
             item: { type: Object },
         },
         setup() {
-            setMetaTitle('meta.title.items_new_bill')
+            setMetaTitle('meta.title.items_update_cyclical_fee')
             
             const itemService = new ItemService()
             return {
@@ -21,10 +21,29 @@
         },
         data() {
             return {
+                loading: true,
                 errors: [],
-                bill : {},
+                fee : {},
                 saving: false,
             }
+        },
+        beforeMount() {
+            if(appStore().toastMessage) {
+                let m = appStore().toastMessage
+                this.$toast.add({ severity: m.severity, summary: m.summary, detail: m.detail, life: 3000 });
+                appStore().setToastMessage(null);
+            }
+            
+            this.itemService.getCyclicalFee(this.$route.params.itemId, this.$route.params.feeId)
+                .then(
+                    (response) => {
+                        this.fee = response.data
+                        this.loading = false
+                    },
+                    (errors) => {
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                    }
+                );
         },
         methods: {
             getBreadcrumbs() {
@@ -37,26 +56,21 @@
                 {
                     items.push({'label' : this.item.name, route : { name : 'item_show'} })
                     items.push({'label' : this.$t('items.bills'), disabled : true })
-                    items.push({'label' : this.$t('items.new_bill'), disabled : true })
+                    items.push({'label' : this.$t('items.update_cyclical_fee'), disabled : true })
                 }
                     
                 return items
             },
             
-            async createBill(bill) {
+            async updateCyclicalFee(fee) {
                 this.saving = true
                 this.errors = []
                 
-                this.itemService.createBill(this.$route.params.itemId, bill)
+                this.itemService.updateCyclicalFee(this.$route.params.itemId, this.$route.params.feeId, fee)
                     .then(
                         (response) => {
-                            appStore().setToastMessage({
-                                severity : 'success',
-                                summary : this.$t('app.success'),
-                                detail : this.$t('items.bill_added'),
-                            });
-                            
-                            this.$router.push({name: 'item_bill_edit', params: { itemId : this.$route.params.itemId, billId : response.data }})
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.cyclical_fee_updated'), life: 3000 });
+                            this.saving = false;
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
@@ -74,8 +88,8 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
-                <BillForm @submit-form="createBill" :bill="bill" :saving="saving" :errors="errors" />
+                <TabMenu activeIndex="fees:const" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
+                <CyclicalFeeForm @submit-form="updateCyclicalFee" :fee="fee" source="update" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>
     </div>

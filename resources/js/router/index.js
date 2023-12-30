@@ -222,11 +222,20 @@ const router = createRouter({
                                     component: () => import('@/views/app/Items/Fees/List.vue'),
                                     meta: {permission: 'item:list'},
                                 },
+                                {
+                                    path: '/app/item/:itemId/fee/new',
+                                    name: 'item_cyclical_fee_new',
+                                    component: () => import('@/views/app/Items/Fees/New.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/fee/:feeId',
+                                    name: 'item_cyclical_fee_edit',
+                                    component: () => import('@/views/app/Items/Fees/Edit.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
                             ]
                         },
-                        
-                        
-                        
                     ]
                 },
                 {

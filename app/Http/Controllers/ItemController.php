@@ -391,21 +391,22 @@ class ItemController extends Controller
         
         $validated = $request->validated();
         
-        $cyclicalFee = new ItemCyclicalFee;
-        $cyclicalFee->item_id = $validated["item_id"];
-        $cyclicalFee->bill_type_id = $validated["bill_type_id"];
-        $cyclicalFee->beginning = Helper::setDateTime($validated["beginning"], "00:00:00", true);
-        $cyclicalFee->payment_day = $validated["payment_day"];
-        $cyclicalFee->repeat_months = $validated["repeat_months"];
-        $cyclicalFee->tenant_cost = $validated["tenant_cost"];
-        $cyclicalFee->cost = $validated["cost"];
-        $cyclicalFee->recipient_name = $validated["recipient_name"] ?? null;
-        $cyclicalFee->recipient_desciption = $validated["recipient_desciption"] ?? null;
-        $cyclicalFee->recipient_bank_account = $validated["recipient_bank_account"] ?? null;
-        $cyclicalFee->source_document_number = $validated["source_document_number"] ?? null;
-        $cyclicalFee->source_document_date = !empty($validated["source_document_date"]) ? Helper::setDateTime($validated["source_document_date"], "12:00:00", true) : null;
-        $cyclicalFee->comments = $validated["comments"] ?? null;
-        $cyclicalFee->save();
+        $cyclicalFee = DB::transaction(function () use($item, $validated) {
+            $cyclicalFee = new ItemCyclicalFee;
+            $cyclicalFee->item_id = $item->id;
+            $cyclicalFee->bill_type_id = $validated["bill_type_id"];
+            $cyclicalFee->payment_day = $validated["payment_day"];
+            $cyclicalFee->repeat_months = $validated["repeat_months"];
+            $cyclicalFee->tenant_cost = $validated["tenant_cost"] ?? 0;
+            $cyclicalFee->cost = $validated["cost"];
+            $cyclicalFee->recipient_name = $validated["recipient_name"] ?? null;
+            $cyclicalFee->recipient_desciption = $validated["recipient_desciption"] ?? null;
+            $cyclicalFee->recipient_bank_account = $validated["recipient_bank_account"] ?? null;
+            $cyclicalFee->comments = $validated["comments"] ?? null;
+            $cyclicalFee->save();
+            
+            return $cyclicalFee;
+        });
         
         return $cyclicalFee->id;
     }
@@ -441,7 +442,7 @@ class ItemController extends Controller
         
         foreach($validated as $field => $value)
         {
-            if(!empty($value) && ($field == "beginning" || $field == "source_document_date"))
+            if(!empty($value) && $field == "source_document_date")
                 $value = Helper::setDateTime($value, $field == "source_document_date" ? "12:00:00" : "00:00:00", true);
             $fee->{$field} = $value;
         }

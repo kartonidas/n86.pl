@@ -41,7 +41,8 @@ class BalanceDocument extends Model
     public function setBalance()
     {
         \DB::transaction(function () {
-            $balance = Balance::find($this->balance_id)->lockForUpdate()->first();
+            $balance = Balance::where("id", $this->balance_id)->lockForUpdate()->first();
+            
             if(!$balance)
                 throw new ObjectNotExist(__("Balance object does not exist"));
             

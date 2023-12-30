@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Exceptions\InvalidStatus;
+use App\Libraries\Data;
 use App\Models\BalanceDocument;
 use App\Models\Dictionary;
 use App\Models\Item;
@@ -57,6 +58,16 @@ class ItemBill extends Model
     private static $cachedBillTypes = [];
     public function getBillType()
     {
+        if($this->bill_type_id < 0)
+        {
+            $systemBillTypes = Data::getSystemBillTypes();
+            foreach($systemBillTypes as $systemBillType)
+            {
+                if($systemBillType[0] == $this->bill_type_id)
+                    return ["name" => $systemBillType[1]];
+            }
+        }
+        
         if(!isset(self::$cachedBillTypes[$this->bill_type_id]))
             self::$cachedBillTypes[$this->bill_type_id] = Dictionary::find($this->bill_type_id);
         

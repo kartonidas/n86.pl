@@ -2,7 +2,6 @@
     import { ref, reactive, computed } from 'vue'
     import { useVuelidate } from '@vuelidate/core'
     import { required, email, helpers, maxLength } from '@/utils/i18n-validators'
-    import { pesel, nip } from '@/utils/validators'
     
     import ItemService from '@/service/ItemService'
     import DictionaryService from '@/service/DictionaryService'
@@ -36,6 +35,8 @@
                 .then(
                     (response) => {
                         this.billTypes = response.data.data
+                        if(this.bill.bill_type_id < 0)
+                            this.billTypes.push({"id" : this.bill.bill_type_id, "name" : this.bill.bill_type.name})
                     },
                     (errors) => {
                         this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -92,28 +93,41 @@
         <div class="mb-4">
             <div class="p-fluid">
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="bill_type_id" v-required class="block text-900 font-medium mb-2">{{ $t('items.bill_type') }}</label>
-                        <Dropdown id="bill_type_id" v-model="bill.bill_type_id" :options="billTypes" :class="{'p-invalid' : v.bill.bill_type_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('items.bill_type')" class="w-full" :disabled="saving || loading"/>
+                        <Dropdown id="bill_type_id" v-model="bill.bill_type_id" :options="billTypes" :class="{'p-invalid' : v.bill.bill_type_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('items.bill_type')" class="w-full" :disabled="saving || loading || (source == 'update' && bill.bill_type_id < 0)"/>
+                        <small>{{ $t("help.bill_bill_type") }}</small>
                         <div v-if="v.bill.bill_type_id.$error">
                             <small class="p-error">{{ v.bill.bill_type_id.$errors[0].$message }}</small>
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="cost" v-required class="block text-900 font-medium mb-2">{{ $t('items.cost') }}</label>
                         <InputNumber id="cost" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.cost')" class="w-full" :class="{'p-invalid' : v.bill.cost.$error}" v-model="bill.cost" :disabled="loading || saving"/>
+                        <small>{{ $t("help.bill_cost") }}</small>
                         <div v-if="v.bill.cost.$error">
                             <small class="p-error">{{ v.bill.cost.$errors[0].$message }}</small>
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="payment_date" v-required class="block text-900 font-medium mb-2">{{ $t('items.payment_date') }}</label>
                         <Calendar id="payment_date" v-model="bill.payment_date" :class="{'p-invalid' : v.bill.payment_date.$error}" :placeholder="$t('items.payment_date')" showIcon :disabled="loading || saving"/>
+                        <small>{{ $t("help.bill_payment_date") }}</small>
                         <div v-if="v.bill.payment_date.$error">
                             <small class="p-error">{{ v.bill.payment_date.$errors[0].$message }}</small>
                         </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4" v-if="source == 'new'">
+                        <label for="charge_current_tenant" class="block text-900 font-medium mb-2">{{ $t('items.tenant_cost') }}</label>
+                        <div class="pt-2 pb-2">
+                            <InputSwitch v-model="bill.charge_current_tenant" :trueValue="1" :disabled="saving || loading"/>
+                        </div>
+                        <small>{{ $t("help.bill_tenant_cost") }}</small>
+                    </div>
+                    <div class="field col-12 md:col-6 mb-4" v-else>
                     </div>
                     
                     <div class="field col-12 md:col-4 mb-4">
@@ -140,19 +154,19 @@
                         </div>
                     </div>
                     
-                    
-                    <div class="field col-12 md:col-6 mb-4">
+                    <div class="field col-12 md:col-6 mb-4" v-if="source == 'update' && bill.bill_type_id > 0">
                         <label for="source_document_number" class="block text-900 font-medium mb-2">{{ $t('items.source_document_number') }}</label>
                         <InputText id="source_document_number" type="text" :placeholder="$t('items.source_document_number')" class="w-full" :class="{'p-invalid' : v.bill.source_document_number.$error}" v-model="bill.source_document_number" :disabled="loading || saving"/>
+                        <small>{{ $t("help.bill_source_document_number") }}</small>
                         <div v-if="v.bill.source_document_number.$error">
                             <small class="p-error">{{ v.bill.source_document_number.$errors[0].$message }}</small>
                         </div>
                     </div>
-                    <div class="field col-12 md:col-6 mb-4">
+                    <div class="field col-12 md:col-6 mb-4" v-if="source == 'update' && bill.bill_type_id > 0">
                         <label for="source_document_date" class="block text-900 font-medium mb-2">{{ $t('items.source_document_date') }}</label>
                         <Calendar id="source_document_date" v-model="bill.source_document_date" :placeholder="$t('items.source_document_date')" showIcon :disabled="loading || saving"/>
+                        <small>{{ $t("help.bill_source_document_date") }}</small>
                     </div>
-                    
                     
                     
                     <div class="field col-12 mb-4">

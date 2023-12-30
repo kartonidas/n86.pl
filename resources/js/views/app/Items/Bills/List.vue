@@ -137,21 +137,32 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
+                <TabMenu activeIndex="fees:bills" :item="item" :showEditButton="false" :showDivider="true"/>
+                
+                <div class="mb-5 font-italic font-light line-height-3">
+                    {{ $t('help.bill_desc')}} 
+                </div>
                 
                 <div class="text-right mb-4" v-if="hasAccess('item:update')">
                     <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
                 </div>
                 
                 <DataTable :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
-                    <Column :header="$t('items.name')" style="min-width: 300px;">
+                    <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Badge :value="data.bill_type.name" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                <router-link :to="{name: 'item_bill_edit', params: { billId : data.id }}">
-                                    {{ numeralFormat(data.cost, '0.00') }}
-                                </router-link>
+                            <div class="mb-1">
+                                {{ data.bill_type.name }}
                             </div>
+                            <div class="mt-1" v-if="data.cyclical">
+                                <small class="font-italic">
+                                    {{ $t("items.cyclical_fee") }}
+                                </small>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.cost')">
+                        <template #body="{ data }">
+                            {{ numeralFormat(data.cost, '0.00') }}
                         </template>
                     </Column>
                     <Column :header="$t('items.payment_date')">

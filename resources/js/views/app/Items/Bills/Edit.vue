@@ -25,7 +25,6 @@
                 errors: [],
                 bill : {},
                 saving: false,
-                fromCustomer: false
             }
         },
         beforeMount() {
@@ -69,7 +68,7 @@
                 return items
             },
             
-            async createBill(bill) {
+            async updateBill(bill) {
                 this.saving = true
                 this.errors = []
                 
@@ -96,7 +95,7 @@
         <div class="col-12">
             <div class="card">
                 <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
-                <BillForm @submit-form="createBill" :bill="bill" source="update" :saving="saving" :loading="loading" :errors="errors" />
+                <BillForm @submit-form="updateBill" :bill="bill" source="update" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>
     </div>

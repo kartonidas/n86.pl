@@ -69,7 +69,7 @@
 
 <template>
     <div>
-        <Header :object="item" type="item"/>
+        <Header :object="item" type="item" :showEditButton="true"/>
         
         <Menubar :model="items" class="mb-0 mt-5">
             <template #item="{ item, props, hasSubmenu }">

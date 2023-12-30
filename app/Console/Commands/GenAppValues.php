@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\ItemCyclicalFee;
 use App\Models\Rental;
 
 class GenAppValues extends Command
@@ -72,6 +73,12 @@ class GenAppValues extends Command
                 
             foreach(Rental::getStatuses() as $type => $name)
                 $toJson[$lang]["rental"]["statuses"][] = ["id" => $type, "name" => $name];
+                
+            foreach(ItemCyclicalFee::getPaymentDays() as $type => $name)
+                $toJson[$lang]["cyclical_fee"]["payment_days"][] = ["id" => $type, "name" => $name];
+                
+            foreach(ItemCyclicalFee::getRepeatMonths() as $type => $name)
+                $toJson[$lang]["cyclical_fee"]["repeat_months"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");
