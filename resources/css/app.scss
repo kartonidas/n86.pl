@@ -76,3 +76,13 @@ A.active-route {
 .p-steps .p-steps-item:before {
     margin-top: 0;
 }
+
+TABLE.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+TABLE.table TR TD {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--gray-200);
+}

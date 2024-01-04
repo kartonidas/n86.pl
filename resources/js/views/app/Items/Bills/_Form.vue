@@ -60,7 +60,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_bills'})
+                this.$router.push({name: 'item_bill_show'})
             }
         },
         validations () {

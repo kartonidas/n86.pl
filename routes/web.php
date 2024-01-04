@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 
 /*
@@ -15,7 +16,9 @@ use App\Http\Controllers\PaymentController;
 */
 
 $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
+$router->get('/pomoc/{any?}', [PageController::class, "help"]);
+$router->get('/', [PageController::class, "index"]);
 
 Route::get('{any?}', function () {
-    return view('welcome');
+    return view('vue');
 })->where('any', '^(?!api).*$');

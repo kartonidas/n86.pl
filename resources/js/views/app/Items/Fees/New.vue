@@ -36,7 +36,7 @@
                 if(this.item.name != undefined)
                 {
                     items.push({'label' : this.item.name, route : { name : 'item_show'} })
-                    items.push({'label' : this.$t('items.bills'), disabled : true })
+                    items.push({'label' : this.$t('items.cyclical_fees'), route : { name : 'item_fees'} })
                     items.push({'label' : this.$t('items.new_cyclical_fee'), disabled : true })
                 }
                     

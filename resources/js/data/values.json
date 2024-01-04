@@ -329,6 +329,18 @@
                     "name": "3 miesi\u0105ce"
                 }
             ]
+        },
+        "payments": {
+            "methods": [
+                {
+                    "id": "cash",
+                    "name": "Got\u00f3wka"
+                },
+                {
+                    "id": "transfer",
+                    "name": "Przelew bankowy"
+                }
+            ]
         }
     }
 }

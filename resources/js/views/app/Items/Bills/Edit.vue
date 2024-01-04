@@ -47,7 +47,13 @@
                         this.loading = false
                     },
                     (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        if(errors.response.status == 404)
+                        {
+                            appStore().setError404(errors.response.data.message);
+                            this.$router.push({name: 'objectnotfound'})
+                        }
+                        else
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
         },
@@ -61,7 +67,7 @@
                 if(this.item.name != undefined)
                 {
                     items.push({'label' : this.item.name, route : { name : 'item_show'} })
-                    items.push({'label' : this.$t('items.bills'), disabled : true })
+                    items.push({'label' : this.$t('items.bills'), route : { name : 'item_bills'} })
                     items.push({'label' : this.$t('items.update_bill'), disabled : true })
                 }
                     

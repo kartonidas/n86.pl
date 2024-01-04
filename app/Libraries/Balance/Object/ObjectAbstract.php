@@ -56,7 +56,7 @@ abstract class ObjectAbstract {
         return $this->amount;
     }
     
-    public function setDocumentIds($documentIds)
+    public function setDocumentIds(array $documentIds)
     {
         $this->documentIds = $documentIds;
     }

@@ -208,13 +208,25 @@ const router = createRouter({
                                     path: '/app/item/:itemId/bill/new',
                                     name: 'item_bill_new',
                                     component: () => import('@/views/app/Items/Bills/New.vue'),
-                                    meta: {permission: 'item:list'},
+                                    meta: {permission: 'item:update'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/bill/:billId/edit',
+                                    name: 'item_bill_edit',
+                                    component: () => import('@/views/app/Items/Bills/Edit.vue'),
+                                    meta: {permission: 'item:update'},
                                 },
                                 {
                                     path: '/app/item/:itemId/bill/:billId',
-                                    name: 'item_bill_edit',
-                                    component: () => import('@/views/app/Items/Bills/Edit.vue'),
+                                    name: 'item_bill_show',
+                                    component: () => import('@/views/app/Items/Bills/Show.vue'),
                                     meta: {permission: 'item:list'},
+                                },
+                                {
+                                    path: '/app/item/:itemId/bill/:billId/payment',
+                                    name: 'item_bill_payment',
+                                    component: () => import('@/views/app/Items/Bills/Payment.vue'),
+                                    meta: {permission: 'item:update'},
                                 },
                                 {
                                     path: '/app/item/:itemId/fees',
@@ -226,13 +238,13 @@ const router = createRouter({
                                     path: '/app/item/:itemId/fee/new',
                                     name: 'item_cyclical_fee_new',
                                     component: () => import('@/views/app/Items/Fees/New.vue'),
-                                    meta: {permission: 'item:list'},
+                                    meta: {permission: 'item:update'},
                                 },
                                 {
                                     path: '/app/item/:itemId/fee/:feeId',
                                     name: 'item_cyclical_fee_edit',
                                     component: () => import('@/views/app/Items/Fees/Edit.vue'),
-                                    meta: {permission: 'item:list'},
+                                    meta: {permission: 'item:update'},
                                 },
                             ]
                         },
@@ -396,6 +408,11 @@ const router = createRouter({
                     path: '/app/access-denied',
                     name: 'access_denied',
                     component: () => import('@/views/errors/AccessDenied.vue'),
+                },
+                {
+                    path: '/app/404',
+                    name: 'objectnotfound',
+                    component: () => import('@/views/app/404.vue'),
                 },
             ]
         },

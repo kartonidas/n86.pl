@@ -80,8 +80,8 @@
                 this.$router.push({name: 'item_bill_new'})
             },
             
-            editBill(billId) {
-                this.$router.push({name: 'item_bill_edit', params: { billId : billId }})
+            showBill(billId) {
+                this.$router.push({name: 'item_bill_show', params: { billId : billId }})
             },
             
             changePage(event) {
@@ -115,7 +115,7 @@
             },
             
             rowClick(event) {
-                this.editBill(event.data.id)
+                this.showBill(event.data.id)
             },
             
             search() {
@@ -147,7 +147,7 @@
                     <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div class="mb-1">
@@ -168,6 +168,17 @@
                     <Column :header="$t('items.payment_date')">
                         <template #body="{ data }">
                             {{ data.payment_date }}
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.paid')" class="text-center">
+                        <template #body="{ data }">
+                            <Badge :value="$t('app.yes')" class="uppercase font-normal" severity="success" v-if="data.paid"></Badge>
+                            <Badge :value="$t('app.no')" class="uppercase font-normal" severity="danger" v-if="!data.paid"></Badge>
+                            <div v-if="data.paid">
+                                <small>
+                                    {{ data.paid_date }}
+                                </small>
+                            </div>
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">

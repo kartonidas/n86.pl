@@ -64,6 +64,10 @@ export default class ItemService {
         return axios.delete('api/v1/item/' + itemId + "/bill/" + billId);
     }
     
+    paymentBill(itemId, billId, paymentData) {
+        return axios.post('api/v1/item/' + itemId + "/bill/" + billId + "/payment", paymentData);
+    }
+    
     cyclicalFees(itemId, size, page, sort, order, search) {
         var data = {
             size: size,

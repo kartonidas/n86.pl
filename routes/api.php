@@ -60,6 +60,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/item/{id}/bill/{bid}', [ItemController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->post('/item/{id}/bill/{bid}/paid', [ItemController::class, "billPaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->post('/item/{id}/bill/{bid}/unpaid', [ItemController::class, "billUnpaid"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->post('/item/{id}/bill/{bid}/payment', [ItemController::class, "billPayment"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->get('/item/{id}/fees', [ItemController::class, "fees"])->where("id", "[0-9]+");
     $router->put('/item/{id}/fee', [ItemController::class, "feeCreate"])->where("id", "[0-9]+");
     

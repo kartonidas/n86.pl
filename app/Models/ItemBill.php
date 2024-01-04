@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Exceptions\InvalidStatus;
+use App\Libraries\Balance\Balance;
+use App\Libraries\Balance\Object\DepositObject;
 use App\Libraries\Data;
+use App\Libraries\Helper;
 use App\Models\BalanceDocument;
 use App\Models\Dictionary;
 use App\Models\Item;
@@ -25,6 +28,13 @@ class ItemBill extends Model
     protected $hidden = ["uuid"];
     
     protected function paymentDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
+    
+    protected function paidDate(): Attribute
     {
         return Attribute::make(
             get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
@@ -127,5 +137,30 @@ class ItemBill extends Model
         $this->saveQuietly();
         
         return true;
+    }
+    
+    public function deposit(float $cost, string $paidData, string $paymentMethod)
+    {
+        $document = $this->getBalanceDocument();
+        if(!$document)
+            throw new ObjectNotExist(__("Balance document does not exists"));
+        
+        if($cost != abs($document->amount))
+            throw new InvalidStatus(__("Value of the documents exceeds the amount paid"));
+        
+        $deposit = DepositObject::makeFromParams($this->item_id, $this->rental_id, BalanceDocument::OBJECT_TYPE_DEPOSIT, 0, $cost);
+        $deposit->setDocumentIds([$document->id]);
+        $deposit->setPayment(Helper::setDateTime($paidData, "00:00:00", true), $paymentMethod);
+        Balance::deposit($deposit)->create();
+        
+        return true;
+    }
+    
+    public function isOutOfDate()
+    {
+        if(!$this->paid && $this->getRawOriginal("payment_date") <= time())
+            return true;
+        
+        return false;
     }
 }

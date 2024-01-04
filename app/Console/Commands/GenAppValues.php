@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Models\BalanceDocument;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\ItemCyclicalFee;
@@ -79,6 +80,9 @@ class GenAppValues extends Command
                 
             foreach(ItemCyclicalFee::getRepeatMonths() as $type => $name)
                 $toJson[$lang]["cyclical_fee"]["repeat_months"][] = ["id" => $type, "name" => $name];
+                
+            foreach(BalanceDocument::getAvailablePaymentMethods() as $type => $name)
+                $toJson[$lang]["payments"]["methods"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

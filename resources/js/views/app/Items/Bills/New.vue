@@ -22,7 +22,9 @@
         data() {
             return {
                 errors: [],
-                bill : {},
+                bill : {
+                    charge_current_tenant: 1
+                },
                 saving: false,
             }
         },
@@ -36,7 +38,7 @@
                 if(this.item.name != undefined)
                 {
                     items.push({'label' : this.item.name, route : { name : 'item_show'} })
-                    items.push({'label' : this.$t('items.bills'), disabled : true })
+                    items.push({'label' : this.$t('items.bills'), route : { name : 'item_bills'} })
                     items.push({'label' : this.$t('items.new_bill'), disabled : true })
                 }
                     
@@ -56,7 +58,7 @@
                                 detail : this.$t('items.bill_added'),
                             });
                             
-                            this.$router.push({name: 'item_bill_edit', params: { itemId : this.$route.params.itemId, billId : response.data }})
+                            this.$router.push({name: 'item_bill_show', params: { itemId : this.$route.params.itemId, billId : response.data }})
                         },
                         (response) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
@@ -71,6 +73,21 @@
 
 <template>
     <Breadcrumb :model="getBreadcrumbs()"/>
+    
+    <Message severity="error">
+        KONCEPCJA JEST TAKA:<br/>
+        Trzeba dodać stronę pomocy, gdzie będzie wyjaśnione w jaki sposób dodwać koszty.<br/>
+        Niezaznaczenie "Obciąż aktualnego najemce" oznacza mniej więcej coś takiego:
+        mamy czynsz najmu (np 2000PLN), w sklad tego czynszu wchodzi opłata do spółdzielni/wspólnoty (500PLN) plus opłata
+        za wywóz śmieci (100PLN), obie te opłaty dodajemny bez zaznaczenia "Obciąż aktualnego najemce" dzięki temu
+        w statystykach wiemy że zarobiliśmy 2000PLN-600=1400PLN (bo obie opłaty są w czynszu więc nie obciązają najemcy).
+        <br/>
+        Generalnie trzeba będzie ładne do opisac w pomocy, bo za skomplikowane to będzie żeby tak od strzała w tym się poruszać
+    </Message>
+
+   
+    
+    
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">

@@ -9,6 +9,7 @@ export const appStore = defineStore('store', {
             permissions: null,
             tableOrder: {},
             tableFilter: {},
+            error404: null,
         };
     },
     actions: {
@@ -26,6 +27,10 @@ export const appStore = defineStore('store', {
         
         setToastMessage (data) {
             this.toastMessage = data;
+        },
+        
+        setError404 (data) {
+            this.error404 = data;
         },
         
         setTableOrder (table, column, order) {

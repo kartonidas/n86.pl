@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\BillPaymentRequest;
 use App\Http\Requests\ItemRequest;
 use App\Http\Requests\ItemBillRequest;
 use App\Http\Requests\ItemCyclicalFeeCostRequest;
@@ -210,6 +212,7 @@ class ItemController extends Controller
         {
             $itemBills[$i]->can_delete = $itemBill->canDelete();
             $itemBills[$i]->bill_type = $itemBill->getBillType();
+            $itemBills[$i]->out_off_date = $itemBill->isOutOfDate();
         }
             
         $out = [
@@ -260,6 +263,7 @@ class ItemController extends Controller
             throw new ObjectNotExist(__("Bill does not exist"));
         
         $bill->bill_type = $bill->getBillType();
+        $bill->out_off_date = $bill->isOutOfDate();
         
         return $bill;
     }
@@ -275,6 +279,9 @@ class ItemController extends Controller
         $bill = ItemBill::find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
+        
+        if($bill->paid)
+            throw new InvalidStatus(__("Cannot edit paid bill"));
         
         $validated = $request->validated();
         
@@ -333,6 +340,40 @@ class ItemController extends Controller
             throw new ObjectNotExist(__("Bill does not exist"));
         
         return $bill->unpaid();
+    }
+    
+    public function billPayment(BillPaymentRequest $request, int $itemId, int $billId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->item_id != $item->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        if($bill->paid)
+            throw new InvalidStatus(__("Bill is already paid"));
+        
+        $validated = $request->validated();
+        
+        switch($validated["type"])
+        {
+            case "deposit":
+                if(!$bill->rental_id)
+                    throw new InvalidStatus(__("Cannot charge the tenant"));
+                
+                $bill->deposit($validated["cost"], $validated["paid_date"], $validated["payment_method"]);
+            break;
+        
+            case "setpaid":
+                $bill->paid();
+            break;
+        }
+        
+        return true;
     }
     
     public function fees(ItemCyclicalFeeRequest $request, int $itemId)
