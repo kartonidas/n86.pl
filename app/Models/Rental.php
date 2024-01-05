@@ -17,16 +17,18 @@ use App\Libraries\Data;
 use App\Libraries\Helper;
 use App\Models\Balances;
 use App\Models\ItemBill;
+use App\Traits\NumberingTrait;
 
 class Rental extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, NumberingTrait;
     use \App\Traits\UuidTrait {
         boot as traitBoot;
     }
     const STATUS_ARCHIVE = "archive";
     const STATUS_CURRENT = "current";
     const STATUS_WAITING = "waiting";
+    const STATUS_TERMINATION = "termination";
     
     const PERIOD_MONTH = "month";
     const PERIOD_INDETERMINATE = "indeterminate";
@@ -36,7 +38,7 @@ class Rental extends Model
     const PAYMENT_CYCLICAL = "cyclical";
     const PAYMENT_ONETIME = "onetime";
     
-    public static $sortable = ["start", "status", "end"];
+    public static $sortable = ["start", "status", "end", "full_number", "rent"];
     public static $defaultSortable = ["start", "desc"];
     
     protected $casts = [
@@ -62,6 +64,13 @@ class Rental extends Model
     }
     
     protected function firstPaymentDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
+    
+    protected function terminationTime(): Attribute
     {
         return Attribute::make(
             get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
@@ -99,8 +108,24 @@ class Rental extends Model
             self::STATUS_ARCHIVE => __("Archive"),
             self::STATUS_CURRENT => __("Current"),
             self::STATUS_WAITING => __("Waiting"),
+            self::STATUS_TERMINATION => __("Termination"),
         ];
     }
+    
+    public function getMaskNumber()
+    {
+        return self::getMaskNumberStatic();
+    }
+
+    public static function getMaskNumberStatic()
+    {
+        $out = [];
+        //$config = Config::getConfig("app");
+        $out["mask"] = !empty($config["rental_numbering_mask"]) ? $config["rental_numbering_mask"] : config("params.default_mask.rental.mask");
+        $out["continuation"] = !empty($config["rental_numbering_continuation"]) ? $config["rental_numbering_continuation"] : config("params.default_mask.rental.continuation");
+        return $out;
+    }
+
     
     public function canDelete()
     {
@@ -258,6 +283,20 @@ class Rental extends Model
             $rental->setArchive();
     }
     
+    public static function checkTerminationRentals()
+    {
+        $time = time();
+        $rentals = self
+            ::where("status", self::STATUS_CURRENT)
+            ->where("termination", 1)
+            ->where("termination_time", "<", $time)
+            ->withoutGlobalScopes()
+            ->get();
+            
+        foreach($rentals as $rental)
+            $rental->setTerminated();
+    }
+    
     private function setCurrent()
     {
         $this->status = self::STATUS_CURRENT;
@@ -271,6 +310,16 @@ class Rental extends Model
     private function setArchive()
     {
         $this->status = self::STATUS_ARCHIVE;
+        $this->saveQuietly();
+        
+        $item = $this->item()->withoutGlobalScopes()->first();
+        if($item)
+            $item->setRentedFlag();
+    }
+    
+    private function setTerminated()
+    {
+        $this->status = self::STATUS_TERMINATION;
         $this->saveQuietly();
         
         $item = $this->item()->withoutGlobalScopes()->first();
@@ -364,5 +413,20 @@ class Rental extends Model
             $this->next_rental = $this->calculateNextRental($this->getRawOriginal("start"));
             $this->save();
         }
+    }
+    
+    public function terminate(int $end, string $reason)
+    {
+        if($this->status != Rental::STATUS_CURRENT)
+            throw new InvalidStatus(__("Rental in incorrect status"));
+        
+        if($this->termination)
+            throw new InvalidStatus(__("The rental is already being terminated"));
+        
+        $this->termination = 1;
+        $this->termination_time = $end;
+        $this->termination_added = time();
+        $this->termination_reason = $reason;
+        $this->save();
     }
 }

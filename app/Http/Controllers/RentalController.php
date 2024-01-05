@@ -7,16 +7,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\RentalBillRequest;
 use App\Http\Requests\RentalRequest;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\StoreRentRequest;
 use App\Http\Requests\StoreRentalRequest;
 use App\Http\Requests\StoreTenantRequest;
+use App\Http\Requests\TerminationRequest;
 use App\Http\Requests\UpdateRentalRequest;
 use App\Libraries\Helper;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\ItemBill;
 use App\Models\Rental;
 use App\Traits\Sortable;
 use App\Models\User;
@@ -108,7 +112,7 @@ class RentalController extends Controller
         
         $total = $rentals->count();
         
-        $orderBy = $this->getOrderBy($request, Rental::class, "start,desc");
+        $orderBy = $this->getOrderBy($request, Rental::class, "full_number,desc");
         $rentals = $rentals->take($size)
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
@@ -169,6 +173,7 @@ class RentalController extends Controller
             $rental = new Rental;
             $rental->item_id = $itemData["id"];
             $rental->tenant_id = $tenantData["id"];
+            $rental->document_date = $rentData["document_date"];
             $rental->start = Helper::setDateTime($rentData["start_date"], "00:00:00", true);
             $rental->period = $rentData["period"];
             $rental->months = $rentData["months"] ?? null;
@@ -274,5 +279,62 @@ class RentalController extends Controller
         
         $rental->delete();
         return true;
+    }
+    
+    public function termination(TerminationRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $validated = $request->validated();
+        
+        $rental->terminate(Helper::setDateTime($validated["end_date"], "23:59:59", true), $validated["termination_reason"] ?? "");
+        
+        return true;
+    }
+    
+    public function bills(RentalBillRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:list");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $validated = $request->validated();
+
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $rentalBills = ItemBill
+            ::where("rental_id", $rentalId);
+        
+        $total = $rentalBills->count();
+        
+        $rentalBills = $rentalBills->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy("paid", "ASC")
+            ->orderByRaw("CASE WHEN paid = 1 THEN payment_date ELSE -payment_date END DESC")
+            ->get();
+            
+        foreach($rentalBills as $i => $itemBill)
+        {
+            $rentalBills[$i]->can_delete = $itemBill->canDelete();
+            $rentalBills[$i]->bill_type = $itemBill->getBillType();
+            $rentalBills[$i]->out_off_date = $itemBill->isOutOfDate();
+        }
+            
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $rentalBills,
+        ];
+            
+        return $out;
     }
 }

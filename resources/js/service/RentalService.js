@@ -34,4 +34,12 @@ export default class RentalService {
     remove(rentalId) {
         return axios.delete('api/v1/rental/' + rentalId);
     }
+    
+    terminate(rentalId, terminateData) {
+        return axios.post('api/v1/rental/' + rentalId + '/terminate', terminateData);
+    }
+    
+    bills(rentalId) {
+        return axios.get('api/v1/rental/' + rentalId + '/bills');
+    }
 }

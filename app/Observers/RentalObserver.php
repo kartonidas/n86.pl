@@ -14,6 +14,8 @@ class RentalObserver
     
     public function created(Rental $rental): void
     {
+        $rental->setNumber();
+        
         $item = $rental->item()->first();
         if($item)
             $item->setRentedFlag();

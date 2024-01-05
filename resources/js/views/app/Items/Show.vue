@@ -89,6 +89,11 @@
                         </i>
                     </div>
                 </div>
+                <p class="m-0 mt-3" v-if="item.comments">
+                    <span class="font-medium">{{ $t('items.comments') }}: </span>
+                    <br/>
+                    <i class="text-sm">{{ item.comments}}</i>
+                </p>
             </div>
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">

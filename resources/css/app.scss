@@ -85,4 +85,9 @@ TABLE.table {
 TABLE.table TR TD {
     padding: 0.5rem;
     border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+}
+
+TABLE.table TR TD:first-of-type {
+    padding-left: 0;
 }

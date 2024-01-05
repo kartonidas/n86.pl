@@ -202,10 +202,10 @@ class ItemController extends Controller
         
         $total = $itemBills->count();
         
-        $orderBy = $this->getOrderBy($request, ItemBill::class, "payment_date,desc");
         $itemBills = $itemBills->take($size)
             ->skip(($page-1)*$size)
-            ->orderBy($orderBy[0], $orderBy[1])
+            ->orderBy("paid", "ASC")
+            ->orderByRaw("CASE WHEN paid = 1 THEN payment_date ELSE -payment_date END DESC")
             ->get();
             
         foreach($itemBills as $i => $itemBill)

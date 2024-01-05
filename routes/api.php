@@ -89,6 +89,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->post('/rental/validate', [RentalController::class, "validateData"]);
     $router->put('/rental/rent', [RentalController::class, "rent"]);
     $router->delete('/rental/{id}', [RentalController::class, "delete"])->where("id", "[0-9]+");
+    $router->post('/rental/{id}/terminate', [RentalController::class, "termination"])->where("id", "[0-9]+");
+    $router->get('/rental/{id}/bills', [RentalController::class, "bills"])->where("id", "[0-9]+");
     
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);

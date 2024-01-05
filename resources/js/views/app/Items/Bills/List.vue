@@ -150,22 +150,32 @@
                 <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <div class="mb-1">
+                            <div class="mb-1 flex">
+                                <span v-if="data.out_off_date" class="mr-1" v-tooltip.top="$t('items.bill_out_off_date')">
+                                    <i class="pi pi-exclamation-circle" style="font-size: 1.2rem; color: var(--red-600)"></i>
+                                </span>
                                 {{ data.bill_type.name }}
                             </div>
                             <div class="mt-1" v-if="data.cyclical">
                                 <small class="font-italic">
+                                    <i class="pi pi-replay"></i>
                                     {{ $t("items.cyclical_fee") }}
                                 </small>
                             </div>
                         </template>
                     </Column>
-                    <Column :header="$t('items.cost')">
+                    <Column :header="$t('items.payer')">
+                        <template #body="{ data }">
+                            <span v-if="data.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                            <span v-else>{{ $t('items.owner') }}</span>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.cost')" class="text-right">
                         <template #body="{ data }">
                             {{ numeralFormat(data.cost, '0.00') }}
                         </template>
                     </Column>
-                    <Column :header="$t('items.payment_date')">
+                    <Column :header="$t('items.payment_date')" class="text-center">
                         <template #body="{ data }">
                             {{ data.payment_date }}
                         </template>

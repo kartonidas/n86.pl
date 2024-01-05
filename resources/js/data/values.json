@@ -209,6 +209,10 @@
                 {
                     "id": "waiting",
                     "name": "Oczekuj\u0105cy"
+                },
+                {
+                    "id": "termination",
+                    "name": "Wypowiedziany"
                 }
             ]
         },

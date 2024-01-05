@@ -19,6 +19,7 @@ class StoreRentalRequest extends FormRequest
     {
         $rules = [
             "start_date" => "required|date_format:Y-m-d",
+            "document_date" => "required|date_format:Y-m-d",
             "period" => ["required", Rule::in(array_keys(Rental::getPeriods()))],
         ];
         

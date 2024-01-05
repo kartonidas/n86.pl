@@ -124,28 +124,35 @@
                                 <td class="font-italic">{{ bill.payment_date }}</td>
                             </tr>
                             <tr>
+                                <td class="pl-0 font-medium">{{ $t('items.payer') }}:</td>
+                                <td class="font-italic">
+                                    <span v-if="bill.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                                    <span v-else>{{ $t('items.owner') }}</span>
+                                </td>
+                            </tr>
+                            <tr v-if="bill.recipient_name">
                                 <td class="pl-0 font-medium">{{ $t('items.recipient_name') }}:</td>
                                 <td class="font-italic">{{ bill.recipient_name }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="bill.recipient_desciption">
                                 <td class="pl-0 font-medium">{{ $t('items.recipient_desciption') }}:</td>
-                                <td class="font-italic">{{ bill.recipient_desciption }}</td>
+                                <td class="font-italic">{{ bill.recipient_desciption ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="bill.recipient_bank_account">
                                 <td class="pl-0 font-medium">{{ $t('items.recipient_bank_account') }}:</td>
-                                <td class="font-italic">{{ bill.recipient_bank_account }}</td>
+                                <td class="font-italic">{{ bill.recipient_bank_account ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="bill.source_document_number">
                                 <td class="pl-0 font-medium">{{ $t('items.source_document_number') }}:</td>
-                                <td class="font-italic">{{ bill.source_document_number }}</td>
+                                <td class="font-italic">{{ bill.source_document_number ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="bill.source_document_date">
                                 <td class="pl-0 font-medium">{{ $t('items.source_document_date') }}:</td>
-                                <td class="font-italic">{{ bill.source_document_date }}</td>
+                                <td class="font-italic">{{ bill.source_document_date ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="bill.comments">
                                 <td class="pl-0 font-medium">{{ $t('items.comments') }}:</td>
-                                <td class="font-italic">{{ bill.comments }}</td>
+                                <td class="font-italic">{{ bill.comments ?? '-' }}</td>
                             </tr>
                         </table>
                     </div>

@@ -10,6 +10,7 @@
         data() {
             const rent = ref({
                 start_date: new Date(),
+                document_date: new Date(),
                 period: 'month',
                 months: 12,
                 termination_period: 'months',
@@ -36,6 +37,7 @@
                 const rules = {
                     rent: {
                         start_date: { required },
+                        document_date: { required },
                         period: { required },
                         end_date: { required: requiredIf(function() { return this.rent.period == "date" }) },
                         termination_period: { required },
@@ -106,6 +108,9 @@
                     if(rent.end_date && rent.end_date instanceof Date)
                         rent.end_date = moment(rent.end_date).format("YYYY-MM-DD")
                         
+                    if(rent.document_date && rent.document_date instanceof Date)
+                        rent.document_date = moment(rent.document_date).format("YYYY-MM-DD")
+                        
                     if(rent.first_payment_date && rent.first_payment_date instanceof Date)
                         rent.first_payment_date = moment(rent.first_payment_date).format("YYYY-MM-DD")
                         
@@ -131,7 +136,15 @@
         <div class="mb-4">
             <div class="p-fluid">
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 md:col-6 xl:col-3 mb-4">
+                        <label for="document_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.document_date') }}</label>
+                        <Calendar id="document_date" v-model="rent.document_date" :class="{'p-invalid' : v.rent.document_date.$error}" :placeholder="$t('rent.document_date')" showIcon :disabled="loading || saving"/>
+                        <div v-if="v.rent.document_date.$error">
+                            <small class="p-error">{{ v.rent.document_date.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 xl:col-3 mb-4">
                         <label for="start_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.start_date') }}</label>
                         <Calendar id="start_date" v-model="rent.start_date" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.start_date.$error">
@@ -139,7 +152,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4" :class="[rent.period == 'indeterminate' ? 'md:col-8' : 'mmd:col-4']">
+                    <div class="field col-12 md:col-6 xl:col-3 mb-4" :class="[rent.period == 'indeterminate' ? 'md:col-8' : 'mmd:col-4']">
                         <label for="period" v-required class="block text-900 font-medium mb-2">{{ $t('rent.period') }}</label>
                         <Dropdown id="period" v-model="rent.period" :options="period" optionLabel="name" :class="{'p-invalid' : v.rent.period.$error}" optionValue="id" :placeholder="$t('rent.select_period')" class="w-full" :disabled="loading || saving"/>
                         <div v-if="v.rent.period.$error">
@@ -147,7 +160,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4" v-if="rent.period == 'month'">
+                    <div class="field col-12 md:col-6 xl:col-3 mb-4" v-if="rent.period == 'month'">
                         <label for="months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.number_of_months') }}</label>
                         <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.months.$error}" :placeholder="$t('rent.number_of_months')" class="w-full" v-model="rent.months" :disabled="saving || loading" />
                         <div v-if="v.rent.months.$error">

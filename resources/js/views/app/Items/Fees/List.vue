@@ -162,19 +162,22 @@
                             </small>
                         </template>
                     </Column>
-                    
-                    <Column :header="$t('items.cost')">
+                    <Column :header="$t('items.recipient_name')">
+                        <template #body="{ data }">
+                            {{ data.recipient_name ?? "" }}
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.payer')">
+                        <template #body="{ data }">
+                            <span v-if="data.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                            <span v-else>{{ $t('items.owner') }}</span>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.cost')" class="text-right">
                         <template #body="{ data }">
                             {{ numeralFormat(data.cost, '0.00') }}
                         </template>
                     </Column>
-                    
-                    <Column :header="$t('items.recipient_name')">
-                        <template #body="{ data }">
-                            {{ data.recipient_name }}
-                        </template>
-                    </Column>
-                    
                     <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
                             <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>

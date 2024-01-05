@@ -35,6 +35,8 @@
                     perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
+                    sortField: 'full_number',
+                    sortOrder: -1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.rentals_list'), disabled : true },
@@ -43,6 +45,12 @@
             }
         },
         beforeMount() {
+            let order = appStore().getTableOrder('rentals');
+            if (order != undefined) {
+                this.meta.sortField = order.col;
+                this.meta.sortOrder = order.dir;
+            }
+            
             let filter = appStore().getTableFilter('rentals');
             if (filter != undefined)
             {
@@ -66,7 +74,7 @@
                 search.start = search.start ? moment(search.start).format("YYYY-MM-DD") : null
                 search.end = search.end ? moment(search.end).format("YYYY-MM-DD") : null
                 
-                this.rentalService.list(this.meta.perPage, this.meta.currentPage, null, null, search)
+                this.rentalService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, search)
                     .then(
                         (response) => {
                             this.rentals = response.data.data
@@ -90,6 +98,16 @@
             
             changePage(event) {
                 this.meta.currentPage = event["page"] + 1;
+                this.getList()
+            },
+            
+            sort(event) {
+                this.meta.sortField = event['sortField']
+                this.meta.sortOrder = event['sortOrder']
+                this.meta.currentPage = 1
+                
+                appStore().setTableOrder('rentals', this.meta.sortField, this.meta.sortOrder);
+                
                 this.getList()
             },
             
@@ -134,6 +152,20 @@
             closeConfirmation() {
                 this.displayConfirmation = false
             },
+            
+            getRowColor(status) {
+                switch (status) {
+                    case "termination":
+                    case "archive":
+                        return "bg-bluegray-50 text-gray-500"
+                    
+                    case "current":
+                        return "bg-green-50"
+                        
+                    case "waiting":
+                        return "bg-blue-50"
+                }
+            }
         },
     }
 </script>
@@ -193,7 +225,15 @@
                         </div>
                     </div>
                 </form>
-                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :rowClass="({ status }) => getRowColor(status)" :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                    <Column :header="$t('rent.number')" field="full_number" sortable>
+                        <template #body="{ data }">
+                            {{ data.full_number }}
+                            <div>
+                                <small>{{ data.document_date }}</small>
+                            </div>
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.estate')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
@@ -226,7 +266,7 @@
                             </div>
                         </template>
                     </Column>
-                    <Column :header="$t('rent.rent')">
+                    <Column :header="$t('rent.rent')" field="rent" sortable>
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
                         </template>
@@ -234,6 +274,9 @@
                     <Column :header="$t('rent.status')">
                         <template #body="{ data }">
                             {{ getValueLabel('rental.statuses', data.status) }}
+                            <span v-if="data.termination && data.status == 'current'" class="mr-1" v-tooltip.top="$t('rent.rental_is_being_terminated')">
+                                <i class="pi pi-delete-left" style="font-size: 1.2rem; color: var(--red-600)"></i>
+                            </span>
                         </template>
                     </Column>
                     <Column :header="$t('rent.period_short')">

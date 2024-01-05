@@ -352,6 +352,19 @@ const router = createRouter({
                             component: () => import('@/views/app/Rentals/Show.vue'),
                             meta: {permission: 'rent:list'},
                         },
+                        {
+                            path: '/app/rental/:rentalId/terminate',
+                            name: 'rental_terminate',
+                            component: () => import('@/views/app/Rentals/Terminate.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/item/:itemId/bill/:billId/edit',
+                            name: 'rental_bill_edit',
+                            component: () => import('@/views/app/Items/Bills/Edit.vue'),
+                            props: true,
+                            meta: {permission: 'rent:update'},
+                        },
                     ]
                 },
                 {
