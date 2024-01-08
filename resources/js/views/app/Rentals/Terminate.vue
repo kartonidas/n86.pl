@@ -141,9 +141,9 @@
                     {'label' : this.$t('menu.rentals_list'), route : { name : 'rentals'}  },
                 ]
                 
-                if(this.rental.item.name != undefined)
+                if(this.rental.full_number != undefined)
                 {
-                    items.push({'label' : this.rental.item.name, route : { name : 'rental_show'} })
+                    items.push({'label' : this.rental.full_number, route : { name : 'rental_show'} })
                     items.push({'label' : this.$t('rent.terminate_contract'), disabled : true })
                 }
                     

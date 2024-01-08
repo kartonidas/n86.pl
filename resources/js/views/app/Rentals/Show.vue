@@ -6,7 +6,6 @@
     import Address from '@/views/app/_partials/Address.vue'
     import Rental from '@/views/app/_partials/Rental.vue'
     import RentalService from '@/service/RentalService'
-    import ItemService from '@/service/ItemService'
     
     export default {
         components: { Address, Header, Rental },
@@ -14,11 +13,9 @@
             setMetaTitle('meta.title.rent_show')
             
             const rentalService = new RentalService()
-            const itemService = new ItemService()
             
             return {
                 p,
-                itemService,
                 rentalService,
                 hasAccess,
                 getValueLabel,
@@ -111,7 +108,7 @@
             },
             
             confirmDeleteBill() {
-                this.itemService.removeBill(this.rental.item_id, this.deleteBillId)
+                this.rentalService.removeBill(this.$route.params.rentalId, this.deleteBillId)
                     .then(
                         (response) => {
                             this.getBillList()
@@ -131,8 +128,12 @@
             },
             
             rowBillsClick(event) {
-                alert("TODO!");
+                this.$router.push({name: 'rental_bill_show', params: {billId : event.data.id}})
             },
+            
+            newBill() {
+                this.$router.push({name: 'rental_bill_new'})
+            }
         },
     }
 </script>
@@ -140,16 +141,16 @@
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
     
-    <div class="mt-5">
+    <div class="mt-5 hidden">
         <strong>TODO:</strong>
         <ul>
             <li>Generowanie dokumentów (umowa, aneks, protokół zdawczo odbiorczy)</li>
             <li>Lista wpłat</li>
-            <li>Dodawanie / edycja rachunków</li>
             <li>Edycja danych najmu (tylko podstwawoe informacje, jak czynsz, data trwania, okres wypowiedzenia)</li>
             <li>Historia edycji (może nowa zakładka)</li>
             <li>Generowanie numeru najmu konfiguracja: [maska]</li>
-            <li>Lista wynajmów: wyszukiwarka po numerze, wyszukiwanie po fladze "w trakcie wypowiedzenie"</li>
+            <li>Lista wynajmów: wyszukiwanie po fladze "w trakcie wypowiedzenie"</li>
+            <li>Posprawdzać uprawnienia (w szczegolności menu)</li>
         </ul>
     </div>
     
@@ -168,15 +169,9 @@
                     <div class="col-12 xl:col-7">
                         <table class="table">
                             <tr>
-                                <td class="font-medium" style="width: 140px">{{ $t('rent.tenant') }}:</td>
+                                <td class="font-medium" style="width: 165px">{{ $t('rent.tenant') }}:</td>
                                 <td class="font-italic">
                                     {{ rental.tenant.name }} <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal" severity="info"></Badge>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium" style="width: 140px">{{ $t('tenants.address') }}:</td>
-                                <td class="font-italic">
-                                    <Address :object="rental.tenant"/>
                                 </td>
                             </tr>
                             <tr v-if="rental.tenant.type == 'person' && rental.tenant.pesel">
@@ -245,7 +240,7 @@
                                 <td class="font-medium">{{ $t('rent.deposit') }}:</td>
                                 <td class="font-italic">
                                     <span v-if="rental.deposit">
-                                        {{ rental.deposit }} (opłacona)
+                                        {{ numeralFormat(rental.deposit, '0.00') }} (opłacona???)
                                     </span>
                                     <span v-else>-</span>
                                 </td>
@@ -269,7 +264,17 @@
                 </p>
                 
                 <div class="mt-5">
-                    <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.bills') }}</h5>
+                    <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.documents') }}</h5>
+                </div>
+                
+                <div class="mt-5">
+                    <div class="flex justify-content-between align-items-center mb-1">
+                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.bills') }}</h5>
+                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                            <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
+                        </div>
+                    </div>
+                
                     <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.bills.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.bills.totalPages" :rows="meta.bills.perPage" @page="changeBillsPage" :loading="meta.bills.loading" @row-click="rowBillsClick($event)">
                         <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                             <template #body="{ data }">

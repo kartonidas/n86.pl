@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DictionaryController;
+use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\NotificationController;
@@ -92,6 +93,13 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->post('/rental/{id}/terminate', [RentalController::class, "termination"])->where("id", "[0-9]+");
     $router->get('/rental/{id}/bills', [RentalController::class, "bills"])->where("id", "[0-9]+");
     
+    $router->put('/rental/{id}/bill', [RentalController::class, "billCreate"])->where("id", "[0-9]+");
+    $router->get('/rental/{id}/bill/{bid}', [RentalController::class, "billGet"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->put('/rental/{id}/bill/{bid}', [RentalController::class, "billUpdate"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->delete('/rental/{id}/bill/{bid}', [RentalController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->post('/rental/{id}/bill/{bid}/payment', [RentalController::class, "billPayment"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
+    $router->post('/rental/{id}/document', [RentalController::class, "generateTemplateDocument"])->where("id", "[0-9]+");
+    
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);
     $router->get('/dictionaries', [DictionaryController::class, "list"]);
@@ -165,6 +173,16 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/stats/task/{id}/daily', [StatsController::class, "taskDaily"])->where("id", "[0-9]+");
     $router->get('/stats/task/{id}/monthly', [StatsController::class, "taskMonthly"])->where("id", "[0-9]+");
     $router->get('/stats/total', [StatsController::class, "total"]);
+    
+    
+    // DOKUMENTY
+    $router->get('/documents/templates', [DocumentTemplateController::class, "list"])->where("id", "[0-9]+");
+    $router->get('/documents/templates/group', [DocumentTemplateController::class, "listGroupByType"])->where("id", "[0-9]+");
+    $router->put('/documents/template', [DocumentTemplateController::class, "create"]);
+    $router->get('/documents/template/{id}', [DocumentTemplateController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/documents/template/{id}', [DocumentTemplateController::class, "update"])->where("id", "[0-9]+");
+    $router->delete('/documents/template/{id}', [DocumentTemplateController::class, "delete"])->where("id", "[0-9]+");
+    
     
     // USUNIĘCIE KONTA
     $router->delete('removeAccount', [UserController::class, "removeAccount"]);

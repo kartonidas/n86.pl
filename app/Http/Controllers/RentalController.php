@@ -9,16 +9,21 @@ use Illuminate\Validation\Rule;
 
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\BillPaymentRequest;
 use App\Http\Requests\RentalBillRequest;
 use App\Http\Requests\RentalRequest;
+use App\Http\Requests\RentalTemplateDocumentRequest;
+use App\Http\Requests\StoreItemBillRequest;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\StoreRentRequest;
 use App\Http\Requests\StoreRentalRequest;
 use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\TerminationRequest;
+use App\Http\Requests\UpdateItemBillRequest;
 use App\Http\Requests\UpdateRentalRequest;
 use App\Libraries\Helper;
 use App\Models\Customer;
+use App\Models\DocumentTemplate;
 use App\Models\Item;
 use App\Models\ItemBill;
 use App\Models\Rental;
@@ -108,6 +113,9 @@ class RentalController extends Controller
                 $end = Helper::setDateTime($validated["search"]["end"], "23:59:59", true);
                 $rentals->where("end", "<=", $end);
             }
+            
+            if(!empty($validated["search"]["number"]))
+                $rentals->where("full_number", "LIKE", "%" . $validated["search"]["number"] . "%");
         }
         
         $total = $rentals->count();
@@ -336,5 +344,138 @@ class RentalController extends Controller
         ];
             
         return $out;
+    }
+    
+    public function billCreate(StoreItemBillRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $item = Item::find($rental->item_id);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $validated = $request->validated();
+        $validated["rental_id"] = $rental->id;
+        
+        $bill = DB::transaction(function () use($item, $validated) {
+            return $item->addBill($validated);
+        });
+        
+        return $bill->id;
+    }
+    
+    public function billGet(Request $request, int $rentalId, int $billId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->rental_id != $rental->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        $bill->bill_type = $bill->getBillType();
+        $bill->out_off_date = $bill->isOutOfDate();
+        
+        return $bill;
+    }
+    
+    public function billUpdate(UpdateItemBillRequest $request, int $rentalId, int $billId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->rental_id != $rental->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        if($bill->paid)
+            throw new InvalidStatus(__("Cannot edit paid bill"));
+        
+        $validated = $request->validated();
+        
+        foreach($validated as $field => $value)
+        {
+            if(!empty($value) && ($field == "payment_date" || $field == "source_document_date"))
+                $value = Helper::setDateTime($value, $field == "source_document_date" ? "12:00:00" : "23:59:59", true);
+            $bill->{$field} = $value;
+        }
+        $bill->save();
+        
+        return true;
+    }
+    
+    public function billDelete(Request $request, int $rentalId, int $billId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->rental_id != $rental->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        $bill->delete();
+        return true;
+    }
+    
+    public function billPayment(BillPaymentRequest $request, int $rentalId, int $billId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $bill = ItemBill::find($billId);
+        if(!$bill || $bill->rental_id != $rental->id)
+            throw new ObjectNotExist(__("Bill does not exist"));
+        
+        if($bill->paid)
+            throw new InvalidStatus(__("Bill is already paid"));
+        
+        $validated = $request->validated();
+        
+        switch($validated["type"])
+        {
+            case "deposit":
+                if(!$bill->rental_id)
+                    throw new InvalidStatus(__("Cannot charge the tenant"));
+                
+                $bill->deposit($validated["cost"], $validated["paid_date"], $validated["payment_method"]);
+            break;
+        
+            case "setpaid":
+                $bill->paid();
+            break;
+        }
+        
+        return true;
+    }
+    
+    public function generateTemplateDocument(RentalTemplateDocumentRequest $request)
+    {
+        $validated = $request->validated();
+        
+        $documentTemplate = DocumentTemplate::find($validated["template"]);
+        if(!$documentTemplate || $documentTemplate->type != $validated["type"])
+            throw new ObjectNotExist(__("Template does not exists"));
+        
+        
+        // TODO: podstawienie danych i wytgenerowanie gotowego tekstu
+        
+        
+        return $documentTemplate;
     }
 }

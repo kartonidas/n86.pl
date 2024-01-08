@@ -19,7 +19,7 @@ const model = ref([
             { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' }, regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i },
             { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' }, regex: /^\/app\/customer(s?)(\/(.*))?$/i },
             { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' }, regex: /^\/app\/tenant(s?)(\/(.*))?$/i },
-            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, regex: /^\/app\/document(s?)(\/(.*))?$/i },
+            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, regex: /^\/app\/document(s?)(\/(?!templates).*)?$/i },
             { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' }, regex: /^\/app\/fault(s?)(\/(.*))?$/i },
         ]
     },
@@ -44,6 +44,7 @@ const model = ref([
                     { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
                 ]
             },
+            { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, regex: /^\/app\/documents\/templates(\/(.*))?$/i },
             { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, regex: /^\/app\/user\/config$/i },
             { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' } , regex: /^\/app\/firm\-data(\/(.*))?$/i},
         ]

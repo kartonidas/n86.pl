@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\BalanceDocument;
 use App\Models\Customer;
+use App\Models\DocumentTemplate;
 use App\Models\Item;
 use App\Models\ItemCyclicalFee;
 use App\Models\Rental;
@@ -83,6 +84,9 @@ class GenAppValues extends Command
                 
             foreach(BalanceDocument::getAvailablePaymentMethods() as $type => $name)
                 $toJson[$lang]["payments"]["methods"][] = ["id" => $type, "name" => $name];
+                
+            foreach(DocumentTemplate::getTypes() as $type => $name)
+                $toJson[$lang]["documents"]["types"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

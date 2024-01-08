@@ -25,6 +25,7 @@ class RentalRequest extends ListRequest
             "search.status" => ["nullable", "string", Rule::in(array_keys(Rental::getStatuses()))],
             "search.start" => "nullable|date_format:Y-m-d",
             "search.end" => "nullable|date_format:Y-m-d",
+            "search.number" => "nullable|string",
         ]);
     }
 }

@@ -42,4 +42,32 @@ export default class RentalService {
     bills(rentalId) {
         return axios.get('api/v1/rental/' + rentalId + '/bills');
     }
+    
+    getBill(rentalId, billId) {
+        return axios.get('api/v1/rental/' + rentalId + '/bill/' + billId);
+    }
+    
+    createBill(rentalId, billData) {
+        return axios.put('api/v1/rental/' + rentalId + "/bill", removeNullValues(billData));
+    }
+   
+    updateBill(rentalId, billId, billData) {
+        return axios.put('api/v1/rental/' + rentalId + "/bill/" + billId, removeNullValues(billData));
+    }
+    
+    paymentBill(rentalId, billId, paymentData) {
+        return axios.post('api/v1/rental/' + rentalId + "/bill/" + billId + "/payment", paymentData);
+    }
+    
+    removeBill(rentalId, billId) {
+        return axios.delete('api/v1/rental/' + rentalId + "/bill/" + billId);
+    }
+    
+    generateTemplateDocument(rentalId, templateType, templateId) {
+        var documentData = {
+            type: templateType,
+            template: templateId
+        };
+        return axios.post('api/v1/rental/' + rentalId + "/document", documentData);
+    }
 }

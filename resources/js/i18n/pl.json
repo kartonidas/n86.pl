@@ -79,6 +79,19 @@
         "new_value" : "Nowa wartość",
         "updated" : "Wartość została zaktualizowana"
     },
+    "documents" : {
+        "add_template" : "Dodaj szablon",
+        "template_content" : "Zawartość dokumentu",
+        "template_deleted" : "Szablon został usunięty",
+        "template_empty_list" : "Brak zdefiniowanych szablonów",
+        "template_title" :  "Nazwa szablonu",
+        "template_type" : "Rodzaj dokumentu",
+        "template_added" : "Szablon został dodany",
+        "template_updated" : "Szablon został zaktualizowany",
+        "new_template" : "Nowy szablon",
+        "update_template" : "Aktualizuj szablon",
+        "show_template" : "Szczegóły szablonu"
+    },
     "items" : {
         "1months" : "miesiąc",
         "2months" : "miesiące",
@@ -194,6 +207,7 @@
         "customer_list" : "Lista klientów",
         "dashboard" : "Biurko",
         "dictionaries" : "Słowniki",
+        "document_templates" : "Szablony dokumentów",
         "documents" : "Dokumenty",
         "estate_list" : "Lista nieruchomości",
         "estates" : "Nieruchomości",
@@ -224,6 +238,7 @@
             "firm_data" : "Dane firmy",
             "dictionary_fees": "Opłaty zawarte w czynszu",
             "dictionary_bills": "Rodzaje rachunków",
+            "documents_template_new" : "Nowy szablon",
             "customers_list": "Lista klientów",
             "customers_edit": "Aktualizacja danych klienta",
             "customers_new": "Nowy klient",
@@ -235,6 +250,8 @@
             "documents_list" : "Lista dokumentów",
             "documents_edit" : "Edycja dokumentu",
             "documents_new" : "Nowy dokument",
+            "documents_template_list" : "Lista szablonów",
+            "documents_template_edit" : "Aktualizacja szablonu",
             "faults_list" : "Lista zgłoszonych usterek",
             "faults_edit" : "Edycja usterki",
             "faults_new" : "Nowa usterka",
@@ -262,7 +279,8 @@
             "items_new_bill" : "Nowy rachunek",
             "items_show_bill" : "Szczegóły rachunku",
             "items_update_bill" : "Edycja rachunku",
-            "items_bill_list" : "Lista rachunków"
+            "items_bill_list" : "Lista rachunków",
+            "rent_new_document" : "Nowy dokument"
         }
     },
     "permissions" : {
@@ -348,6 +366,9 @@
         "deposit" : "Kaucja",
         "details" : "Szczegóły",
         "document_date": "Data dokumentu",
+        "document_template" : "Szablon",
+        "document_type" : "Rodzaj dokumentu",
+        "documents" : "Dokumenty",
         "each_month": "każdego miesiąca",
         "empty_archive_list" : "Brak przeszłych wynajmów",
         "empty_list" : "Brak wynajmów",
@@ -356,6 +377,9 @@
         "estate" : "Nieruchomość",
         "first_month_different_amount" : "Inna kota w pierwszym miesiącu",
         "first_payment_date" : "Data pierwszej płatności",
+        "generate" : "Wygeneruj",
+        "load" : "Załaduj",
+        "content" : "Zawartość",
         "go_to_details" : "Przejdź do szczegółów",
         "indeterminate" : "Nieokreślony",
         "item_address": "Adres nieruchomości",
@@ -370,6 +394,7 @@
         "2days" : "dni",
         "3days" : "dni",
         "new_rent" : "Nowy wynajem",
+        "new_document" : "Nowy dokument",
         "number_of_months" : "Ilość miesięcy",
         "number_of_people" : "Ilość osób",
         "payment" : "Płatność",

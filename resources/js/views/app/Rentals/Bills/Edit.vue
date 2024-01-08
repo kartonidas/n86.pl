@@ -2,25 +2,23 @@
     import { appStore } from '@/store.js'
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
     
-    import TabMenu from './../_TabMenu.vue'
-    import BillForm from './_Form.vue'
-    import ItemService from '@/service/ItemService'
+    import BillForm from './../../Items/Bills/_Form.vue'
+    import RentalService from '@/service/RentalService'
+    import moment from 'moment'
     
     export default {
-        components: { BillForm, TabMenu },
-        props: {
-            item: { type: Object },
-        },
+        components: { BillForm },
         setup() {
             setMetaTitle('meta.title.items_update_bill')
             
-            const itemService = new ItemService()
+            const rentalService = new RentalService()
             return {
-                itemService,
+                rentalService,
             }
         },
         data() {
             return {
+                rental: {},
                 loading: true,
                 errors: [],
                 bill : {},
@@ -34,17 +32,32 @@
                 appStore().setToastMessage(null);
             }
             
-            this.itemService.getBill(this.$route.params.itemId, this.$route.params.billId)
+            this.rentalService.get(this.$route.params.rentalId)
                 .then(
                     (response) => {
-                        this.bill = response.data
-                        if(this.bill.payment_date && !(this.bill.payment_date instanceof Date))
-                            this.bill.payment_date = new Date(this.bill.payment_date)
-                            
-                        if(this.bill.source_document_date && !(this.bill.source_document_date instanceof Date))
-                            this.bill.source_document_date = new Date(this.bill.source_document_date)
-                        
-                        this.loading = false
+                        this.rental = response.data
+                        this.rentalService.getBill(this.$route.params.rentalId, this.$route.params.billId)
+                            .then(
+                                (response) => {
+                                    this.bill = response.data
+                                    if(this.bill.payment_date)
+                                        this.bill.payment_date = moment(this.bill.payment_date).format("YYYY-MM-DD")
+                                        
+                                    if(this.bill.source_document_date)
+                                        this.bill.source_document_date = moment(this.bill.source_document_date).format("YYYY-MM-DD")
+                                    
+                                    this.loading = false
+                                },
+                                (errors) => {
+                                    if(errors.response.status == 404)
+                                    {
+                                        appStore().setError404(errors.response.data.message);
+                                        this.$router.push({name: 'objectnotfound'})
+                                    }
+                                    else
+                                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                                }
+                            );
                     },
                     (errors) => {
                         if(errors.response.status == 404)
@@ -55,21 +68,19 @@
                         else
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
-                );
+                )
         },
         methods: {
             getBreadcrumbs() {
                 let items = [
                     {'label' : this.$t('menu.estates'), disabled : true },
-                    {'label' : this.$t('menu.estate_list'), route : { name : 'items'} },
+                    {'label' : this.$t('menu.rentals_list'), route : { name : 'rentals'}  },
                 ]
                 
-                if(this.item.name != undefined)
-                {
-                    items.push({'label' : this.item.name, route : { name : 'item_show'} })
-                    items.push({'label' : this.$t('items.bills'), route : { name : 'item_bills'} })
-                    items.push({'label' : this.$t('items.update_bill'), disabled : true })
-                }
+                if(this.rental.full_number != undefined)
+                    items.push({'label' : this.rental.full_number, route : { name : 'rental_show'} })
+                
+                items.push({'label' : this.$t('items.update_bill'), disabled : true })
                     
                 return items
             },
@@ -78,7 +89,7 @@
                 this.saving = true
                 this.errors = []
                 
-                this.itemService.updateBill(this.$route.params.itemId, this.$route.params.billId, bill)
+                this.rentalService.updateBill(this.$route.params.rentalId, this.$route.params.billId, bill)
                     .then(
                         (response) => {
                             this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.bill_updated'), life: 3000 });
@@ -93,7 +104,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_bill_show'})
+                this.$router.push({name: 'rental_bill_show'})
             }
         }
     }
@@ -104,7 +115,6 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
                 <BillForm @submit-form="updateBill" @back="back" :bill="bill" source="update" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>

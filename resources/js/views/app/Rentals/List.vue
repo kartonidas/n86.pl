@@ -185,30 +185,34 @@
                 <form v-on:submit.prevent="search">
                     <div class="formgrid grid mb-1">
                         <div class="col-12 md:col-4 mb-3">
+                            <InputText type="text" :placeholder="$t('rent.number')" class="w-full" v-model="meta.search.number"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-4 mb-3">
                             <InputText type="text" :placeholder="$t('rent.item_name')" class="w-full" v-model="meta.search.item_name"/>
                         </div>
                         <div class="col-12 md:col-4 mb-3">
                             <Dropdown v-model="meta.search.item_type" :showClear="this.meta.search.item_type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('rent.item_type')" class="w-full" />
                         </div>
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-3 mb-3">
                             <InputText type="text" :placeholder="$t('rent.item_address')" class="w-full" v-model="meta.search.item_address"/>
                         </div>
                         
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-3 mb-3">
                             <InputText type="text" :placeholder="$t('rent.tenant_name')" class="w-full" v-model="meta.search.tenant_name"/>
                         </div>
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-3 mb-3">
                             <Dropdown v-model="meta.search.tenant_type" :showClear="this.meta.search.tenant_type ? true : false" :options="tenant_types" optionLabel="name" optionValue="id" :placeholder="$t('rent.tenant_type')" class="w-full" />
                         </div>
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-3 mb-3">
                             <InputText type="text" :placeholder="$t('rent.tenant_address')" class="w-full" v-model="meta.search.tenant_address"/>
                         </div>
                         
-                        <div class="col-12 md:col-4 mb-3">
+                        <div class="col-12 md:col-3 mb-3">
                             <Dropdown v-model="meta.search.status" :showClear="this.meta.search.status ? true : false" :options="statuses" optionLabel="name" optionValue="id" :placeholder="$t('rent.status')" class="w-full" />
                         </div>
                         
-                        <div class="col-12 md:col-6 sm:col-9 mb-3">
+                        <div class="col-12 md:col-7 sm:col-9 mb-3">
                             <div class="flex">
                                 <div class="col-6 p-0 pr-1">
                                     <Calendar id="start" v-model="meta.search.start" :placeholder="$t('rent.start_date')" class="w-auto" showIcon/>

@@ -345,6 +345,26 @@
                     "name": "Przelew bankowy"
                 }
             ]
+        },
+        "documents": {
+            "types": [
+                {
+                    "id": "agreement",
+                    "name": "Umowa"
+                },
+                {
+                    "id": "annex",
+                    "name": "Aneks do umowy"
+                },
+                {
+                    "id": "handover_protocol",
+                    "name": "Protok\u00f3\u0142 zdawczo-odbiorczy"
+                },
+                {
+                    "id": "other",
+                    "name": "Inne"
+                }
+            ]
         }
     }
 }

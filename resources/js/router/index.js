@@ -359,11 +359,34 @@ const router = createRouter({
                             meta: {permission: 'rent:update'},
                         },
                         {
-                            path: '/app/rental/:rentalId/item/:itemId/bill/:billId/edit',
-                            name: 'rental_bill_edit',
-                            component: () => import('@/views/app/Items/Bills/Edit.vue'),
-                            props: true,
+                            path: '/app/rental/:rentalId/document/new',
+                            name: 'rental_document_new',
+                            component: () => import('@/views/app/Rentals/Documents/New.vue'),
                             meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/bill/new',
+                            name: 'rental_bill_new',
+                            component: () => import('@/views/app/Rentals/Bills/New.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/bill/edit/:billId',
+                            name: 'rental_bill_edit',
+                            component: () => import('@/views/app/Rentals/Bills/Edit.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/bill/:billId',
+                            name: 'rental_bill_show',
+                            component: () => import('@/views/app/Rentals/Bills/Show.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/bill/:billId/payment',
+                            name: 'rental_bill_payment',
+                            component: () => import('@/views/app/Rentals/Bills/Payment.vue'),
+                            meta: {permission: 'item:update'},
                         },
                     ]
                 },
@@ -375,6 +398,35 @@ const router = createRouter({
                             name: 'documents',
                             component: () => import('@/views/app/Documents/List.vue'),
                             meta: {permission: 'document:list'},
+                        },
+                        {
+                            path: '/app/documents/templates',
+                            children: [
+                                {
+                                    path: '/app/documents/templates',
+                                    name: 'documents_templates',
+                                    component: () => import('@/views/app/Documents/Templates/List.vue'),
+                                    meta: {permission: 'document:list'},
+                                },
+                                {
+                                    path: '/app/documents/templates/new',
+                                    name: 'documents_templates_new',
+                                    component: () => import('@/views/app/Documents/Templates/New.vue'),
+                                    meta: {permission: 'document:create'},
+                                },
+                                {
+                                    path: '/app/documents/templates/edit/:templateId',
+                                    name: 'documents_templates_edit',
+                                    component: () => import('@/views/app/Documents/Templates/Edit.vue'),
+                                    meta: {permission: 'document:update'},
+                                },
+                                {
+                                    path: '/app/documents/templates/:templateId',
+                                    name: 'documents_templates_show',
+                                    component: () => import('@/views/app/Documents/Templates/Show.vue'),
+                                    meta: {permission: 'document:list'},
+                                },
+                            ]
                         },
                     ]
                 },

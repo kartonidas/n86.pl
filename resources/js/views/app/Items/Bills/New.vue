@@ -66,6 +66,10 @@
                             this.saving = false
                         }
                     )
+            },
+            
+            back() {
+                this.$router.push({name: 'item_bills'})
             }
         }
     }
@@ -92,7 +96,7 @@
         <div class="col-12">
             <div class="card">
                 <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
-                <BillForm @submit-form="createBill" :bill="bill" :saving="saving" :errors="errors" />
+                <BillForm @submit-form="createBill" @back="back" :bill="bill" :saving="saving" :errors="errors" />
             </div>
         </div>
     </div>

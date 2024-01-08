@@ -8,7 +8,7 @@
     import moment from 'moment'
     
     export default {
-        emits: ['submit-form'],
+        emits: ['submit-form', 'back'],
         setup() {
             const itemService = new ItemService()
             const dictionaryService = new DictionaryService()
@@ -60,7 +60,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_bill_show'})
+                this.$emit('back')
             }
         },
         validations () {
