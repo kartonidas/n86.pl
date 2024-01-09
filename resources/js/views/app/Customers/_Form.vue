@@ -3,7 +3,7 @@
     import { useVuelidate } from '@vuelidate/core'
     import { required, email, helpers, maxLength } from '@/utils/i18n-validators'
     import { getValues } from '@/utils/helper'
-    import { pesel, nip } from '@/utils/validators'
+    import { pesel, nip, regon } from '@/utils/validators'
     
     import Countries from '@/data/countries.json'
     import CustomerService from '@/service/CustomerService'
@@ -36,10 +36,13 @@
                         city: { maxLengthValue: maxLength(120) },
                         zip: { maxLengthValue: maxLength(10) },
                         comments: { maxLengthValue: maxLength(5000) },
+                        document_number: { maxLengthValue: maxLength(100) },
+                        document_extra: { maxLengthValue: maxLength(250) },
                     }
                 }
                 
                 rules.customer.nip = state.customer.type == "firm" ? { nip: helpers.withMessage(this.$t('validations.nip'), nip) } : {};
+                rules.customer.regon = state.customer.type == "firm" ? { regon: helpers.withMessage(this.$t('validations.regon'), regon) } : {};
                 rules.customer.pesel = state.customer.type == "person" ? { pesel: helpers.withMessage(this.$t('validations.pesel'), pesel) } : {};
                 
                 rules.customer.contacts = {}
@@ -66,6 +69,7 @@
                 phoneCodes : PhoneCodes,
                 phoneCodesFilterFields : ['code', 'name'],
                 countries: Countries[this.$i18n.locale],
+                documentTypes: getValues('customer.documents'),
                 types: getValues('customer_types'),
                 v: useVuelidate(rules, state),
                 toValidate: toValidate
@@ -138,7 +142,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4">
+                    <div class="field col-12 mb-4" :class="[customer.type == 'firm' ? 'md:col-8' : 'md:col-4']">
                         <label for="name" v-required class="block text-900 font-medium mb-2">{{ labelCustomerTypeName }}</label>
                         <InputText id="name" type="text" :placeholder="$t('customers.name')" class="w-full" :class="{'p-invalid' : v.customer.name.$error}" v-model="customer.name" :disabled="saving || loading"/>
                         <div v-if="v.customer.name.$error">
@@ -146,11 +150,19 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-4 mb-4" v-if="customer.type == 'firm'">
+                    <div class="field col-12 md:col-6 mb-4" v-if="customer.type == 'firm'">
                         <label for="nip" class="block text-900 font-medium mb-2">{{ $t('customers.nip') }}</label>
                         <InputText id="nip" type="text" :placeholder="$t('customers.nip')" class="w-full" :class="{'p-invalid' : v.customer.nip.$error}" v-model="customer.nip" :disabled="saving || loading" />
                         <div v-if="v.customer.nip.$error">
                             <small class="p-error">{{ v.customer.nip.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4" v-if="customer.type == 'firm'">
+                        <label for="regon" class="block text-900 font-medium mb-2">{{ $t('customers.regon') }}</label>
+                        <InputText id="regon" type="text" :placeholder="$t('customers.regon')" :class="{'p-invalid' : v.customer.regon.$error}" class="w-full" v-model="customer.regon" :disabled="saving || loading" />
+                        <div v-if="v.customer.regon.$error">
+                            <small class="p-error">{{ v.customer.regon.$errors[0].$message }}</small>
                         </div>
                     </div>
                     
@@ -160,6 +172,25 @@
                         <div v-if="v.customer.pesel.$error">
                             <small class="p-error">{{ v.customer.pesel.$errors[0].$message }}</small>
                         </div>
+                    </div>
+                    <div class="field col-12 md:col-3 mb-4" v-if="customer.type == 'person'">
+                        <label for="document_type" class="block text-900 font-medium mb-2">{{ $t('customers.document_type') }}</label>
+                        <Dropdown id="type" v-model="customer.document_type" showClear :options="documentTypes" optionLabel="name" optionValue="id" :placeholder="$t('customers.document_type')" class="w-full" :disabled="saving || loading"/>
+                    </div>
+                    <div class="field col-12 md:col-3 mb-4" v-if="customer.type == 'person'">
+                        <label for="document_number" class="block text-900 font-medium mb-2">{{ $t('customers.document_number') }}</label>
+                        <InputText id="document_number" type="text" :placeholder="$t('customers.document_number')" class="w-full" :class="{'p-invalid' : v.customer.document_number.$error}" v-model="customer.document_number" :disabled="saving || loading" />
+                        <div v-if="v.customer.document_number.$error">
+                            <small class="p-error">{{ v.customer.document_number.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    <div class="field col-12 md:col-6 mb-4" v-if="customer.type == 'person'">
+                        <label for="document_extra" class="block text-900 font-medium mb-2">{{ $t('customers.document_extra') }}</label>
+                        <InputText id="document_extra" type="text" :placeholder="$t('customers.document_extra')" class="w-full" :class="{'p-invalid' : v.customer.document_extra.$error}" v-model="customer.document_extra" :disabled="saving || loading" />
+                        <div v-if="v.customer.document_extra.$error">
+                            <small class="p-error">{{ v.customer.document_extra.$errors[0].$message }}</small>
+                        </div>
+                        <small>{{ $t("customers.document_extra_help") }}</small>
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4">

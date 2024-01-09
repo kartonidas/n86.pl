@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\DocumentTemplateController;
@@ -99,6 +100,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/rental/{id}/bill/{bid}', [RentalController::class, "billDelete"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->post('/rental/{id}/bill/{bid}/payment', [RentalController::class, "billPayment"])->where("id", "[0-9]+")->where("bid", "[0-9]+");
     $router->post('/rental/{id}/document', [RentalController::class, "generateTemplateDocument"])->where("id", "[0-9]+");
+    $router->put('/rental/{id}/document', [RentalController::class, "addDocument"])->where("id", "[0-9]+");
+    $router->get('/rental/{id}/documents', [RentalController::class, "getDocuments"])->where("id", "[0-9]+");
+    $router->delete('/rental/{id}/document/{did}', [RentalController::class, "deleteDocument"])->where("id", "[0-9]+")->where("did", "[0-9]+");
+    $router->get('/rental/{id}/document/{did}/pdf', [RentalController::class, "getDocumentPdf"])->where("id", "[0-9]+")->where("did", "[0-9]+");
     
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);
@@ -182,6 +187,12 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/documents/template/{id}', [DocumentTemplateController::class, "get"])->where("id", "[0-9]+");
     $router->put('/documents/template/{id}', [DocumentTemplateController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/documents/template/{id}', [DocumentTemplateController::class, "delete"])->where("id", "[0-9]+");
+    
+    
+    
+    // KONFIGURACJA
+    $router->get('/config', [ConfigController::class, "get"]);
+    $router->put('/config', [ConfigController::class, "update"]);
     
     
     // USUNIĘCIE KONTA

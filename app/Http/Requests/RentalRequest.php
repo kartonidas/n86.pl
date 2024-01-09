@@ -22,7 +22,7 @@ class RentalRequest extends ListRequest
             "search.tenant_name" => "nullable|string",
             "search.tenant_address" => "nullable|string",
             "search.tenant_type" => ["nullable", "string", Rule::in([Customer::TYPE_FIRM, Customer::TYPE_PERSON])],
-            "search.status" => ["nullable", "string", Rule::in(array_keys(Rental::getStatuses()))],
+            "search.status" => ["nullable", "string", Rule::in(array_keys(Rental::getStatuses(true)))],
             "search.start" => "nullable|date_format:Y-m-d",
             "search.end" => "nullable|date_format:Y-m-d",
             "search.number" => "nullable|string",

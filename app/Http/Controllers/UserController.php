@@ -988,19 +988,12 @@ class UserController extends Controller
             "firstname" => "required|max:100",
             "lastname" => "required|max:100",
             "email" => "required|email",
-            "nip" => "nullable",
             "name" => "nullable|max:200",
-            "street" => "nullable|max:80",
-            "house_no" => "nullable|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "nullable|max:120",
-            "zip" => "nullable|max:10",
-            "country" => ["nullable", Rule::in(Country::getAllowedCodes())],
             "phone" => "nullable|max:50",
         ];
         
         $validate = [];
-        $updateFields = ["firstname", "lastname", "email", "nip", "name", "street", "house_no", "apartment_no", "city", "zip", "country", "phone"];
+        $updateFields = ["firstname", "lastname", "email", "name", "phone"];
         foreach($updateFields as $field)
         {
             if($request->has($field))

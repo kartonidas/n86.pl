@@ -70,4 +70,27 @@ export default class RentalService {
         };
         return axios.post('api/v1/rental/' + rentalId + "/document", documentData);
     }
+    
+    generateDocument(rentalId, documentData) {
+        return axios.put('api/v1/rental/' + rentalId + "/document", documentData);
+    }
+    
+    getDocuments(rentalId, size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get('api/v1/rental/' + rentalId + "/documents", { params : removeNullValues(data) });
+    }
+    
+    removeDocument(rentalId, documentId) {
+        return axios.delete('api/v1/rental/' + rentalId + "/document/" + documentId);
+    }
+    
+    getPDFDocument(rentalId, documentId) {
+        return axios.get('api/v1/rental/' + rentalId + "/document/" + documentId + "/pdf", {'responseType': 'blob'});
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\DocumentTemplate;
 use App\Models\Item;
 use App\Models\ItemCyclicalFee;
+use App\Models\Numbering;
 use App\Models\Rental;
 
 class GenAppValues extends Command
@@ -73,8 +74,11 @@ class GenAppValues extends Command
             foreach(Rental::getPaymentDays() as $type => $name)
                 $toJson[$lang]["rental"]["payment_days"][] = ["id" => $type, "name" => $name];
                 
-            foreach(Rental::getStatuses() as $type => $name)
+            foreach(Rental::getStatuses(true) as $type => $name)
                 $toJson[$lang]["rental"]["statuses"][] = ["id" => $type, "name" => $name];
+                
+            foreach(Numbering::getNumberingContinuation() as $type => $name)
+                $toJson[$lang]["rental"]["mask_numbering_continuation"][] = ["id" => $type, "name" => $name];
                 
             foreach(ItemCyclicalFee::getPaymentDays() as $type => $name)
                 $toJson[$lang]["cyclical_fee"]["payment_days"][] = ["id" => $type, "name" => $name];

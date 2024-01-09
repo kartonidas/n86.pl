@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('title', 200);
             $table->longText('content');
             $table->timestamps();
+            
+            $table->index('uuid');
         });
     }
 

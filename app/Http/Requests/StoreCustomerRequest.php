@@ -31,9 +31,17 @@ class StoreCustomerRequest extends FormRequest
         ];
         
         if(($this->type ?? "") == Customer::TYPE_PERSON)
+        {
             $rules["pesel"] = ["sometimes", "max:15", new \App\Rules\Pesel];
+            $rules["document_type"] = ["sometimes", Rule::in(array_keys(Customer::getDocumentTypes()))];
+            $rules["document_number"] = ["sometimes", "max:100"];
+            $rules["document_extra"] = ["sometimes", "max:250"];
+        }
         elseif(($this->type ?? "") == Customer::TYPE_FIRM)
+        {
             $rules["nip"] = ["sometimes", "max:20", new \App\Rules\Nip];
+            $rules["regon"] = ["sometimes", "max:15", new \App\Rules\Regon];
+        }
             
         $rules["contacts.email"] = ["sometimes", "array", new \App\Rules\ContactEmail];
         $rules["contacts.phone"] = ["sometimes", "array", new \App\Rules\ContactPhone];

@@ -94,7 +94,11 @@ class CustomerController extends Controller
         $customer->zip = $validated["zip"] ?? null;
         $customer->country = $validated["country"] ?? null;
         $customer->nip = $validated["nip"] ?? null;
+        $customer->regon = $validated["regon"] ?? null;
         $customer->pesel = $validated["pesel"] ?? null;
+        $customer->document_type = $validated["document_type"] ?? null;
+        $customer->document_number = $validated["document_number"] ?? null;
+        $customer->document_extra = $validated["document_extra"] ?? null;
         $customer->comments = $validated["comments"] ?? null;
         $customer->send_sms = $validated["send_sms"] ?? 0;
         $customer->send_email = $validated["send_email"] ?? 0;

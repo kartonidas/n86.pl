@@ -160,7 +160,7 @@
                 <div class="mb-4">
                     <div class="p-fluid">
                         <div class="formgrid grid">
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
+                            <div class="field col-12 md:col-4 sm:col-6 mb-4">
                                 <label for="firstname" v-required class="block text-900 font-medium mb-2">{{ $t('profile.firstname') }}</label>
                                 <InputText id="firstname" type="text" :placeholder="$t('profile.firstname')" class="w-full" :class="{'p-invalid' : v$.firmdata.firstname.$error}" v-model="firmdata.firstname" :disabled="loading || saving"/>
                                 <div v-if="v$.firmdata.firstname.$error">
@@ -168,7 +168,7 @@
                                 </div>
                             </div>
                             
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
+                            <div class="field col-12 md:col-4 sm:col-6 mb-4">
                                 <label for="lastname" v-required class="block text-900 font-medium mb-2">{{ $t('profile.lastname') }}</label>
                                 <InputText id="lastname" type="text" :placeholder="$t('profile.lastname')" class="w-full" :class="{'p-invalid' : v$.firmdata.lastname.$error}" v-model="firmdata.lastname" :disabled="loading || saving"/>
                                 <div v-if="v$.firmdata.lastname.$error">
@@ -176,25 +176,7 @@
                                 </div>
                             </div>
                             
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                <label for="email" v-required class="block text-900 font-medium mb-2">{{ $t('profile.email') }}</label>
-                                <InputText id="email" type="text" :placeholder="$t('profile.email')" class="w-full" :class="{'p-invalid' : v$.firmdata.email.$error}" v-model="firmdata.email" :disabled="loading || saving"/>
-                                <div v-if="v$.firmdata.email.$error">
-                                    <small class="p-error">{{ v$.firmdata.email.$errors[0].$message }}</small>
-                                </div>
-                            </div>
-                            
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                <label for="phone" class="block text-900 font-medium mb-2">{{ $t('profile.phone') }}</label>
-                                <InputText id="phone" type="text" :placeholder="$t('profile.phone')" class="w-full" v-model="firmdata.phone" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 sm:col-6 mb-4">
-                                <label for="nip" class="block text-900 font-medium mb-2">{{ $t('profile.nip') }}</label>
-                                <InputText id="nip" type="text" :placeholder="$t('profile.nip')" class="w-full" v-model="firmdata.nip" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 sm:col-6 mb-4">
+                            <div class="field col-12 md:col-4 sm:col-6 mb-4">
                                 <label for="name" v-required class="block text-900 font-medium mb-2">{{ $t('profile.firm_name') }}</label>
                                 <InputText id="name" type="text" :placeholder="$t('profile.firm_name')" :class="{'p-invalid' : v$.firmdata.name.$error}" class="w-full" v-model="firmdata.name" :disabled="loading || saving"/>
                                 <div v-if="v$.firmdata.name.$error">
@@ -203,33 +185,16 @@
                             </div>
                             
                             <div class="field col-12 md:col-6 mb-4">
-                                <label for="street" class="block text-900 font-medium mb-2">{{ $t('profile.street') }}</label>
-                                <InputText id="street" type="text" :placeholder="$t('profile.street')" class="w-full" v-model="firmdata.street" :disabled="loading || saving"/>
+                                <label for="email" v-required class="block text-900 font-medium mb-2">{{ $t('profile.email') }}</label>
+                                <InputText id="email" type="text" :placeholder="$t('profile.email')" class="w-full" :class="{'p-invalid' : v$.firmdata.email.$error}" v-model="firmdata.email" :disabled="loading || saving"/>
+                                <div v-if="v$.firmdata.email.$error">
+                                    <small class="p-error">{{ v$.firmdata.email.$errors[0].$message }}</small>
+                                </div>
                             </div>
                             
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                <label for="house_no" class="block text-900 font-medium mb-2">{{ $t('profile.house_no') }}</label>
-                                <InputText id="house_no" type="text" :placeholder="$t('profile.house_no')" class="w-full" v-model="firmdata.house_no" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 md:col-3 sm:col-6 mb-4">
-                                <label for="apartment_no" class="block text-900 font-medium mb-2">{{ $t('profile.apartment_no') }}</label>
-                                <InputText id="apartment_no" type="text" :placeholder="$t('profile.apartment_no')" class="w-full" v-model="firmdata.apartment_no" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 md:col-4 sm:col-12 mb-4">
-                                <label for="country" class="block text-900 font-medium mb-2">{{ $t('profile.country') }}</label>
-                                <Dropdown id="country" v-model="firmdata.country" filter :options="countries" optionLabel="name" optionValue="code" :placeholder="$t('profile.select_country')" class="w-full" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 md:col-3 sm:col-4 mb-4">
-                                <label for="zip" class="block text-900 font-medium mb-2">{{ $t('profile.zip') }}</label>
-                                <InputText id="zip" type="text" :placeholder="$t('profile.zip')" class="w-full" v-model="firmdata.zip" :disabled="loading || saving"/>
-                            </div>
-                            
-                            <div class="field col-12 md:col-5 sm:col-8 mb-4">
-                                <label for="city" class="block text-900 font-medium mb-2">{{ $t('profile.city') }}</label>
-                                <InputText id="city" type="text" :placeholder="$t('profile.city')" class="w-full" v-model="firmdata.city" :disabled="loading || saving"/>
+                            <div class="field col-12 md:col-6 mb-4">
+                                <label for="phone" class="block text-900 font-medium mb-2">{{ $t('profile.phone') }}</label>
+                                <InputText id="phone" type="text" :placeholder="$t('profile.phone')" class="w-full" v-model="firmdata.phone" :disabled="loading || saving"/>
                             </div>
                         </div>
                     </div>

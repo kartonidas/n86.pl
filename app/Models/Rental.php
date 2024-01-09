@@ -16,6 +16,7 @@ use App\Exceptions\ObjectNotExist;
 use App\Libraries\Data;
 use App\Libraries\Helper;
 use App\Models\Balances;
+use App\Models\Config;
 use App\Models\ItemBill;
 use App\Traits\NumberingTrait;
 
@@ -102,14 +103,19 @@ class Rental extends Model
         ];
     }
     
-    public static function getStatuses()
+    public static function getStatuses($duringTermination = false)
     {
-        return [
+        $statuses = [
             self::STATUS_ARCHIVE => __("Archive"),
             self::STATUS_CURRENT => __("Current"),
             self::STATUS_WAITING => __("Waiting"),
             self::STATUS_TERMINATION => __("Termination"),
         ];
+        
+        if($duringTermination)
+            $statuses["during_termination"] = __("During termination");
+        
+        return $statuses;
     }
     
     public function getMaskNumber()
@@ -120,7 +126,7 @@ class Rental extends Model
     public static function getMaskNumberStatic()
     {
         $out = [];
-        //$config = Config::getConfig("app");
+        $config = Config::getConfig("basic");
         $out["mask"] = !empty($config["rental_numbering_mask"]) ? $config["rental_numbering_mask"] : config("params.default_mask.rental.mask");
         $out["continuation"] = !empty($config["rental_numbering_continuation"]) ? $config["rental_numbering_continuation"] : config("params.default_mask.rental.continuation");
         return $out;

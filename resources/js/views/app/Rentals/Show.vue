@@ -24,8 +24,11 @@
         data() {
             return {
                 bills: [],
+                documents: [],
                 displayBillConfirmation: false,
                 deleteBillId: null,
+                displayDocumentConfirmation: false,
+                deleteDocumentId: null,
                 errors: [],
                 rental: {
                     item: {},
@@ -39,6 +42,14 @@
                         {'label' : this.$t('rent.details'), disabled : true },
                     ],
                     bills: {
+                        search: {},
+                        currentPage: 1,
+                        perPage: this.rowsPerPage,
+                        loading: false,
+                        totalRecords: null,
+                        totalPages: null,
+                    },
+                    documents: {
                         search: {},
                         currentPage: 1,
                         perPage: this.rowsPerPage,
@@ -74,6 +85,7 @@
                 );
                 
             this.getBillList()
+            this.getDocumentList()
         },
         methods: {
             terminate() {
@@ -127,12 +139,88 @@
                 this.displayBillConfirmation = false
             },
             
+            getDocumentList() {
+                this.meta.loading = true
+                
+                this.rentalService.getDocuments(this.$route.params.rentalId, this.meta.documents.perPage, this.meta.documents.currentPage, null, null, this.meta.documents.search)
+                    .then(
+                        (response) => {
+                            this.documents = response.data.data
+                            this.meta.documents.totalRecords = response.data.total_rows
+                            this.meta.documents.totalPages = response.data.total_pages
+                            this.meta.documents.loading = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    );
+            },
+            
+            changeDocumentsPage(event) {
+                this.meta.documents.currentPage = event["page"] + 1;
+                this.getDocumentList()
+            },
+            
+            openDocumentConfirmation(id) {
+                this.displayDocumentConfirmation = true
+                this.deleteDocumentId = id
+            },
+            
+            confirmDeleteDocument() {
+                this.rentalService.removeDocument(this.$route.params.rentalId, this.deleteDocumentId)
+                    .then(
+                        (response) => {
+                            this.getDocumentList()
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('rent.document_deleted'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    )
+                
+                this.displayDocumentConfirmation = false
+                this.deleteDocumentId = null
+            },
+            
+            closeDocumentConfirmation() {
+                this.displayDocumentConfirmation = false
+            },
+            
             rowBillsClick(event) {
                 this.$router.push({name: 'rental_bill_show', params: {billId : event.data.id}})
             },
             
             newBill() {
                 this.$router.push({name: 'rental_bill_new'})
+            },
+            
+            newDocument() {
+                this.$router.push({name: 'rental_document_new'})
+            },
+            
+            downloadPDF(documentId) {
+                this.rentalService.getPDFDocument(this.$route.params.rentalId, documentId)
+                    .then(
+                        (response) => {
+                            const contentDisposition = response.headers['content-disposition'];
+                            let fileName = 'file.pdf';
+                            if (contentDisposition) {
+                                const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+                                if (fileNameMatch.length === 2)
+                                    fileName = fileNameMatch[1];
+                            }
+                            
+                            var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            var fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', fileName);
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                        },
+                        (errors) => {
+                            
+                        }
+                    )
             }
         },
     }
@@ -144,12 +232,10 @@
     <div class="mt-5 hidden">
         <strong>TODO:</strong>
         <ul>
-            <li>Generowanie dokumentów (umowa, aneks, protokół zdawczo odbiorczy)</li>
+            <li>Aktualizacja dokumentów</li>
             <li>Lista wpłat</li>
             <li>Edycja danych najmu (tylko podstwawoe informacje, jak czynsz, data trwania, okres wypowiedzenia)</li>
             <li>Historia edycji (może nowa zakładka)</li>
-            <li>Generowanie numeru najmu konfiguracja: [maska]</li>
-            <li>Lista wynajmów: wyszukiwanie po fladze "w trakcie wypowiedzenie"</li>
             <li>Posprawdzać uprawnienia (w szczegolności menu)</li>
         </ul>
     </div>
@@ -171,7 +257,13 @@
                             <tr>
                                 <td class="font-medium" style="width: 165px">{{ $t('rent.tenant') }}:</td>
                                 <td class="font-italic">
-                                    {{ rental.tenant.name }} <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal" severity="info"></Badge>
+                                    <router-link v-if="rental.tenant.id" target="_blank" :to="{name: 'tenant_show', params: { tenantId : rental.tenant.id }}">
+                                        {{ rental.tenant.name }}
+                                    </router-link>
+                                    <span v-else>
+                                        {{ rental.tenant.name }}
+                                    </span>
+                                    <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal ml-1" severity="info"></Badge>
                                 </td>
                             </tr>
                             <tr v-if="rental.tenant.type == 'person' && rental.tenant.pesel">
@@ -195,7 +287,13 @@
                             <tr>
                                 <td class="font-medium" style="width: 165px">{{ $t('rent.estate') }}:</td>
                                 <td class="font-italic">
-                                    {{ rental.item.name }} <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal" severity="info"></Badge>
+                                    <router-link v-if="rental.item.id" target="_blank" :to="{name: 'item_show', params: { itemId : rental.item.id }}">
+                                        {{ rental.item.name }}
+                                    </router-link>
+                                    <span v-else>
+                                        {{ rental.item.name }}
+                                    </span>
+                                    <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal ml-1" severity="info"></Badge>
                                 </td>
                             </tr>
                             <tr>
@@ -264,7 +362,39 @@
                 </p>
                 
                 <div class="mt-5">
-                    <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.documents') }}</h5>
+                    <div class="flex justify-content-between align-items-center mb-1">
+                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.documents') }}</h5>
+                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                            <Button icon="pi pi-plus" :label="$t('items.add_document_short')" size="small" v-tooltip.left="$t('items.add_document')" @click="newDocument" class="text-center"></Button>
+                        </div>
+                    </div>
+                    
+                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
+                        <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
+                        <Column class="text-center" style="min-width: 60px; width: 60px;">
+                            <template #body="{ data }">
+                                <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
+                            </template>
+                        </Column>
+                        <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
+                            <template #body="{ data }">
+                                <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openDocumentConfirmation(data.id)"/>
+                            </template>
+                        </Column>
+                        <template #empty>
+                            {{ $t('rent.empty_documents_list') }}
+                        </template>
+                    </DataTable>
+                    <Dialog :header="$t('app.confirmation')" v-model:visible="displayDocumentConfirmation" :style="{ width: '450px' }" :modal="true">
+                        <div class="flex align-items-center justify-content-center">
+                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                            <span>{{ $t('app.remove_object_confirmation') }}</span>
+                        </div>
+                        <template #footer>
+                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closeDocumentConfirmation" class="p-button-text" />
+                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteDocument" class="p-button-danger" autofocus />
+                        </template>
+                    </Dialog>
                 </div>
                 
                 <div class="mt-5">
@@ -329,15 +459,15 @@
                         </template>
                     </DataTable>
                     <Dialog :header="$t('app.confirmation')" v-model:visible="displayBillConfirmation" :style="{ width: '450px' }" :modal="true">
-                    <div class="flex align-items-center justify-content-center">
-                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                        <span>{{ $t('app.remove_object_confirmation') }}</span>
-                    </div>
-                    <template #footer>
-                        <Button :label="$t('app.no')" icon="pi pi-times" @click="closeBillConfirmation" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
-                    </template>
-                </Dialog>
+                        <div class="flex align-items-center justify-content-center">
+                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                            <span>{{ $t('app.remove_object_confirmation') }}</span>
+                        </div>
+                        <template #footer>
+                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closeBillConfirmation" class="p-button-text" />
+                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
+                        </template>
+                    </Dialog>
                 </div>
             </div>
         </div>

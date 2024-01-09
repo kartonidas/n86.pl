@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('config', function (Blueprint $table) {
             $table->id();
             $table->string('uuid', 64);
-            $table->integer('item_id');
-            $table->integer('rental_id');
-            $table->integer('user_id');
-            $table->string('file');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->string('group', 50);
+            $table->string('key', 100);
+            $table->text('content');
             
-            $table->index('uuid');
+            $table->index(['uuid', 'group']);
         });
     }
 
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('config');
     }
 };

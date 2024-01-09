@@ -4,11 +4,12 @@
     import { required, helpers, maxLength } from '@/utils/i18n-validators'
     import { getValues } from '@/utils/helper'
     import Editor from 'primevue/editor';
+    import EditorToolbar from './../../_partials/EditorToolbar.vue'
     
     import DocumentTemplateService from '@/service/DocumentTemplateService'
     
     export default {
-        components: { Editor },
+        components: { Editor, EditorToolbar },
         emits: ['submit-form', 'back'],
         setup() {
             const documentTemplateService = new DocumentTemplateService()
@@ -96,7 +97,9 @@
                     <div class="field col-12 mb-4">
                         <label for="content" v-required class="block text-900 font-medium mb-2">{{ $t('documents.template_content') }}</label>
                         <Editor v-model="template.content" editorStyle="height: 320px">
-                            
+                            <template v-slot:toolbar>
+                                <EditorToolbar/>
+                            </template>
                         </Editor>
                         <div v-if="v.template.content.$error">
                             <small class="p-error">{{ v.template.content.$errors[0].$message }}</small>

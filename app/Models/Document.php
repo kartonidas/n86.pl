@@ -12,4 +12,6 @@ class Document extends Model
     use \App\Traits\UuidTrait {
         boot as traitBoot;
     }
+    
+    protected $hidden = ["uuid"];
 }

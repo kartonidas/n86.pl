@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Libraries\TemplateManager;
+use App\Models\Rental;
 use App\Models\User;
 
 class DocumentTemplate extends Model
@@ -31,5 +33,11 @@ class DocumentTemplate extends Model
             self::TYPE_HANDOVER => __("Handover protocol"),
             self::TYPE_OTHER => __("Other")
         ];
+    }
+    
+    public function generateDocument(Rental $rental)
+    {
+        $manager = TemplateManager::getTemplate($rental);
+        return $manager->generateHtml($this->content);
     }
 }

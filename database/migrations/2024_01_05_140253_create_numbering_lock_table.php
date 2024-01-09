@@ -17,6 +17,8 @@ return new class extends Migration
             $table->enum('type', ['rental']);
             $table->integer('val');
             $table->timestamps();
+            
+            $table->index('uuid');
         });
     }
 

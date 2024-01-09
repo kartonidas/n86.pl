@@ -40,7 +40,7 @@ const model = ref([
                 icon: 'pi pi-fw pi-book',
                 access: hasAccess('dictionary:list'),
                 items: [
-                    { label: t('menu.fee_include_rent'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'fees'} }, regex: /^\/app\/dictionary\/fee(s?)(\/(.*))?$/i },
+                    //{ label: t('menu.fee_include_rent'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'fees'} }, regex: /^\/app\/dictionary\/fee(s?)(\/(.*))?$/i },
                     { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
                 ]
             },

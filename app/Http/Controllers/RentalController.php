@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -12,9 +14,11 @@ use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\BillPaymentRequest;
 use App\Http\Requests\RentalBillRequest;
 use App\Http\Requests\RentalRequest;
+use App\Http\Requests\RentalDocumentsRequest;
 use App\Http\Requests\RentalTemplateDocumentRequest;
 use App\Http\Requests\StoreItemBillRequest;
 use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\StoreRentalDocumentRequest;
 use App\Http\Requests\StoreRentRequest;
 use App\Http\Requests\StoreRentalRequest;
 use App\Http\Requests\StoreTenantRequest;
@@ -22,7 +26,9 @@ use App\Http\Requests\TerminationRequest;
 use App\Http\Requests\UpdateItemBillRequest;
 use App\Http\Requests\UpdateRentalRequest;
 use App\Libraries\Helper;
+use App\Libraries\TemplateManager;
 use App\Models\Customer;
+use App\Models\Document;
 use App\Models\DocumentTemplate;
 use App\Models\Item;
 use App\Models\ItemBill;
@@ -52,7 +58,12 @@ class RentalController extends Controller
             if(!empty($validated["search"]["tenant_id"]))
                 $rentals->where("tenant_id", $validated["search"]["tenant_id"]);
             if(!empty($validated["search"]["status"]))
-                $rentals->where("status", $validated["search"]["status"]);
+            {
+                if($validated["search"]["status"] == "during_termination")
+                    $rentals->where("status", Rental::STATUS_CURRENT)->where("termination", 1);
+                else
+                    $rentals->where("status", $validated["search"]["status"]);
+            }
                 
             if(!empty($validated["search"]["item_name"]) || !empty($validated["search"]["item_address"]) || !empty($validated["search"]["item_type"]))
             {
@@ -464,18 +475,123 @@ class RentalController extends Controller
         return true;
     }
     
-    public function generateTemplateDocument(RentalTemplateDocumentRequest $request)
+    public function generateTemplateDocument(RentalTemplateDocumentRequest $request, int $rentalId)
     {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
         $validated = $request->validated();
         
         $documentTemplate = DocumentTemplate::find($validated["template"]);
         if(!$documentTemplate || $documentTemplate->type != $validated["type"])
             throw new ObjectNotExist(__("Template does not exists"));
         
+        $tenant = $rental->getTenant();
+        $item = $rental->getItem();
+        $title = DocumentTemplate::getTypes()[$validated["type"]];
+        $title .= ": " . $rental->full_number;
+        if($tenant) $title .= ", " . $tenant->name;
+        if($item) $title .= ", " . $item->name;
         
-        // TODO: podstawienie danych i wytgenerowanie gotowego tekstu
+        return [
+            "content" => $documentTemplate->generateDocument($rental),
+            "title" => $title
+        ];
+    }
+    
+    public function addDocument(StoreRentalDocumentRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
         
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
         
-        return $documentTemplate;
+        $validated = $request->validated();
+        
+        $document = new Document;
+        $document->item_id = $rental->item_id;
+        $document->rental_id = $rental->id;
+        $document->user_id = Auth::user()->id;
+        $document->title = $validated["title"];
+        $document->content = $validated["content"];
+        $document->type = $validated["type"];
+        $document->save();
+        
+        return $document->id;
+    }
+    
+    public function getDocuments(RentalDocumentsRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $validated = $request->validated();
+        
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $documents = Document::select("id", "item_id", "rental_id", "title", "type", "user_id", "created_at", "updated_at");
+        
+        $total = $documents->count();
+        
+        $orderBy = $this->getOrderBy($request, Document::class, "created_at,desc");
+        $documents = $documents->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+        
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $documents,
+        ];
+            
+        return $out;
+    }
+    
+    public function deleteDocument(Request $request, int $rentalId, int $documentId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $document = Document::find($documentId);
+        if(!$document || $document->rental_id != $rentalId)
+            throw new ObjectNotExist(__("Document does not exist"));
+        
+        $document->delete();
+        
+        return true;
+    }
+    
+    public function getDocumentPdf(Request $request, int $rentalId, int $documentId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $document = Document::find($documentId);
+        if(!$document || $document->rental_id != $rentalId)
+            throw new ObjectNotExist(__("Document does not exist"));
+        
+        $manager = TemplateManager::getTemplate($rental);
+        $html = $manager->generateHtml($document->content);
+        
+        $pdf = PDF::loadView("pdf.rental_document", ["content" => $html]);
+        $pdf->getMpdf()->SetTitle(Helper::__no_pl($document->title) . ".pdf");
+        $pdf->stream(Helper::__no_pl($document->title) . ".pdf");
     }
 }

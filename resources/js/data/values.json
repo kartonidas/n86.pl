@@ -213,6 +213,24 @@
                 {
                     "id": "termination",
                     "name": "Wypowiedziany"
+                },
+                {
+                    "id": "during_termination",
+                    "name": "W trakcie wypowiedzenia"
+                }
+            ],
+            "mask_numbering_continuation": [
+                {
+                    "id": "month",
+                    "name": "miesi\u0119czna"
+                },
+                {
+                    "id": "year",
+                    "name": "roczna"
+                },
+                {
+                    "id": "continuation",
+                    "name": "ci\u0105g\u0142a"
                 }
             ]
         },

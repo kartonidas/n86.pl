@@ -1,15 +1,16 @@
 <script>
-    import { setMetaTitle, getValues } from '@/utils/helper'
+    import { setMetaTitle, getValues, getResponseErrors } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
-    import { required } from '@/utils/i18n-validators'
+    import { required, maxLength } from '@/utils/i18n-validators'
     import { appStore } from '@/store.js'
     
     import Editor from 'primevue/editor';
+    import EditorToolbar from './../../_partials/EditorToolbar.vue'
     import RentalService from '@/service/RentalService'
     import DocumentTemplateService from '@/service/DocumentTemplateService'
     
     export default {
-        components: { Editor },
+        components: { Editor, EditorToolbar },
         setup() {
             setMetaTitle('meta.title.rent_new_document')
             
@@ -104,6 +105,7 @@
                     then(
                         (response) => {
                             this.document.content = response.data.content
+                            this.document.title = response.data.title
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -112,8 +114,27 @@
             },
             async submitForm() {
                 const result = await this.v.$validate()
-                if (result)
-                    alert('submit')
+                if (result) {
+                    this.saving = true;
+                    this.rentalService.generateDocument(this.$route.params.rentalId, this.document)
+                        .then(
+                            (response) => {
+                                this.saving = false;
+                                appStore().setToastMessage({
+                                    severity : 'success',
+                                    summary : this.$t('app.success'),
+                                    detail : this.$t('rent.document_added'),
+                                });
+                                
+                                this.$router.push({name: 'rental_show'})
+                            },
+                            (errors) => {
+                                this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                                this.errors = getResponseErrors(errors)
+                                this.saving = false;
+                            }
+                        )
+                }
                 else
                     this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
@@ -129,6 +150,7 @@
                 document: {
                     type: { required },
                     content: { required },
+                    title: { required, maxLengthValue: maxLength(200) },
                 }
             }
         },
@@ -169,10 +191,21 @@
                                 <Button type="button" @click="loadTemplate" :label="$t('rent.load')" :disabled="isSelected()" iconPos="right" icon="pi pi-cloud-download" class="mr-2"/>
                             </div>
                             
+                            
+                            <div class="field col-12 mb-4">
+                                <label for="title" v-required class="block text-900 font-medium mb-2">{{ $t('rent.document_title') }}</label>
+                                <InputText id="title" type="text" :placeholder="$t('rent.document_title')" class="w-full" :class="{'p-invalid' : v.document.title.$error}" v-model="document.title" :disabled="saving || loading"/>
+                                <div v-if="v.document.title.$error">
+                                    <small class="p-error">{{ v.document.title.$errors[0].$message }}</small>
+                                </div>
+                            </div>
+                            
                             <div class="field col-12">
                                 <label for="content" v-required class="block text-900 font-medium mb-2">{{ $t('rent.content') }}</label>
-                                <Editor v-model="document.content" editorStyle="height: 320px">
-                           
+                                <Editor v-model="document.content" editorStyle="height: 500px">
+                                    <template v-slot:toolbar>
+                                        <EditorToolbar/>
+                                    </template>
                                 </Editor>
                                 <div v-if="v.document.content.$error">
                                     <small class="p-error">{{ v.document.content.$errors[0].$message }}</small>

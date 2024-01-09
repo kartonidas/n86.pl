@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('full_number', 50);
             $table->string('date', 7)->nullable()->default(null);
             $table->integer('object_id')->nullable()->default(null);
+            
+            $table->index('uuid');
         });
     }
 

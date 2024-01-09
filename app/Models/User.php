@@ -22,6 +22,7 @@ use App\Exceptions\Unauthorized;
 use App\Mail\Register\InitMessage;
 use App\Mail\Register\WelcomeMessage;
 use App\Mail\User\ForgotPasswordMessage;
+use App\Models\Config;
 use App\Models\Dictionary;
 use App\Models\Firm;
 use App\Models\PasswordResetToken;
@@ -260,9 +261,8 @@ class User extends Authenticatable
         $defaultPermissions->permissions = implode(";", $permissions);
         $defaultPermissions->saveQuietly();
         
-        
         Dictionary::createDefaultDictionaries($this);
-        
+        Config::createDefaultConfiguration($this);
         
         $this->ensureAccountSettings();
     }

@@ -11,6 +11,7 @@ use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Libraries\Helper;
 use App\Models\Customer;
+use App\Models\Config;
 use App\Models\ItemBill;
 use App\Models\ItemTenant;
 use App\Models\Rental;
@@ -186,5 +187,33 @@ class Item extends Model
         $bill->save();
         
         return $bill;
+    }
+    
+    public function getOwner()
+    {
+        if($this->customer_id)
+        {
+            $customer = Customer::find($this->customer_id);
+            if(!$customer)
+                throw new ObjectNotExist(__("Customer does not exists"));
+            
+            return $customer;
+        }
+        else
+        {
+            $config = Config::getConfig("basic");
+            $out = new \stdClass();
+            
+            if(!empty($config))
+            {
+                foreach($config as $field => $value)
+                {
+                    if(substr($field, 0, 6) == "owner_")
+                        $out->{substr($field, 6)} = $value;
+                }
+            }
+            
+            return $out;
+        }
     }
 }

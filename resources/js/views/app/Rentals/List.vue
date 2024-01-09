@@ -215,10 +215,10 @@
                         <div class="col-12 md:col-7 sm:col-9 mb-3">
                             <div class="flex">
                                 <div class="col-6 p-0 pr-1">
-                                    <Calendar id="start" v-model="meta.search.start" :placeholder="$t('rent.start_date')" class="w-auto" showIcon/>
+                                    <Calendar id="start" v-model="meta.search.start" :placeholder="$t('rent.start_date_list')" class="w-auto" showIcon/>
                                 </div>
                                 <div class="col-6 p-0 pl-1">
-                                    <Calendar id="end" v-model="meta.search.end" :placeholder="$t('rent.end_date')" showIcon/>
+                                    <Calendar id="end" v-model="meta.search.end" :placeholder="$t('rent.end_date_list')" showIcon/>
                                 </div>
                             </div>
                         </div>
@@ -258,9 +258,7 @@
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
                             <div class="mt-1">
-                                <router-link :to="{name: 'tenant_show', params: { tenantId : data.tenant.id }}">
-                                    {{ data.tenant.name }}
-                                </router-link>
+                                {{ data.tenant.name }}
                                 
                                 <div>
                                     <small>
