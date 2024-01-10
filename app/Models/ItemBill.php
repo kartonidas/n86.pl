@@ -158,7 +158,7 @@ class ItemBill extends Model
     
     public function isOutOfDate()
     {
-        if(!$this->paid && $this->getRawOriginal("payment_date") <= time())
+        if(!$this->paid && $this->getAttributes()["payment_date"] <= time())
             return true;
         
         return false;

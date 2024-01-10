@@ -242,9 +242,7 @@
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
                             <div class="mt-1">
-                                <router-link :to="{name: 'item_show', params: { itemId : data.item.id }}">
-                                    {{ data.item.name }}
-                                </router-link>
+                                {{ data.item.name }}
                                 
                                 <div>
                                     <small>

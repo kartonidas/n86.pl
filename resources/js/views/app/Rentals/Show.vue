@@ -1,14 +1,10 @@
 <script>
     import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, p } from '@/utils/helper'
     import { appStore } from '@/store.js'
-    import Header from '@/views/app/_partials/Header.vue'
     
-    import Address from '@/views/app/_partials/Address.vue'
-    import Rental from '@/views/app/_partials/Rental.vue'
     import RentalService from '@/service/RentalService'
     
     export default {
-        components: { Address, Header, Rental },
         setup() {
             setMetaTitle('meta.title.rent_show')
             
@@ -25,6 +21,7 @@
             return {
                 bills: [],
                 documents: [],
+                payments: [],
                 displayBillConfirmation: false,
                 deleteBillId: null,
                 displayDocumentConfirmation: false,
@@ -56,6 +53,14 @@
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
+                    },
+                    payments: {
+                        search: {},
+                        currentPage: 1,
+                        perPage: this.rowsPerPage,
+                        loading: false,
+                        totalRecords: null,
+                        totalPages: null,
                     }
                 }
             }
@@ -72,6 +77,10 @@
                     (response) => {
                         this.rental = response.data
                         this.loading = false
+                        
+                        this.getBillList()
+                        this.getDocumentList()
+                        this.getPaymentList()
                     },
                     (errors) => {
                         if(errors.response.status == 404)
@@ -83,9 +92,6 @@
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
-                
-            this.getBillList()
-            this.getDocumentList()
         },
         methods: {
             terminate() {
@@ -93,7 +99,7 @@
             },
             
             getBillList() {
-                this.meta.loading = true
+                this.meta.bills.loading = true
                 
                 this.rentalService.bills(this.$route.params.rentalId, this.meta.bills.perPage, this.meta.bills.currentPage, null, null, this.meta.bills.search)
                     .then(
@@ -140,7 +146,7 @@
             },
             
             getDocumentList() {
-                this.meta.loading = true
+                this.meta.documents.loading = true
                 
                 this.rentalService.getDocuments(this.$route.params.rentalId, this.meta.documents.perPage, this.meta.documents.currentPage, null, null, this.meta.documents.search)
                     .then(
@@ -198,6 +204,14 @@
                 this.$router.push({name: 'rental_document_new'})
             },
             
+            rowDocumentsClick(event) {
+                this.$router.push({name: 'rental_document_edit', params: {documentId : event.data.id}})
+            },
+            
+            edit() {
+                this.$router.push({name: 'rental_edit'})
+            },
+            
             downloadPDF(documentId) {
                 this.rentalService.getPDFDocument(this.$route.params.rentalId, documentId)
                     .then(
@@ -221,7 +235,29 @@
                             
                         }
                     )
-            }
+            },
+            
+            getPaymentList() {
+                this.meta.payments.loading = true
+                
+                this.rentalService.payments(this.$route.params.rentalId, this.meta.payments.perPage, this.meta.payments.currentPage, null, null, this.meta.payments.search)
+                    .then(
+                        (response) => {
+                            this.payments = response.data.data
+                            this.meta.payments.totalRecords = response.data.total_rows
+                            this.meta.payments.totalPages = response.data.total_pages
+                            this.meta.payments.loading = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    );
+            },
+            
+            changePaymentsPage(event) {
+                this.meta.payments.currentPage = event["page"] + 1;
+                this.getPaymentList()
+            },
         },
     }
 </script>
@@ -232,20 +268,25 @@
     <div class="mt-5 hidden">
         <strong>TODO:</strong>
         <ul>
-            <li>Aktualizacja dokumentów</li>
-            <li>Lista wpłat</li>
-            <li>Edycja danych najmu (tylko podstwawoe informacje, jak czynsz, data trwania, okres wypowiedzenia)</li>
+            <li>Lista wpłat, usuwanie, przyjmowanie wpłaty</li>
             <li>Historia edycji (może nowa zakładka)</li>
             <li>Posprawdzać uprawnienia (w szczegolności menu)</li>
+            <li>Jak nie ma odpowiedniej liczby pakietów blokujemy konto</li>
+            <li>Zwrot kaucji</li>
         </ul>
     </div>
     
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card">
-                <h3 class="mb-5 text-color">
-                    {{ $t('rent.rental_agreement_no_of', [rental.full_number, rental.document_date]) }}
-                </h3>
+                <div class="flex align-items-center">
+                    <div class="w-full">
+                        <h3 class="mt-2 mb-1 text-color">{{ $t('rent.rental_agreement_no_of', [rental.full_number, rental.document_date]) }}</h3>
+                    </div>
+                    <div class="text-right" v-if="rental.can_update">
+                        <Button icon="pi pi-pencil" @click="edit" v-tooltip.left="$t('app.edit')"></Button>
+                    </div>
+                </div>
                 
                 <Message severity="error" :closable="false" v-if="rental.termination && rental.status == 'current'">
                     {{ $t('rent.rental_is_being_terminated') }}
@@ -338,7 +379,9 @@
                                 <td class="font-medium">{{ $t('rent.deposit') }}:</td>
                                 <td class="font-italic">
                                     <span v-if="rental.deposit">
-                                        {{ numeralFormat(rental.deposit, '0.00') }} (opłacona???)
+                                        {{ numeralFormat(rental.deposit, '0.00') }}
+                                        <Badge :value="$t('rent.deposit_paid')" class="font-normal ml-1" severity="success" v-if="rental.has_paid_deposit"></Badge>
+                                        <Badge :value="$t('rent.deposit_unpaid')" class="font-normal ml-1" severity="danger" v-if="!rental.has_paid_deposit"></Badge>
                                     </span>
                                     <span v-else>-</span>
                                 </td>
@@ -369,8 +412,10 @@
                         </div>
                     </div>
                     
-                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
+                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
                         <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
+                        <Column :header="$t('rent.document_created')" class="text-center" field="created_at"></Column>
+                        <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
                         <Column class="text-center" style="min-width: 60px; width: 60px;">
                             <template #body="{ data }">
                                 <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
@@ -468,6 +513,43 @@
                             <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
                         </template>
                     </Dialog>
+                </div>
+                
+                <div class="mt-5">
+                    <div class="flex justify-content-between align-items-center mb-1">
+                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.deposits') }}</h5>
+                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                            <Button icon="pi pi-plus" :label="$t('rent.add_payment_short')" size="small" v-tooltip.left="$t('rent.add_payment')" @click="newBill" class="text-center"></Button>
+                        </div>
+                    </div>
+                
+                    <DataTable :value="payments" stripedRows class="p-datatable-gridlines" :totalRecords="meta.payments.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.payments.totalPages" :rows="meta.payments.perPage" @page="changePaymentsPage" :loading="meta.payments.loading">
+                        <Column :header="$t('rent.due')">
+                            <template #body="{ data }">
+                                <ul class="list-unstyled">
+                                    <li v-for="item in data.associated_documents">
+                                        <router-link :to="{name: 'rental_bill_show', params: { billId : item.id }}">
+                                            {{ item.bill_type.name }}
+                                        </router-link>
+                                    </li>
+                                </ul>
+                            </template>
+                        </Column>
+                        <Column :header="$t('rent.amount')" class="text-right">
+                            <template #body="{ data }">
+                                {{ numeralFormat(data.amount, '0.00') }}
+                            </template>
+                        </Column>
+                        <Column :header="$t('rent.paid_date')" class="text-center" field="paid_date"></Column>
+                        <Column :header="$t('rent.payment_method')" >
+                            <template #body="{ data }">
+                                {{ getValueLabel('payments.methods', data.payment_method) }}
+                            </template>    
+                        </Column>
+                        <template #empty>
+                            {{ $t('items.empty_bills_list') }}
+                        </template>
+                    </DataTable>
                 </div>
             </div>
         </div>

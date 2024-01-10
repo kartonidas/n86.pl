@@ -13,5 +13,10 @@ class Document extends Model
         boot as traitBoot;
     }
     
+    protected $casts = [
+        "created_at" => 'datetime:Y-m-d H:i',
+        "updated_at" => 'datetime:Y-m-d H:i',
+    ];
+    
     protected $hidden = ["uuid"];
 }

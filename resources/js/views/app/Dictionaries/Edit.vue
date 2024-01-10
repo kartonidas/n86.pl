@@ -46,7 +46,13 @@
                         this.loading = false
                     },
                     (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        if(errors.response.status == 404)
+                        {
+                            appStore().setError404(errors.response.data.message);
+                            this.$router.push({name: 'objectnotfound'})
+                        }
+                        else
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
         },

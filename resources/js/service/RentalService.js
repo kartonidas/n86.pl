@@ -27,6 +27,10 @@ export default class RentalService {
         return axios.get('api/v1/rental/' + rentalId);
     }
     
+    update(rentalId, rentalData) {
+        return axios.put('api/v1/rental/' + rentalId, removeNullValues(rentalData));
+    }
+    
     validate(rentalData) {
         return axios.post('api/v1/rental/validate', removeNullValues(rentalData));
     }
@@ -75,6 +79,14 @@ export default class RentalService {
         return axios.put('api/v1/rental/' + rentalId + "/document", documentData);
     }
     
+    getDocument(rentalId, documentId) {
+        return axios.get('api/v1/rental/' + rentalId + "/document/" + documentId);
+    }
+    
+    updateDocument(rentalId, documentId, documentData) {
+        return axios.put('api/v1/rental/' + rentalId + "/document/" + documentId, documentData);
+    }
+    
     getDocuments(rentalId, size, page, sort, order, search) {
         var data = {
             size: size,
@@ -92,5 +104,16 @@ export default class RentalService {
     
     getPDFDocument(rentalId, documentId) {
         return axios.get('api/v1/rental/' + rentalId + "/document/" + documentId + "/pdf", {'responseType': 'blob'});
+    }
+    
+    payments(rentalId, size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get('api/v1/rental/' + rentalId + "/payments", { params : removeNullValues(data) });
     }
 }

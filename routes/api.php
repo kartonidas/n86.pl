@@ -88,6 +88,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     // WYNAJEM
     $router->get('/rentals', [RentalController::class, "list"]);
     $router->get('/rental/{id}', [RentalController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/rental/{id}', [RentalController::class, "update"])->where("id", "[0-9]+");
     $router->post('/rental/validate', [RentalController::class, "validateData"]);
     $router->put('/rental/rent', [RentalController::class, "rent"]);
     $router->delete('/rental/{id}', [RentalController::class, "delete"])->where("id", "[0-9]+");
@@ -102,8 +103,11 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->post('/rental/{id}/document', [RentalController::class, "generateTemplateDocument"])->where("id", "[0-9]+");
     $router->put('/rental/{id}/document', [RentalController::class, "addDocument"])->where("id", "[0-9]+");
     $router->get('/rental/{id}/documents', [RentalController::class, "getDocuments"])->where("id", "[0-9]+");
+    $router->get('/rental/{id}/document/{did}', [RentalController::class, "getDocument"])->where("id", "[0-9]+");
+    $router->put('/rental/{id}/document/{did}', [RentalController::class, "updateDocument"])->where("id", "[0-9]+");
     $router->delete('/rental/{id}/document/{did}', [RentalController::class, "deleteDocument"])->where("id", "[0-9]+")->where("did", "[0-9]+");
     $router->get('/rental/{id}/document/{did}/pdf', [RentalController::class, "getDocumentPdf"])->where("id", "[0-9]+")->where("did", "[0-9]+");
+    $router->get('/rental/{id}/payments', [RentalController::class, "payments"])->where("id", "[0-9]+");
     
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);

@@ -49,7 +49,7 @@ class Deposit extends BalanceAbstract
                         throw new InvalidStatus(__("Document is already paid"));
                     
                     $associatedDocument->paid = 1;
-                    $associatedDocument->paid_date = $document->paid_date;
+                    $associatedDocument->paid_date = $document->getAttributes()["paid_date"];
                     $associatedDocument->source_paid_document = $document->id;
                     $associatedDocument->save();
                 }
@@ -75,7 +75,7 @@ class Deposit extends BalanceAbstract
             {
                 foreach($associatedDocuments as $associatedDocument)
                 {
-                    $associatedDocument->paid_date = $document->paid_date;
+                    $associatedDocument->paid_date = $document->getAttributes()["paid_date"];
                     $associatedDocument->save();
                 }
             }

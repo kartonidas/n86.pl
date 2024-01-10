@@ -353,6 +353,12 @@ const router = createRouter({
                             meta: {permission: 'rent:list'},
                         },
                         {
+                            path: '/app/rental/edit/:rentalId',
+                            name: 'rental_edit',
+                            component: () => import('@/views/app/Rentals/Edit.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
                             path: '/app/rental/:rentalId/terminate',
                             name: 'rental_terminate',
                             component: () => import('@/views/app/Rentals/Terminate.vue'),
@@ -362,6 +368,12 @@ const router = createRouter({
                             path: '/app/rental/:rentalId/document/new',
                             name: 'rental_document_new',
                             component: () => import('@/views/app/Rentals/Documents/New.vue'),
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/document/edit/:documentId',
+                            name: 'rental_document_edit',
+                            component: () => import('@/views/app/Rentals/Documents/Edit.vue'),
                             meta: {permission: 'rent:update'},
                         },
                         {

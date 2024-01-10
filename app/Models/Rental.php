@@ -15,7 +15,8 @@ use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Libraries\Data;
 use App\Libraries\Helper;
-use App\Models\Balances;
+use App\Models\Balance;
+use App\Models\BalanceDocument;
 use App\Models\Config;
 use App\Models\ItemBill;
 use App\Traits\NumberingTrait;
@@ -132,6 +133,13 @@ class Rental extends Model
         return $out;
     }
 
+    public function canUpdate()
+    {
+        if(in_array($this->status, [self::STATUS_WAITING, self::STATUS_CURRENT]))
+            return true;
+        
+        return false;
+    }
     
     public function canDelete()
     {
@@ -160,7 +168,7 @@ class Rental extends Model
         return $days;
     }
     
-    public static function checkDates(array $rent, int $itemId = null)
+    public static function checkDates(array $rent, int $itemId = null, $rentalId = null)
     {
         if(empty($itemId))
             return;
@@ -188,8 +196,10 @@ class Rental extends Model
                 ->where("start", "<=", $startDate)
                 ->where(function($q) use($startDate) {
                     $q->where("end", ">=", $startDate)->orWhereNull("end");
-                })
-                ->count();
+                });
+            if($rentalId)
+                $c1->where("id", "!=", $rentalId);
+            $c1 = $c1->count();
             
             $c2 = self
                 ::where("item_id", $itemId)
@@ -197,8 +207,10 @@ class Rental extends Model
                 ->where("start", "<=", $endDate)
                 ->where(function($q) use($endDate) {
                     $q->where("end", ">=", $endDate)->orWhereNull("end");
-                })
-                ->count();
+                });
+            if($rentalId)
+                $c2->where("id", "!=", $rentalId);
+            $c2 = $c2->count();
             
             $c3 = self
                 ::where("item_id", $itemId)
@@ -207,8 +219,10 @@ class Rental extends Model
                     $q
                         ->whereBetween("start", [$startDate, $endDate])
                         ->orWhereBetween("end", [$startDate, $endDate]);
-                })
-                ->count();
+                });
+            if($rentalId)
+                $c3->where("id", "!=", $rentalId);
+            $c3 = $c3->count();
             
             if($c1 || $c2 || $c3)
                 throw new InvalidRentalDates(__("Cannot rented during the given time period"));
@@ -303,6 +317,16 @@ class Rental extends Model
             $rental->setTerminated();
     }
     
+    private function setWaiting()
+    {
+        $this->status = self::STATUS_WAITING;
+        $this->saveQuietly();
+        
+        $item = $this->item()->withoutGlobalScopes()->first();
+        if($item)
+            $item->setRentedFlag();
+    }
+    
     private function setCurrent()
     {
         $this->status = self::STATUS_CURRENT;
@@ -373,7 +397,7 @@ class Rental extends Model
     {
         if(!self::where("item_id", $this->item_id)->where("status", self::STATUS_CURRENT)->count())
         {
-            if($this->getRawOriginal("start") <= time())
+            if($this->getAttributes()["start"] <= time())
                 $this->setCurrent();
         }
     }
@@ -397,7 +421,7 @@ class Rental extends Model
             $deposit->item_id = $this->item_id;
             $deposit->rental_id = $this->id;
             $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
-            $deposit->payment_date = $this->getRawOriginal("first_payment_date");
+            $deposit->payment_date = $this->getAttributes()["first_payment_date"];
             $deposit->cost = $this->deposit;
             $deposit->save();
         }
@@ -410,13 +434,13 @@ class Rental extends Model
         $rent->item_id = $this->item_id;
         $rent->rental_id = $this->id;
         $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
-        $rent->payment_date = $this->getRawOriginal("first_payment_date");
+        $rent->payment_date = $this->getAttributes()["first_payment_date"];
         $rent->cost = $cost;
         $rent->save();
         
         if($this->payment == self::PAYMENT_CYCLICAL)
         {
-            $this->next_rental = $this->calculateNextRental($this->getRawOriginal("start"));
+            $this->next_rental = $this->calculateNextRental($this->getAttributes()["start"]);
             $this->save();
         }
     }
@@ -434,5 +458,78 @@ class Rental extends Model
         $this->termination_added = time();
         $this->termination_reason = $reason;
         $this->save();
+    }
+    
+    public function hasPaidDeposit()
+    {
+        $depositBill = ItemBill::where("rental_id", $this->id)->where("bill_type_id", Data::getSystemBillTypes()["deposit"][0])->first();
+        if($depositBill)
+        {
+            $balanceDocument = BalanceDocument::where("object_type", BalanceDocument::OBJECT_TYPE_BILL)->where("object_id", $depositBill->id)->first();
+            if($balanceDocument && $balanceDocument->paid)
+                return true;
+        }
+        return false;
+    }
+    
+    public function hasGeneratedRent()
+    {
+        if(ItemBill::where("rental_id", $this->id)->where("bill_type_id", Data::getSystemBillTypes()["rent"][0])->count() > 0)
+            return true;
+        return false;
+    }
+    
+    public function updateRentalStatusFlag()
+    {
+        if($this->status == self::STATUS_CURRENT)
+        {
+            if($this->getAttributes()["start"] > time())
+                $this->setWaiting();
+        }
+        
+        if($this->status == self::STATUS_WAITING)
+            $this->setCurrentRentalImmediately();
+    }
+    
+    public function updateItemBills()
+    {
+        $rents = ItemBill
+            ::where("rental_id", $this->id)
+            ->where("payment_date", ">", time())
+            ->where("bill_type_id", Data::getSystemBillTypes()["rent"][0])
+            ->where("paid", 0)
+            ->get();
+            
+        foreach($rents as $rent)
+        {
+            $rent->cost = $this->rent;
+            $rent->save();
+        }
+        
+        $depositBill = ItemBill
+            ::where("rental_id", $this->id)
+            ->where("bill_type_id", Data::getSystemBillTypes()["deposit"][0])
+            ->first();
+            
+        if($depositBill)
+        {
+            $depositBill->cost = $this->deposit;
+            $depositBill->save();
+        }
+        elseif($this->deposit > 0)
+        {
+            $deposit = new ItemBill;
+            $deposit->item_id = $this->item_id;
+            $deposit->rental_id = $this->id;
+            $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
+            $deposit->payment_date = $this->getAttributes()["first_payment_date"];
+            $deposit->cost = $this->deposit;
+            $deposit->save();
+        }
+    }
+    
+    public function getBalanceRow()
+    {
+        return Balance::where("item_id", $this->item_id)->where("rental_id", $this->id)->first();
     }
 }

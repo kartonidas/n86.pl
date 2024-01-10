@@ -13,6 +13,7 @@ use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\BillPaymentRequest;
 use App\Http\Requests\RentalBillRequest;
+use App\Http\Requests\RentalPaymentRequest;
 use App\Http\Requests\RentalRequest;
 use App\Http\Requests\RentalDocumentsRequest;
 use App\Http\Requests\RentalTemplateDocumentRequest;
@@ -25,8 +26,10 @@ use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\TerminationRequest;
 use App\Http\Requests\UpdateItemBillRequest;
 use App\Http\Requests\UpdateRentalRequest;
+use App\Http\Requests\UpdateRentalDocumentRequest;
 use App\Libraries\Helper;
 use App\Libraries\TemplateManager;
+use App\Models\BalanceDocument;
 use App\Models\Customer;
 use App\Models\Document;
 use App\Models\DocumentTemplate;
@@ -231,7 +234,57 @@ class RentalController extends Controller
         
         $rental->tenant = $rental->getTenant();
         $rental->item = $rental->getItem();
+        $rental->can_update = $rental->canUpdate();
+        $rental->has_paid_deposit = $rental->hasPaidDeposit();
+        $rental->has_generated_rent = $rental->hasGeneratedRent();
         return $rental;
+    }
+    
+    public function update(UpdateRentalRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        if(!in_array($rental->status, [Rental::STATUS_CURRENT, Rental::STATUS_WAITING]))
+            throw new InvalidStatus(__("Cannot update rental"));
+        
+        $validated = $request->validated();
+        
+        Rental::checkDates($validated, $rental->item_id, $rental->id);
+        
+        $rental->document_date = $validated["document_date"];
+        $rental->start = Helper::setDateTime($validated["start_date"], "00:00:00", true);
+        $rental->period = $validated["period"];
+        $rental->months = $validated["months"] ?? null;
+        $rental->end = $validated["period"] == Rental::PERIOD_DATE ? Helper::setDateTime($validated["end_date"], "23:59:59", true) : null;
+        $rental->termination_period = $validated["termination_period"];
+        $rental->termination_months = $validated["termination_months"] ?? null;
+        $rental->termination_days = $validated["termination_days"] ?? null;
+        $rental->rent = $validated["rent"];
+        
+        if(!$rental->hasPaidDeposit())
+            $rental->deposit = $validated["deposit"] ?? null;
+            
+        if(!$rental->hasGeneratedRent())
+        {
+            $rental->first_month_different_amount = $validated["first_month_different_amount_value"] ?? null;
+            $rental->last_month_different_amount = $validated["last_month_different_amount_value"] ?? null;
+            $rental->first_payment_date = Helper::setDateTime($validated["first_payment_date"], "23:59:59", true);
+        }
+        
+        $rental->payment_day = $validated["payment_day"] ?? null;
+        $rental->number_of_people = $validated["number_of_people"];
+        $rental->comments = $validated["comments"] ?? null;
+        $rental->setEndDate();
+        $rental->save();
+        
+        $rental->updateRentalStatusFlag();
+        $rental->updateItemBills();
+        
+        return true;
     }
     
     private function createItem($data)
@@ -524,6 +577,28 @@ class RentalController extends Controller
         return $document->id;
     }
     
+    public function updateDocument(UpdateRentalDocumentRequest $request, int $rentalId, int $documentId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $document = Document::find($documentId);
+        if(!$document || $document->rental_id != $rentalId)
+            throw new ObjectNotExist(__("Document does not exist"));
+        
+        $validated = $request->validated();
+        
+        $document->title = $validated["title"];
+        $document->content = $validated["content"];
+        $document->type = $validated["type"];
+        $document->save();
+        
+        return true;
+    }
+    
     public function getDocuments(RentalDocumentsRequest $request, int $rentalId)
     {
         User::checkAccess("rent:update");
@@ -538,7 +613,7 @@ class RentalController extends Controller
         $page = $validated["page"] ?? 1;
         
         $documents = Document::select("id", "item_id", "rental_id", "title", "type", "user_id", "created_at", "updated_at");
-        
+        $documents->where("rental_id", $rentalId);
         $total = $documents->count();
         
         $orderBy = $this->getOrderBy($request, Document::class, "created_at,desc");
@@ -575,6 +650,21 @@ class RentalController extends Controller
         return true;
     }
     
+    public function getDocument(Request $request, int $rentalId, int $documentId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $document = Document::find($documentId);
+        if(!$document || $document->rental_id != $rentalId)
+            throw new ObjectNotExist(__("Document does not exist"));
+        
+        return $document;
+    }
+    
     public function getDocumentPdf(Request $request, int $rentalId, int $documentId)
     {
         User::checkAccess("rent:update");
@@ -593,5 +683,64 @@ class RentalController extends Controller
         $pdf = PDF::loadView("pdf.rental_document", ["content" => $html]);
         $pdf->getMpdf()->SetTitle(Helper::__no_pl($document->title) . ".pdf");
         $pdf->stream(Helper::__no_pl($document->title) . ".pdf");
+    }
+    
+    public function payments(RentalPaymentRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:list");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $validated = $request->validated();
+        
+        $size = $validated["size"] ?? config("api.list.size");
+        $page = $validated["page"] ?? 1;
+        
+        $balance = $rental->getBalanceRow();
+        
+        $payments = BalanceDocument
+            ::where("item_id", $rental->item_id)
+            ->where("balance_id", $balance ? $balance->id : -1)
+            ->where("object_type", BalanceDocument::OBJECT_TYPE_DEPOSIT);
+        
+        $total = $payments->count();
+        
+        $orderBy = $this->getOrderBy($request, BalanceDocument::class, "created_at,desc");
+        $payments = $payments->take($size)
+            ->skip(($page-1)*$size)
+            ->orderBy($orderBy[0], $orderBy[1])
+            ->get();
+            
+        foreach($payments as $k => $payment)
+        {
+            $associatedBills = [];
+            $deposits = $payment->getDepositAssociatedDocument();
+            foreach($deposits as $deposit)
+            {
+                if($deposit->object_type == BalanceDocument::OBJECT_TYPE_BILL)
+                {
+                    $bill = ItemBill::find($deposit->object_id);
+                    if($bill)
+                    {
+                        $bill->bill_type = $bill->getBillType();
+                        $associatedBills[] = $bill;
+                    }
+                }
+            }
+            
+            $payments[$k]->associated_documents = $associatedBills;
+        }
+            
+        $out = [
+            "total_rows" => $total,
+            "total_pages" => ceil($total / $size),
+            "current_page" => $page,
+            "has_more" => ceil($total / $size) > $page,
+            "data" => $payments,
+        ];
+            
+        return $out;
     }
 }

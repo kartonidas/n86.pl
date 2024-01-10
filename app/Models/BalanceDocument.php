@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +16,19 @@ use App\Models\ItemBill;
 class BalanceDocument extends Model
 {
     use SoftDeletes;
+    
+    protected $casts = [
+        "amount" => "float",
+        "created_at" => 'datetime:Y-m-d H:i',
+        "updated_at" => 'datetime:Y-m-d H:i',
+    ];
+    
+    protected function paidDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+        );
+    }
     
     const OBJECT_TYPE_BILL = "bill";
     const OBJECT_TYPE_DEPOSIT = "deposit";
@@ -61,7 +75,7 @@ class BalanceDocument extends Model
                     throw new ObjectNotExist(__("Bill does not exists"));
                 
                 $bill->paid = $this->paid;
-                $bill->paid_date = $this->paid_date;
+                $bill->paid_date = $this->getAttributes()["paid_date"];
                 $bill->saveQuietly();
             break;
         }

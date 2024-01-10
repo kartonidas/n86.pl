@@ -30,6 +30,24 @@
                 }
             }
         },
+        beforeMount() {
+            this.rentalService.getDocument(this.$route.params.rentalId, this.$route.params.documentId)
+                .then(
+                    (response) => {
+                        this.document = response.data
+                        this.loading = false
+                    },
+                    (errors) => {
+                        if(errors.response.status == 404)
+                        {
+                            appStore().setError404(errors.response.data.message);
+                            this.$router.push({name: 'objectnotfound'})
+                        }
+                        else
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                    }
+                );
+        },
         methods: {
             getBreadcrumbs() {
                 let items = [
@@ -40,21 +58,21 @@
                 if(this.rental.full_number != undefined)
                 {
                     items.push({'label' : this.rental.full_number, route : { name : 'rental_show'} })
-                    items.push({'label' : this.$t('rent.new_document'), disabled : true })
+                    items.push({'label' : this.$t('rent.edit_document'), disabled : true })
                 }
                     
                 return items
             },
-            async createDocument(document) {
+            async updateDocument(document) {
                 this.saving = true;
-                this.rentalService.generateDocument(this.$route.params.rentalId, document)
+                this.rentalService.updateDocument(this.$route.params.rentalId, this.$route.params.documentId, document)
                     .then(
                         (response) => {
                             this.saving = false;
                             appStore().setToastMessage({
                                 severity : 'success',
                                 summary : this.$t('app.success'),
-                                detail : this.$t('rent.document_added'),
+                                detail : this.$t('rent.document_updated'),
                             });
                             
                             this.$router.push({name: 'rental_show'})
@@ -90,7 +108,7 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid">
-                <DocumentForm @submit-form="createDocument" @back="back" @set-rental="setRental" :document="document" :saving="saving" :errors="errors" />
+                <DocumentForm @submit-form="updateDocument" @back="back" @set-rental="setRental" :document="document" :saving="saving" :errors="errors" />
             </div>
         </div>
     </div>
