@@ -311,7 +311,8 @@
             "items_bill_list" : "Lista rachunków",
             "rent_new_document" : "Nowy dokument",
             "rent_edit" : "Edycja najmu",
-            "rent_edit_document" : "Edycja dokumentu"
+            "rent_edit_document" : "Edycja dokumentu",
+            "rent_payment_deposit" : "Przyjmij wpłatę"
         }
     },
     "permissions" : {
@@ -334,7 +335,9 @@
         "tenant" : "Najemcy",
         "update" : "Aktualizacja",
         "updated" : "Grupa została zaktualizowana",
-        "user" : "Użytkownicy"
+        "user" : "Użytkownicy",
+        "rent" : "Wynajem",
+        "config" : "Konfiguracja"
     },
     "profile" : {
         "apartment_no" : "Nr lokalu",
@@ -489,7 +492,9 @@
         "add_payment_short" : "Przyjmij wpłatę",
         "add_payment" : "Przyjmij nową wpłatę",
         "due": "Należność",
-        "deposits": "Wpłaty"
+        "deposits": "Wpłaty",
+        "empty_payment_list": "Brak wpłat",
+        "payment_accepted": "Przyjął"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",

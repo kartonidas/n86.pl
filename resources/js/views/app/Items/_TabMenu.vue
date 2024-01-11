@@ -19,6 +19,7 @@
                         label: this.$t('items.rent'),
                         icon: 'pi pi-fw pi-users',
                         index: 'rent',
+                        access: hasAccess('rent:list'),
                         items: [
                             { label: this.$t('items.reservation'), icon: 'pi pi-fw pi-list', route: { name: 'item_show_reservation' }, index: 'rent:reservation' },
                             { label: this.$t('items.history'), icon: 'pi pi-fw pi-history', route: { name: 'item_show_history' }, index: 'rent:history' },
@@ -73,26 +74,28 @@
         
         <Menubar :model="items" class="mb-0 mt-5">
             <template #item="{ item, props, hasSubmenu }">
-                <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                    <a :href="href" v-bind="props.action" @click="navigate" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
+                <span v-if="item.access == undefined || item.access">
+                    <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                        <a :href="href" v-bind="props.action" @click="navigate" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
+                            <span :class="item.icon" />
+                            <span class="ml-2">{{ item.label }}</span>
+                            
+                            <span :set="badge = getBadge(item.index)">
+                                <Badge v-if="badge" class="ml-2" :severity="badge.severity">{{ badge.cnt }}</Badge>
+                            </span>
+                        </a>
+                    </router-link>
+                    <a v-else  :href="item.url" :target="item.target" v-bind="props.action" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
                         <span :class="item.icon" />
                         <span class="ml-2">{{ item.label }}</span>
                         
                         <span :set="badge = getBadge(item.index)">
                             <Badge v-if="badge" class="ml-2" :severity="badge.severity">{{ badge.cnt }}</Badge>
                         </span>
+                        
+                        <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
                     </a>
-                </router-link>
-                <a v-else  :href="item.url" :target="item.target" v-bind="props.action" :class="[isActive(item.index) ? 'text-color-primary' : 'text-color-secondary']">
-                    <span :class="item.icon" />
-                    <span class="ml-2">{{ item.label }}</span>
-                    
-                    <span :set="badge = getBadge(item.index)">
-                        <Badge v-if="badge" class="ml-2" :severity="badge.severity">{{ badge.cnt }}</Badge>
-                    </span>
-                    
-                    <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
-                </a>
+                </span>
             </template>
         </Menubar>
         

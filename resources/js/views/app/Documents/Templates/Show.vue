@@ -78,7 +78,7 @@
                         <Badge :value="getType()" class="font-normal" severity="info"></Badge>
                         <h3 class="mt-2 mb-1 text-color">{{ template.title }}</h3>
                     </div>
-                    <div class="text-right" v-if="hasAccess('document:update')">
+                    <div class="text-right" v-if="hasAccess('config:update')">
                         <Button icon="pi pi-pencil" @click="editTemplate" v-tooltip.left="$t('app.edit')"></Button>
                     </div>
                 </div>

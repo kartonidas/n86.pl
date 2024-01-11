@@ -108,6 +108,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/rental/{id}/document/{did}', [RentalController::class, "deleteDocument"])->where("id", "[0-9]+")->where("did", "[0-9]+");
     $router->get('/rental/{id}/document/{did}/pdf', [RentalController::class, "getDocumentPdf"])->where("id", "[0-9]+")->where("did", "[0-9]+");
     $router->get('/rental/{id}/payments', [RentalController::class, "payments"])->where("id", "[0-9]+");
+    $router->delete('/rental/{id}/payment/{pid}', [RentalController::class, "deletePayment"])->where("id", "[0-9]+")->where("pid", "[0-9]+");
+    $router->put('/rental/{id}/deposit', [RentalController::class, "deposit"])->where("id", "[0-9]+");
     
     // SŁOWNIKI
     $router->get('/dictionary/types', [DictionaryController::class, "types"]);

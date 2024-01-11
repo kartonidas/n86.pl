@@ -181,7 +181,7 @@ class ItemController extends Controller
     
     public function bills(ItemBillRequest $request, int $itemId)
     {
-        User::checkAccess("item:update");
+        User::checkAccess("item:list");
         
         $item = Item::find($itemId);
         if(!$item)
@@ -252,7 +252,7 @@ class ItemController extends Controller
     
     public function billGet(Request $request, int $itemId, int $billId)
     {
-        User::checkAccess("item:update");
+        User::checkAccess("item:list");
         
         $item = Item::find($itemId);
         if(!$item)
@@ -378,7 +378,7 @@ class ItemController extends Controller
     
     public function fees(ItemCyclicalFeeRequest $request, int $itemId)
     {
-        User::checkAccess("item:update");
+        User::checkAccess("item:list");
         
         $item = Item::find($itemId);
         if(!$item)
@@ -454,7 +454,7 @@ class ItemController extends Controller
     
     public function feeGet(Request $request, int $itemId, int $feeId)
     {
-        User::checkAccess("item:update");
+        User::checkAccess("item:list");
         
         $item = Item::find($itemId);
         if(!$item)

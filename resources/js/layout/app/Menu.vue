@@ -13,14 +13,14 @@ const model = ref([
     },
     {
         label: t('menu.estates'),
-        access: hasAccess('item:list'),
+        access: hasAccess('item:list') || hasAccess('rent:list') || hasAccess('customer:list') || hasAccess('tenant:list') || hasAccess('document:list') || hasAccess('fault:list'),
         items: [
-            { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' }, regex: /^\/app\/item(s?)(\/(.*))?$/i },
-            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' }, regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i },
-            { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' }, regex: /^\/app\/customer(s?)(\/(.*))?$/i },
-            { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' }, regex: /^\/app\/tenant(s?)(\/(.*))?$/i },
-            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, regex: /^\/app\/document(s?)(\/(?!templates).*)?$/i },
-            { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' }, regex: /^\/app\/fault(s?)(\/(.*))?$/i },
+            { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' }, access: hasAccess('item:list'), regex: /^\/app\/item(s?)(\/(.*))?$/i },
+            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' }, access: hasAccess('rent:list'), regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i },
+            { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' }, access: hasAccess('customer:list'), regex: /^\/app\/customer(s?)(\/(.*))?$/i },
+            { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' }, access: hasAccess('tenant:list'), regex: /^\/app\/tenant(s?)(\/(.*))?$/i },
+            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, access: hasAccess('document:list'), regex: /^\/app\/document(s?)(\/(?!templates).*)?$/i },
+            { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' }, access: hasAccess('fault:list'), regex: /^\/app\/fault(s?)(\/(.*))?$/i },
         ]
     },
     {
@@ -33,20 +33,19 @@ const model = ref([
     },
     {
         label: t('menu.settings'),
-        access: hasAccess('dictionary:list'),
+        access: hasAccess('dictionary:list') || hasAccess('config:update') || hasAccess('owner'),
         items: [
             {
                 label: t('menu.dictionaries'),
                 icon: 'pi pi-fw pi-book',
                 access: hasAccess('dictionary:list'),
                 items: [
-                    //{ label: t('menu.fee_include_rent'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'fees'} }, regex: /^\/app\/dictionary\/fee(s?)(\/(.*))?$/i },
                     { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
                 ]
             },
-            { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, regex: /^\/app\/documents\/templates(\/(.*))?$/i },
-            { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, regex: /^\/app\/user\/config$/i },
-            { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' } , regex: /^\/app\/firm\-data(\/(.*))?$/i},
+            { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, access: hasAccess('config:update'), regex: /^\/app\/documents\/templates(\/(.*))?$/i },
+            { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, access: hasAccess('config:update'), regex: /^\/app\/user\/config$/i },
+            { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' }, regex: /^\/app\/firm\-data(\/(.*))?$/i},
         ]
     },
 ]);

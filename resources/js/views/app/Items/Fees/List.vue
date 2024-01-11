@@ -116,7 +116,8 @@
             },
             
             rowClick(event) {
-                this.editCyclicalFee(event.data.id)
+                if (hasAccess('item:update')) 
+                    this.editCyclicalFee(event.data.id)
             },
             
             search() {
@@ -149,7 +150,7 @@
                     <Button icon="pi pi-plus" :label="$t('items.add_cyclical_fee_short')" size="small" v-tooltip.left="$t('items.add_cyclical_fee')" @click="newCyclicalFee" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="fees" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :value="fees" stripedRows class="p-datatable-gridlines" :class="hasAccess('item:update') ? 'clickable' : ''" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div class="mb-1">

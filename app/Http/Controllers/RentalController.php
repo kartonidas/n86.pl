@@ -15,6 +15,7 @@ use App\Http\Requests\BillPaymentRequest;
 use App\Http\Requests\RentalBillRequest;
 use App\Http\Requests\RentalPaymentRequest;
 use App\Http\Requests\RentalRequest;
+use App\Http\Requests\RentalDepositRequest;
 use App\Http\Requests\RentalDocumentsRequest;
 use App\Http\Requests\RentalTemplateDocumentRequest;
 use App\Http\Requests\StoreItemBillRequest;
@@ -27,6 +28,8 @@ use App\Http\Requests\TerminationRequest;
 use App\Http\Requests\UpdateItemBillRequest;
 use App\Http\Requests\UpdateRentalRequest;
 use App\Http\Requests\UpdateRentalDocumentRequest;
+use App\Libraries\Balance\Balance;
+use App\Libraries\Balance\Object\DepositObject;
 use App\Libraries\Helper;
 use App\Libraries\TemplateManager;
 use App\Models\BalanceDocument;
@@ -383,6 +386,12 @@ class RentalController extends Controller
         
         $rentalBills = ItemBill
             ::where("rental_id", $rentalId);
+            
+        if(!empty($validated["search"]))
+        {
+            if(isset($validated["search"]["paid"]))
+                $rentalBills->where("paid", !empty($validated["search"]["paid"]) ? 1 : 0);
+        }
         
         $total = $rentalBills->count();
         
@@ -397,6 +406,7 @@ class RentalController extends Controller
             $rentalBills[$i]->can_delete = $itemBill->canDelete();
             $rentalBills[$i]->bill_type = $itemBill->getBillType();
             $rentalBills[$i]->out_off_date = $itemBill->isOutOfDate();
+            $rentalBills[$i]->balance_document = $itemBill->getBalanceDocument();
         }
             
         $out = [
@@ -434,7 +444,7 @@ class RentalController extends Controller
     
     public function billGet(Request $request, int $rentalId, int $billId)
     {
-        User::checkAccess("rent:update");
+        User::checkAccess("rent:list");
         
         $rental = Rental::find($rentalId);
         if(!$rental)
@@ -601,7 +611,7 @@ class RentalController extends Controller
     
     public function getDocuments(RentalDocumentsRequest $request, int $rentalId)
     {
-        User::checkAccess("rent:update");
+        User::checkAccess("rent:list");
         
         $rental = Rental::find($rentalId);
         if(!$rental)
@@ -731,6 +741,7 @@ class RentalController extends Controller
             }
             
             $payments[$k]->associated_documents = $associatedBills;
+            $payments[$k]->created_by = $payment->getCreatedBy();
         }
             
         $out = [
@@ -742,5 +753,58 @@ class RentalController extends Controller
         ];
             
         return $out;
+    }
+    
+    public function deletePayment(Request $request, int $rentalId, int $paymentId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $balanceDocument = BalanceDocument::find($paymentId);
+        if(!$balanceDocument || $balanceDocument->item_id != $rental->item_id || $balanceDocument->object_type != BalanceDocument::OBJECT_TYPE_DEPOSIT)
+            throw new ObjectNotExist(__("Payment does not exist"));
+        
+        $balanceDocument->delete();
+    }
+    
+    public function deposit(RentalDepositRequest $request, int $rentalId)
+    {
+        User::checkAccess("rent:update");
+        
+        $rental = Rental::find($rentalId);
+        if(!$rental)
+            throw new ObjectNotExist(__("Rental does not exist"));
+        
+        $validated = $request->validated();
+        
+        $documentIds = [];
+        if(!empty($validated["documents"]))
+        {
+            $documentsAmount = 0;
+            $documents = BalanceDocument::whereIn("id", $validated["documents"])->get();
+            foreach($documents as $document)
+            {
+                $documentsAmount += abs($document->amount);
+                $documentIds[] = $document->id;
+            }
+                
+            if($validated["cost"] < $documentsAmount)
+                throw new InvalidStatus(__("Value of the documents exceeds the amount paid"));
+        }
+        
+        $deposit = DepositObject::makeFromParams($rental->item_id, $rental->id, BalanceDocument::OBJECT_TYPE_DEPOSIT, 0, $validated["cost"]);
+        
+        $deposit->setDocumentIds($documentIds);
+        $deposit->setPayment(Helper::setDateTime($validated["paid_date"], "00:00:00", true), $validated["payment_method"]);
+        
+        if(isset($validated["comments"]))
+            $deposit->setComment($validated["comments"]);
+        
+        Balance::deposit($deposit)->create();
+        
+        return true;
     }
 }

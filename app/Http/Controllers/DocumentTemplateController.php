@@ -21,8 +21,6 @@ class DocumentTemplateController extends Controller
     
     public function list(DocumentTemplateRequest $request)
     {
-        User::checkAccess("document:list");
-        
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
@@ -59,8 +57,6 @@ class DocumentTemplateController extends Controller
     
     public function listGroupByType(DocumentTemplateRequest $request)
     {
-        User::checkAccess("document:list");
-        
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
@@ -92,7 +88,7 @@ class DocumentTemplateController extends Controller
     
     public function create(StoreDocumentTemplateRequest $request)
     {
-        User::checkAccess("document:create");
+        User::checkAccess("config:update");
         
         $validated = $request->validated();
         
@@ -107,7 +103,7 @@ class DocumentTemplateController extends Controller
     
     public function get(Request $request, int $documentTemplateId)
     {
-        User::checkAccess("document:list");
+        User::checkAccess("config:update");
         
         $documentTemplate = DocumentTemplate::find($documentTemplateId);
         if(!$documentTemplate)
@@ -118,7 +114,7 @@ class DocumentTemplateController extends Controller
     
     public function update(UpdateDocumentTemplateRequest $request, int $documentTemplateId)
     {
-        User::checkAccess("document:update");
+        User::checkAccess("config:update");
         
         $documentTemplate = DocumentTemplate::find($documentTemplateId);
         if(!$documentTemplate)
@@ -135,7 +131,7 @@ class DocumentTemplateController extends Controller
     
     public function delete(Request $request, int $documentTemplateId)
     {
-        User::checkAccess("document:delete");
+        User::checkAccess("config:update");
         
         $documentTemplate = DocumentTemplate::find($documentTemplateId);
         if(!$documentTemplate)

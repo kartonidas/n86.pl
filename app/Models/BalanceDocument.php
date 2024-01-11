@@ -12,6 +12,7 @@ use App\Exceptions\ObjectNotExist;
 use App\Models\Balance;
 use App\Models\Item;
 use App\Models\ItemBill;
+use App\Models\User;
 
 class BalanceDocument extends Model
 {
@@ -103,5 +104,17 @@ class BalanceDocument extends Model
         }
         
         return null;
+    }
+    
+    private static $cacheCreatedBy = [];
+    public function getCreatedBy()
+    {
+        if($this->user_id > 0)
+        {
+            if(!isset(static::$cacheCreatedBy[$this->user_id]))
+                static::$cacheCreatedBy[$this->user_id] = User::withTrashed()->find($this->user_id);
+                
+            return static::$cacheCreatedBy[$this->user_id];
+        }
     }
 }

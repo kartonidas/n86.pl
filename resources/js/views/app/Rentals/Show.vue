@@ -26,6 +26,8 @@
                 deleteBillId: null,
                 displayDocumentConfirmation: false,
                 deleteDocumentId: null,
+                displayPaymentConfirmation: false,
+                deletePaymentId: null,
                 errors: [],
                 rental: {
                     item: {},
@@ -41,7 +43,7 @@
                     bills: {
                         search: {},
                         currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
@@ -49,7 +51,7 @@
                     documents: {
                         search: {},
                         currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
@@ -57,7 +59,7 @@
                     payments: {
                         search: {},
                         currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
@@ -204,8 +206,13 @@
                 this.$router.push({name: 'rental_document_new'})
             },
             
+            newPayment() {
+                this.$router.push({name: 'rental_payment'})
+            },
+            
             rowDocumentsClick(event) {
-                this.$router.push({name: 'rental_document_edit', params: {documentId : event.data.id}})
+                if (hasAccess('rent:update')) 
+                    this.$router.push({name: 'rental_document_edit', params: {documentId : event.data.id}})
             },
             
             edit() {
@@ -258,6 +265,32 @@
                 this.meta.payments.currentPage = event["page"] + 1;
                 this.getPaymentList()
             },
+            
+            openPaymentConfirmation(id) {
+                this.displayPaymentConfirmation = true
+                this.deletePaymentId = id
+            },
+            
+            confirmDeletePayment() {
+                this.rentalService.removePayment(this.$route.params.rentalId, this.deletePaymentId)
+                    .then(
+                        (response) => {
+                            this.getPaymentList()
+                            this.getBillList()
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.bill_deleted'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    )
+                
+                this.displayPaymentConfirmation = false
+                this.deletePaymentId = null
+            },
+            
+            closePaymentConfirmation() {
+                this.displayPaymentConfirmation = false
+            },
         },
     }
 </script>
@@ -268,11 +301,9 @@
     <div class="mt-5 hidden">
         <strong>TODO:</strong>
         <ul>
-            <li>Lista wpłat, usuwanie, przyjmowanie wpłaty</li>
             <li>Historia edycji (może nowa zakładka)</li>
-            <li>Posprawdzać uprawnienia (w szczegolności menu)</li>
-            <li>Jak nie ma odpowiedniej liczby pakietów blokujemy konto</li>
             <li>Zwrot kaucji</li>
+            <li>Saldo nieruchomości i wynajmu - zapisywać w kolumnie</li>
         </ul>
     </div>
     
@@ -283,7 +314,7 @@
                     <div class="w-full">
                         <h3 class="mt-2 mb-1 text-color">{{ $t('rent.rental_agreement_no_of', [rental.full_number, rental.document_date]) }}</h3>
                     </div>
-                    <div class="text-right" v-if="rental.can_update">
+                    <div class="text-right" v-if="rental.can_update && hasAccess('rent:update')">
                         <Button icon="pi pi-pencil" @click="edit" v-tooltip.left="$t('app.edit')"></Button>
                     </div>
                 </div>
@@ -412,7 +443,7 @@
                         </div>
                     </div>
                     
-                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
+                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines" :class="hasAccess('rent:update') ? 'clickable' : ''" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
                         <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
                         <Column :header="$t('rent.document_created')" class="text-center" field="created_at"></Column>
                         <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
@@ -519,7 +550,7 @@
                     <div class="flex justify-content-between align-items-center mb-1">
                         <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.deposits') }}</h5>
                         <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
-                            <Button icon="pi pi-plus" :label="$t('rent.add_payment_short')" size="small" v-tooltip.left="$t('rent.add_payment')" @click="newBill" class="text-center"></Button>
+                            <Button icon="pi pi-plus" :label="$t('rent.add_payment_short')" size="small" v-tooltip.left="$t('rent.add_payment')" @click="newPayment" class="text-center"></Button>
                         </div>
                     </div>
                 
@@ -527,7 +558,7 @@
                         <Column :header="$t('rent.due')">
                             <template #body="{ data }">
                                 <ul class="list-unstyled">
-                                    <li v-for="item in data.associated_documents">
+                                    <li v-for="item in data.associated_documents" class="pt-1 pb-1">
                                         <router-link :to="{name: 'rental_bill_show', params: { billId : item.id }}">
                                             {{ item.bill_type.name }}
                                         </router-link>
@@ -541,15 +572,39 @@
                             </template>
                         </Column>
                         <Column :header="$t('rent.paid_date')" class="text-center" field="paid_date"></Column>
-                        <Column :header="$t('rent.payment_method')" >
+                        <Column :header="$t('rent.payment_method')">
                             <template #body="{ data }">
                                 {{ getValueLabel('payments.methods', data.payment_method) }}
                             </template>    
                         </Column>
+                        <Column :header="$t('rent.payment_accepted')">
+                            <template #body="{ data }">
+                                <span v-if="data.created_by">
+                                    {{ data.created_by.firstname }}
+                                    {{ data.created_by.lastname }}
+                                </span>
+                            </template>
+                        </Column>
+                        <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
+                            <template #body="{ data }">
+                                <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openPaymentConfirmation(data.id)"/>
+                            </template>
+                        </Column>
                         <template #empty>
-                            {{ $t('items.empty_bills_list') }}
+                            {{ $t('rent.empty_payment_list') }}
                         </template>
                     </DataTable>
+                    
+                    <Dialog :header="$t('app.confirmation')" v-model:visible="displayPaymentConfirmation" :style="{ width: '450px' }" :modal="true">
+                        <div class="flex align-items-center justify-content-center">
+                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                            <span>{{ $t('app.remove_object_confirmation') }}</span>
+                        </div>
+                        <template #footer>
+                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closePaymentConfirmation" class="p-button-text" />
+                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeletePayment" class="p-button-danger" autofocus />
+                        </template>
+                    </Dialog>
                 </div>
             </div>
         </div>

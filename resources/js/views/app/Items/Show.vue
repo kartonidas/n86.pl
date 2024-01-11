@@ -1,5 +1,5 @@
 <script>
-    import { setMetaTitle } from '@/utils/helper'
+    import { setMetaTitle, hasAccess } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import TabMenu from '@/views/app/Items/_TabMenu.vue'
@@ -9,6 +9,9 @@
         components: { Rental, TabMenu },
         setup() {
             setMetaTitle('meta.title.items_show')
+            return {
+                hasAccess
+            }
         },
         props: {
             item: { type: Object },
@@ -107,7 +110,7 @@
                         <div class="col-12 lg:col-6">
                             <Rental :object="item.current_rental" />
                         </div>
-                        <div class="col-12 lg:col-6 text-center">
+                        <div class="col-12 lg:col-6 text-center" v-if="hasAccess('rent:list')">
                             <Button severity="success" :label="$t('rent.go_to_details')" @click="showRental" class="align-center mt-5" iconPos="right" icon="pi pi-external-link"></Button>
                         </div>
                     </div>
@@ -117,7 +120,7 @@
                         <div class="col-12 lg:col-6 text-lg font-medium text-red-500">
                             {{ $t('items.currently_no_tenant') }}
                         </div>
-                        <div class="col-12 lg:col-6 text-center">
+                        <div class="col-12 lg:col-6 text-center" v-if="hasAccess('rent:create')">
                             <Button :label="$t('items.start_rental')" @click="rentItem" type="button" severity="danger" iconPos="right" icon="pi pi-briefcase" class="w-auto text-center" />
                         </div>
                     </div>

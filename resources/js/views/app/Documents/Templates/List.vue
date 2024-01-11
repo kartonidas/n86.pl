@@ -139,7 +139,7 @@
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.document_templates') }}</h4>
-                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('document:create')">
+                    <div class="text-right mb-0 inline-flex" v-if="hasAccess('config:update')">
                         <Button icon="pi pi-plus" v-tooltip.left="$t('documents.add_template')" @click="newTemplate" class="text-center"></Button>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
                         </template>
                     </Column>
                     <Column field="title" sortable :header="$t('documents.template_title')" style="min-width: 300px;"></Column>
-                    <Column field="delete" v-if="hasAccess('document:delete')" style="min-width: 60px; width: 60px" class="text-center">
+                    <Column field="delete" v-if="hasAccess('config:update')" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
                             <Button v-tooltip.bottom="$t('app.remove')" icon="pi pi-trash" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>

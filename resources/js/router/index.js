@@ -112,6 +112,7 @@ const router = createRouter({
                     path: '/app/firm-data',
                     name: 'firm_data',
                     component: () => import('@/views/app/FirmData.vue'),
+                    meta: {permission: 'owner'},
                 },
                 {
                     path: '/app/users',
@@ -190,13 +191,13 @@ const router = createRouter({
                                     path: '/app/item/:itemId/history',
                                     name: 'item_show_history',
                                     component: () => import('@/views/app/Items/Rental/History.vue'),
-                                    meta: {permission: 'item:list'},
+                                    meta: {permission: 'rent:list'},
                                 },
                                 {
                                     path: '/app/item/:itemId/reservations',
                                     name: 'item_show_reservation',
                                     component: () => import('@/views/app/Items/Rental/Reservation.vue'),
-                                    meta: {permission: 'item:list'},
+                                    meta: {permission: 'rent:list'},
                                 },
                                 {
                                     path: '/app/item/:itemId/bills',
@@ -392,13 +393,19 @@ const router = createRouter({
                             path: '/app/rental/:rentalId/bill/:billId',
                             name: 'rental_bill_show',
                             component: () => import('@/views/app/Rentals/Bills/Show.vue'),
-                            meta: {permission: 'rent:update'},
+                            meta: {permission: 'rent:list'},
                         },
                         {
                             path: '/app/rental/:rentalId/bill/:billId/payment',
                             name: 'rental_bill_payment',
                             component: () => import('@/views/app/Rentals/Bills/Payment.vue'),
-                            meta: {permission: 'item:update'},
+                            meta: {permission: 'rent:update'},
+                        },
+                        {
+                            path: '/app/rental/:rentalId/payment',
+                            name: 'rental_payment',
+                            component: () => import('@/views/app/Rentals/Payment.vue'),
+                            meta: {permission: 'rent:update'},
                         },
                     ]
                 },
@@ -418,25 +425,25 @@ const router = createRouter({
                                     path: '/app/documents/templates',
                                     name: 'documents_templates',
                                     component: () => import('@/views/app/Documents/Templates/List.vue'),
-                                    meta: {permission: 'document:list'},
+                                    meta: {permission: 'config:update'},
                                 },
                                 {
                                     path: '/app/documents/templates/new',
                                     name: 'documents_templates_new',
                                     component: () => import('@/views/app/Documents/Templates/New.vue'),
-                                    meta: {permission: 'document:create'},
+                                    meta: {permission: 'config:update'},
                                 },
                                 {
                                     path: '/app/documents/templates/edit/:templateId',
                                     name: 'documents_templates_edit',
                                     component: () => import('@/views/app/Documents/Templates/Edit.vue'),
-                                    meta: {permission: 'document:update'},
+                                    meta: {permission: 'config:update'},
                                 },
                                 {
                                     path: '/app/documents/templates/:templateId',
                                     name: 'documents_templates_show',
                                     component: () => import('@/views/app/Documents/Templates/Show.vue'),
-                                    meta: {permission: 'document:list'},
+                                    meta: {permission: 'config:update'},
                                 },
                             ]
                         },
@@ -480,6 +487,7 @@ const router = createRouter({
                     path: '/app/user/config',
                     name: 'config',
                     component: () => import('@/views/app/Config.vue'),
+                    meta: {permission: 'config:update'},
                 },
                 {
                     path: '/app/access-denied',

@@ -532,4 +532,18 @@ class Rental extends Model
     {
         return Balance::where("item_id", $this->item_id)->where("rental_id", $this->id)->first();
     }
+    
+    public function getUnpaidBalanceDocuments()
+    {
+        $balance = $this->getBalanceRow();
+        if($balance)
+        {
+            return BalanceDocument
+                ::where("item_id", $this->item_id)
+                ->where("balance_id", $balance->id)
+                ->where("paid", 0)
+                ->where("amount", "<", 0)
+                ->get();
+        }
+    }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\Exception;
 use App\Http\Requests\UpdateConfigRequest;
 use App\Models\Config;
+use App\Models\User;
 
 class ConfigController extends Controller
 {
@@ -18,6 +19,7 @@ class ConfigController extends Controller
     
     public function update(UpdateConfigRequest $request)
     {
+        User::checkAccess("config:update");
         $validated = $request->validated();
         
         foreach($validated as $key => $val)
