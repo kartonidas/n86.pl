@@ -41,6 +41,7 @@ input::placeholder,
 }
 
 TABLE.p-datatable-table {
+    TR TH,
     TR TD {
         white-space: nowrap;
     }
@@ -90,4 +91,13 @@ TABLE.table TR TD {
 
 TABLE.table TR TD:first-of-type {
     padding-left: 0;
+}
+
+DIV.p-tabview-panels {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+LI.p-tabview-header:not(.p-highlight) A {
+    color: #6b7280;
 }

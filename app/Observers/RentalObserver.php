@@ -10,12 +10,12 @@ class RentalObserver
 {
     public function creating(Rental $rental): void
     {
-        History::log("create", $rental);
         $rental->status = $rental->initStatus();
     }
     
     public function created(Rental $rental): void
     {
+        History::log("create", $rental);
         $rental->setNumber();
         
         $item = $rental->item()->first();

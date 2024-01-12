@@ -727,15 +727,18 @@ class RentalController extends Controller
         {
             $associatedBills = [];
             $deposits = $payment->getDepositAssociatedDocument();
-            foreach($deposits as $deposit)
+            if($deposits)
             {
-                if($deposit->object_type == BalanceDocument::OBJECT_TYPE_BILL)
+                foreach($deposits as $deposit)
                 {
-                    $bill = ItemBill::find($deposit->object_id);
-                    if($bill)
+                    if($deposit->object_type == BalanceDocument::OBJECT_TYPE_BILL)
                     {
-                        $bill->bill_type = $bill->getBillType();
-                        $associatedBills[] = $bill;
+                        $bill = ItemBill::find($deposit->object_id);
+                        if($bill)
+                        {
+                            $bill->bill_type = $bill->getBillType();
+                            $associatedBills[] = $bill;
+                        }
                     }
                 }
             }

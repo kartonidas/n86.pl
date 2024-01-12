@@ -8,6 +8,7 @@ use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\DocumentTemplateController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\NotificationController;
@@ -195,6 +196,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/documents/template/{id}', [DocumentTemplateController::class, "delete"])->where("id", "[0-9]+");
     
     
+    $router->get('/history/{type}/{id}', [HistoryController::class, "list"])->where("id", "[0-9]+")->where("id", "[0-9]+");
     
     // KONFIGURACJA
     $router->get('/config', [ConfigController::class, "get"]);

@@ -40,7 +40,7 @@ class Rental extends Model
     const PAYMENT_CYCLICAL = "cyclical";
     const PAYMENT_ONETIME = "onetime";
     
-    public static $sortable = ["start", "status", "end", "full_number", "rent"];
+    public static $sortable = ["start", "status", "end", "full_number", "rent", "balance"];
     public static $defaultSortable = ["start", "desc"];
     
     protected $casts = [
@@ -48,6 +48,7 @@ class Rental extends Model
         "rent" => "float",
         "first_month_different_amount" => "float",
         "last_month_different_amount" => "float",
+        "balance" => "float",
     ];
     protected $hidden = ["uuid"];
     

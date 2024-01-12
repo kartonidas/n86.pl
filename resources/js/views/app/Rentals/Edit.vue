@@ -100,6 +100,11 @@
                             
                         if(this.rent.first_payment_date && !(this.rent.first_payment_date instanceof Date))
                             this.rent.first_payment_date = moment(this.rent.first_payment_date).toDate()
+                            
+                        if (this.rent.first_month_different_amount)
+                            this.rent.first_month_different_amount_value = this.rent.first_month_different_amount;
+                        if (this.rent.last_month_different_amount)
+                            this.rent.last_month_different_amount_value = this.rent.last_month_different_amount;
                         
                         this.loading = false
                     },
@@ -213,7 +218,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-6 xl:col-3 mb-4" :class="[rent.period == 'indeterminate' ? 'md:col-8' : 'mmd:col-4']">
+                                <div class="field col-12 mb-4" :class="[rent.period == 'indeterminate' ? 'xl:col-6 md:col-4' : 'xl:col-3 md:col-6']">
                                     <label for="period" v-required class="block text-900 font-medium mb-2">{{ $t('rent.period') }}</label>
                                     <Dropdown id="period" v-model="rent.period" :options="period" optionLabel="name" :class="{'p-invalid' : v.rent.period.$error}" optionValue="id" :placeholder="$t('rent.select_period')" class="w-full" :disabled="loading || saving"/>
                                     <div v-if="v.rent.period.$error">
@@ -229,7 +234,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-4 mb-4" v-if="rent.period == 'date'">
+                                <div class="field col-12 md:col-6 xl:col-3 mb-4" v-if="rent.period == 'date'">
                                     <label for="end_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.end_date') }}</label>
                                     <Calendar id="end_date" v-model="rent.end_date" :class="{'p-invalid' : v.rent.end_date.$error}" :placeholder="$t('rent.end_date')" :minDate="rent.start_date" showIcon :disabled="loading || saving"/>
                                     <div v-if="v.rent.end_date.$error">
@@ -237,7 +242,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-6 mb-4">
+                                <div class="field col-12 mb-4" :class="[rent.period == 'indeterminate' ? 'xl:col-6 md:col-4' : 'md:col-6']">
                                     <label for="termination_period" v-required class="block text-900 font-medium mb-2">{{ $t('rent.termination_period') }}</label>
                                     <Dropdown id="termination_period" v-model="rent.termination_period" :options="termination_period" optionLabel="name" :class="{'p-invalid' : v.rent.termination_period.$error}" optionValue="id" :placeholder="$t('rent.select_termination_period')" class="w-full" :disabled="loading || saving"/>
                                     <div v-if="v.rent.termination_period.$error">
@@ -245,17 +250,19 @@
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-6 mb-4" v-if="rent.termination_period == 'months'">
-                                    <label for="termination_months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.termination_months') }}</label>
+                                <div class="field col-12 mb-4" v-if="rent.termination_period == 'months'" :class="[rent.period == 'indeterminate' ? 'xl:col-6 md:col-4' : 'md:col-6']">
+                                    <label for="termination_months" v-required class="block text-900 font-medium mb-2">{{ $t('rent.terminate') }}</label>
                                     <InputMask mask="9?99" slotChar="" :class="{'p-invalid' : v.rent.termination_months.$error}" :placeholder="$t('rent.termination_months')" class="w-full" v-model="rent.termination_months" :disabled="saving || loading"/>
+                                    <small>{{ $t('rent.number_months') }}</small>
                                     <div v-if="v.rent.termination_months.$error">
                                         <small class="p-error">{{ v.rent.termination_months.$errors[0].$message }}</small>
                                     </div>
                                 </div>
                                 
-                                <div class="field col-12 md:col-6 mb-4" v-if="rent.termination_period == 'days'">
-                                    <label for="termination_days" v-required class="block text-900 font-medium mb-2">{{ $t('rent.termination_days') }}</label>
+                                <div class="field col-12 mb-4" v-if="rent.termination_period == 'days'" :class="[rent.period == 'indeterminate' ? 'xl:col-6 md:col-4' : 'md:col-6']">
+                                    <label for="termination_days" v-required class="block text-900 font-medium mb-2">{{ $t('rent.terminate') }}</label>
                                     <InputMask mask="9?9" slotChar="" :class="{'p-invalid' : v.rent.termination_days.$error}" :placeholder="$t('rent.termination_days')" class="w-full" v-model="rent.termination_days" :disabled="saving || loading"/>
+                                    <small>{{ $t('rent.number_days') }}</small>
                                     <div v-if="v.rent.termination_days.$error">
                                         <small class="p-error">{{ v.rent.termination_days.$errors[0].$message }}</small>
                                     </div>

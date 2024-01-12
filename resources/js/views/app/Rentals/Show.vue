@@ -3,16 +3,19 @@
     import { appStore } from '@/store.js'
     
     import RentalService from '@/service/RentalService'
+    import HistoryService from '@/service/HistoryService'
     
     export default {
         setup() {
             setMetaTitle('meta.title.rent_show')
             
             const rentalService = new RentalService()
+            const historyService = new HistoryService()
             
             return {
                 p,
                 rentalService,
+                historyService,
                 hasAccess,
                 getValueLabel,
             }
@@ -22,6 +25,7 @@
                 bills: [],
                 documents: [],
                 payments: [],
+                histories: [],
                 displayBillConfirmation: false,
                 deleteBillId: null,
                 displayDocumentConfirmation: false,
@@ -63,6 +67,14 @@
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
+                    },
+                    history: {
+                        search: {},
+                        currentPage: 1,
+                        perPage: 10,
+                        loading: false,
+                        totalRecords: null,
+                        totalPages: null,
                     }
                 }
             }
@@ -83,6 +95,7 @@
                         this.getBillList()
                         this.getDocumentList()
                         this.getPaymentList()
+                        this.getHistoryList()
                     },
                     (errors) => {
                         if(errors.response.status == 404)
@@ -291,6 +304,28 @@
             closePaymentConfirmation() {
                 this.displayPaymentConfirmation = false
             },
+            
+            getHistoryList() {
+                this.meta.history.loading = true
+                
+                this.historyService.list("rental", this.$route.params.rentalId, this.meta.history.perPage, this.meta.history.currentPage, null, null, this.meta.history.search)
+                    .then(
+                        (response) => {
+                            this.histories = response.data.data
+                            this.meta.history.totalRecords = response.data.total_rows
+                            this.meta.history.totalPages = response.data.total_pages
+                            this.meta.history.loading = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    );
+            },
+            
+            changeHistoryPage(event) {
+                this.meta.history.currentPage = event["page"] + 1;
+                this.getHistoryList()
+            },
         },
     }
 </script>
@@ -303,7 +338,6 @@
         <ul>
             <li>Historia edycji (może nowa zakładka)</li>
             <li>Zwrot kaucji</li>
-            <li>Saldo nieruchomości i wynajmu - zapisywać w kolumnie</li>
         </ul>
     </div>
     
@@ -325,103 +359,150 @@
             
                 <div class="grid mt-3">
                     <div class="col-12 xl:col-7">
-                        <table class="table">
-                            <tr>
-                                <td class="font-medium" style="width: 165px">{{ $t('rent.tenant') }}:</td>
-                                <td class="font-italic">
-                                    <router-link v-if="rental.tenant.id" target="_blank" :to="{name: 'tenant_show', params: { tenantId : rental.tenant.id }}">
-                                        {{ rental.tenant.name }}
-                                    </router-link>
-                                    <span v-else>
-                                        {{ rental.tenant.name }}
-                                    </span>
-                                    <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal ml-1" severity="info"></Badge>
-                                </td>
-                            </tr>
-                            <tr v-if="rental.tenant.type == 'person' && rental.tenant.pesel">
-                                <td class="font-medium">{{ $t('tenants.pesel') }}:</td>
-                                <td class="font-italic">{{ rental.tenant.pesel }}</td>
-                            </tr>
-                            <tr v-if="rental.tenant.type == 'person' && rental.tenant.document_number">
-                                <td class="font-medium">{{ $t('tenants.document_number') }}:</td>
-                                <td class="font-italic">{{ rental.tenant.document_number }}</td>
-                            </tr>
-                            <tr v-if="rental.tenant.type == 'firm' && rental.tenant.nip">
-                                <td class="font-medium">{{ $t('tenants.nip') }}:</td>
-                                <td class="font-italic">{{ rental.tenant.nip }}</td>
-                            </tr>
-                            <tr v-if="rental.tenant.type == 'firm' && rental.tenant.regon">
-                                <td class="font-medium">{{ $t('tenants.regon') }}:</td>
-                                <td class="font-italic">{{ rental.tenant.regon }}</td>
-                            </tr>
-                        </table>
-                        <table class="table mt-5">
-                            <tr>
-                                <td class="font-medium" style="width: 165px">{{ $t('rent.estate') }}:</td>
-                                <td class="font-italic">
-                                    <router-link v-if="rental.item.id" target="_blank" :to="{name: 'item_show', params: { itemId : rental.item.id }}">
-                                        {{ rental.item.name }}
-                                    </router-link>
-                                    <span v-else>
-                                        {{ rental.item.name }}
-                                    </span>
-                                    <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal ml-1" severity="info"></Badge>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium" style="width: 165px">{{ $t('rent.period') }}:</td>
-                                <td class="font-italic">
-                                    {{ rental.start }} - 
-                                    <span v-if="rental.period == 'indeterminate'">
-                                        <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
-                                    </span>
-                                    <span v-if="rental.period == 'month'">
-                                        {{ rental.end }}<br/>({{ rental.months }} {{ p(rental.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
-                                    </span>
-                                    <span v-if="rental.period == 'date'">
-                                        {{ rental.end }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium">{{ $t('rent.rent') }}:</td>
-                                <td class="font-italic">{{ numeralFormat(rental.rent, '0.00') }}</td>
-                            </tr>
-                            <tr v-if="rental.payment == 'cyclical'">
-                                <td class="font-medium">{{ $t('rent.payment_day') }}:</td>
-                                <td class="font-italic">{{ rental.payment_day }}{{ $t("rent.payment_day_postfix") }} {{ $t("rent.each_month") }}</td>
-                            </tr>
-                        </table>
+                        <div class="grid">
+                            <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                <span class="font-medium">{{ $t('rent.tenant') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                <router-link v-if="rental.tenant.id" target="_blank" :to="{name: 'tenant_show', params: { tenantId : rental.tenant.id }}">
+                                    {{ rental.tenant.name }}
+                                </router-link>
+                                <span v-else>
+                                    {{ rental.tenant.name }}
+                                </span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <template v-if="rental.tenant.type == 'person'">
+                                <template v-if="rental.tenant.pesel">
+                                    <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                        <span class="font-medium">{{ $t('tenants.pesel') }}:</span>
+                                    </div>
+                                    <div class="col-12 sm:col-7 pt-0 pb-1">
+                                        {{ rental.tenant.pesel }}
+                                    </div>
+                                    <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                </template>
+                                <template v-if="rental.tenant.document_number">
+                                    <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                        <span class="font-medium">{{ $t('tenants.document_number') }}:</span>
+                                    </div>
+                                    <div class="col-12 sm:col-7 pt-0 pb-1">
+                                        {{ rental.tenant.document_number }}
+                                    </div>
+                                    <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                </template>
+                            </template>
+                            
+                            <template v-if="rental.tenant.type == 'firm'">
+                                <template v-if="rental.tenant.nip">
+                                    <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                        <span class="font-medium">{{ $t('tenants.nip') }}:</span>
+                                    </div>
+                                    <div class="col-12 sm:col-7 pt-0 pb-1">
+                                        {{ rental.tenant.nip }}
+                                    </div>
+                                    <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                </template>
+                                <template v-if="rental.tenant.regon">
+                                    <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                        <span class="font-medium">{{ $t('tenants.regon') }}:</span>
+                                    </div>
+                                    <div class="col-12 sm:col-7 pt-0 pb-1">
+                                        {{ rental.tenant.regon }}
+                                    </div>
+                                    <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                </template>
+                            </template>
+                        </div>
+                        
+                        <div class="grid mt-4">
+                            <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                <span class="font-medium">{{ $t('rent.estate') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                 <router-link v-if="rental.item.id" target="_blank" :to="{name: 'item_show', params: { itemId : rental.item.id }}">
+                                    {{ rental.item.name }}
+                                </router-link>
+                                <span v-else>
+                                    {{ rental.item.name }}
+                                </span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                <span class="font-medium">{{ $t('rent.period') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ rental.start }} - 
+                                <span v-if="rental.period == 'indeterminate'">
+                                    <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
+                                </span>
+                                <span v-if="rental.period == 'month'">
+                                    {{ rental.end }}<br/>({{ rental.months }} {{ p(rental.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
+                                </span>
+                                <span v-if="rental.period == 'date'">
+                                    {{ rental.end }}
+                                </span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                <span class="font-medium">{{ $t('rent.rent') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ numeralFormat(rental.rent, '0.00') }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <template v-if="rental.payment == 'cyclical'">
+                                <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                    <span class="font-medium">{{ $t('rent.payment_day') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ rental.payment_day }}{{ $t("rent.payment_day_postfix") }} {{ $t("rent.each_month") }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                        </div>
                     </div>
                     <div class="col-12 xl:col-5 relative">
-                        <table class="table">
-                            <tr>
-                                <td class="font-medium" style="width: 120px">{{ $t('rent.terminate') }}:</td>
-                                <td class="font-italic">
-                                    <span v-if="rental.termination_period == 'days'">
-                                        {{ rental.termination_days }} {{ p(rental.termination_days, $t('rent.1days'), $t('rent.2days'), $t('rent.3days')) }}
-                                    </span>
-                                    <span v-if="rental.termination_period == 'months'">
-                                        {{ rental.termination_months }} {{ p(rental.termination_months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium">{{ $t('rent.deposit') }}:</td>
-                                <td class="font-italic">
-                                    <span v-if="rental.deposit">
-                                        {{ numeralFormat(rental.deposit, '0.00') }}
-                                        <Badge :value="$t('rent.deposit_paid')" class="font-normal ml-1" severity="success" v-if="rental.has_paid_deposit"></Badge>
-                                        <Badge :value="$t('rent.deposit_unpaid')" class="font-normal ml-1" severity="danger" v-if="!rental.has_paid_deposit"></Badge>
-                                    </span>
-                                    <span v-else>-</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium">{{ $t('rent.number_of_people') }}:</td>
-                                <td class="font-italic">{{ rental.number_of_people }}</td>
-                            </tr>
-                        </table>
+                        
+                        <div class="grid">
+                            <div class="col-fixed pt-0 pb-1" style="width: 120px">
+                                <span class="font-medium">{{ $t('rent.terminate') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                <span v-if="rental.termination_period == 'days'">
+                                    {{ rental.termination_days }} {{ p(rental.termination_days, $t('rent.1days'), $t('rent.2days'), $t('rent.3days')) }}
+                                </span>
+                                <span v-if="rental.termination_period == 'months'">
+                                    {{ rental.termination_months }} {{ p(rental.termination_months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
+                                </span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 120px">
+                                <span class="font-medium">{{ $t('rent.deposit') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                <span v-if="rental.deposit">
+                                    {{ numeralFormat(rental.deposit, '0.00') }}
+                                    <Badge :value="$t('rent.deposit_paid')" class="font-normal ml-1" severity="success" v-if="rental.has_paid_deposit"></Badge>
+                                    <Badge :value="$t('rent.deposit_unpaid')" class="font-normal ml-1" severity="danger" v-if="!rental.has_paid_deposit"></Badge>
+                                </span>
+                                <span v-else>-</span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 120px">
+                                <span class="font-medium">{{ $t('rent.number_of_people') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ rental.number_of_people }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                        </div>
                         
                         <div v-if="rental.status == 'current' && !rental.termination" class="mt-6">
                             <Button :label="$t('rent.terminate_contract')" @click="terminate" type="button" severity="danger" iconPos="right" icon="pi pi-delete-left" class="w-full text-center" v-if="hasAccess('rent:update')" />
@@ -435,177 +516,197 @@
                     <i class="text-sm">{{ rental.comments}}</i>
                 </p>
                 
-                <div class="mt-5">
-                    <div class="flex justify-content-between align-items-center mb-1">
-                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.documents') }}</h5>
-                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
-                            <Button icon="pi pi-plus" :label="$t('items.add_document_short')" size="small" v-tooltip.left="$t('items.add_document')" @click="newDocument" class="text-center"></Button>
-                        </div>
-                    </div>
-                    
-                    <DataTable :value="documents" stripedRows class="p-datatable-gridlines" :class="hasAccess('rent:update') ? 'clickable' : ''" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
-                        <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
-                        <Column :header="$t('rent.document_created')" class="text-center" field="created_at"></Column>
-                        <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
-                        <Column class="text-center" style="min-width: 60px; width: 60px;">
-                            <template #body="{ data }">
-                                <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
-                            </template>
-                        </Column>
-                        <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
-                            <template #body="{ data }">
-                                <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openDocumentConfirmation(data.id)"/>
-                            </template>
-                        </Column>
-                        <template #empty>
-                            {{ $t('rent.empty_documents_list') }}
-                        </template>
-                    </DataTable>
-                    <Dialog :header="$t('app.confirmation')" v-model:visible="displayDocumentConfirmation" :style="{ width: '450px' }" :modal="true">
-                        <div class="flex align-items-center justify-content-center">
-                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                            <span>{{ $t('app.remove_object_confirmation') }}</span>
-                        </div>
-                        <template #footer>
-                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closeDocumentConfirmation" class="p-button-text" />
-                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteDocument" class="p-button-danger" autofocus />
-                        </template>
-                    </Dialog>
+                <div class="text-center mt-2 p-3 text-2xl border-round-lg text-white-alpha-90 uppercase" :class="rental.balance < 0 ? 'bg-red-600' : 'bg-green-600'">
+                    {{ $t('rent.balance') }}: {{ numeralFormat(rental.balance, '0.00') }}
                 </div>
                 
-                <div class="mt-5">
-                    <div class="flex justify-content-between align-items-center mb-1">
-                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.bills') }}</h5>
-                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
-                            <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
+                <TabView class="mt-5">
+                    <TabPanel :header="$t('rent.bills')">
+                        <div class="flex justify-content-between align-items-center mb-1">
+                            <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.bills') }}</h5>
+                            <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                                <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
+                            </div>
                         </div>
-                    </div>
-                
-                    <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.bills.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.bills.totalPages" :rows="meta.bills.perPage" @page="changeBillsPage" :loading="meta.bills.loading" @row-click="rowBillsClick($event)">
-                        <Column :header="$t('items.bill_type')" style="min-width: 300px;">
-                            <template #body="{ data }">
-                                <div class="mb-1 flex">
-                                    <span v-if="data.out_off_date" class="mr-1" v-tooltip.top="$t('items.bill_out_off_date')">
-                                        <i class="pi pi-exclamation-circle" style="font-size: 1.2rem; color: var(--red-600)"></i>
+                    
+                        <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.bills.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.bills.totalPages" :rows="meta.bills.perPage" @page="changeBillsPage" :loading="meta.bills.loading" @row-click="rowBillsClick($event)">
+                            <Column :header="$t('items.bill_type')" style="min-width: 300px;">
+                                <template #body="{ data }">
+                                    <div class="mb-1 flex">
+                                        <span v-if="data.out_off_date" class="mr-1" v-tooltip.top="$t('items.bill_out_off_date')">
+                                            <i class="pi pi-exclamation-circle" style="font-size: 1.2rem; color: var(--red-600)"></i>
+                                        </span>
+                                        {{ data.bill_type.name }}
+                                    </div>
+                                    <div class="mt-1" v-if="data.cyclical">
+                                        <small class="font-italic">
+                                            <i class="pi pi-replay"></i>
+                                            {{ $t("items.cyclical_fee") }}
+                                        </small>
+                                    </div>
+                                </template>
+                            </Column>
+                            <Column :header="$t('items.payer')">
+                                <template #body="{ data }">
+                                    <span v-if="data.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                                    <span v-else>{{ $t('items.owner') }}</span>
+                                </template>
+                            </Column>
+                            <Column :header="$t('items.cost')" class="text-right">
+                                <template #body="{ data }">
+                                    {{ numeralFormat(data.cost, '0.00') }}
+                                </template>
+                            </Column>
+                            <Column :header="$t('items.payment_date')" class="text-center">
+                                <template #body="{ data }">
+                                    {{ data.payment_date }}
+                                </template>
+                            </Column>
+                            <Column :header="$t('items.paid')" class="text-center">
+                                <template #body="{ data }">
+                                    <Badge :value="$t('app.yes')" class="uppercase font-normal" severity="success" v-if="data.paid"></Badge>
+                                    <Badge :value="$t('app.no')" class="uppercase font-normal" severity="danger" v-if="!data.paid"></Badge>
+                                    <div v-if="data.paid">
+                                        <small>
+                                            {{ data.paid_date }}
+                                        </small>
+                                    </div>
+                                </template>
+                            </Column>
+                            <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
+                                <template #body="{ data }">
+                                    <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openBillConfirmation(data.id)"/>
+                                </template>
+                            </Column>
+                            <template #empty>
+                                {{ $t('items.empty_bills_list') }}
+                            </template>
+                        </DataTable>
+                        <Dialog :header="$t('app.confirmation')" v-model:visible="displayBillConfirmation" :style="{ width: '450px' }" :modal="true">
+                            <div class="flex align-items-center justify-content-center">
+                                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                                <span>{{ $t('app.remove_object_confirmation') }}</span>
+                            </div>
+                            <template #footer>
+                                <Button :label="$t('app.no')" icon="pi pi-times" @click="closeBillConfirmation" class="p-button-text" />
+                                <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
+                            </template>
+                        </Dialog>
+                    </TabPanel>
+                    
+                    <TabPanel :header="$t('rent.documents')">
+                        <div class="flex justify-content-between align-items-center mb-1">
+                            <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.documents') }}</h5>
+                            <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                                <Button icon="pi pi-plus" :label="$t('items.add_document_short')" size="small" v-tooltip.left="$t('items.add_document')" @click="newDocument" class="text-center"></Button>
+                            </div>
+                        </div>
+                        
+                        <DataTable :value="documents" stripedRows class="p-datatable-gridlines" :class="hasAccess('rent:update') ? 'clickable' : ''" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
+                            <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
+                            <Column :header="$t('rent.document_created')" class="text-center" field="created_at"></Column>
+                            <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
+                            <Column class="text-center" style="min-width: 60px; width: 60px;">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
+                                </template>
+                            </Column>
+                            <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openDocumentConfirmation(data.id)"/>
+                                </template>
+                            </Column>
+                            <template #empty>
+                                {{ $t('rent.empty_documents_list') }}
+                            </template>
+                        </DataTable>
+                        <Dialog :header="$t('app.confirmation')" v-model:visible="displayDocumentConfirmation" :style="{ width: '450px' }" :modal="true">
+                            <div class="flex align-items-center justify-content-center">
+                                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                                <span>{{ $t('app.remove_object_confirmation') }}</span>
+                            </div>
+                            <template #footer>
+                                <Button :label="$t('app.no')" icon="pi pi-times" @click="closeDocumentConfirmation" class="p-button-text" />
+                                <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteDocument" class="p-button-danger" autofocus />
+                            </template>
+                        </Dialog>
+                    </TabPanel>
+                    
+                    <TabPanel :header="$t('rent.deposits')">
+                        <div class="flex justify-content-between align-items-center mb-1">
+                            <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.deposits') }}</h5>
+                            <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
+                                <Button icon="pi pi-plus" :label="$t('rent.add_payment_short')" size="small" v-tooltip.left="$t('rent.add_payment')" @click="newPayment" class="text-center"></Button>
+                            </div>
+                        </div>
+                    
+                        <DataTable :value="payments" stripedRows class="p-datatable-gridlines" :totalRecords="meta.payments.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.payments.totalPages" :rows="meta.payments.perPage" @page="changePaymentsPage" :loading="meta.payments.loading">
+                            <Column :header="$t('rent.due')">
+                                <template #body="{ data }">
+                                    <ul class="list-unstyled">
+                                        <li v-for="item in data.associated_documents" class="pt-1 pb-1">
+                                            <router-link :to="{name: 'rental_bill_show', params: { billId : item.id }}">
+                                                {{ item.bill_type.name }}
+                                            </router-link>
+                                        </li>
+                                    </ul>
+                                </template>
+                            </Column>
+                            <Column :header="$t('rent.amount')" class="text-right">
+                                <template #body="{ data }">
+                                    {{ numeralFormat(data.amount, '0.00') }}
+                                </template>
+                            </Column>
+                            <Column :header="$t('rent.paid_date')" class="text-center" field="paid_date"></Column>
+                            <Column :header="$t('rent.payment_method')">
+                                <template #body="{ data }">
+                                    {{ getValueLabel('payments.methods', data.payment_method) }}
+                                </template>    
+                            </Column>
+                            <Column :header="$t('rent.payment_accepted')">
+                                <template #body="{ data }">
+                                    <span v-if="data.created_by">
+                                        {{ data.created_by.firstname }}
+                                        {{ data.created_by.lastname }}
                                     </span>
-                                    {{ data.bill_type.name }}
-                                </div>
-                                <div class="mt-1" v-if="data.cyclical">
-                                    <small class="font-italic">
-                                        <i class="pi pi-replay"></i>
-                                        {{ $t("items.cyclical_fee") }}
-                                    </small>
-                                </div>
+                                </template>
+                            </Column>
+                            <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openPaymentConfirmation(data.id)"/>
+                                </template>
+                            </Column>
+                            <template #empty>
+                                {{ $t('rent.empty_payment_list') }}
                             </template>
-                        </Column>
-                        <Column :header="$t('items.payer')">
-                            <template #body="{ data }">
-                                <span v-if="data.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
-                                <span v-else>{{ $t('items.owner') }}</span>
+                        </DataTable>
+                        
+                        <Dialog :header="$t('app.confirmation')" v-model:visible="displayPaymentConfirmation" :style="{ width: '450px' }" :modal="true">
+                            <div class="flex align-items-center justify-content-center">
+                                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                                <span>{{ $t('app.remove_object_confirmation') }}</span>
+                            </div>
+                            <template #footer>
+                                <Button :label="$t('app.no')" icon="pi pi-times" @click="closePaymentConfirmation" class="p-button-text" />
+                                <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeletePayment" class="p-button-danger" autofocus />
                             </template>
-                        </Column>
-                        <Column :header="$t('items.cost')" class="text-right">
-                            <template #body="{ data }">
-                                {{ numeralFormat(data.cost, '0.00') }}
-                            </template>
-                        </Column>
-                        <Column :header="$t('items.payment_date')" class="text-center">
-                            <template #body="{ data }">
-                                {{ data.payment_date }}
-                            </template>
-                        </Column>
-                        <Column :header="$t('items.paid')" class="text-center">
-                            <template #body="{ data }">
-                                <Badge :value="$t('app.yes')" class="uppercase font-normal" severity="success" v-if="data.paid"></Badge>
-                                <Badge :value="$t('app.no')" class="uppercase font-normal" severity="danger" v-if="!data.paid"></Badge>
-                                <div v-if="data.paid">
-                                    <small>
-                                        {{ data.paid_date }}
-                                    </small>
-                                </div>
-                            </template>
-                        </Column>
-                        <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
-                            <template #body="{ data }">
-                                <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openBillConfirmation(data.id)"/>
-                            </template>
-                        </Column>
-                        <template #empty>
-                            {{ $t('items.empty_bills_list') }}
-                        </template>
-                    </DataTable>
-                    <Dialog :header="$t('app.confirmation')" v-model:visible="displayBillConfirmation" :style="{ width: '450px' }" :modal="true">
-                        <div class="flex align-items-center justify-content-center">
-                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                            <span>{{ $t('app.remove_object_confirmation') }}</span>
-                        </div>
-                        <template #footer>
-                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closeBillConfirmation" class="p-button-text" />
-                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteBill" class="p-button-danger" autofocus />
-                        </template>
-                    </Dialog>
-                </div>
-                
-                <div class="mt-5">
-                    <div class="flex justify-content-between align-items-center mb-1">
-                        <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.deposits') }}</h5>
-                        <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:update')">
-                            <Button icon="pi pi-plus" :label="$t('rent.add_payment_short')" size="small" v-tooltip.left="$t('rent.add_payment')" @click="newPayment" class="text-center"></Button>
-                        </div>
-                    </div>
-                
-                    <DataTable :value="payments" stripedRows class="p-datatable-gridlines" :totalRecords="meta.payments.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.payments.totalPages" :rows="meta.payments.perPage" @page="changePaymentsPage" :loading="meta.payments.loading">
-                        <Column :header="$t('rent.due')">
-                            <template #body="{ data }">
-                                <ul class="list-unstyled">
-                                    <li v-for="item in data.associated_documents" class="pt-1 pb-1">
-                                        <router-link :to="{name: 'rental_bill_show', params: { billId : item.id }}">
-                                            {{ item.bill_type.name }}
-                                        </router-link>
-                                    </li>
-                                </ul>
-                            </template>
-                        </Column>
-                        <Column :header="$t('rent.amount')" class="text-right">
-                            <template #body="{ data }">
-                                {{ numeralFormat(data.amount, '0.00') }}
-                            </template>
-                        </Column>
-                        <Column :header="$t('rent.paid_date')" class="text-center" field="paid_date"></Column>
-                        <Column :header="$t('rent.payment_method')">
-                            <template #body="{ data }">
-                                {{ getValueLabel('payments.methods', data.payment_method) }}
-                            </template>    
-                        </Column>
-                        <Column :header="$t('rent.payment_accepted')">
-                            <template #body="{ data }">
-                                <span v-if="data.created_by">
-                                    {{ data.created_by.firstname }}
-                                    {{ data.created_by.lastname }}
-                                </span>
-                            </template>
-                        </Column>
-                        <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">
-                            <template #body="{ data }">
-                                <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openPaymentConfirmation(data.id)"/>
-                            </template>
-                        </Column>
-                        <template #empty>
-                            {{ $t('rent.empty_payment_list') }}
-                        </template>
-                    </DataTable>
+                        </Dialog>
+                    </TabPanel>
                     
-                    <Dialog :header="$t('app.confirmation')" v-model:visible="displayPaymentConfirmation" :style="{ width: '450px' }" :modal="true">
-                        <div class="flex align-items-center justify-content-center">
-                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                            <span>{{ $t('app.remove_object_confirmation') }}</span>
+                    <TabPanel :header="$t('rent.history')">
+                        <div class="flex justify-content-between align-items-center mb-1">
+                            <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.history') }}</h5>
                         </div>
-                        <template #footer>
-                            <Button :label="$t('app.no')" icon="pi pi-times" @click="closePaymentConfirmation" class="p-button-text" />
-                            <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeletePayment" class="p-button-danger" autofocus />
-                        </template>
-                    </Dialog>
-                </div>
+                    
+                        <DataTable :value="histories" stripedRows class="p-datatable-gridlines" :totalRecords="meta.history.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.history.totalPages" :rows="meta.payments.perPage" @page="changeHistoryPage" :loading="meta.history.loading">
+                            <Column :header="$t('rent.user')" field="user"></Column>
+                            <Column :header="$t('rent.date')" field="created_at"></Column>
+                            <template #empty>
+                                {{ $t('rent.empty_history_list') }}
+                            </template>
+                        </DataTable>
+                    </TabPanel>
+                </TabView>
             </div>
         </div>
     </div>

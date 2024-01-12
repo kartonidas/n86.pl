@@ -28,6 +28,7 @@ class Item extends Model
         "area" => "float",
         "default_rent" => "float",
         "default_deposit" => "float",
+        "balance" => "float",
     ];
     protected $hidden = ["uuid"];
     

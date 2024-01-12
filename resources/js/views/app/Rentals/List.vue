@@ -238,6 +238,11 @@
                             </div>
                         </template>
                     </Column>
+                    <Column :header="$t('rent.balance')" field="balance" sortable>
+                        <template #body="{ data }">
+                            {{ numeralFormat(data.balance, '0.00') }}
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.estate')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>

@@ -12,6 +12,7 @@ use App\Exceptions\ObjectNotExist;
 use App\Models\Balance;
 use App\Models\Item;
 use App\Models\ItemBill;
+use App\Models\Rental;
 use App\Models\User;
 
 class BalanceDocument extends Model
@@ -63,6 +64,29 @@ class BalanceDocument extends Model
             
             $balance->amount = self::where("item_id", $this->item_id)->where("balance_id", $balance->id)->sum("amount");
             $balance->save();
+            
+            $rental = Rental::withoutGlobalScopes()->find($balance->rental_id);
+            if($rental)
+            {
+                $rental->balance = $balance->amount;
+                $rental->save();
+            }
+            
+            $itemBalance = Balance::ensureBalance($this->item_id);
+            $itemBalance = Balance::where("id", $itemBalance->id)->lockForUpdate()->first();
+            
+            if(!$itemBalance)
+                throw new ObjectNotExist(__("Balance object does not exist"));
+            
+            $itemBalance->amount = self::where("item_id", $this->item_id)->sum("amount");
+            $itemBalance->save();
+            
+            $item = Item::withoutGlobalScopes()->find($this->item_id);
+            if($item)
+            {
+                $item->balance = $itemBalance->amount;
+                $item->save();
+            }
         });
     }
     
