@@ -16,7 +16,10 @@ class Config extends Model
 
 	public static function saveConfig($group, $key, $val, $uuid = null)
 	{
-        $row = self::where("group", $group)->where("key", $key)->first();
+        if(!$uuid)
+            $row = self::where("group", $group)->where("key", $key)->first();
+        else
+            $row = self::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("group", $group)->where("key", $key)->first();
         if(!$row)
         {
             $row = new self;

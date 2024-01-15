@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -67,6 +68,12 @@ class UserController extends Controller
         
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            
+            $firm = Auth::user()->getFirm();
+            $firebaseCredentials = null;
+            if($firm->firebase && $firm->firebase_password)
+                $firebaseCredentials = $firm->uuid . "@" . Crypt::decryptString($firm->firebase_password);
+            
             return [
                 "id" => Auth::user()->id,
                 "firstname" => Auth::user()->firstname,
@@ -74,6 +81,7 @@ class UserController extends Controller
                 "locale" => Auth::user()->locale,
                 "owner" => Auth::user()->owner,
                 "permission" => UserPermission::permissionArrayToString(Auth::user()->getAllUserPermissions(Auth::user()->getUuid(), true)),
+                "firebase" => $firebaseCredentials,
             ];
         }
         

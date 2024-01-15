@@ -419,6 +419,12 @@ const router = createRouter({
                             meta: {permission: 'document:list'},
                         },
                         {
+                            path: '/app/document/edit/:documentId',
+                            name: 'document_edit',
+                            component: () => import('@/views/app/Documents/Edit.vue'),
+                            meta: {permission: 'document:update'},
+                        },
+                        {
                             path: '/app/documents/templates',
                             children: [
                                 {

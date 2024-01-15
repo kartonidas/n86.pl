@@ -52,7 +52,6 @@ class HistoryController extends Controller
                 "created_at" => $h->created_at,
             ];
         }
-        //print_r($historyOut);
         
         $out = [
             "total_rows" => $total,

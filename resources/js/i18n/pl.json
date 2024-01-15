@@ -117,7 +117,23 @@
         "template_updated" : "Szablon został zaktualizowany",
         "new_template" : "Nowy szablon",
         "update_template" : "Aktualizuj szablon",
-        "show_template" : "Szczegóły szablonu"
+        "show_template" : "Szczegóły szablonu",
+        "type" : "Rodzaj dokumentu",
+        "title" : "Nazwa",
+        "empty_list": "Brak dokumentów",
+        "document_deleted" : "Dokument został usunięty",
+        "update_document" : "Aktualizuj dokument",
+        "content" : "Zawartość",
+        "document_updated" : "Dokument został zaktualizowany",
+        "estate" : "Nieruchomość",
+        "rental" : "Wynajem",
+        "item_name" : "Nazwa nieruchomości"
+    },
+    "history" : {
+        "date": "Data operacji",
+        "event": "Zdarzenie",
+        "user": "Użytkownik",
+        "diff": "Modyfikacje"
     },
     "items" : {
         "1months" : "miesiąc",
@@ -312,7 +328,8 @@
             "rent_new_document" : "Nowy dokument",
             "rent_edit" : "Edycja najmu",
             "rent_edit_document" : "Edycja dokumentu",
-            "rent_payment_deposit" : "Przyjmij wpłatę"
+            "rent_payment_deposit" : "Przyjmij wpłatę",
+            "documents_edit" : "Edycja dokumentu"
         }
     },
     "permissions" : {

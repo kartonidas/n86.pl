@@ -1,10 +1,36 @@
 <script setup>
+import db from '@/utils/firebase'
+import { useDatabaseList } from 'vuefire'
+import { ref as dbRef } from 'firebase/database'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { appStore } from '@/store.js'
+
 import { ref } from 'vue';
 
 import MenuItem from './MenuItem.vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n();
 import { hasAccess } from '@/utils/helper.js'
+
+let counters = ref({});
+try {
+    const auth = getAuth();
+    if (appStore().firebase) {
+        let firebaseCredentials = appStore().firebase.split("@");
+        let login = firebaseCredentials[0];
+        let pass = firebaseCredentials[1];
+        
+        signInWithEmailAndPassword(auth, login + "@n86.pl", pass)
+            .then(
+                () => {},
+                () => {},
+            );
+            
+        counters = useDatabaseList(dbRef(db, 'stats/' + firebaseCredentials[0]));
+    }
+} catch (e) {}
+
+
 
 const model = ref([
     {
@@ -15,12 +41,52 @@ const model = ref([
         label: t('menu.estates'),
         access: hasAccess('item:list') || hasAccess('rent:list') || hasAccess('customer:list') || hasAccess('tenant:list') || hasAccess('document:list') || hasAccess('fault:list'),
         items: [
-            { label: t('menu.estate_list'), icon: 'pi pi-fw pi-building', to: { name: 'items' }, access: hasAccess('item:list'), regex: /^\/app\/item(s?)(\/(.*))?$/i },
-            { label: t('menu.rentals_list'), icon: 'pi pi-fw pi-dollar', to: { name: 'rentals' }, access: hasAccess('rent:list'), regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i },
-            { label: t('menu.customer_list'), icon: 'pi pi-fw pi-briefcase', to: { name: 'customers' }, access: hasAccess('customer:list'), regex: /^\/app\/customer(s?)(\/(.*))?$/i },
-            { label: t('menu.tenant_list'), icon: 'pi pi-fw pi-user', to: { name: 'tenants' }, access: hasAccess('tenant:list'), regex: /^\/app\/tenant(s?)(\/(.*))?$/i },
-            { label: t('menu.documents'), icon: 'pi pi-fw pi-file', to: { name: 'documents' }, access: hasAccess('document:list'), regex: /^\/app\/document(s?)(\/(?!templates).*)?$/i },
-            { label: t('menu.faults'), icon: 'pi pi-fw pi-wrench', to: { name: 'faults' }, access: hasAccess('fault:list'), regex: /^\/app\/fault(s?)(\/(.*))?$/i },
+            {
+                label: t('menu.estate_list'),
+                icon: 'pi pi-fw pi-building',
+                to: { name: 'items' },
+                access: hasAccess('item:list'),
+                regex: /^\/app\/item(s?)(\/(.*))?$/i,
+                count: [{'index' : 'items', 'class' : 'info'}]
+            },
+            {
+                label: t('menu.rentals_list'),
+                icon: 'pi pi-fw pi-dollar',
+                to: { name: 'rentals' },
+                access: hasAccess('rent:list'),
+                regex: /^\/app\/(rental(s?)|rent)(\/(.*))?$/i,
+                count: [{'index' : 'rentals', 'class' : 'info'}]
+            },
+            {
+                label: t('menu.customer_list'),
+                icon: 'pi pi-fw pi-briefcase',
+                to: { name: 'customers' },
+                access: hasAccess('customer:list'),
+                regex: /^\/app\/customer(s?)(\/(.*))?$/i,
+                count: [{'index' : 'customers', 'class' : 'info'}]
+            },
+            {
+                label: t('menu.tenant_list'),
+                icon: 'pi pi-fw pi-user',
+                to: { name: 'tenants' },
+                access: hasAccess('tenant:list'),
+                regex: /^\/app\/tenant(s?)(\/(.*))?$/i,
+                count: [{'index' : 'tenants', 'class' : 'info'}]
+            },
+            {
+                label: t('menu.documents'),
+                icon: 'pi pi-fw pi-file',
+                to: { name: 'documents' },
+                access: hasAccess('document:list'),
+                regex: /^\/app\/document(s?)(\/(?!templates).*)?$/i
+            },
+            {
+                label: t('menu.faults'),
+                icon: 'pi pi-fw pi-wrench',
+                to: { name: 'faults' },
+                access: hasAccess('fault:list'),
+                regex: /^\/app\/fault(s?)(\/(.*))?$/i
+            },
         ]
     },
     {
@@ -54,7 +120,7 @@ const model = ref([
 <template>
     <ul class="layout-menu">
         <template v-for="(item, i) in model" :key="item">
-            <menu-item v-if="!item.separator" :item="item" :index="i"></menu-item>
+            <menu-item v-if="!item.separator" :item="item" :index="i" :counters="counters"></menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>

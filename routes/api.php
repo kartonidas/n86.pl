@@ -7,6 +7,7 @@ use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DictionaryController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ItemController;
@@ -194,6 +195,12 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/documents/template/{id}', [DocumentTemplateController::class, "get"])->where("id", "[0-9]+");
     $router->put('/documents/template/{id}', [DocumentTemplateController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/documents/template/{id}', [DocumentTemplateController::class, "delete"])->where("id", "[0-9]+");
+    
+    $router->get('/documents', [DocumentController::class, "list"])->where("id", "[0-9]+");
+    $router->get('/document/{id}/pdf', [DocumentController::class, "getDocumentPdf"])->where("id", "[0-9]+");
+    $router->get('/document/{id}', [DocumentController::class, "get"])->where("id", "[0-9]+");
+    $router->delete('/document/{id}', [DocumentController::class, "delete"])->where("id", "[0-9]+");
+    $router->put('/document/{id}', [DocumentController::class, "update"])->where("id", "[0-9]+");
     
     
     $router->get('/history/{type}/{id}', [HistoryController::class, "list"])->where("id", "[0-9]+")->where("id", "[0-9]+");

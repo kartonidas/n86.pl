@@ -19,6 +19,7 @@ use App\Exceptions\AccessDenied;
 use App\Exceptions\Exception;
 use App\Exceptions\ObjectNotExist;
 use App\Exceptions\Unauthorized;
+use App\Jobs\FirebaseRegister;
 use App\Mail\Register\InitMessage;
 use App\Mail\Register\WelcomeMessage;
 use App\Mail\User\ForgotPasswordMessage;
@@ -201,6 +202,8 @@ class User extends Authenticatable
                 
                 $this->firm_id = $firm->id;
                 $this->save();
+                
+                FirebaseRegister::dispatch($firm->uuid);
             }
         }
     }

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
+use App\Jobs\RecalculateStats;
+use App\Libraries\FirebaseHelper;
 use App\Models\User;
 
 class Firm extends Model
@@ -27,5 +30,25 @@ class Firm extends Model
             if($user)
                 return $user;
         }
+    }
+    
+    public static function stats(string $uuid)
+    {
+        $stats = [
+            "items" => \App\Models\Item::withoutGlobalScope("uuid")->where("uuid", $uuid)->count(),
+            "customers" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_CUSTOMER)->count(),
+            "tenants" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_TENANT)->count(),
+            "rentals" => \App\Models\Rental::withoutGlobalScope("uuid")->where("uuid", $uuid)->count(),
+        ];
+        
+        @mkdir(storage_path("accounts/" . $uuid), 0777, true);
+        
+        $file = storage_path("accounts/" . $uuid . "/stats.json");
+        $fp = fopen($file, "w");
+        fwrite($fp, json_encode($stats));
+        fclose($fp);
+        
+        
+        FirebaseHelper::updateStats($uuid, $stats);
     }
 }

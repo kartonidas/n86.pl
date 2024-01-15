@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Auth;
+
+use App\Jobs\RecalculateStats;
 use App\Models\History;
 use App\Models\Rental;
 
@@ -23,17 +25,20 @@ class RentalObserver
             $item->setRentedFlag();
             
         Rental::recalculate($rental);
+        RecalculateStats::dispatch($rental->uuid);
     }
     
     public function updated(Rental $rental): void
     {
         History::log("update", $rental);
         Rental::recalculate($rental);
+        RecalculateStats::dispatch($rental->uuid);
     }
     
     public function deleted(Rental $rental): void
     {
         History::log("delete", $rental);
         Rental::recalculate($rental);
+        RecalculateStats::dispatch($rental->uuid);
     }
 }

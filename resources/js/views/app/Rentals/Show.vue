@@ -699,10 +699,21 @@
                         </div>
                     
                         <DataTable :value="histories" stripedRows class="p-datatable-gridlines" :totalRecords="meta.history.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.history.totalPages" :rows="meta.payments.perPage" @page="changeHistoryPage" :loading="meta.history.loading">
-                            <Column :header="$t('rent.user')" field="user"></Column>
-                            <Column :header="$t('rent.date')" field="created_at"></Column>
+                            <Column :header="$t('history.user')" field="user"></Column>
+                            <Column :header="$t('history.event')" field="event"></Column>
+                            <Column :header="$t('history.diff')">
+                                <template #body="{ data }">
+                                    <ul class="list-unstyled" v-if="data.diff">
+                                        <li v-for="item in data.diff">
+                                            <span class="font-medium">{{ item.field }}:</span>
+                                            {{ item.old }} &raquo; {{ item.new }}
+                                        </li>
+                                    </ul>
+                                </template>
+                            </Column>
+                            <Column :header="$t('history.date')" field="created_at"></Column>
                             <template #empty>
-                                {{ $t('rent.empty_history_list') }}
+                                {{ $t('history.empty_history_list') }}
                             </template>
                         </DataTable>
                     </TabPanel>

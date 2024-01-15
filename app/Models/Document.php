@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Models\Item;
+use App\Models\Rental;
 use App\Models\User;
 
 class Document extends Model
@@ -19,4 +22,14 @@ class Document extends Model
     ];
     
     protected $hidden = ["uuid"];
+    
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(Item::class);
+    }
+    
+    public function rental(): BelongsTo
+    {
+        return $this->belongsTo(Rental::class);
+    }
 }

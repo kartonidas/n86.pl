@@ -39,6 +39,7 @@ export default class UserService {
                             appStore().setUserId(response.data.id);
                             appStore().setIsOwner(response.data.owner);
                             appStore().setUserPermission(response.data.permission);
+                            appStore().setFirebase(response.data.firebase);
                             resolve(response.data);
                         },
                         (response) => {

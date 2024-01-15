@@ -7,6 +7,7 @@ export const appStore = defineStore('store', {
             isOwner: false,
             toastMessage: null,
             permissions: null,
+            firebase: null,
             tableOrder: {},
             tableFilter: {},
             error404: null,
@@ -52,6 +53,10 @@ export const appStore = defineStore('store', {
                 this.tableFilter[table] = {};
             
             this.tableFilter[table] = filter;
+        },
+        
+        setFirebase(firebase) {
+            this.firebase = firebase
         },
         
         getTableFilter(table) {

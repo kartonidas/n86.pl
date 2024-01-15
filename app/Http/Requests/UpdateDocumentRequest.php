@@ -3,10 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use App\Models\DocumentTemplate;
+use App\Http\Requests\StoreRentalDocumentRequest;
 
-class StoreRentalDocumentRequest extends FormRequest
+class UpdateDocumentRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +15,6 @@ class StoreRentalDocumentRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "type" => ["required", Rule::in(array_keys(DocumentTemplate::getTypes()))],
             "content" => "required",
             "title" => "required|max:200",
         ];
@@ -24,4 +22,3 @@ class StoreRentalDocumentRequest extends FormRequest
         return $rules;
     }
 }
-

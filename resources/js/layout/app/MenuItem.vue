@@ -23,7 +23,11 @@ const props = defineProps({
     parentItemKey: {
         type: String,
         default: null
-    }
+    },
+    counters: {
+        type: Object,
+        default: () => ({})
+    },
 });
 
 const isActiveMenu = ref(false);
@@ -41,8 +45,9 @@ watch(
     () => layoutConfig.activeMenuItem.value,
     (newVal) => {
         isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
-    }
+    },
 );
+
 const itemClick = (event, item) => {
     if (item.disabled) {
         event.preventDefault();
@@ -72,6 +77,18 @@ const checkActiveRoute = (item) => {
     
     return route.path === item.to;
 };
+
+const getCounter = (counter) => {
+    let value;
+    props.counters.forEach((c) => {
+        if (c.id == counter) {
+            value = c.$value;
+            return;
+        }
+    });
+    return value;
+}
+
 </script>
 
 <template>
@@ -82,14 +99,18 @@ const checkActiveRoute = (item) => {
             <span class="layout-menuitem-text">{{ item.label }}</span>
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </a>
-        <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
-            <span class="layout-menuitem-text">{{ item.label }}</span>
-            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+        <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" class="justify-content-between" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
+            <div>
+                <i :class="item.icon" class="layout-menuitem-icon"></i>
+                <span class="layout-menuitem-text">{{ item.label }}</span>
+            </div>
+            <template v-if="item.count" v-for="count in item.count">
+                <Badge v-if="getCounter(count.index)" :value="getCounter(count.index)" class="p-badge-secondary"></Badge>
+            </template>
         </router-link>
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
             <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
-                <menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></menu-item>
+                <menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false" :counters="counters"></menu-item>
             </ul>
         </Transition>
     </li>
