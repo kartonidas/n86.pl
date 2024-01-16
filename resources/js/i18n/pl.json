@@ -133,7 +133,8 @@
         "date": "Data operacji",
         "event": "Zdarzenie",
         "user": "Użytkownik",
-        "diff": "Modyfikacje"
+        "diff": "Modyfikacje",
+        "empty_history_list" : "Brak historii"
     },
     "items" : {
         "1months" : "miesiąc",
@@ -266,7 +267,8 @@
         "settings" : "Ustawienia",
         "tenant_list" : "Lista najemców",
         "users" : "Użytkownicy",
-        "users_list" : "Lista użytkowników"
+        "users_list" : "Lista użytkowników",
+        "invoices" : "Faktury"
     },
     "meta": {
         "title" : {
@@ -329,7 +331,11 @@
             "rent_edit" : "Edycja najmu",
             "rent_edit_document" : "Edycja dokumentu",
             "rent_payment_deposit" : "Przyjmij wpłatę",
-            "documents_edit" : "Edycja dokumentu"
+            "documents_edit" : "Edycja dokumentu",
+            "buy_access" : "Wykup dostęp",
+            "prolong_access" : "Przedłuż dostęp",
+            "extend_access" : "Powiększ pakiet",
+            "invoices" : "Faktury"
         }
     },
     "permissions" : {
@@ -616,5 +622,48 @@
         "bill_source_document_number" : "Numer dokumentu źródłowego, np.: numer faktury.",
         "bill_source_document_date" : "Data wystawienia dokumentu źródłowego np.: data wystawienia faktury.",
         "bill_tenant_cost" : "Zaznacz to pole jeśli opłata ma obciążyć saldo najemcy."
+    },
+    "orders" : {
+        "active_items" : "Ilość nieruchomości",
+        "buy_access" : "Wykup dostęp",
+        "select_period" : "Okres na jakich chcesz wykupić dostęp",
+        "select_period_prolong" : "Okres na jakich chcesz przedłużyć dostęp",
+        "period" : "Okres",
+        "total_items" : "Ilość nieruchomości",
+        "selected_items" : "Wybrana ilość nieruchomości",
+        "price_per_item" : "Cena za jedną nieruchomość",
+        "total_to_paid" : "Łącznie do zapłaty",
+        "price_tax_info" : "Podane ceny zawierają {0}% podatek VAT",
+        "order" : "Zamawiam",
+        "prolong_access" : "Przedłuż dostęp",
+        "month" : "miesiąc",
+        "year" : "rok",
+        "bottom_info" : "Po kliknieciu 'Zamawiam' zostaniesz przeniesiony na stronę operatora płatności, na której dokonasz płatności.",
+        "period_end_date_info" : "Twój aktualny pakiet wygasa w dniu: {0}. Po przedłużeniu konto pozostanie ważne do dnia: {1}.",
+        "extend_access" : "Powiększ swój pakiet",
+        "until_the_end_package" : "do końca ważności pakietu",
+        "extend_info" : "Aktualnie posiadasz pakiet dla {0} nieruchomości. Po zakupie będziesz mógł dodać do: {1} nieruchomości. Twój pakiet pozostanie ważny do {2}.",
+        "prolong_extend_info_line_1" : "Za pomocą poniższego formularza możesz doknać przedłużenia ważności Twojego aktualnego pakietu o jeden miesiąc bądź o jeden rok licząc od końca aktualnego dnia. Przedłużenie dotyczy aktualnie posiadanych przez Ciebie limitów.",
+        "prolong_extend_info_line_2" : "Jeśli chcesz powiększyć ilość nieruchomości jakie możesz dodać na swoim koncie przejdź",
+        "prolong_extend_info_line_3" : "tutaj",
+        "extend_package" : "Chcesz powiększyć pakiet?",
+        "extend_prolong_info_line_1" : "Za pomocą poniższego formularza możesz doknać rozszerzenia aktualnego pakietu o wybraną ilość nieruchomości. Cena zostanie obliczona na podstawie okresu jaki pozostał do końca ważności Twojego pakietu.",
+        "extend_prolong_info_line_2" : "Jeśli chcesz wydłużyć ważność Twojego aktualnego pakietu przejdź",
+        "extend_prolong_info_line_3" : "tutaj",
+        "prolong_package" : "Chcesz przedłużyć ważność?",
+        "order_info_line_1" : "Za pomocą poniższego formularza możesz dokonać, na wybrany przez Ciebie okres czasu zakupu wybranej ilości nieruchomości. W wykupionym okresie czasu będziesz miał możliwość zarządzania zakupioną ilością nieruchomości. Pamiętaj że w każdej chwili istnieje możliwość powiększenia limitów.",
+        "invoice_data_empty" : "Przed wykupienie dostępu należy uzupełnić dane do faktury. Możesz to zrobić ",
+        "invoice_data_empty_here" : "tutaj",
+        "payment_return_1" : "Dziękujemy za dokonanie płatności.",
+        "payment_return_2" : "Aktualnie Twoja płatność jest przetwarzana przez procesora płatności.",
+        "payment_return_3" : "Jeśli tylko otrzmymamy wpłatę zostaniesz o tym niezwłocznie poinformowany, a Twoje konto zostanie zaktualizowane o wykopioną przez Ciebie usługę."
+    },
+    "invoices" : {
+        "empty_list" : "Brak faktur",
+        "number" : "Numer",
+        "amount" : "Kwota",
+        "gross_amount" : "Kwota brutto",
+        "date" : "Data wystawienia",
+        "download_document" : "Pobierz fakturę"
     }
 }

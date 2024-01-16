@@ -5,21 +5,25 @@
             "p1" => [
                 "type" => "subscription",
                 "name" => "premium:1",
-                "price" => 29.99,
+                "price_vat" => 9,
+                "price_day_vat" => 0.3,
                 "vat" => 23,
+                "price" => 7.3171,
+                "price_day" => 0.2439,
                 "months" => 1,
             ],
             "p12" => [
                 "type" => "subscription",
                 "name" => "premium:12",
-                "price" => 299.99,
+                "price_vat" => 99,
+                "price_day_vat" => 0.27,
                 "vat" => 23,
+                "price" => 80.4878,
+                "price_day" => 0.2195,
                 "months" => 12,
             ]
         ],
         "free" => [
-            "projects" => 2,
-            "tasks" => 10,
-            "space" => 10485760
+            "items" => 2,
         ]
     ];

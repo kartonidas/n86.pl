@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ObjectNotExist;
+use App\Libraries\Helper;
 use App\Models\Country;
 use App\Models\FirmInvoicingData;
 use App\Models\Limit;
@@ -278,6 +279,8 @@ class IndexController extends Controller
                 "start_date" => date("Y-m-d H:i:s", $subscription->start),
                 "end" => $subscription->end,
                 "end_date" => date("Y-m-d H:i:s", $subscription->end),
+                "items" => $subscription->items,
+                "days_to_end" => $subscription->calculateDaysToEnd(),
             ];
         }
         return $out;

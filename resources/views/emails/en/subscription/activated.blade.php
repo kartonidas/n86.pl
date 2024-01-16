@@ -1,22 +1,24 @@
 @extends("emails.template")
 
-@section("title")
-    {{ $title }}
-@endsection
-
 @section("content")
     <p>
-        Thank you for purchasing the premium package of our application!
+        Thank you for purchasing the additional real estate package.
+        <br/>
+        <br/>
+        Details of the order:
+        <ul>
+            <li>Number of properties: {{ $order->quantity }}</li>
+            <li>The package will remain valid until: {{ date("Y-m-d H:i:s", $subscription->end) }}</li>
+        </ul>
     </p>
+        
     <p>
-        We are committed to providing you with the highest quality service and continuous improvement of our application.
+        You will find the invoice for your order after logging in, in the 'Invoices' tab.
     </p>
-    <p>
-        If you have any questions, concerns or suggestions regarding our app, please don't hesitate to contact our customer service team.
-    </p>
+        
     <p>
         Best regards,
         <br/>
-        ninjaTask team
+        n86.pl team
     </p>
 @endsection

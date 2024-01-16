@@ -7,6 +7,8 @@
         <br/>
         Details of the order:
         <ul>
+            <li>Number of packages purchased: {{ $order->quantity }}</li>
+            <li>Total number of packages: {{ $subscription->items }}</li>
             <li>The package will remain valid until: {{ date("Y-m-d H:i:s", $subscription->end) }}</li>
         </ul>
     </p>

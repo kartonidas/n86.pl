@@ -8,22 +8,23 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Order;
 use App\Models\Subscription;
 
-class Expired extends Mailable
+class Extend extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public Subscription $subscription)
+    public function __construct(public Order $order, public Subscription $subscription)
     {
     }
     
     public function getTitle()
     {
-        return __('Your item package expired');
+        return __('Thank you for extend item package');
     }
 
     /**
@@ -41,14 +42,15 @@ class Expired extends Mailable
      */
     public function content(): Content
     {
-        $view = 'emails.' . $this->locale . '.subscription.expired';
+        $view = 'emails.' . $this->locale . '.subscription.extend';
         if(!view()->exists($view))
-            $view = 'emails.'.config("api.default_language").'.subscription.expired';
+            $view = 'emails.'.config("api.default_language").'.subscription.extend';
             
         return new Content(
             view: $view,
             with: [
                 "locale" => $this->locale,
+                "order" => $this->order,
                 "subscription" => $this->subscription,
                 "title" => $this->getTitle(),
             ],

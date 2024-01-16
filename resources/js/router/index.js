@@ -490,6 +490,37 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/order',
+                    children: [
+                        {
+                            path: '/app/order',
+                            name: 'order',
+                            component: () => import('@/views/app/Order/Order.vue'),
+                        },
+                        {
+                            path: '/app/order/prolong',
+                            name: 'order_prolong',
+                            component: () => import('@/views/app/Order/Prolong.vue'),
+                        },
+                        {
+                            path: '/app/order/extend',
+                            name: 'order_extend',
+                            component: () => import('@/views/app/Order/Extend.vue'),
+                        },
+                        {
+                            path: '/app/order/payment/return',
+                            name: 'order_payment_return',
+                            component: () => import('@/views/app/Order/PaymentReturn.vue'),
+                        },
+                    ]
+                },
+                {
+                    path: '/app/invoices',
+                    name: 'invoices',
+                    component: () => import('@/views/app/Order/Invoices.vue'),
+                    meta: {permission: 'owner'},
+                },
+                {
                     path: '/app/user/config',
                     name: 'config',
                     component: () => import('@/views/app/Config.vue'),

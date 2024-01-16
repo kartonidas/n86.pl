@@ -400,4 +400,12 @@ class Helper
         
         return implode($separator, $addres);
     }
+    
+    public static function addTax($amount, $vatValue = 0)
+    {
+        if($vatValue > 0)
+            return $amount  * ((100 + $vatValue) / 100);
+        
+        return $amount;
+    }
 }

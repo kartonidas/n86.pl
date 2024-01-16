@@ -58,7 +58,7 @@
             getArchiveList() {
                 const search = {
                     item_id : this.$route.params.itemId,
-                    status : 'archive',
+                    status_arr : ['archive', 'termination'],
                 };
                 this.rentalService.list(this.meta.archive_rentals.perPage, this.meta.archive_rentals.currentPage, 'end', -1, search)
                     .then(

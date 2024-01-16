@@ -16,6 +16,7 @@ class RentalRequest extends ListRequest
             "search.item_id" => "nullable|integer",
             "search.tenant_id" => "nullable|integer",
             "search.status" => "nullable|string",
+            "search.status_arr" => "nullable|array",
             "search.item_name" => "nullable|string",
             "search.item_address" => "nullable|string",
             "search.item_type" => ["nullable", "string", Rule::in(array_keys(Item::getTypes()))],

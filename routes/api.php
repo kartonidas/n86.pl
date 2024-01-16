@@ -164,6 +164,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     // ZAMÓWIENIA / PŁATNOŚCI
     $router->get('/payment/status/{md5}', [PaymentController::class, "status"]);
     $router->post('/order/create', [OrderController::class, "create"]);
+    $router->post('/order/prolong', [OrderController::class, "prolong"]);
+    $router->post('/order/extend', [OrderController::class, "extend"]);
     
     $router->get('/invoices', [OrderController::class, "invoices"]);
     $router->get('/invoice/{id}', [OrderController::class, "invoice"])->where("id", "[0-9]+");

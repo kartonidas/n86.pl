@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Order;
 use App\Models\Subscription;
 
 class Activated extends Mailable
@@ -17,13 +18,13 @@ class Activated extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public Subscription $subscription)
+    public function __construct(public Order $order, public Subscription $subscription)
     {
     }
     
     public function getTitle()
     {
-        return __('Thank you for purchase premium package!');
+        return __('Thank you for purchasing extra item package');
     }
 
     /**
@@ -49,6 +50,7 @@ class Activated extends Mailable
             view: $view,
             with: [
                 "locale" => $this->locale,
+                "order" => $this->order,
                 "subscription" => $this->subscription,
                 "title" => $this->getTitle(),
             ],

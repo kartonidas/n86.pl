@@ -7,7 +7,7 @@ return [
             "sandbox" => env("PAYNOW_API_SANDBOX"),
             "api_signature" => env("PAYNOW_API_SIGNATURE"),
             "api_key" => env("PAYNOW_API_KEY"),
-            "continue_url" => env("FRONTEND_URL") . "payment/return"
+            "continue_url" => env("FRONTEND_URL") . "app/order/payment/return"
         ],
     ]
 ];

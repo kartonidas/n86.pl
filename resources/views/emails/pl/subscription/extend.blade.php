@@ -2,16 +2,17 @@
 
 @section("content")
     <p>
-        Dziękujemy za wykupienie dodatkowego pakietu nieruchomości.
+        Dziękujemy za rozszerzenie pakietu.
         <br/>
         <br/>
         Szczegóły zamówienia:
         <ul>
-            <li>Ilość nieruchomości: {{ $order->quantity }}</li>
+            <li>Zakupiona ilość pakietów: {{ $order->quantity }}</li>
+            <li>Łączna ilość pakietów: {{ $subscription->items }}</li>
             <li>Pakiet pozostanie ważny do: {{ date("Y-m-d H:i:s", $subscription->end) }}</li>
         </ul>
     </p>
-        
+    
     <p>
         Fakturę do zamówienia znajdziesz po zalogowaniu, w zakładzce 'Faktury'.
     </p>

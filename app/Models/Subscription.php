@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\OutOffLimit;
+use App\Libraries\Helper;
 use App\Models\ExpirationNotify;
 use App\Models\Firm;
 use App\Models\Limit;
@@ -33,13 +34,14 @@ class Subscription extends Model
             $row->status = self::STATUS_ACTIVE;
             $row->start = time();
             $row->end = strtotime(self::getPeriod($order->months), strtotime(date("Y-m-d") . " 23:59:59"));
+            $row->items = $order->quantity;
             $row->saveQuietly();
             
             $notificationType = "subscription:activated";
         }
         else
         {
-            $row->end = strtotime(self::getPeriod($order->months), $row->end);
+            $row->items = $row->items + $order->quantity;
             $row->saveQuietly();
             
             $notificationType = "subscription:renewed";
@@ -51,10 +53,46 @@ class Subscription extends Model
         ExpirationNotify::where("subscription_id", $row->id)->delete();
         
         $owner = Firm::getOwnerByUuid($row->uuid);
-        if($owner && !empty($notificationType))
-            Notification::notify($owner->id, -1, $row->id, $notificationType);
+        if($owner)
+            Notification::notify($owner->id, -1, $order->id, $notificationType);
         
         return $row;
+    }
+    
+    public static function prolongPackageFromOrder(Order $order)
+    {
+        $row = self::withoutGLobalScopes()->where("uuid", $order->uuid)->where("status", self::STATUS_ACTIVE)->first();
+        if($row)
+        {
+            $row->end = strtotime(self::getPeriod($order->months), $row->end);
+            $row->saveQuietly();
+            
+            ExpirationNotify::where("subscription_id", $row->id)->delete();
+            
+            $order->subscription_id = $row->id;
+            $order->saveQuietly();
+        
+            $owner = Firm::getOwnerByUuid($row->uuid);
+            if($owner)
+                Notification::notify($owner->id, -1, $order->id, "subscription:renewed");
+        }
+    }
+    
+    public static function extendPackageFromOrder(Order $order)
+    {
+        $row = self::withoutGLobalScopes()->where("uuid", $order->uuid)->where("status", self::STATUS_ACTIVE)->first();
+        if($row)
+        {
+            $row->items = $row->items + $order->quantity;
+            $row->saveQuietly();
+            
+            $order->subscription_id = $row->id;
+            $order->saveQuietly();
+            
+            $owner = Firm::getOwnerByUuid($row->uuid);
+            if($owner)
+                Notification::notify($owner->id, -1, $order->id, "subscription:extend");
+        }
     }
     
     private static function getPeriod($period) {
@@ -129,5 +167,14 @@ class Subscription extends Model
             }
         }
         return true;
+    }
+    
+    public function calculateDaysToEnd()
+    {
+        $daysToEnd = floor(($this->end - Helper::setDateTime(date("Y-m-d"), "23:59:59", true)) / 86400);
+        if($daysToEnd <= 0)
+            $daysToEnd = 1;
+            
+        return $daysToEnd;
     }
 }

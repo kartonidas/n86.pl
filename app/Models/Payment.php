@@ -36,7 +36,7 @@ class Payment extends Model
         {
             case "paynow":
                 $params = array(
-                    "amount" => intval($order->gross * 100),
+                    "amount" => intval(round($order->gross, 2) * 100),
                     "externalId" => $md5,
                     "currency" => "PLN",
                     "description" => "Płatność za zamówienie nr: ". $order->id,

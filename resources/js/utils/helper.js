@@ -2,6 +2,7 @@ import { appStore } from '@/store.js';
 import { useI18n } from 'vue-i18n'
 import { useHead } from 'unhead'
 import AppValues from '@/data/values.json';
+import Prices from '@/data/prices.json';
 import moment from 'moment'
 
 export const getLocale = () => {
@@ -85,6 +86,10 @@ export const getValueLabel = (module, value, key = 'name') => {
         }
     });
     return label;
+};
+
+export const getPrices = () => {
+    return Prices;
 };
 
 

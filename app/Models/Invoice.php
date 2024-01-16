@@ -19,6 +19,10 @@ class Invoice extends Model
     }
     
     protected $hidden = ["uuid"];
+    protected $casts = [
+        "amount" => "float",
+        "gross" => "float",
+    ];
     
     private static function getActiveInvoiceDataId()
     {

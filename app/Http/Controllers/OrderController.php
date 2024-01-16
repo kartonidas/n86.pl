@@ -10,10 +10,14 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use App\Exceptions\Exception;
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\OrderCreateRequest;
+use App\Http\Requests\OrderExtendRequest;
+use App\Http\Requests\OrderProlongRequest;
 use App\Models\FirmInvoicingData;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Subscription;
 
 class OrderController extends Controller
 {
@@ -26,11 +30,17 @@ class OrderController extends Controller
     * @header Authorization: Bearer {TOKEN}
     * @group Orders
     */
-    public function create(Request $request)
+    public function create(OrderCreateRequest $request)
     {
         $validInvoicing = FirmInvoicingData::validateInvoicingData();
         if(!$validInvoicing)
             throw new Exception(__("Invalid invoicing data"));
+        
+        $subscription = Subscription::where("status", Subscription::STATUS_ACTIVE)->first();
+        if($subscription)
+            throw new Exception(__("You have currently active subscription. You can prolong currently package or buy extra packages."));
+     
+        $validated = $request->validated();
         
         $invoicingData = FirmInvoicingData
             ::where("uuid", Auth::user()->getUuid())
@@ -41,20 +51,119 @@ class OrderController extends Controller
         $foreign = strtolower($invoicingData->country) != "pl";
         $reverseCharge = $foreign && $invoicingData->type == "firm";
         
-        $request->validate([
-            "package" => ["required", Rule::in(array_keys(config("packages.allowed")))],
-        ]);
-        
         $packages = config("packages.allowed");
-        $package = $packages[$request->input("package")];
+        $package = $packages[$validated["period"]];
         
-        $url = DB::transaction(function () use($package, $invoicingData, $reverseCharge) {
+        $url = DB::transaction(function () use($validated, $package, $invoicingData, $reverseCharge) {
             $order = new Order;
             $order->uuid = Auth::user()->getUuid();
             $order->type = $package["type"];
-            $order->unit_price = !$reverseCharge ? $package["price"] : round($package["price"] * ((100 + $package["vat"]) / 100), 2);
-            $order->unit_price_gross = round($package["price"] * ((100 + $package["vat"]) / 100), 2);
-            $order->quantity = 1;
+            $order->unit_price = !$reverseCharge ? $package["price"] : $package["price_vat"];
+            $order->unit_price_gross = $package["price_vat"];
+            $order->quantity = $validated["total"];
+            $order->amount = $order->unit_price * $order->quantity;
+            $order->vat = !$reverseCharge ? $package["vat"] : 0;
+            $order->gross = $order->unit_price_gross * $order->quantity;
+            $order->name = $package["name"];
+            $order->months = $package["months"];
+            $order->firm_invoicing_data_id = $invoicingData->id;
+            $order->reverse = $reverseCharge ? 1 : 0;
+            $order->save();
+            
+            return Payment::generatePaymentRedirectLink($order);
+        });
+        
+        return [
+            "url" => $url,
+        ];
+    }
+    
+    public function extend(OrderExtendRequest $request)
+    {
+        $validInvoicing = FirmInvoicingData::validateInvoicingData();
+        if(!$validInvoicing)
+            throw new Exception(__("Invalid invoicing data"));
+        
+        $subscription = Subscription::where("status", Subscription::STATUS_ACTIVE)->first();
+        if(!$subscription)
+            throw new Exception(__("Can't extend. Currently you don't have active subscription."));
+     
+        $validated = $request->validated();
+        
+        $invoicingData = FirmInvoicingData
+            ::where("uuid", Auth::user()->getUuid())
+            ->whereNull("deleted_at")
+            ->withoutGlobalScopes()
+            ->first();
+            
+        $foreign = strtolower($invoicingData->country) != "pl";
+        $reverseCharge = $foreign && $invoicingData->type == "firm";
+        
+        $packages = config("packages.allowed");
+        
+        
+        $daysToEnd = $subscription->calculateDaysToEnd();
+        $period = "p1";
+        if($daysToEnd > 31)
+            $period = "p12";
+        $package = $packages[$period];
+        
+        
+        $url = DB::transaction(function () use($validated, $package, $invoicingData, $reverseCharge, $daysToEnd) {
+            $order = new Order;
+            $order->uuid = Auth::user()->getUuid();
+            $order->type = "extend";
+            $order->unit_price = (!$reverseCharge ? $package["price_day"] : $package["price_day_vat"]) * $daysToEnd;
+            $order->unit_price_gross = $package["price_day_vat"] * $daysToEnd;
+            $order->quantity = $validated["total"];
+            $order->amount = $order->unit_price * $order->quantity;
+            $order->vat = !$reverseCharge ? $package["vat"] : 0;
+            $order->gross = $order->unit_price_gross * $order->quantity;
+            $order->name = $package["name"];
+            $order->months = $package["months"];
+            $order->firm_invoicing_data_id = $invoicingData->id;
+            $order->reverse = $reverseCharge ? 1 : 0;
+            $order->save();
+            
+            return Payment::generatePaymentRedirectLink($order);
+        });
+        
+        return [
+            "url" => $url,
+        ];
+    }
+    
+    public function prolong(OrderProlongRequest $request)
+    {
+        $validInvoicing = FirmInvoicingData::validateInvoicingData();
+        if(!$validInvoicing)
+            throw new Exception(__("Invalid invoicing data"));
+        
+        $subscription = Subscription::where("status", Subscription::STATUS_ACTIVE)->first();
+        if(!$subscription)
+            throw new Exception(__("Can't prolong. Currently you don't have active subscription."));
+     
+        $validated = $request->validated();
+        
+        $invoicingData = FirmInvoicingData
+            ::where("uuid", Auth::user()->getUuid())
+            ->whereNull("deleted_at")
+            ->withoutGlobalScopes()
+            ->first();
+            
+        $foreign = strtolower($invoicingData->country) != "pl";
+        $reverseCharge = $foreign && $invoicingData->type == "firm";
+        
+        $packages = config("packages.allowed");
+        $package = $packages[$validated["period"]];
+        
+        $url = DB::transaction(function () use($validated, $package, $invoicingData, $reverseCharge, $subscription) {
+            $order = new Order;
+            $order->uuid = Auth::user()->getUuid();
+            $order->type = "prolong";
+            $order->unit_price = !$reverseCharge ? $package["price"] : $package["price_vat"];
+            $order->unit_price_gross = $package["price_vat"];
+            $order->quantity = $subscription->items;
             $order->amount = $order->unit_price * $order->quantity;
             $order->vat = !$reverseCharge ? $package["vat"] : 0;
             $order->gross = $order->unit_price_gross * $order->quantity;
@@ -137,10 +246,12 @@ class OrderController extends Controller
         if(!file_exists($file))
             throw new ObjectNotExist(__("Invoice does not exist"));
 
-        return [
-            "invoice" => base64_encode(file_get_contents($file)),
-            "name" => $invoice->file,
-        ];
+            
+        $headers = array(
+            'Content-Type: application/pdf',
+        );
+
+        return response()->download($file, $invoice->file, $headers);
     }
     
     /**

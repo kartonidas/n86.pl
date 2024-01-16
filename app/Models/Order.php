@@ -23,23 +23,37 @@ class Order extends Model
             $this->paid = date("Y-m-d H:i:s");
             $this->save();
 
+            $invoice = false;
             switch($this->type) {
                 case "subscription":
                     $subscription = Subscription::addPackageFromOrder($this);
-                    
-                    $items = [];
-                    $items[] = [
-                        "name" => $this->name,
-                        "amount" => $this->amount,
-                        "vat" => $this->vat,
-                        "gross" => $this->gross,
-                        "qt" => 1,
-                    ];
-                    //$invoiceId = Invoice::createInvoice($this->id, $this->firm_invoicing_data_id, $this->paid, $this->uuid, $items);
-                    $invoiceId = Invoice::createInvoice($this);
-                    $this->invoice_id = $invoiceId;
-                    $this->save();
+                    $invoice = true;
                 break;
+            
+                case "prolong":
+                    $subscription = Subscription::prolongPackageFromOrder($this);
+                    $invoice = true;                    
+                break;
+            
+                case "extend":
+                    $subscription = Subscription::extendPackageFromOrder($this);
+                    $invoice = true;
+                break;
+            }
+            
+            if($invoice)
+            {
+                $items = [];
+                $items[] = [
+                    "name" => $this->name,
+                    "amount" => $this->amount,
+                    "vat" => $this->vat,
+                    "gross" => $this->gross,
+                    "qt" => 1,
+                ];
+                $invoiceId = Invoice::createInvoice($this);
+                $this->invoice_id = $invoiceId;
+                $this->save();
             }
         }
     }

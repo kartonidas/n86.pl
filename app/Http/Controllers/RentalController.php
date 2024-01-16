@@ -70,7 +70,9 @@ class RentalController extends Controller
                 else
                     $rentals->where("status", $validated["search"]["status"]);
             }
-                
+            if(!empty($validated["search"]["status_arr"]))
+                $rentals->whereIn("status", $validated["search"]["status_arr"]);
+            
             if(!empty($validated["search"]["item_name"]) || !empty($validated["search"]["item_address"]) || !empty($validated["search"]["item_type"]))
             {
                 $items = Item::select("id");

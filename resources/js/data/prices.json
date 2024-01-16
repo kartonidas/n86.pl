@@ -1,0 +1,28 @@
+{
+    "p1": {
+        "type": "subscription",
+        "name": "premium:1",
+        "price_vat": 9,
+        "price_day_vat": 0.3,
+        "vat": 23,
+        "price": 7.3171,
+        "price_day": 0.2439,
+        "months": 1,
+        "pl": {
+            "name": "Jeden miesi\u0105c"
+        }
+    },
+    "p12": {
+        "type": "subscription",
+        "name": "premium:12",
+        "price_vat": 99,
+        "price_day_vat": 0.27,
+        "vat": 23,
+        "price": 80.4878,
+        "price_day": 0.2195,
+        "months": 12,
+        "pl": {
+            "name": "Jeden rok"
+        }
+    }
+}
