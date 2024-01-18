@@ -13,6 +13,7 @@ use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\OrderCreateRequest;
 use App\Http\Requests\OrderExtendRequest;
 use App\Http\Requests\OrderProlongRequest;
+use App\Libraries\Helper;
 use App\Models\FirmInvoicingData;
 use App\Models\Invoice;
 use App\Models\Order;
@@ -58,7 +59,7 @@ class OrderController extends Controller
             $order = new Order;
             $order->uuid = Auth::user()->getUuid();
             $order->type = $package["type"];
-            $order->unit_price = !$reverseCharge ? $package["price"] : $package["price_vat"];
+            $order->unit_price = !$reverseCharge ? Helper::withoutTax($package["price_vat"], $package["vat"]) : $package["price_vat"];
             $order->unit_price_gross = $package["price_vat"];
             $order->quantity = $validated["total"];
             $order->amount = $order->unit_price * $order->quantity;
@@ -113,7 +114,7 @@ class OrderController extends Controller
             $order = new Order;
             $order->uuid = Auth::user()->getUuid();
             $order->type = "extend";
-            $order->unit_price = (!$reverseCharge ? $package["price_day"] : $package["price_day_vat"]) * $daysToEnd;
+            $order->unit_price = (!$reverseCharge ? Helper::withoutTax($package["price_day_vat"], $package["vat"]) : $package["price_day_vat"]) * $daysToEnd;
             $order->unit_price_gross = $package["price_day_vat"] * $daysToEnd;
             $order->quantity = $validated["total"];
             $order->amount = $order->unit_price * $order->quantity;
@@ -161,7 +162,7 @@ class OrderController extends Controller
             $order = new Order;
             $order->uuid = Auth::user()->getUuid();
             $order->type = "prolong";
-            $order->unit_price = !$reverseCharge ? $package["price"] : $package["price_vat"];
+            $order->unit_price = !$reverseCharge ? Helper::withoutTax($package["price_vat"], $package["vat"]) : $package["price_vat"];
             $order->unit_price_gross = $package["price_vat"];
             $order->quantity = $subscription->items;
             $order->amount = $order->unit_price * $order->quantity;

@@ -1,5 +1,5 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, p } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, p, getRentalBoxColor } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import RentalService from '@/service/RentalService'
@@ -18,6 +18,7 @@
                 historyService,
                 hasAccess,
                 getValueLabel,
+                getRentalBoxColor
             }
         },
         data() {
@@ -336,10 +337,10 @@
     <div class="mt-5 hidden">
         <strong>TODO:</strong>
         <ul>
-            <li>Historia edycji (może nowa zakładka)</li>
             <li>Zwrot kaucji</li>
         </ul>
     </div>
+    
     
     <div class="grid mt-1">
         <div class="col col-12">
@@ -356,6 +357,33 @@
                 <Message severity="error" :closable="false" v-if="rental.termination && rental.status == 'current'">
                     {{ $t('rent.rental_is_being_terminated') }}
                 </Message>
+            
+                <div class="mt-4">
+                    <div class="grid">
+                        <div class="col-12 sm:col-6">
+                            <div class="card text-center p-3 border-round-lg uppercase" :class="rental.balance < 0 ? 'text-red-600 border-red-600' : 'text-green-600  border-green-600'">
+                                <div class="text-4xl font-semibold">
+                                    <template v-if="rental.balance > 0">+</template>{{ numeralFormat(rental.balance, '0.00') }}
+                                </div>
+                                <div class="text-sm mt-1">
+                                    {{ $t('rent.balance') }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 sm:col-6">
+                            <div class="card text-center p-3 border-round-lg uppercase" :class="getRentalBoxColor(rental.status)">
+                                <div class="text-4xl font-semibold">
+                                    {{ getValueLabel('rental.statuses', rental.status) }}
+                                </div>
+                                <div class="text-sm mt-1">
+                                    {{ $t('rent.status') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
             
                 <div class="grid mt-3">
                     <div class="col-12 xl:col-7">
@@ -515,10 +543,6 @@
                     <br/>
                     <i class="text-sm">{{ rental.comments}}</i>
                 </p>
-                
-                <div class="text-center mt-2 p-3 text-2xl border-round-lg text-white-alpha-90 uppercase" :class="rental.balance < 0 ? 'bg-red-600' : 'bg-green-600'">
-                    {{ $t('rent.balance') }}: {{ numeralFormat(rental.balance, '0.00') }}
-                </div>
                 
                 <TabView class="mt-5">
                     <TabPanel :header="$t('rent.bills')">

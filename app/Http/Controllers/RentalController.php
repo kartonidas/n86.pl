@@ -368,7 +368,10 @@ class RentalController extends Controller
         
         $validated = $request->validated();
         
-        $rental->terminate(Helper::setDateTime($validated["end_date"], "23:59:59", true), $validated["termination_reason"] ?? "");
+        if($validated["mode"] == "immediately")
+            $rental->terminateImmediately($validated["termination_reason"] ?? "");
+        else
+            $rental->terminate(Helper::setDateTime($validated["end_date"], "23:59:59", true), $validated["termination_reason"] ?? "");
         
         return true;
     }

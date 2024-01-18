@@ -245,7 +245,8 @@
         "street" : "Ulica",
         "th": "-go",
         "updated" : "Nieruchomość została zaktualizowana",
-        "zip" : "Kod pocztowy"
+        "zip" : "Kod pocztowy",
+        "tenant" : "Najemca"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -268,7 +269,8 @@
         "tenant_list" : "Lista najemców",
         "users" : "Użytkownicy",
         "users_list" : "Lista użytkowników",
-        "invoices" : "Faktury"
+        "invoices" : "Faktury",
+        "finances" : "Finanse"
     },
     "meta": {
         "title" : {
@@ -493,6 +495,7 @@
         "tenant_type": "Rodzaj najemcy",
         "terminate" : "Wypowiedzenie",
         "terminate_contract" : "Wypowiedz umowę",
+        "terminate_contract_short" : "Wypowiedz",
         "termination" : "Okres wypowiedzenia",
         "termination_reason" : "Powód wypowiedzenia",
         "termination_time" : "Data zakończenia",
@@ -524,7 +527,12 @@
         "user" : "Użytkownik",
         "date" : "Data",
         "number_days" : "Ilość dni",
-        "number_months" : "Ilość miesięcy"
+        "number_months" : "Ilość miesięcy",
+        "terminate_date_info" : "umowa będzie obowiązywać do końca dnia",
+        "select_terminate_mode" : "Wybierz rodzaj wypowiedzenia",
+        "terminate_mode" : "Rodzaj wypowiedzenia",
+        "terminate_mode_date" : "Według daty",
+        "terminate_mode_immediately" : "Natychmiast"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",
@@ -656,7 +664,15 @@
         "invoice_data_empty_here" : "tutaj",
         "payment_return_1" : "Dziękujemy za dokonanie płatności.",
         "payment_return_2" : "Aktualnie Twoja płatność jest przetwarzana przez procesora płatności.",
-        "payment_return_3" : "Jeśli tylko otrzmymamy wpłatę zostaniesz o tym niezwłocznie poinformowany, a Twoje konto zostanie zaktualizowane o wykopioną przez Ciebie usługę."
+        "payment_return_3" : "Jeśli tylko otrzmymamy wpłatę zostaniesz o tym niezwłocznie poinformowany, a Twoje konto zostanie zaktualizowane o wykopioną przez Ciebie usługę.",
+        "currently_package" : "Aktualny pakiet: {0} {1}",
+        "estate_1" : "nieruchomość",
+        "estate_2" : "nieruchomości",
+        "estate_3" : "nieruchomości",
+        "prolong" : "Przedłuż",
+        "extend" : "Zwiększ",
+        "buy_package_info" : "Wykup pakiet aby móc dodawać więcej nieruchomości",
+        "buy_package" : "Wykup pakiet"
     },
     "invoices" : {
         "empty_list" : "Brak faktur",

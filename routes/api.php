@@ -19,6 +19,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RentalController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TenantController;
@@ -204,8 +205,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/document/{id}', [DocumentController::class, "delete"])->where("id", "[0-9]+");
     $router->put('/document/{id}', [DocumentController::class, "update"])->where("id", "[0-9]+");
     
+    $router->get('/history/{type}/{id}', [HistoryController::class, "list"])->where("id", "[0-9]+");
     
-    $router->get('/history/{type}/{id}', [HistoryController::class, "list"])->where("id", "[0-9]+")->where("id", "[0-9]+");
+    $router->get('/report/chart/item/{id}', [ReportController::class, "chartItemData"])->where("id", "[0-9]+");
+    $router->get('/report/chart/rental/{id}', [ReportController::class, "chartRentalData"])->where("id", "[0-9]+");
     
     // KONFIGURACJA
     $router->get('/config', [ConfigController::class, "get"]);

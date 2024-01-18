@@ -166,7 +166,19 @@
                     </Column>
                     <Column :header="$t('items.payer')">
                         <template #body="{ data }">
-                            <span v-if="data.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                            <span v-if="data.rental_id > 0">
+                                <span v-if="data.rental">
+                                    <div>{{ $t('items.tenant') }}</div>
+                                    <small>
+                                        <router-link :to="{name: 'rental_show', params: { rentalId : data.rental_id }}" v-if="hasAccess('rent:list')" target="_blank">
+                                            {{ data.rental.full_number }}
+                                        </router-link>
+                                    </small>
+                                </span>
+                                <span v-else>
+                                    {{ $t('items.currently_tenant') }}
+                                </span>
+                            </span>
                             <span v-else>{{ $t('items.owner') }}</span>
                         </template>
                     </Column>

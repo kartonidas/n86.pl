@@ -4,6 +4,7 @@ import { useDatabaseList } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { appStore } from '@/store.js'
+import Package from './../../views/app/_partials/Package.vue';
 
 import { ref } from 'vue';
 
@@ -114,6 +115,13 @@ const model = ref([
             { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' }, regex: /^\/app\/firm\-data(\/(.*))?$/i},
         ]
     },
+    {
+        label: t('menu.finances'),
+        access: hasAccess('owner'),
+        items: [
+            { label: t('menu.invoices'), icon: 'pi pi-fw pi-chart-bar', to: { name: 'invoices' }, access: hasAccess('owner'), regex: /^\/app\/invoices(\/(.*))?$/i },
+        ]
+    },
 ]);
 </script>
 
@@ -124,5 +132,6 @@ const model = ref([
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>
+    <Package location="header"/>
 </template>
 

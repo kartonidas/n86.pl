@@ -19,6 +19,7 @@ class TerminationRequest extends FormRequest
         $rules = [
             "end_date" => "required|date_format:Y-m-d",
             "termination_reason" => "sometimes|max:5000",
+            "mode" => "required|in:date,immediately",
         ];
         
         return $rules;

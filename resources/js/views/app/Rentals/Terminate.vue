@@ -1,7 +1,7 @@
 <script>
     import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, p } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
-    import { required,  maxLength } from '@/utils/i18n-validators'
+    import { required,  requiredIf, maxLength } from '@/utils/i18n-validators'
     import { appStore } from '@/store.js'
     import moment from 'moment'
     
@@ -34,10 +34,16 @@
                     item: {},
                     tenant: {},
                 },
-                terminate: {},
+                terminate: {
+                    mode: "date"
+                },
                 terminate_modal: {},
                 loading: true,
                 saving: false,
+                terminate_mode: [
+                    {"id" : "date", "name" : this.$t('rent.terminate_mode_date')},
+                    {"id" : "immediately", "name" : this.$t('rent.terminate_mode_immediately')},
+                ]
             }
         },
         beforeMount() {
@@ -93,6 +99,9 @@
                     let terminate = Object.assign({}, this.terminate);
                     if(terminate.end_date && terminate.end_date instanceof Date)
                         terminate.end_date = moment(terminate.end_date).format("YYYY-MM-DD")
+                    
+                    if(terminate.mode == "immediately")
+                        terminate.end_date = moment().format("YYYY-MM-DD")
                     
                     if(this.displayConfirmation)
                     {
@@ -153,8 +162,9 @@
         validations () {
             return {
                 terminate: {
-                    end_date: { required },
+                    end_date: { required: requiredIf(function() { return this.terminate.mode != "immediately" }) },
                     termination_reason : { maxLengthValue: maxLength(5000) },
+                    mode: { required },
                 }
             }
         },
@@ -186,62 +196,77 @@
                     
                     <div class="grid mt-3">
                         <div class="col-12 xl:col-6">
-                            <table class="table">
-                                <tr>
-                                    <td class="font-medium" style="width: 80px">{{ $t('rent.tenant') }}:</td>
-                                    <td class="font-italic">
-                                        {{ rental.tenant.name }} <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal" severity="info"></Badge>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="grid">
+                                <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                    <span class="font-medium">{{ $t('rent.tenant') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ rental.tenant.name }} <Badge :value="getValueLabel('tenant_types', rental.tenant.type)" class="font-normal" severity="info"></Badge>
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </div>
                         </div>
                         
                         <div class="col-12 xl:col-6">
-                            <table class="table">
-                                <tr>
-                                    <td class="font-medium" style="width: 170px">{{ $t('rent.estate') }}:</td>
-                                    <td class="font-italic">
-                                        {{ rental.item.name }} <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal" severity="info"></Badge>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">{{ $t('rent.period') }}:</td>
-                                    <td class="font-italic">
-                                        {{ rental.start }} - 
-                                        <span v-if="rental.period == 'indeterminate'">
-                                            <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
-                                        </span>
-                                        <span v-if="rental.period == 'month'">
-                                            {{ rental.end }}<br/>({{ rental.months }} {{ p(rental.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
-                                        </span>
-                                        <span v-if="rental.period == 'date'">
-                                            {{ rental.end }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">{{ $t('rent.terminate') }}:</td>
-                                    <td class="font-italic">
-                                        <span v-if="rental.termination_period == 'days'">
-                                            {{ rental.termination_days }} {{ p(rental.termination_days, $t('rent.1days'), $t('rent.2days'), $t('rent.3days')) }}
-                                        </span>
-                                        <span v-if="rental.termination_period == 'months'">
-                                            {{ rental.termination_months }} {{ p(rental.termination_months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="grid">
+                                <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                    <span class="font-medium">{{ $t('rent.estate') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ rental.item.name }} <Badge :value="getValueLabel('item_types', rental.item.type)" class="font-normal" severity="info"></Badge>
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                
+                                <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                    <span class="font-medium">{{ $t('rent.period') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ rental.start }} - 
+                                    <span v-if="rental.period == 'indeterminate'">
+                                        <span style="text-transform: lowercase">{{ $t('rent.indeterminate') }}</span>
+                                    </span>
+                                    <span v-if="rental.period == 'month'">
+                                        {{ rental.end }}<br/>({{ rental.months }} {{ p(rental.months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }})
+                                    </span>
+                                    <span v-if="rental.period == 'date'">
+                                        {{ rental.end }}
+                                    </span>
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                
+                                <div class="col-fixed pt-0 pb-1" style="width: 186px">
+                                    <span class="font-medium">{{ $t('rent.terminate') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    <span v-if="rental.termination_period == 'days'">
+                                        {{ rental.termination_days }} {{ p(rental.termination_days, $t('rent.1days'), $t('rent.2days'), $t('rent.3days')) }}
+                                    </span>
+                                    <span v-if="rental.termination_period == 'months'">
+                                        {{ rental.termination_months }} {{ p(rental.termination_months, $t('rent.1months'), $t('rent.2months'), $t('rent.3months')) }}
+                                    </span>
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="p-fluid">
                         <div class="formgrid grid">
                             <div class="field col-12 md:col-4 mb-4">
+                                <label for="mode" class="block text-900 font-medium mb-2">{{ $t('rent.terminate_mode') }}</label>
+                                <Dropdown id="mode" v-model="terminate.mode" :options="terminate_mode" optionLabel="name" optionValue="id" :class="{'p-invalid' : v.terminate.mode.$error}" :placeholder="$t('rent.select_terminate_mode')" class="w-full" :disabled="loading || saving || block"/>
+                                <div v-if="v.terminate.mode.$error">
+                                    <small class="p-error">{{ v.terminate.mode.$errors[0].$message }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="field col-12 md:col-4 mb-4">
                                 <label for="end_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.termination_time') }}</label>
-                                <Calendar id="end_date" v-model="terminate.end_date" :class="{'p-invalid' : v.terminate.end_date.$error}" :placeholder="$t('rent.termination_time')" showIcon :disabled="loading || saving || block"/>
+                                <Calendar id="end_date" v-model="terminate.end_date" :class="{'p-invalid' : v.terminate.end_date.$error}" :placeholder="$t('rent.termination_time')" showIcon :disabled="loading || saving || block || terminate.mode == 'immediately'"/>
                                 <div v-if="v.terminate.end_date.$error">
                                     <small class="p-error">{{ v.terminate.end_date.$errors[0].$message }}</small>
                                 </div>
+                                <small>{{ $t('rent.terminate_date_info') }}</small>
                             </div>
                             
                             <div class="field col-12 mb-4">
@@ -258,7 +283,7 @@
                         
                         <div class="flex justify-content-between align-items-center">
                             <Button type="button" :label="$t('app.cancel')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
-                            <Button type="submit" :label="$t('rent.terminate_contract')" v-if="!loading" :disabled="block" :loading="saving" iconPos="right" icon="pi pi-delete-left" class="p-button-danger w-auto text-center"></Button>
+                            <Button type="submit" :label="$t('rent.terminate_contract_short')" v-if="!loading" :disabled="block" :loading="saving" iconPos="right" icon="pi pi-delete-left" class="p-button-danger w-auto text-center"></Button>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle, getValueLabel, getValues } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValueLabel, getValues, getRentalRowColor } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import moment from 'moment'
     
@@ -16,7 +16,8 @@
             return {
                 rentalService,
                 hasAccess,
-                getValueLabel
+                getValueLabel,
+                getRentalRowColor
             }
         },
         data() {
@@ -152,20 +153,6 @@
             closeConfirmation() {
                 this.displayConfirmation = false
             },
-            
-            getRowColor(status) {
-                switch (status) {
-                    case "termination":
-                    case "archive":
-                        return "bg-bluegray-50 text-gray-500"
-                    
-                    case "current":
-                        return "bg-green-50"
-                        
-                    case "waiting":
-                        return "bg-blue-50"
-                }
-            }
         },
     }
 </script>
@@ -229,13 +216,21 @@
                         </div>
                     </div>
                 </form>
-                <DataTable :rowClass="({ status }) => getRowColor(status)" :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :rowClass="({ status }) => getRentalRowColor(status)" :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column :header="$t('rent.number')" field="full_number" sortable>
                         <template #body="{ data }">
                             {{ data.full_number }}
                             <div>
                                 <small>{{ data.document_date }}</small>
                             </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('rent.status')">
+                        <template #body="{ data }">
+                            {{ getValueLabel('rental.statuses', data.status) }}
+                            <span v-if="data.termination && data.status == 'current'" class="mr-1" v-tooltip.top="$t('rent.rental_is_being_terminated')">
+                                <i class="pi pi-delete-left" style="font-size: 1.2rem; color: var(--red-600)"></i>
+                            </span>
                         </template>
                     </Column>
                     <Column :header="$t('rent.balance')" field="balance" sortable>
@@ -274,14 +269,6 @@
                     <Column :header="$t('rent.rent')" field="rent" sortable>
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.status')">
-                        <template #body="{ data }">
-                            {{ getValueLabel('rental.statuses', data.status) }}
-                            <span v-if="data.termination && data.status == 'current'" class="mr-1" v-tooltip.top="$t('rent.rental_is_being_terminated')">
-                                <i class="pi pi-delete-left" style="font-size: 1.2rem; color: var(--red-600)"></i>
-                            </span>
                         </template>
                     </Column>
                     <Column :header="$t('rent.period_short')">

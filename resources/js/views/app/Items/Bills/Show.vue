@@ -110,51 +110,100 @@
                 
                 <div class="grid mt-3">
                     <div class="col-12 md:col-8">
-                        <table class="table">
-                            <tr>
-                                <td class="pl-0 font-medium" style="width: 280px">{{ $t('items.bill_type') }}:</td>
-                                <td class="font-italic">{{ bill.bill_type.name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="pl-0 font-medium">{{ $t('items.cost') }}:</td>
-                                <td class="font-italic">{{ numeralFormat(bill.cost, '0.00') }}</td>
-                            </tr>
-                            <tr>
-                                <td class="pl-0 font-medium">{{ $t('items.payment_date') }}:</td>
-                                <td class="font-italic">{{ bill.payment_date }}</td>
-                            </tr>
-                            <tr>
-                                <td class="pl-0 font-medium">{{ $t('items.payer') }}:</td>
-                                <td class="font-italic">
-                                    <span v-if="bill.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
-                                    <span v-else>{{ $t('items.owner') }}</span>
-                                </td>
-                            </tr>
-                            <tr v-if="bill.recipient_name">
-                                <td class="pl-0 font-medium">{{ $t('items.recipient_name') }}:</td>
-                                <td class="font-italic">{{ bill.recipient_name }}</td>
-                            </tr>
-                            <tr v-if="bill.recipient_desciption">
-                                <td class="pl-0 font-medium">{{ $t('items.recipient_desciption') }}:</td>
-                                <td class="font-italic">{{ bill.recipient_desciption ?? '-' }}</td>
-                            </tr>
-                            <tr v-if="bill.recipient_bank_account">
-                                <td class="pl-0 font-medium">{{ $t('items.recipient_bank_account') }}:</td>
-                                <td class="font-italic">{{ bill.recipient_bank_account ?? '-' }}</td>
-                            </tr>
-                            <tr v-if="bill.source_document_number">
-                                <td class="pl-0 font-medium">{{ $t('items.source_document_number') }}:</td>
-                                <td class="font-italic">{{ bill.source_document_number ?? '-' }}</td>
-                            </tr>
-                            <tr v-if="bill.source_document_date">
-                                <td class="pl-0 font-medium">{{ $t('items.source_document_date') }}:</td>
-                                <td class="font-italic">{{ bill.source_document_date ?? '-' }}</td>
-                            </tr>
-                            <tr v-if="bill.comments">
-                                <td class="pl-0 font-medium">{{ $t('items.comments') }}:</td>
-                                <td class="font-italic">{{ bill.comments ?? '-' }}</td>
-                            </tr>
-                        </table>
+                        <div class="grid">
+                            <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                <span class="font-medium">{{ $t('items.bill_type') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ bill.bill_type.name }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                <span class="font-medium">{{ $t('items.cost') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ numeralFormat(bill.cost, '0.00') }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                <span class="font-medium">{{ $t('items.payment_date') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ bill.payment_date }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                <span class="font-medium">{{ $t('items.payer') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                <span v-if="bill.rental_id > 0">{{ $t('items.currently_tenant') }}</span>
+                                <span v-else>{{ $t('items.owner') }}</span>
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <template v-if="bill.recipient_name">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.payer') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.recipient_name }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                            
+                            <template v-if="bill.recipient_desciption">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.recipient_desciption') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.recipient_desciption ?? '-' }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                            
+                            <template v-if="bill.recipient_bank_account">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.recipient_bank_account') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.recipient_bank_account ?? '-' }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                            
+                            <template v-if="bill.source_document_number">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.source_document_number') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.source_document_number ?? '-' }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                            
+                            <template v-if="bill.source_document_date">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.source_document_date') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.source_document_date ?? '-' }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                            
+                            <template v-if="bill.comments">
+                                <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                                    <span class="font-medium">{{ $t('items.comments') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ bill.comments ?? '-' }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            </template>
+                        </div>
                     </div>
                     <div class="col-12 md:col-4">
                         <Button :label="$t('items.update_bill')" @click="editBill" type="button" severity="primary" iconPos="right" icon="pi pi-pencil" class="w-full text-center" v-if="hasAccess('item:update')" :disabled="bill.paid" />

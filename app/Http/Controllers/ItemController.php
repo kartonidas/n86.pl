@@ -213,6 +213,7 @@ class ItemController extends Controller
             $itemBills[$i]->can_delete = $itemBill->canDelete();
             $itemBills[$i]->bill_type = $itemBill->getBillType();
             $itemBills[$i]->out_off_date = $itemBill->isOutOfDate();
+            $itemBills[$i]->rental = $itemBill->getRental();
         }
             
         $out = [

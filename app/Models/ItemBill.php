@@ -15,6 +15,7 @@ use App\Libraries\Helper;
 use App\Models\BalanceDocument;
 use App\Models\Dictionary;
 use App\Models\Item;
+use App\Models\Rental;
 
 class ItemBill extends Model
 {
@@ -162,5 +163,21 @@ class ItemBill extends Model
             return true;
         
         return false;
+    }
+    
+    private static $cacheRentals = [];
+    public function getRental()
+    {
+        if($this->rental_id > 0)
+        {
+            if(empty(static::$cacheRentals[$this->rental_id]))
+            {
+                $rental = Rental::withTrashed()->find($this->rental_id);
+                if($rental)
+                    static::$cacheRentals[$this->rental_id] = $rental;
+            }
+            
+            return static::$cacheRentals[$this->rental_id] ?? null;
+        }
     }
 }

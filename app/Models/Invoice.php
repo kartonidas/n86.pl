@@ -74,6 +74,8 @@ class Invoice extends Model
             $totalGross += $item["gross"];
         }
         
+        
+        
         $inv = new Invoice;
         $inv->withoutGlobalScopes();
         $inv->uuid = $order->uuid;
@@ -107,7 +109,7 @@ class Invoice extends Model
         $inv->currency = "PLN";
         $inv->saveQuietly();
 
-        $inv->generateInvoice(true);
+        $inv->generateInvoice(true, true);
         
         $ownerAccount = $accountFirmData->getOwner();
         if($ownerAccount)
@@ -192,10 +194,10 @@ class Invoice extends Model
         switch($item)
         {
             case "premium:1":
-                return $language == "pl" ? "Dostęp do pełnej wersji serwisu ninjatask.pl (1 miesiąc)" : "Access to the full version of the ninjatask.pl website (1 month)";
+                return $language == "pl" ? "Dostęp do pełnej wersji serwisu n86.pl (1 miesiąc)" : "Access to the full version of the ninjatask.pl website (1 month)";
             break;
             case "premium:12":
-                return $language == "pl" ? "Dostęp do pełnej wersji serwisu ninjatask.pl (12 miesięcy)" : "Access to the full version of the ninjatask.pl website (12 months)";
+                return $language == "pl" ? "Dostęp do pełnej wersji serwisu n86.pl (12 miesięcy)" : "Access to the full version of the ninjatask.pl website (12 months)";
             break;
         }
         return $item;

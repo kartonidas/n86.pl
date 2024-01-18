@@ -408,4 +408,12 @@ class Helper
         
         return $amount;
     }
+    
+    public static function withoutTax($amount, $vatValue = 0)
+    {
+        if($vatValue > 0)
+            return ($amount * 100) / (100 + $vatValue);
+        
+        return $amount;
+    }
 }

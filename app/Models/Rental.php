@@ -461,6 +461,23 @@ class Rental extends Model
         $this->save();
     }
     
+    public function terminateImmediately(string $reason)
+    {
+        if($this->status != Rental::STATUS_CURRENT)
+            throw new InvalidStatus(__("Rental in incorrect status"));
+        
+        if($this->termination)
+            throw new InvalidStatus(__("The rental is already being terminated"));
+        
+        $this->termination = 1;
+        $this->termination_time = time();
+        $this->termination_added = time();
+        $this->termination_reason = $reason;
+        $this->save();
+        
+        $this->setTerminated();
+    }
+    
     public function hasPaidDeposit()
     {
         $depositBill = ItemBill::where("rental_id", $this->id)->where("bill_type_id", Data::getSystemBillTypes()["deposit"][0])->first();

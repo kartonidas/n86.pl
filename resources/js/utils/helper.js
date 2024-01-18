@@ -92,7 +92,6 @@ export const getPrices = () => {
     return Prices;
 };
 
-
 export const p = (i, w1, w2, w3) => {
     if(i == 1) return w1;
 
@@ -108,3 +107,31 @@ export const p = (i, w1, w2, w3) => {
 export const timeToDate = (value)  => {
     return moment.unix(value).format("YYYY-MM-DD");
 };
+
+export const getRentalRowColor = (status) => {
+    switch (status) {
+        case "termination":
+        case "archive":
+            return "bg-bluegray-50 text-gray-500";
+        
+        case "current":
+            return "bg-green-50";
+            
+        case "waiting":
+            return "bg-blue-50";
+    }
+};
+
+export const getRentalBoxColor = (status) => {
+    switch (status) {
+        case "termination":
+        case "archive":
+            return "text-gray-400 border-gray-300";
+        
+        case "current":
+            return "text-green-600 border-green-600";
+            
+        case "waiting":
+            return "text-blue-300 border-blue-300";
+    }
+}
