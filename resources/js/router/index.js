@@ -200,6 +200,12 @@ const router = createRouter({
                                     meta: {permission: 'rent:list'},
                                 },
                                 {
+                                    path: '/app/item/:itemId/reports',
+                                    name: 'item_show_reports',
+                                    component: () => import('@/views/app/Items/Report.vue'),
+                                    meta: {permission: 'item:list'},
+                                },
+                                {
                                     path: '/app/item/:itemId/bills',
                                     name: 'item_bills',
                                     component: () => import('@/views/app/Items/Bills/List.vue'),

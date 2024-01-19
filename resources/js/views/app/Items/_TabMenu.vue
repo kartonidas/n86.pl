@@ -36,7 +36,7 @@
                     },
                     
                     
-                    { label: this.$t('items.stats'), icon: 'pi pi-fw pi-chart-line', route: { name: 'items' }, index: 'stats' },
+                    { label: this.$t('items.stats'), icon: 'pi pi-fw pi-chart-line', route: { name: 'item_show_reports' }, index: 'report' },
                 ]
             }
         },

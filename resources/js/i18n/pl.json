@@ -246,7 +246,9 @@
         "th": "-go",
         "updated" : "Nieruchomość została zaktualizowana",
         "zip" : "Kod pocztowy",
-        "tenant" : "Najemca"
+        "tenant" : "Najemca",
+        "last_year" : "Ostatni rok",
+        "select_period" : "Wybierz okres"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -337,7 +339,8 @@
             "buy_access" : "Wykup dostęp",
             "prolong_access" : "Przedłuż dostęp",
             "extend_access" : "Powiększ pakiet",
-            "invoices" : "Faktury"
+            "invoices" : "Faktury",
+            "items_report" : "Statystyki"
         }
     },
     "permissions" : {
