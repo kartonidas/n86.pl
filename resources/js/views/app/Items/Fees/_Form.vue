@@ -58,6 +58,10 @@
                     this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             
+            changeCost() {
+                this.$router.push({name: 'item_cyclical_fee_costs'})
+            },
+            
             back() {
                 this.$router.push({name: 'item_fees'})
             }
@@ -101,14 +105,22 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-6 mb-4">
+                    <div class="field col-12 mb-4" :class="[source == 'update' ? 'md:col-6' : 'md:col-6']">
                         <label for="cost" v-required class="block text-900 font-medium mb-2">{{ $t('items.cost') }}</label>
-                        <InputNumber id="cost" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.cost')" class="w-full" :class="{'p-invalid' : v.fee.cost.$error}" v-model="fee.cost" :disabled="loading || saving"/>
+                        <div class="flex justify-content-between">
+                            <div class="col p-0">
+                                <InputNumber id="cost" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.cost')" class="w-full" :class="{'p-invalid' : v.fee.cost.$error}" v-model="fee.cost" :disabled="loading || saving || source == 'update'"/>
+                            </div>
+                            <div class="col-fixed pr-0" style="width:100px" v-if="source == 'update'">
+                                <Button severity="secondary" :label="$t('items.change')" @click="changeCost"/>
+                            </div>
+                        </div>
                         <small>{{ $t("help.cyclical_fee_cost") }}</small>
                         <div v-if="v.fee.cost.$error">
                             <small class="p-error">{{ v.fee.cost.$errors[0].$message }}</small>
                         </div>
                     </div>
+                    
                     
                     <div class="field col-12 md:col-4 mb-4">
                         <label for="payment_day" v-required class="block text-900 font-medium mb-2">{{ $t('items.payment_day') }}</label>

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+use DateTime;
+use DateInterval;
+
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\BillPaymentRequest;
@@ -147,6 +150,7 @@ class RentalController extends Controller
         
         foreach($rentals as $i => $rental)
         {
+            $rentals[$i]->prepareViewData();
             $rentals[$i]->tenant = $rental->getTenant();
             $rentals[$i]->item = $rental->getItem();
             $rentals[$i]->can_delete = $rental->canDelete();
@@ -237,6 +241,7 @@ class RentalController extends Controller
         if(!$rental)
             throw new ObjectNotExist(__("Rental does not exist"));
         
+        $rental->prepareViewData();
         $rental->tenant = $rental->getTenant();
         $rental->item = $rental->getItem();
         $rental->can_update = $rental->canUpdate();
@@ -408,6 +413,7 @@ class RentalController extends Controller
             
         foreach($rentalBills as $i => $itemBill)
         {
+            $rentalBills[$i]->prepareViewData();
             $rentalBills[$i]->can_delete = $itemBill->canDelete();
             $rentalBills[$i]->bill_type = $itemBill->getBillType();
             $rentalBills[$i]->out_off_date = $itemBill->isOutOfDate();
@@ -459,6 +465,7 @@ class RentalController extends Controller
         if(!$bill || $bill->rental_id != $rental->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
+        $bill->prepareViewData();
         $bill->bill_type = $bill->getBillType();
         $bill->out_off_date = $bill->isOutOfDate();
         
@@ -730,6 +737,7 @@ class RentalController extends Controller
             
         foreach($payments as $k => $payment)
         {
+            $payments[$k]->prepareViewData();
             $associatedBills = [];
             $deposits = $payment->getDepositAssociatedDocument();
             if($deposits)
@@ -814,5 +822,45 @@ class RentalController extends Controller
         Balance::deposit($deposit)->create();
         
         return true;
+    }
+    
+    public function getDates(Request $request, $itemId)
+    {
+        User::checkAccess("rental:list");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        $rentals = Rental
+            ::where("item_id", $item->id)
+            ->whereIn("status", [Rental::STATUS_CURRENT, Rental::STATUS_WAITING])
+            ->orderBy("start", "ASC")
+            ->get();
+            
+        $dates = [];
+        foreach($rentals as $rental)
+        {
+            $fromDate = (new DateTime())->setTimestamp($rental->start);
+            
+            if($rental->termination)
+            {
+                $toDate = (new DateTime())->setTimestamp($rental->termination_time);
+            }
+            else
+            {
+                if($rental->period == Rental::PERIOD_INDETERMINATE)
+                    $toDate = (new DateTime())->setTimestamp($rental->start)->add(new DateInterval("P20Y"));
+                else
+                    $toDate = (new DateTime())->setTimestamp($rental->end);
+            }
+            
+            $dates[] = [
+                $fromDate->format("Y-m-d"),
+                $toDate->format("Y-m-d"),
+            ];
+        }
+        
+        return $dates;
     }
 }

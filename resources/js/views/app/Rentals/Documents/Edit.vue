@@ -91,15 +91,6 @@
                 this.rental = rental;
             }
         },
-        validations () {
-            return {
-                document: {
-                    type: { required },
-                    content: { required },
-                    title: { required, maxLengthValue: maxLength(200) },
-                }
-            }
-        },
     }
 </script>
 

@@ -265,6 +265,12 @@
     "Thank you for purchasing extra item package": "Dzi\u0119kujemy za wykupienie pakietu nieruchomo\u015bci",
     "Thank you for prolong item package": "Dzi\u0119kujemy za przed\u0142u\u017cenie pakietu",
     "Thank you for extend item package": "Dzi\u0119kujemy za rozszerzenie pakietu",
-    "Your item package expired": "Twój pakiet nieruchomości wygasł",
-    "Reminder: Expiring item package in %s Days": "Przypomnienie: pakiet nieruchomości wygaśnie za %s dni"
+    "Your item package expired": "Tw\u00f3j pakiet nieruchomo\u015bci wygas\u0142",
+    "Reminder: Expiring item package in %s Days": "Przypomnienie: pakiet nieruchomo\u015bci wyga\u015bnie za %s dni",
+    "Sum": "Suma",
+    "Charge": "Obci\u0105\u017cenia",
+    "Balance": "Saldo",
+    "There is already a cost with a given date": "Isnieje ju\u017c wpis z podan\u0105 dat\u0105",
+    "Invalid credentials": "Nieprawid\u0142owe dane logowania",
+    "Payment": "Wpłaty"
 }

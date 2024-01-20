@@ -2,19 +2,17 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class ReportService {
-    itemReport(itemId, period, year) {
+    itemReport(itemId, period) {
         var data = {
             period: period,
-            year: year,
         };
         
         return axios.get('api/v1/report/chart/item/' + itemId, { params : removeNullValues(data) });
     }
     
-    rentalReport(rentalId, period, year) {
+    rentalReport(rentalId, period) {
         var data = {
             period: period,
-            year: year,
         };
         
         return axios.get('api/v1/report/chart/rental/' + rentalId, { params : removeNullValues(data) });

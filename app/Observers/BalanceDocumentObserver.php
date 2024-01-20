@@ -31,10 +31,13 @@ class BalanceDocumentObserver
         if($balanceDocument->object_type == BalanceDocument::OBJECT_TYPE_DEPOSIT)
         {
             $associatedDocuments = $balanceDocument->getDepositAssociatedDocument();
-            foreach($associatedDocuments as $associatedDocument)
+            if($associatedDocuments)
             {
-                $associatedDocument->paid = 0;
-                $associatedDocument->save();
+                foreach($associatedDocuments as $associatedDocument)
+                {
+                    $associatedDocument->paid = 0;
+                    $associatedDocument->save();
+                }
             }
         }
             

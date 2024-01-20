@@ -144,7 +144,10 @@ class Item extends Model
             ->first();
             
         if($rental)
+        {
+            $rental->prepareViewData();
             $rental->tenant = $rental->getTenant();
+        }
         
         return $rental;
     }

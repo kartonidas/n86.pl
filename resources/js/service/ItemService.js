@@ -94,4 +94,20 @@ export default class ItemService {
     removeCyclicalFee(itemId, feeId) {
         return axios.delete('api/v1/item/' + itemId + "/fee/" + feeId);
     }
+    
+    cyclicalFeeCosts(itemId, feeId, size, page) {
+        var data = {
+            size: size,
+            page: page,
+        };
+        return axios.get('api/v1/item/' + itemId + "/fee/" + feeId + "/costs", { params : data });
+    }
+    
+    removeCyclicalFeeCost(itemId, feeId, costId) {
+        return axios.delete('api/v1/item/' + itemId + "/fee/" + feeId + "/cost/" + costId);
+    }
+    
+    addCyclicalFeeCost(itemId, feeId, costData) {
+        return axios.put('api/v1/item/' + itemId + "/fee/" + feeId + "/cost", removeNullValues(costData));
+    }
 }

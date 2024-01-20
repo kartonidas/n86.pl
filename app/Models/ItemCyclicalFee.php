@@ -36,11 +36,17 @@ class ItemCyclicalFee extends Model
         return $days;
     }
     
-    protected function sourceDocumentDate(): Attribute
+    
+    protected function sourceDocumentDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["source_document_date"] ? date("Y-m-d", $attributes["source_document_date"]) : null,
         );
+    }
+    
+    public function prepareViewData()
+    {
+        $this->source_document_date = $this->sourceDocumentDateString;
     }
     
     protected function cost(): Attribute

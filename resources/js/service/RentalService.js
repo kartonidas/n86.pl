@@ -131,4 +131,8 @@ export default class RentalService {
     payment(rentalId, depositData) {
         return axios.put('api/v1/rental/' + rentalId + "/deposit", removeNullValues(depositData));
     }
+    
+    getNonAvailableDates(itemId) {
+        return axios.get('api/v1/rental/item/' + itemId + '/getDates');
+    }
 }

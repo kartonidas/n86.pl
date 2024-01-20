@@ -85,7 +85,7 @@ class UserController extends Controller
             ];
         }
         
-        throw new Exception("Invalid credentials");
+        throw new Exception(__("Invalid credentials"));
     }
     
     public function getToken(Request $request)

@@ -93,6 +93,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/rental/{id}', [RentalController::class, "get"])->where("id", "[0-9]+");
     $router->put('/rental/{id}', [RentalController::class, "update"])->where("id", "[0-9]+");
     $router->post('/rental/validate', [RentalController::class, "validateData"]);
+    $router->get('/rental/item/{id}/getDates', [RentalController::class, "getDates"])->where("id", "[0-9]+");
     $router->put('/rental/rent', [RentalController::class, "rent"]);
     $router->delete('/rental/{id}', [RentalController::class, "delete"])->where("id", "[0-9]+");
     $router->post('/rental/{id}/terminate', [RentalController::class, "termination"])->where("id", "[0-9]+");

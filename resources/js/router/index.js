@@ -253,6 +253,12 @@ const router = createRouter({
                                     component: () => import('@/views/app/Items/Fees/Edit.vue'),
                                     meta: {permission: 'item:update'},
                                 },
+                                {
+                                    path: '/app/item/:itemId/fee/:feeId/costs',
+                                    name: 'item_cyclical_fee_costs',
+                                    component: () => import('@/views/app/Items/Fees/Costs.vue'),
+                                    meta: {permission: 'item:update'},
+                                },
                             ]
                         },
                     ]

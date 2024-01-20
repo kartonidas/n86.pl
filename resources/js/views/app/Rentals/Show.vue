@@ -495,7 +495,6 @@
                         </div>
                     </div>
                     <div class="col-12 xl:col-5 relative">
-                        
                         <div class="grid">
                             <div class="col-fixed pt-0 pb-1" style="width: 120px">
                                 <span class="font-medium">{{ $t('rent.terminate') }}:</span>
@@ -531,6 +530,35 @@
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                         </div>
+                            
+                        <template v-if="rental.termination">
+                            <div class="grid mt-4">
+                                <div class="col-fixed pt-0 pb-1" style="width: 150px">
+                                    <span class="font-medium">{{ $t('rent.terminate') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1">
+                                    {{ rental.termination_added }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                
+                                <div class="col-fixed pt-0 pb-1" style="width: 150px">
+                                    <span class="font-medium">{{ $t('rent.terminate_end') }}:</span>
+                                </div>
+                                <div class="col-12 sm:col-7 pt-0 pb-1 font-medium text-red-500">
+                                    {{ rental.termination_time }}
+                                </div>
+                                <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                                
+                                <template v-if="rental.termination_reason">
+                                    <div class="col-12 pt-0 pb-1">
+                                        <span class="font-medium">{{ $t('rent.termination_reason') }}:</span>
+                                    </div>
+                                    <div class="col-12 sm:col-7 pt-0 pb-1 font-italic">
+                                        {{ rental.termination_reason }}
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
                         
                         <div v-if="rental.status == 'current' && !rental.termination" class="mt-6">
                             <Button :label="$t('rent.terminate_contract')" @click="terminate" type="button" severity="danger" iconPos="right" icon="pi pi-delete-left" class="w-full text-center" v-if="hasAccess('rent:update')" />

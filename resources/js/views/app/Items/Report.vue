@@ -30,9 +30,9 @@
         data() {
             return {
                 loading: true,
-                period: "last_year",
+                period: moment().year(),
                 years: [],
-                allowed_periods: [],
+                allowedPeriods: [],
                 chartData: {
                 },
                 chartOptions: {
@@ -69,7 +69,7 @@
             
             setPeriod() {
                 let period = [
-                    { "id" : "last_year", "name" : this.$t("items.last_year") }
+                    { "id" : "last_year", "name" : this.$t("items.last_12_months") }
                 ];
                 if (!this.years.length) {
                     period.push({ "id" : moment().year(), "name" : moment().year() });
@@ -80,11 +80,12 @@
                         period.push({ "id" : year, "name" : year });
                     });
                 }
-                this.allowed_periods = period
+                this.allowedPeriods = period
             },
             
             changePeriod(e) {
-                console.log(e.value);
+                this.period = e.value
+                this.getReport()
             },
             
             getReport() {
@@ -92,7 +93,7 @@
                     item_id : this.$route.params.itemId,
                     status_arr : ['archive', 'termination'],
                 };
-                this.reportService.itemReport(this.$route.params.itemId, "last_year")
+                this.reportService.itemReport(this.$route.params.itemId, this.period)
                     .then(
                         (response) => {
                             let labels = response.data.labels;
@@ -137,7 +138,7 @@
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="report" class="mb-5"/>
                 
                 <div class="text-right">
-                    <Dropdown v-model="period" :showClear="false" :options="allowed_periods" optionLabel="name" optionValue="id" :placeholder="$t('items.select_period')" :disabled="loading" @change="changePeriod"/>
+                    <Dropdown v-model="period" :showClear="false" :options="allowedPeriods" optionLabel="name" optionValue="id" :placeholder="$t('items.select_period')" :disabled="loading" @change="changePeriod"/>
                 </div>
                 
                 <Chart type="bar" :data="chartData" :options="chartOptions" :loading="true"/>

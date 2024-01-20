@@ -14,9 +14,21 @@ class ReportChartRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            "year" => "sometimes|integer|min:2020|max:2100",
-            "period" => "sometimes|string|in:last_year",
+        $rules = [
+            "period" => ["sometimes"]
         ];
+        if(isset($this->period) && is_numeric($this->period))
+        {
+            $rules["period"][] = "integer";
+            $rules["period"][] = "min:2020";
+            $rules["period"][] = "max:2100";
+        }
+        else
+        {
+            $rules["period"][] = "string";
+            $rules["period"][] = "in:last_year";
+        }
+        
+        return $rules;
     }
 }

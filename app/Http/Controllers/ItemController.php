@@ -210,6 +210,7 @@ class ItemController extends Controller
             
         foreach($itemBills as $i => $itemBill)
         {
+            $itemBills[$i]->prepareViewData();
             $itemBills[$i]->can_delete = $itemBill->canDelete();
             $itemBills[$i]->bill_type = $itemBill->getBillType();
             $itemBills[$i]->out_off_date = $itemBill->isOutOfDate();
@@ -263,6 +264,7 @@ class ItemController extends Controller
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
+        $bill->prepareViewData();
         $bill->bill_type = $bill->getBillType();
         $bill->out_off_date = $bill->isOutOfDate();
         
@@ -531,12 +533,18 @@ class ItemController extends Controller
         
         $total = $itemFeeCosts->count();
         
-        $orderBy = $this->getOrderBy($request, ItemCyclicalFeeCost::class, "created_at,desc");
+        $orderBy = $this->getOrderBy($request, ItemCyclicalFeeCost::class, "from_time,desc");
         $itemFeeCosts = $itemFeeCosts->take($size)
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
-            
+        
+        foreach($itemFeeCosts as $i => $itemFeeCost)
+        {
+            $itemFeeCosts[$i]->prepareViewData();
+            $itemFeeCosts[$i]->can_delete = $itemFeeCost->canDelete();
+        }
+        
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
@@ -562,6 +570,15 @@ class ItemController extends Controller
         
         $validated = $request->validated();
         
+        $cnt = ItemCyclicalFeeCost
+            ::where("item_cyclical_fee_id", $feeId)
+            ->where("from_time", ">=", Helper::setDateTime($validated["from_time"], "00:00:00", true))
+            ->where("from_time", "<=", Helper::setDateTime($validated["from_time"], "23:59:59", true))
+            ->count();
+            
+        if($cnt > 0)
+            throw new InvalidStatus(__("There is already a cost with a given date"));
+        
         $cost = new ItemCyclicalFeeCost;
         $cost->item_cyclical_fee_id = $feeId;
         $cost->from_time = Helper::setDateTime($validated["from_time"], "00:00:00", true);
@@ -586,6 +603,9 @@ class ItemController extends Controller
         $cost = ItemCyclicalFeeCost::find($costId);
         if(!$cost || $cost->item_cyclical_fee_id != $feeId)
             throw new ObjectNotExist(__("Cost does not exist"));
+        
+        
+        $cost->prepareViewData();
         
         return $cost;
     }
@@ -632,7 +652,7 @@ class ItemController extends Controller
             throw new ObjectNotExist(__("Cyclical fee does not exist"));
         
         $cost = ItemCyclicalFeeCost::find($costId);
-        if(!$cost || $cost->item_cyclical_fee_id != $item->id)
+        if(!$cost || $cost->item_cyclical_fee_id != $feeId)
             throw new ObjectNotExist(__("Fee does not exist"));
         
         $cost->delete();

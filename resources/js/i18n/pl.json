@@ -168,8 +168,14 @@
         "add_cyclical_fee_short" : "Dodaj opłatę",
         "add_cyclical_fee" : "Dodaj opłatę cykliczną",
         "empty_cyclical_fee_list" : "Brak opłat cyklinczych",
+        "empty_cyclical_fee_history_cost" : "Brak historii",
         "new_cyclical_fee" : "Nowa opłata cykliczna",
+        "items_cyclical_fee_add_cost" : "Dodaj koszt",
         "cyclical_fee_added" : "Opłata cykliczna została dodana",
+        "items_cyclical_fee_costs" : "Historia zmian ceny",
+        "items_cyclical_fee_cost" : "Opłata",
+        "cyclical_fee_add_cost" : "Dodaj nową wartość",
+        "from_time" : "Od kiedy",
         "select_repeat_months" : "Wybierz powtarzaj co",
         "add_bill" : "Dodaj nowy rachunek",
         "add_bill_short" : "Dodaj rachunek",
@@ -248,7 +254,11 @@
         "zip" : "Kod pocztowy",
         "tenant" : "Najemca",
         "last_year" : "Ostatni rok",
-        "select_period" : "Wybierz okres"
+        "select_period" : "Wybierz okres",
+        "change" : "Zmień",
+        "value" : "Wartość",
+        "from_day" : "Od dnia",
+        "last_12_months" : "Ostatnie 12 miesięcy"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -340,7 +350,8 @@
             "prolong_access" : "Przedłuż dostęp",
             "extend_access" : "Powiększ pakiet",
             "invoices" : "Faktury",
-            "items_report" : "Statystyki"
+            "items_report" : "Statystyki",
+            "items_cyclical_fee_costs" : "Historia zmian ceny"
         }
     },
     "permissions" : {
@@ -535,7 +546,8 @@
         "select_terminate_mode" : "Wybierz rodzaj wypowiedzenia",
         "terminate_mode" : "Rodzaj wypowiedzenia",
         "terminate_mode_date" : "Według daty",
-        "terminate_mode_immediately" : "Natychmiast"
+        "terminate_mode_immediately" : "Natychmiast",
+        "terminate_end" : "Koniec wynajmu"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",

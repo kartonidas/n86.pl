@@ -25,11 +25,16 @@ class BalanceDocument extends Model
         "updated_at" => 'datetime:Y-m-d H:i',
     ];
     
-    protected function paidDate(): Attribute
+    protected function paidDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["paid_date"] ? date("Y-m-d", $attributes["paid_date"]) : null,
         );
+    }
+    
+    public function prepareViewData()
+    {
+        $this->paid_date = $this->paidDateString;
     }
     
     const OBJECT_TYPE_BILL = "bill";
@@ -100,7 +105,7 @@ class BalanceDocument extends Model
                     throw new ObjectNotExist(__("Bill does not exists"));
                 
                 $bill->paid = $this->paid;
-                $bill->paid_date = $this->getAttributes()["paid_date"];
+                $bill->paid_date = $this->paid_date;
                 $bill->saveQuietly();
             break;
         }

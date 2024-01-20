@@ -134,4 +134,11 @@ export const getRentalBoxColor = (status) => {
         case "waiting":
             return "text-blue-300 border-blue-300";
     }
-}
+};
+
+export const getDatesFromRange = (start, end, interval) => {
+    var days = [];
+    for (var m = moment(start); m.isBefore(end); m.add(1, interval))
+        days.push(m.toDate());
+    return days;
+};

@@ -52,32 +52,49 @@ class Rental extends Model
     ];
     protected $hidden = ["uuid"];
     
-    protected function start(): Attribute
+    
+    protected function startString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["start"] ? date("Y-m-d", $attributes["start"]) : null,
         );
     }
     
-    protected function end(): Attribute
+    protected function endString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["end"] ? date("Y-m-d", $attributes["end"]) : null,
         );
     }
     
-    protected function firstPaymentDate(): Attribute
+    protected function firstPaymentDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["first_payment_date"] ? date("Y-m-d", $attributes["first_payment_date"]) : null,
         );
     }
     
-    protected function terminationTime(): Attribute
+    protected function terminationTimeString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["termination_time"] ? date("Y-m-d", $attributes["termination_time"]) : null,
         );
+    }
+    
+    protected function terminationAddedString(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => $attributes["termination_added"] ? date("Y-m-d", $attributes["termination_added"]) : null,
+        );
+    }
+    
+    public function prepareViewData()
+    {
+        $this->start = $this->startString;
+        $this->end = $this->endString;
+        $this->first_payment_date = $this->firstPaymentDateString;
+        $this->termination_time = $this->terminationTimeString;
+        $this->termination_added = $this->terminationAddedString;
     }
     
     public static function getPeriods()
@@ -243,7 +260,7 @@ class Rental extends Model
     public function setEndDate()
     {
         if($this->period == self::PERIOD_MONTH)
-            $this->end = self::calculateEndDate(strtotime($this->start), $this->months);
+            $this->end = self::calculateEndDate($this->start, $this->months);
     }
     
     public static function calculateEndDate(int $start, int $months)
@@ -369,6 +386,11 @@ class Rental extends Model
             {
                 if($this->start > $time)
                     return self::STATUS_WAITING;
+                else
+                {
+                    if($time > $this->end)
+                        return self::STATUS_ARCHIVE;
+                }
             }
         }
         elseif($this->start)
@@ -378,6 +400,8 @@ class Rental extends Model
             else
                 return self::STATUS_CURRENT;
         }
+        
+        return self::STATUS_WAITING;
     }
     
     public static function recalculate(Rental $rental)
@@ -398,7 +422,7 @@ class Rental extends Model
     {
         if(!self::where("item_id", $this->item_id)->where("status", self::STATUS_CURRENT)->count())
         {
-            if($this->getAttributes()["start"] <= time())
+            if($this->start <= time() && ($this->period == self::PERIOD_INDETERMINATE || $this->end > time()))
                 $this->setCurrent();
         }
     }
@@ -422,7 +446,7 @@ class Rental extends Model
             $deposit->item_id = $this->item_id;
             $deposit->rental_id = $this->id;
             $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
-            $deposit->payment_date = $this->getAttributes()["first_payment_date"];
+            $deposit->payment_date = $this->first_payment_date;
             $deposit->cost = $this->deposit;
             $deposit->save();
         }
@@ -435,13 +459,13 @@ class Rental extends Model
         $rent->item_id = $this->item_id;
         $rent->rental_id = $this->id;
         $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
-        $rent->payment_date = $this->getAttributes()["first_payment_date"];
+        $rent->payment_date = $this->first_payment_date;
         $rent->cost = $cost;
         $rent->save();
         
         if($this->payment == self::PAYMENT_CYCLICAL)
         {
-            $this->next_rental = $this->calculateNextRental($this->getAttributes()["start"]);
+            $this->next_rental = $this->calculateNextRental($this->start);
             $this->save();
         }
     }
@@ -501,7 +525,7 @@ class Rental extends Model
     {
         if($this->status == self::STATUS_CURRENT)
         {
-            if($this->getAttributes()["start"] > time())
+            if($this->start > time())
                 $this->setWaiting();
         }
         
@@ -540,7 +564,7 @@ class Rental extends Model
             $deposit->item_id = $this->item_id;
             $deposit->rental_id = $this->id;
             $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
-            $deposit->payment_date = $this->getAttributes()["first_payment_date"];
+            $deposit->payment_date = $this->first_payment_date;
             $deposit->cost = $this->deposit;
             $deposit->save();
         }

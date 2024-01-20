@@ -28,25 +28,32 @@ class ItemBill extends Model
     ];
     protected $hidden = ["uuid"];
     
-    protected function paymentDate(): Attribute
+    protected function paymentDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["payment_date"] ? date("Y-m-d", $attributes["payment_date"]) : null,
         );
     }
     
-    protected function paidDate(): Attribute
+    protected function paidDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["paid_date"] ? date("Y-m-d", $attributes["paid_date"]) : null,
         );
     }
     
-    protected function sourceDocumentDate(): Attribute
+    protected function sourceDocumentDateString(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value) => $value ? date("Y-m-d", $value) : null,
+            get: fn (mixed $value, array $attributes) => $attributes["source_document_date"] ? date("Y-m-d", $attributes["source_document_date"]) : null,
         );
+    }
+    
+    public function prepareViewData()
+    {
+        $this->payment_date = $this->paymentDateString;
+        $this->paid_date = $this->paidDateString;
+        $this->source_document_date = $this->sourceDocumentDateString;
     }
     
     public function canDelete()
@@ -159,7 +166,7 @@ class ItemBill extends Model
     
     public function isOutOfDate()
     {
-        if(!$this->paid && $this->getAttributes()["payment_date"] <= time())
+        if(!$this->paid && $this->payment_date <= time())
             return true;
         
         return false;

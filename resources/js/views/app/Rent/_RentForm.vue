@@ -1,12 +1,19 @@
 <script>
     import { ref, reactive, computed } from 'vue'
-    import { getValueLabel, getValues } from '@/utils/helper'
+    import { getValueLabel, getValues, getDatesFromRange } from '@/utils/helper'
     import { useVuelidate } from '@vuelidate/core'
     import { required, requiredIf, minValue, maxLength, maxValue } from '@/utils/i18n-validators'
+    import RentalService from '@/service/RentalService'
     import moment from 'moment'
 
     export default {
         emits: ['submit-form', 'back'],
+        setup() {
+            const rentalService = new RentalService();
+            return {
+                rentalService
+            }
+        },
         data() {
             const rent = ref({
                 start_date: new Date(),
@@ -61,6 +68,7 @@
             });
             
             return {
+                disabledDates: [],
                 period,
                 termination_period,
                 payment,
@@ -77,6 +85,9 @@
             item: { type: Object },
             r: { type: Object },
         },
+        beforeMount() {
+            this.getNonAvailableDates()
+        },
         mounted() {
             this.rent = Object.assign(this.rent, this.r);
             
@@ -90,6 +101,22 @@
                 this.rent.first_payment_date = moment(this.rent.first_payment_date).toDate()
         },
         methods: {
+            getNonAvailableDates() {
+                this.rentalService.getNonAvailableDates(this.item.id)
+                    .then(
+                        (response) => {
+                            response.data.forEach((index) => {
+                                let dates = getDatesFromRange(index[0], index[1], 'days');
+                                dates.forEach((date) => {
+                                    this.disabledDates.push(date);
+                                })
+                                
+                            });
+                        },
+                        (errors) => {}
+                    )
+            },
+            
             onChangeStartDate(date) {
                 this.rent.first_payment_date = moment(date).add(10, 'days').toDate()
             },
@@ -146,7 +173,7 @@
                     
                     <div class="field col-12 md:col-6 xl:col-3 mb-4">
                         <label for="start_date" v-required class="block text-900 font-medium mb-2">{{ $t('rent.start_date') }}</label>
-                        <Calendar id="start_date" v-model="rent.start_date" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" showIcon :disabled="loading || saving"/>
+                        <Calendar id="start_date" v-model="rent.start_date" :disabledDates="disabledDates" @date-select="onChangeStartDate" :class="{'p-invalid' : v.rent.start_date.$error}" :placeholder="$t('rent.start_date')" showIcon :disabled="loading || saving"/>
                         <div v-if="v.rent.start_date.$error">
                             <small class="p-error">{{ v.rent.start_date.$errors[0].$message }}</small>
                         </div>

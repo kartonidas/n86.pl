@@ -75,7 +75,7 @@ class ReportController extends Controller
                 "values" => [],
             ],
             "deposit" => [
-                "name" => __("Deposit"),
+                "name" => __("Payment"),
                 "values" => [],
             ],
             "balance" => [
@@ -146,7 +146,7 @@ class ReportController extends Controller
                 "values" => [],
             ],
             "deposit" => [
-                "name" => __("Deposit"),
+                "name" => __("Payment"),
                 "values" => [],
             ],
             "balance" => [
@@ -167,21 +167,12 @@ class ReportController extends Controller
     
     private function prepareData($params) : array
     {
-        $period = "year";
-        if(empty($params["year"]) && empty($params["period"]))
-            $year = date("Y");
-        else
-        {
-            if(!empty($params["year"]))
-                $year = $params["year"];
-            if(!empty($params["period"]))
-                $period = $params["period"];
-        }
+        $period = $params["period"] ?? date("Y");
         
-        if($period == "year")
+        if(is_numeric($period))
         {
-            $start = (new DateTime(date($year . "-01-01")))->setTime(00, 00, 00);
-            $end = (new DateTime(date($year . "-12-t")))->setTime(23, 59, 59);          
+            $start = (new DateTime(date($period . "-01-01")))->setTime(00, 00, 00);
+            $end = (new DateTime(date($period . "-12-t")))->setTime(23, 59, 59);          
         }
         else
         {
@@ -190,7 +181,6 @@ class ReportController extends Controller
             $start = clone $end;
             $start = $start->sub(new DateInterval("P12M"))->add(new DateInterval("P1D"))->setTime(00, 00, 00);
         }
-        
         
         $report = [];
         $months = 12;
@@ -211,7 +201,6 @@ class ReportController extends Controller
             "start" => $start,
             "end" => $end,
             "period" => $period,
-            "year" => $year ?? null,
             "report" => $report,
         ];
     }
