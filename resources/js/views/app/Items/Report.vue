@@ -33,9 +33,12 @@
                 period: moment().year(),
                 years: [],
                 allowedPeriods: [],
+                
                 chartData: {
                 },
                 chartOptions: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         x: {
                             grid: {
@@ -141,7 +144,7 @@
                     <Dropdown v-model="period" :showClear="false" :options="allowedPeriods" optionLabel="name" optionValue="id" :placeholder="$t('items.select_period')" :disabled="loading" @change="changePeriod"/>
                 </div>
                 
-                <Chart type="bar" :data="chartData" :options="chartOptions" :loading="true"/>
+                <Chart type="bar" :data="chartData" :options="chartOptions" :loading="true" class="h-30rem"/>
             </div>
         </div>
     </div>

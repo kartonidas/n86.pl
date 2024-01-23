@@ -7,6 +7,10 @@ return [
                 "Gaz",
                 "Prąd",
                 "Woda",
+            ],
+            "payment_types" => [
+                "Gotówka",
+                "Przelew",
             ]
         ]
     ]

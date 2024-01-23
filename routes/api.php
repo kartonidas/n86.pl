@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerInvoicesController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentTemplateController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SaleRegisterController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TenantController;
@@ -214,6 +216,20 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     // KONFIGURACJA
     $router->get('/config', [ConfigController::class, "get"]);
     $router->put('/config', [ConfigController::class, "update"]);
+    
+    
+    // REJESTR SPRZEDAŻY
+    $router->get('/sale-register', [SaleRegisterController::class, "list"]);
+    $router->put('/sale-register', [SaleRegisterController::class, "create"]);
+    $router->get('/sale-register/{id}', [SaleRegisterController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/sale-register/{id}', [SaleRegisterController::class, "update"])->where("id", "[0-9]+");
+    $router->delete('/sale-register/{id}', [SaleRegisterController::class, "delete"])->where("id", "[0-9]+");
+    
+    
+    // FAKTURY
+    $router->get('/customer-invoices', [CustomerInvoicesController::class, "list"]);
+    $router->put('/customer-invoices', [CustomerInvoicesController::class, "create"]);
+    $router->put('/customer-invoices/{id}', [CustomerInvoicesController::class, "update"])->where("id", "[0-9]+");
     
     
     // USUNIĘCIE KONTA

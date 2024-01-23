@@ -42,5 +42,9 @@ return [
             "module" => "Configurations",
             "operation" => ["update"]
         ],
+        "customer_invoices" => [
+            "module" => "Customer invoices",
+            "operation" => ["list", "create", "update", "delete"]
+        ]
     ]
 ];
