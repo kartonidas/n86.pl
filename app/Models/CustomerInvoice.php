@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\SaleRegister;
+use App\Exceptions\ObjectNotExist;
 use App\Models\Customer;
 use App\Models\CustomerInvoiceItem;
-use App\Models\Settlement;
+use App\Models\FirmInvoicingData;
 use App\Models\Numbering;
 use App\Traits\NumberingTrait;
+use App\Models\SaleRegister;
 
 class CustomerInvoice extends Model
 {
@@ -44,9 +47,8 @@ class CustomerInvoice extends Model
         $this->gross_amount = $summary["gross"];
         $this->net_amount_discount = $summary["net_discount"];
         $this->gross_amount_discount = $summary["gross_discount"];
+        $this->balance = $this->gross_amount;
         $this->saveQuietly();
-
-        $this->recalculateBalance();
     }
 
     private function calculateSummary()
@@ -58,7 +60,7 @@ class CustomerInvoice extends Model
             "gross_discount" => 0,
         ];
 
-        $items = $this->getItems();
+        $items = $this->items()->get();
         if(!$items->isEmpty())
         {
 
@@ -103,10 +105,6 @@ class CustomerInvoice extends Model
             break;
         }
         
-        // Jeśli faktura ma przypisane wpłaty nie możemy usunąć faktury
-        if(Settlement::where("document", "cash_register")->where("object", "invoice")->where("object_id", $this->id)->count())
-            return false;
-
         return true;
     }
 
@@ -148,89 +146,23 @@ class CustomerInvoice extends Model
         return "";
     }
 
-    private static $cachedData = [];
-    public function prepareData()
+    public function items(): HasMany
     {
-        if(empty(self::$cachedData["customer"][$this->customer_id]))
-            self::$cachedData["customer"][$this->customer_id] = Customer::find($this->customer_id);
-
-        if(empty(self::$cachedData["sale_register"][$this->sale_register_id]))
-            self::$cachedData["sale_register"][$this->sale_register_id] = SaleRegister::find($this->sale_register_id);
-
-        $recipientId = $this->customer_id != $this->recipient_id && $this->recipient_id ? $this->recipient_id : $this->customer_id;
-        $payerId = $this->customer_id != $this->payer_id && $this->payer_id ? $this->payer_id : $this->customer_id;
-        if(empty(self::$cachedData["recipient"][$recipientId]))
-            self::$cachedData["recipient"][$recipientId] = Customer::find($recipientId);
-
-        if(empty(self::$cachedData["payer"][$payerId]))
-            self::$cachedData["payer"][$payerId] = Customer::find($payerId);
-
-        $this->customer = self::$cachedData["customer"][$this->customer_id];
-        $this->recipient = self::$cachedData["recipient"][$recipientId];
-        $this->payer = self::$cachedData["payer"][$payerId];
-        $this->sale_register = self::$cachedData["sale_register"][$this->sale_register_id];
-    }
-
-    public function getItems($array = false)
-    {
-        $items = CustomerInvoiceItem::where("customer_invoice_id", $this->id)->orderBy("created_at", "DESC")->get();
-
-        if($array)
-        {
-            $out = [];
-            foreach($items as $item)
-            {
-                $product = $item->getProduct();
-                $item = $item->toArray();
-                unset($item["account_uuid"]);
-                unset($item["created_at"]);
-                unset($item["update_at"]);
-
-                if($product)
-                    $item["product_type"] = $product->type;
-                $out[$item["id"]] = $item;
-            }
-            return $out;
-        }
-
-        return $items;
+        return $this->hasMany(CustomerInvoiceItem::class);
     }
     
-    public function getAssignedServiceTaskIds()
-    {
-        $ids = [];
-        $items = $this->getItems();
-        if(!$items->isEmpty())
-        {
-            foreach($items as $item)
-            {
-                if(!empty($item->service_task_id))
-                    $ids[] = $item->service_task_id;
-            }
-        }
-        $ids = array_unique($ids);
-        return $ids;
-    }
-
-    public static function getAssignedServiceTaskRows($ids)
-    {
-        if(empty($ids))
-            $ids = [-1];
-        return ServiceTask::whereIn("id", $ids)->get();
-    }
-
     public function getGroupedItems()
     {
         $out = [];
-        $items = $this->getItems(true);
+        $items = $this->items()->get();
 
         foreach($items as $item)
         {
-            if(empty($out[$item["vat_rate_id"]]))
+            $item = $item->toArray();
+            if(empty($out[$item["vat_value"]]))
             {
-                $out[$item["vat_rate_id"]] = [
-                    "vat_rate_id" => $item["vat_rate_id"],
-                    "vat_rate_value" => $item["vat_rate_value"],
+                $out[$item["vat_value"]] = [
+                    "vat_value" => $item["vat_value"],
                     "net_amount" => 0,
                     "gross_amount" => 0,
                     "gross_value" => 0,
@@ -245,8 +177,8 @@ class CustomerInvoice extends Model
                 $grossAmount = $item["total_gross_amount_discount"];
             }
 
-            $out[$item["vat_rate_id"]]["net_amount"] += $netAmount;
-            $out[$item["vat_rate_id"]]["gross_amount"] += $grossAmount;
+            $out[$item["vat_value"]]["net_amount"] += $netAmount;
+            $out[$item["vat_value"]]["gross_amount"] += $grossAmount;
         }
 
         foreach($out as $k => $item)
@@ -267,7 +199,6 @@ class CustomerInvoice extends Model
         {
             return DB::transaction(function () {
                 CustomerInvoiceItem::where("customer_invoice_id", $this->id)->delete();
-                Settlement::where("object", "invoice")->where("object_id", $this->id)->delete();
                 Numbering::where("type", "invoice")->where("object_id", $this->id)->delete();
     
                 if($this->type == "correction")
@@ -329,13 +260,13 @@ class CustomerInvoice extends Model
 
     public function getCorrectionSource()
     {
-        if($this->type == "correction")
+        if($this->type == SaleRegister::TYPE_CORRECTION)
         {
             $invoice = self::where("type", "invoice")->where("correction_id", $this->id)->first();
             if($invoice)
                 return $invoice;
         }
-        throw new \Exception("Faktura nie istnieje");
+        throw new ObjectNotExist(__("Invoice does not exists"));
     }
 
     public static function getInvoiceNextNumber($saleRegisterId)
@@ -374,56 +305,6 @@ class CustomerInvoice extends Model
         return $fullNumber;
     }
 
-    public function recalculateBalance()
-    {
-        // jesli wpłaty sa wieksze od należności oznacznym fakture jako oplaconą
-
-        $total_payments = Settlement::where("object", "invoice")->where("object_id", $this->id)->sum("amount");
-
-        $grossAmount = $this->gross_amount;
-
-        if($this->type == "correction")
-        {
-             $correctedInvoice = $this->getCorrectionSource();
-             if($correctedInvoice)
-             {
-                 $grossAmountDiff = $this->gross_amount - $correctedInvoice->gross_amount;
-                 if($grossAmountDiff < 0)
-                 {
-                     $paymentRow = Settlement::where("object", "invoice")->where("object_id", $correctedInvoice->id)->where("correction_id", $this->id)->first();
-                     if(!$paymentRow)
-                     {
-                         $paymentRow = new Settlement;
-                         $paymentRow->object = "invoice";
-                         $paymentRow->object_id = $correctedInvoice->id;
-                         $paymentRow->payment_date = date("Y-m-d H:i:s");
-                         $paymentRow->correction_id = $this->id;
-                     }
-                     $paymentRow->amount = abs($grossAmountDiff);
-                     $paymentRow->saveQuietly();
-
-                     $correctedInvoice->recalculateBalance();
-                 }
-                 else
-                 {
-                     $paymentRow = Settlement::where("object", "invoice")->where("object_id", $correctedInvoice->id)->where("correction_id", $this->id)->first();
-                     if($paymentRow)
-                        $paymentRow->delete();
-                 }
-                 $this->balance = $grossAmountDiff;
-                 $this->balance_correction = $grossAmountDiff - $total_payments;
-             }
-        }
-        else
-        {
-            $balance = $grossAmount - $total_payments;
-            $this->balance = $balance;
-        }
-
-        $this->total_payments = $total_payments;
-        $this->saveQuietly();
-    }
-
     public function isLastNumber()
     {
         $lastId = Numbering::where("type", "invoice")->where("invoice_sale_register_id", $this->sale_register_id)->max("id");
@@ -433,16 +314,6 @@ class CustomerInvoice extends Model
             return false;
 
         return true;
-    }
-
-    public function getPayments()
-    {
-        return Settlement::where("object", "invoice")->where("object_id", $this->id)->orderBy("payment_date", "DESC")->get();
-    }
-
-    public function getTotalPayments()
-    {
-        return Settlement::where("object", "invoice")->where("object_id", $this->id)->sum("amount");
     }
 
     public static function getAllowedOperations(CustomerInvoice $invoice = null)
@@ -498,12 +369,53 @@ class CustomerInvoice extends Model
             return true;
         return false;
     }
-
-    public function getCashRegisterSummary()
+    
+    public function customer(): BelongsTo
     {
-        return [
-            "payment" => Settlement::where("object", "invoice")->where("object_id", $this->id)->where("amount", ">", 0)->sum("amount"),
-            "paycheck" => abs(Settlement::where("object", "invoice")->where("object_id", $this->id)->where("amount", "<", 0)->sum("amount")),
-        ];
+        return $this->belongsTo(Customer::class, "customer_id");
+    }
+
+    public function recipient(): BelongsTo
+    {
+        if(empty($this->recipient_id) || $this->customer_id == $this->recipient_id)
+            return $this->customer();
+        
+        return $this->belongsTo(Customer::class, "recipient_id");
+    }
+    
+    public function payer(): BelongsTo
+    {
+        if(empty($this->payer_id) || $this->customer_id == $this->payer_id)
+            return $this->customer();
+        
+        return $this->belongsTo(Customer::class, "payer_id");
+    }
+    
+    public function saleRegister(): BelongsTo
+    {
+        return $this->belongsTo(SaleRegister::class);
+    }
+    
+    public function getFirmInvoicingData()
+    {
+        return FirmInvoicingData::where("uuid", $this->uuid)
+            ->where("id", $this->firm_invoicing_data_id)
+            ->withoutGlobalScopes()
+            ->withTrashed()
+            ->first();
+    }
+    
+    public static function getCurrentFirmInvoicingDataId()
+    {
+        // TODO: zmienna pobierana z konfiguracji,
+        // gdzie będzie można albo ustawić dane faktury z aktualnych danych firmy,
+        // abo ustawić swoje własne
+        $useFirmInvoicingData = true;
+        
+        $firmInvoicingData = $useFirmInvoicingData ? FirmInvoicingData::invoice()->first() : FirmInvoicingData::customerInvoice()->first();
+        if(!$firmInvoicingData)
+            throw new ObjectNotExist(__("No customer invoicing data configured"));
+        
+        return $firmInvoicingData->id;
     }
 }

@@ -21,6 +21,10 @@ trait NumberingTrait
             case \App\Models\Rental::class:
                 $type = "rental";
             break;
+        
+            case \App\Models\CustomerInvoice::class:
+                $type = "customer_invoice";
+            break;
         }
 
         if(!$type)
@@ -44,6 +48,8 @@ trait NumberingTrait
             $fullNumber = $maskConfig["mask"];
 
             $lastNumberQuery = Numbering::withoutGlobalScopes()->where("uuid", $this->uuid)->where("type", $type);
+            if($type == "customer_invoice")
+                $lastNumberQuery->where("sale_register_id", $this->sale_register_id);
 
             switch($maskConfig["continuation"])
             {
@@ -74,6 +80,7 @@ trait NumberingTrait
             $numb->number = $number;
             $numb->full_number = $fullNumber;
             $numb->date = $currentYear . "-" . $currentMonth;
+            $numb->sale_register_id = $type == "customer_invoice" ? $this->sale_register_id : null;
             $numb->object_id = $this->id;
             $numb->save();
         });

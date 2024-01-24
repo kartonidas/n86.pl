@@ -29,10 +29,6 @@ class CustomerInvoiceItem extends Model
                     continue;
             }
 
-            $item["quantity"] = str_replace(",", ".", $item["quantity"]);
-            $item["net_amount"] = str_replace(",", ".", $item["net_amount"]);
-            $item["discount"] = str_replace(",", ".", $item["discount"]);
-
             $row->gtu = $item["gtu"];
             $row->name = $item["name"];
             $row->quantity = $item["quantity"];

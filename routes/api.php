@@ -228,8 +228,16 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     
     // FAKTURY
     $router->get('/customer-invoices', [CustomerInvoicesController::class, "list"]);
-    $router->put('/customer-invoices', [CustomerInvoicesController::class, "create"]);
-    $router->put('/customer-invoices/{id}', [CustomerInvoicesController::class, "update"])->where("id", "[0-9]+");
+    $router->put('/customer-invoice', [CustomerInvoicesController::class, "create"]);
+    $router->get('/customer-invoice/{id}', [CustomerInvoicesController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/customer-invoice/{id}', [CustomerInvoicesController::class, "update"])->where("id", "[0-9]+");
+    $router->delete('/customer-invoice/{id}', [CustomerInvoicesController::class, "delete"])->where("id", "[0-9]+");
+    $router->put('/customer-invoice/from-proforma/{pid}', [CustomerInvoicesController::class, "fromProforma"])->where("pid", "[0-9]+");
+    $router->put('/customer-invoice/correction/{invoiceId}', [CustomerInvoicesController::class, "correctionCreate"])->where("invoiceId", "[0-9]+");
+    $router->put('/customer-invoice/correction/update/{id}', [CustomerInvoicesController::class, "correctionUpdate"])->where("id", "[0-9]+");
+    $router->get('/customer-invoice/{id}/pdf', [CustomerInvoicesController::class, "getPdf"])->where("id", "[0-9]+");
+    $router->get('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceData"]);
+    $router->put('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceDataUpdate"]);
     
     
     // USUNIĘCIE KONTA

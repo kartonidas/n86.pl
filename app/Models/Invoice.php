@@ -57,6 +57,7 @@ class Invoice extends Model
         
         $invoicingData = FirmInvoicingData::where("uuid", $order->uuid)
             ->where("id", $order->firm_invoicing_data_id)
+            ->invoice()
             ->withoutGlobalScopes()
             ->withTrashed()
             ->first();

@@ -45,6 +45,7 @@ class OrderController extends Controller
         
         $invoicingData = FirmInvoicingData
             ::where("uuid", Auth::user()->getUuid())
+            ->invoice()
             ->whereNull("deleted_at")
             ->withoutGlobalScopes()
             ->first();
@@ -93,6 +94,7 @@ class OrderController extends Controller
         
         $invoicingData = FirmInvoicingData
             ::where("uuid", Auth::user()->getUuid())
+            ->invoice()
             ->whereNull("deleted_at")
             ->withoutGlobalScopes()
             ->first();
@@ -148,6 +150,7 @@ class OrderController extends Controller
         
         $invoicingData = FirmInvoicingData
             ::where("uuid", Auth::user()->getUuid())
+            ->invoice()
             ->whereNull("deleted_at")
             ->withoutGlobalScopes()
             ->first();

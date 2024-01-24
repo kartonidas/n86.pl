@@ -1034,7 +1034,7 @@ class UserController extends Controller
     */
     public function getInvoiceData()
     {
-        return FirmInvoicingData::first();
+        return FirmInvoicingData::invoice()->first();
     }
     
     /**
@@ -1099,9 +1099,12 @@ class UserController extends Controller
         if(!empty($validate))
             $request->validate($validate);
             
-        $invoicingData = FirmInvoicingData::first();
+        $invoicingData = FirmInvoicingData::invoice()->first();
         if(!$invoicingData)
+        {
             $invoicingData = new FirmInvoicingData;
+            $invoicingData->object = FirmInvoicingData::OBJECT_INVOICE;
+        }
         
         foreach($updateFields as $field)
         {

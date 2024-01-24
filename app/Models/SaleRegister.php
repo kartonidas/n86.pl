@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\UserInvoice;
+use App\Models\CustomerInvoice;
 
 class SaleRegister extends Model
 {
@@ -47,7 +47,7 @@ class SaleRegister extends Model
 
     public function canDelete()
     {
-        if(UserInvoice::where("sale_register_id", $this->id)->count() > 0)
+        if(CustomerInvoice::where("sale_register_id", $this->id)->count() > 0)
             return false;
 
         return true;

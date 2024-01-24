@@ -12,8 +12,12 @@ class UpdateCustomerInvoicesRequest extends StoreCustomerInvoicesRequest
     
     public function rules(): array
     {
-        $rules = $this->addSometimesToRules(parent::rules());
+        $rules = parent::rules();
+        
+        $rules["items.*.id"] = "sometimes|integer";
+        
         unset($rules["type"]);
+        unset($rules["sale_register_id"]);
         return $rules;
     }
 }

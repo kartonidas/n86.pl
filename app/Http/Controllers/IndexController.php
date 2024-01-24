@@ -467,7 +467,13 @@ class IndexController extends Controller
     {
         if(Auth::check())
         {
-            $invoicingData = FirmInvoicingData::first();
+            $invoicingData = FirmInvoicingData
+                ::where("uuid", Auth::user()->getUuid())
+                ->invoice()
+                ->whereNull("deleted_at")
+                ->withoutGlobalScopes()
+                ->first();
+            
             if($invoicingData)
             {
                 $foreign = strtolower($invoicingData->country) != "pl";

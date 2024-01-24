@@ -248,9 +248,20 @@ class Rental extends Model
         elseif($startDate)
         {
             // na czas nieokreślony nie moga istnieć żadne przyszłe rezerwacje!!!!!!
-            $c1 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->where("end", ">=", $startDate)->count();
-            $c2 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", ">=", $startDate)->count();
-            $c3 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->whereNull("end")->count();
+            $c1 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->where("end", ">=", $startDate);
+            if($rentalId)
+                $c1->where("id", "!=", $rentalId);
+            $c1 = $c1->count();
+            
+            $c2 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", ">=", $startDate);
+            if($rentalId)
+                $c2->where("id", "!=", $rentalId);
+            $c2 = $c2->count();
+            
+            $c3 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->whereNull("end");
+            if($rentalId)
+                $c3->where("id", "!=", $rentalId);
+            $c3 = $c3->count();
             
             if($c1 || $c2 || $c3)
                 throw new InvalidRentalDates(__("Cannot rented during the given time period"));
