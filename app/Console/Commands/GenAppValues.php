@@ -10,6 +10,7 @@ use App\Models\Item;
 use App\Models\ItemCyclicalFee;
 use App\Models\Numbering;
 use App\Models\Rental;
+use App\Models\SaleRegister;
 
 class GenAppValues extends Command
 {
@@ -91,6 +92,12 @@ class GenAppValues extends Command
                 
             foreach(DocumentTemplate::getTypes() as $type => $name)
                 $toJson[$lang]["documents"]["types"][] = ["id" => $type, "name" => $name];
+                
+            foreach(SaleRegister::getNumberingContinuation() as $type => $name)
+                $toJson[$lang]["invoices"]["sale_register"]["continuation"][] = ["id" => $type, "name" => $name];
+                
+            foreach(SaleRegister::getAllowedTypes() as $type => $name)
+                $toJson[$lang]["invoices"]["types"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

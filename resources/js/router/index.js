@@ -527,6 +527,29 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/customer-invoices',
+                    children: [
+                        {
+                            path: '/app/customer-invoices/sale-register',
+                            name: 'sale_register',
+                            component: () => import('@/views/app/CustomerInvoices/SaleRegister/List.vue'),
+                            meta: {permission: 'config:update'},
+                        },
+                        {
+                            path: '/app/customer-invoices/sale-register/new',
+                            name: 'sale_register_new',
+                            component: () => import('@/views/app/CustomerInvoices/SaleRegister/New.vue'),
+                            meta: {permission: 'config:update'},
+                        },
+                        {
+                            path: '/app/customer-invoices/sale-register/edit/:saleRegisterId',
+                            name: 'sale_register_edit',
+                            component: () => import('@/views/app/CustomerInvoices/SaleRegister/Edit.vue'),
+                            meta: {permission: 'config:update'},
+                        },
+                    ]
+                },
+                {
                     path: '/app/invoices',
                     name: 'invoices',
                     component: () => import('@/views/app/Order/Invoices.vue'),

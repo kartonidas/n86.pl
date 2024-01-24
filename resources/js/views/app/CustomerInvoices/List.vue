@@ -1,0 +1,3 @@
+<template>
+    Customer invoices
+</template>

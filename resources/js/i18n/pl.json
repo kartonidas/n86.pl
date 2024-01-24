@@ -282,7 +282,9 @@
         "users" : "Użytkownicy",
         "users_list" : "Lista użytkowników",
         "invoices" : "Faktury",
-        "finances" : "Finanse"
+        "finances" : "Finanse",
+        "sale_registries" : "Rejestry sprzedaży",
+        "settlements" : "Rozliczenia"
     },
     "meta": {
         "title" : {
@@ -351,7 +353,10 @@
             "extend_access" : "Powiększ pakiet",
             "invoices" : "Faktury",
             "items_report" : "Statystyki",
-            "items_cyclical_fee_costs" : "Historia zmian ceny"
+            "items_cyclical_fee_costs" : "Historia zmian ceny",
+            "sale_registries_list" : "Rejestry sprzedaży",
+            "sale_registrer_edit" : "Edycja rejestru sprzedaży",
+            "sale_registrer_new" : "Nowy rejestr sprzedaży"
         }
     },
     "permissions" : {
@@ -696,5 +701,18 @@
         "gross_amount" : "Kwota brutto",
         "date" : "Data wystawienia",
         "download_document" : "Pobierz fakturę"
+    },
+    "customer_invoices" : {
+        "sale_register_deleted" : "Rejestr sprzedaży został usunięty",
+        "new_sale_register" : "Nowy rejestr sprzedaży",
+        "edit_sale_register" : "Edycja rejestru sprzedaży",
+        "sale_register_added" : "Rejestr sprzedaży został utworzony",
+        "sale_register_updated" : "Rejestr sprzedaży został zaktualizowany",
+        "name" : "Nazwa",
+        "sale_register_empty_list" : "Brak rejestrów sprzedaży",
+        "continuation" : "Ciągłość",
+        "document_type" : "Rodzaj dokumentu",
+        "mask" : "Maska",
+        "continuation_help" : "{'@N1.9 - numer zlecenia, @M - miesiąc, @Y - rok'}"
     }
 }

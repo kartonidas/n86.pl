@@ -383,6 +383,38 @@
                     "name": "Inne"
                 }
             ]
+        },
+        "invoices": {
+            "sale_register": {
+                "continuation": [
+                    {
+                        "id": "month",
+                        "name": "miesi\u0119czna"
+                    },
+                    {
+                        "id": "year",
+                        "name": "roczna"
+                    },
+                    {
+                        "id": "continuation",
+                        "name": "ci\u0105g\u0142a"
+                    }
+                ]
+            },
+            "types": [
+                {
+                    "id": "proforma",
+                    "name": "Proforma"
+                },
+                {
+                    "id": "invoice",
+                    "name": "Faktura"
+                },
+                {
+                    "id": "correction",
+                    "name": "Korekta"
+                }
+            ]
         }
     }
 }

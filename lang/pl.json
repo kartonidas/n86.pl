@@ -272,5 +272,21 @@
     "Balance": "Saldo",
     "There is already a cost with a given date": "Isnieje ju\u017c wpis z podan\u0105 dat\u0105",
     "Invalid credentials": "Nieprawid\u0142owe dane logowania",
-    "Payment": "Wpłaty"
+    "Payment": "Wp\u0142aty",
+    "Sale register does not exist": "Rejestr sprzedaży nie istnieje",
+    "Cannot delete sale register": "Nie można usunąć rejestru sprzedaży",
+    "Proforma does not exist": "Proforma nie istnieje",
+    "Invoice to correction does not exist": "Faktura do skorygowania nie istnieje",
+    "Cannot correction selected invoice": "Nie można skorygować wybranej faktury",
+    "Correction does not exist": "Korekta nie istnieje",
+    "Cannot delete invoice": "Nie można usunąć faktury",
+    "Payment types": "Rodzaj płatności",
+    "monthly": "miesięczna",
+    "yearly": "roczna",
+    "continuous": "ciągła",
+    "proforma": "Proforma",
+    "invoice": "Faktura",
+    "correction": "Korekta",
+    "Invoice does not exists": "Faktura nie istnieje",
+    "No customer invoicing data configured": "Brak danych wystawiającego fakturę"
 }

@@ -116,6 +116,13 @@ const model = ref([
         ]
     },
     {
+        label: t('menu.settlements'),
+        access: hasAccess('config:update'),
+        items: [
+            { label: t('menu.sale_registries'), icon: 'pi pi-fw pi-folder', to: { name: 'sale_register' }, access: hasAccess('owner'), regex: /^\/app\/customer\-invoices(\/(.*))?$/i },
+        ]
+    },
+    {
         label: t('menu.finances'),
         access: hasAccess('owner'),
         items: [
