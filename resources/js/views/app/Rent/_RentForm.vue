@@ -26,7 +26,7 @@
                 deposit: this.item.default_deposit,
                 payment: 'cyclical',
                 rent: this.item.default_rent,
-                payment_day: 5, // to można dać z konfuguracji
+                payment_day: 5,
                 first_payment_date: moment().add(10, 'days').toDate(),
                 first_month_different_amount: false,
                 last_month_different_amount: false,
