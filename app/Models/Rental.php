@@ -599,4 +599,9 @@ class Rental extends Model
                 ->get();
         }
     }
+    
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereIn("status", [self::STATUS_CURRENT, self::STATUS_WAITING]);
+    }
 }

@@ -282,9 +282,12 @@
         "users" : "Użytkownicy",
         "users_list" : "Lista użytkowników",
         "invoices" : "Faktury",
-        "finances" : "Finanse",
+        "finances" : "Moje finanse",
         "sale_registries" : "Rejestry sprzedaży",
-        "settlements" : "Rozliczenia"
+        "settlements" : "Rozliczenia",
+        "customer_invoices" : "Faktury",
+        "payment_types" : "Sposoby płatności",
+        "customer_invoices_config": "Ustawienia"
     },
     "meta": {
         "title" : {
@@ -356,7 +359,11 @@
             "items_cyclical_fee_costs" : "Historia zmian ceny",
             "sale_registries_list" : "Rejestry sprzedaży",
             "sale_registrer_edit" : "Edycja rejestru sprzedaży",
-            "sale_registrer_new" : "Nowy rejestr sprzedaży"
+            "sale_registrer_new" : "Nowy rejestr sprzedaży",
+            "customer_invoices_list" : "Faktury",
+            "customer_invoices_new" : "Nowa faktura",
+            "customer_invoices_edit" : "Edycja faktury",
+            "customer_invoices_from_proforma" : "Nowa faktura z proformy"
         }
     },
     "permissions" : {
@@ -713,6 +720,53 @@
         "continuation" : "Ciągłość",
         "document_type" : "Rodzaj dokumentu",
         "mask" : "Maska",
-        "continuation_help" : "{'@N1.9 - numer zlecenia, @M - miesiąc, @Y - rok'}"
+        "continuation_help" : "{'@N1.9 - numer zlecenia, @M - miesiąc, @Y - rok'}",
+        "invoice_deleted" : "Faktura została usunięta",
+        "number" : "Numer",
+        "empty_list" : "Brak faktur",
+        "new_invoice" : "Wystaw fakturę",
+        "document_date" : "Data wystawienia",
+        "gross_amount" : "Wartość brutto",
+        "net_amount" : "Wartość netto",
+        "document_type" : "Rodzaj dokumentu",
+        "start_document_date" : "Data wystawienia (od)",
+        "end_document_date" : "Data wystawienia (do)",
+        "sale_register" : "Rejestr sprzedaży",
+        "customer" : "Klient",
+        "download_invoice" : "Pobierz fakturę",
+        "new_customer_invoice" : "Nowa faktura",
+        "sell_date" : "Data sprzedaży",
+        "payment_date" : "Termin płatności",
+        "payment_type" : "Sposób płatności",
+        "comment" : "Uwagi",
+        "add_invoice_item" : "Dodaj nową pozycję",
+        "items" : "Pozycje",
+        "empty_item_list" : "Brak pozycji na fakturze",
+        "item_name" : "Nazwa towaru lub usługi",
+        "unit_type_short" : "J.m.",
+        "quantity" : "Ilość",
+        "net_amount" : "Cena netto",
+        "total_net_amount" : "Wartość netto",
+        "vat_rate" : "Stawka VAT",
+        "vat_amount" : "Kwota VAT",
+        "total_gross_amount" : "Wartość brutto",
+        "issued" : "Wystawił",
+        "invoice_added": "Faktura została utworzona",
+        "gtu" : "GTU",
+        "total" : "Razem",
+        "netto": "netto",
+        "issue_invoice" : "Wystaw fakturę",
+        "edit_invoice" : "Edycja faktury",
+        "make_from_proforma" : "Utwórz fakturę",
+        "new_invoice_from_proforma" : "Nowa faktura z proformy",
+        "invoice_updated" : "Faktura została zaktualizowana",
+        "from_proforma" : "Z proformy",
+        "use_invoice_firm_data_info_1" : "Przy wystawianiu faktur używaj danych firmowych zdefiniowanych na podstronie",
+        "use_invoice_firm_data_info_link" : "Ustawienia => Firma",
+        "use_invoice_firm_data_info_2" : "zakładka \"Dane do faktury\". Jeśli chcesz używać innych danych odznacz to pole i uzupełnij formularz."
+    },
+    "dashboard": {
+        "total_items" : "Ilość nieruchomości",
+        "total_active_rentals" : "Ilość wynajmów"
     }
 }

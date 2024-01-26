@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValueLabel } from '@/utils/helper'
     import { appStore } from '@/store.js'
     import UserInvoiceService from '@/service/UserInvoiceService'
     
@@ -11,7 +11,8 @@
             
             return {
                 userInvoiceService,
-                hasAccess
+                hasAccess,
+                getValueLabel
             }
         },
         data() {
@@ -119,12 +120,17 @@
                 <DataTable :value="saleRegistries" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('customer_invoices.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <router-link :to="{name: 'dictionary_edit', params: { type : data.type, dictionaryId : data.id }}" v-if="hasAccess('dictionary:update')">
+                            <router-link :to="{name: 'sale_register_edit', params: { saleRegisterId : data.id }}" v-if="hasAccess('dictionary:update')">
                                 {{ data.name }}
                             </router-link>
                             <span v-else>
                                 {{ data.name }}
                             </span>
+                        </template>
+                    </Column>
+                    <Column :header="$t('customer_invoices.document_type')" field="type">
+                        <template #body="{ data }">
+                            {{ getValueLabel("invoices.types", data.type) }}
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('config:update')" style="min-width: 45px; width: 45px" class="text-center">

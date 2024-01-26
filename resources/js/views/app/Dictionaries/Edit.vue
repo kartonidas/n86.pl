@@ -42,7 +42,6 @@
                 .then(
                     (response) => {
                         this.dictionary = response.data
-                        this.dictionary.active = this.dictionary.active == 1
                         this.loading = false
                     },
                     (errors) => {
@@ -63,7 +62,7 @@
                     this.saving = true
                     this.errors = []
                     
-                    this.dictionaryService.update(this.route.params.dictionaryId, this.dictionary.active, this.dictionary.name)
+                    this.dictionaryService.update(this.route.params.dictionaryId, true, this.dictionary.name)
                         .then(
                             (response) => {
                                 this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('dictionaries.updated'), life: 3000 });
@@ -90,6 +89,9 @@
                     break;
                     case 'fees':
                         breadcrumbs.push({'label' : this.$t('menu.fee_include_rent'), route : {name : 'dictionaries', params : {type : 'fees'}} });
+                    break;
+                    case 'payment_types':
+                        breadcrumbs.push({'label' : this.$t('menu.payment_types'), route : {name : 'dictionaries', params : {type : 'payment_types'}} });
                     break;
                 }
                 
@@ -129,13 +131,6 @@
                                     <InputText id="name" type="text" :placeholder="$t('dictionaries.name')" class="w-full" :class="{'p-invalid' : v$.dictionary.name.$error}" v-model="dictionary.name" :disabled="loading || saving"/>
                                     <div v-if="v$.dictionary.name.$error">
                                         <small class="p-error">{{ v$.dictionary.name.$errors[0].$message }}</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="field col-12 mb-4">
-                                    <div class="field-checkbox mb-0">
-                                        <Checkbox inputId="activeCheck" name="active" value="1" v-model="dictionary.active" :binary="true" :disabled="loading || saving"/>
-                                        <label for="activeCheck">{{ $t('dictionaries.active') }}</label>
                                     </div>
                                 </div>
                             </div>

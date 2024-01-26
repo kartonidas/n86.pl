@@ -98,6 +98,15 @@ class GenAppValues extends Command
                 
             foreach(SaleRegister::getAllowedTypes() as $type => $name)
                 $toJson[$lang]["invoices"]["types"][] = ["id" => $type, "name" => $name];
+                
+            foreach(SaleRegister::getAllowedTypes(true) as $type => $name)
+                $toJson[$lang]["invoices"]["types_new"][] = ["id" => $type, "name" => $name];
+                
+            foreach(config("invoice.vat") as $type => $name)
+                $toJson[$lang]["invoices"]["vat_values"][] = ["id" => (string)$type, "name" => $name];
+            
+            foreach(config("invoice.gtu") as $type => $name)
+                $toJson[$lang]["invoices"]["gtu"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

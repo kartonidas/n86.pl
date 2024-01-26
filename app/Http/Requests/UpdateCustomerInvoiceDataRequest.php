@@ -16,28 +16,32 @@ class UpdateCustomerInvoiceDataRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "type" => "required|in:firm,person",
-            "street" => "required|max:80",
-            "house_no" => "required|max:20",
-            "apartment_no" => "nullable|max:20",
-            "city" => "required|max:120",
-            "zip" => "required|max:10",
-            "country" => ["required", Rule::in(Country::getAllowedCodes())],
+            "use_invoice_firm_data" => "sometimes|boolean"
         ];
-        
-        if(empty($this->type) || $this->type == "firm")
+        if(empty($this->use_invoice_firm_data))
         {
-            if(empty($this->country) || strtolower($this->country) == "pl")
-                $rules["nip"] = ["required", new \App\Rules\Nip];
+            $rules ["type"] = "required|in:firm,person";
+            $rules ["street"] = "required|max:80";
+            $rules ["house_no"] = "required|max:20";
+            $rules ["apartment_no"] = "nullable|max:20";
+            $rules ["city"] = "required|max:120";
+            $rules ["zip"] = "required|max:10";
+            $rules ["country"] = ["required", Rule::in(Country::getAllowedCodes())];
+            
+            if(empty($this->type) || $this->type == "firm")
+            {
+                if(empty($this->country) || strtolower($this->country) == "pl")
+                    $rules["nip"] = ["required", new \App\Rules\Nip];
+                else
+                    $rules["nip"] = "required";
+                    
+                $rules["name"] = "required|max:200";
+            }
             else
-                $rules["nip"] = "required";
-                
-            $rules["name"] = "required|max:200";
-        }
-        else
-        {
-            $rules["firstname"] = "required|max:100";
-            $rules["lastname"] = "required|max:100";
+            {
+                $rules["firstname"] = "required|max:100";
+                $rules["lastname"] = "required|max:100";
+            }
         }
         
         return $rules;

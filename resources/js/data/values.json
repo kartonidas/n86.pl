@@ -414,6 +414,112 @@
                     "id": "correction",
                     "name": "Korekta"
                 }
+            ],
+            "types_new": [
+                {
+                    "id": "proforma",
+                    "name": "Proforma"
+                },
+                {
+                    "id": "invoice",
+                    "name": "Faktura"
+                }
+            ],
+            "vat_values": [
+                {
+                    "id": "23",
+                    "name": "23%"
+                },
+                {
+                    "id": "22",
+                    "name": "22%"
+                },
+                {
+                    "id": "8",
+                    "name": "8%"
+                },
+                {
+                    "id": "7",
+                    "name": "7%"
+                },
+                {
+                    "id": "5",
+                    "name": "5%"
+                },
+                {
+                    "id": "3",
+                    "name": "3%"
+                },
+                {
+                    "id": "0",
+                    "name": "0%"
+                },
+                {
+                    "id": "zw.",
+                    "name": "zw."
+                },
+                {
+                    "id": "np.",
+                    "name": "np."
+                },
+                {
+                    "id": "o.o.",
+                    "name": "o.o."
+                }
+            ],
+            "gtu": [
+                {
+                    "id": "GTU_01",
+                    "name": "Dostawa napoj\u00f3w alkoholowych"
+                },
+                {
+                    "id": "GTU_02",
+                    "name": "Dostawa paliw silnikowych"
+                },
+                {
+                    "id": "GTU_03",
+                    "name": "Dostawa oleju opa\u0142owego, olej\u00f3w smarownych oraz smar\u00f3w plastycznych itp."
+                },
+                {
+                    "id": "GTU_04",
+                    "name": "Dostawa wyrob\u00f3w tytoniowych oraz wybor\u00f3w nowatorskich"
+                },
+                {
+                    "id": "GTU_05",
+                    "name": "Dostawa odpad\u00f3w"
+                },
+                {
+                    "id": "GTU_06",
+                    "name": "Dostawa urz\u0105dze\u0144 elektronicznych oraz cz\u0119\u015bci i materia\u0142\u00f3w do nich"
+                },
+                {
+                    "id": "GTU_07",
+                    "name": "Dostawa pojazd\u00f3w oraz cz\u0119\u015bci samochodowych"
+                },
+                {
+                    "id": "GTU_08",
+                    "name": "Dostawa metali szlachetnych oraz nieszlachetnych"
+                },
+                {
+                    "id": "GTU_09",
+                    "name": "Dostawa lek\u00f3w oraz wyrob\u00f3w medycznych"
+                },
+                {
+                    "id": "GTU_10",
+                    "name": "Dostawa budynk\u00f3w, budowli i grunt\u00f3w."
+                },
+                {
+                    "id": "GTU_11",
+                    "name": "\u015awiadczenie us\u0142ug w zakresie przenoszenia uprawnie\u0144 do emisji gaz\u00f3w cieplarnianych"
+                },
+                {
+                    "id": "GTU_12",
+                    "name": "\u015awiadczenie us\u0142ug doradczych, ksi\u0119gowych, prawnych, zarz\u0105dczych, szkoleniowych, marketingowych"
+                },
+                {
+                    "id": "GTU_13",
+                    "name": "\u015awiadczenie us\u0142ug transportowych i gospodarki magazynowej"
+                }
             ]
         }
     }

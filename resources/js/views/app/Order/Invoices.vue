@@ -23,6 +23,7 @@
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
+                        {'label' : this.$t('menu.finances'), disabled : true },
                         {'label' : this.$t('menu.invoices'), disabled : true },
                     ],
                 }

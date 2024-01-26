@@ -20,6 +20,7 @@ use App\Http\Requests\UpdateCustomerInvoiceDataRequest;
 use App\Http\Requests\UpdateCustomerInvoicesRequest;
 use App\Libraries\CustomerInvoicePrinter;
 use App\Models\Account;
+use App\Models\Config;
 use App\Models\Customer;
 use App\Models\CustomerInvoice;
 use App\Models\CustomerInvoiceItem;
@@ -68,6 +69,17 @@ class CustomerInvoicesController extends Controller
             ->skip(($page-1)*$size)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
+        
+        foreach($userInvoices as $k => $userInvoice)
+        {
+            $userInvoices[$k]->can_delete = $userInvoice->canDelete();
+            $userInvoices[$k]->can_update = CustomerInvoice::checkOperation($userInvoice, "update");
+            $userInvoices[$k]->customer = $userInvoice->customer()->first();
+            $userInvoices[$k]->sale_register = $userInvoice->saleRegister()->first();
+            $userInvoices[$k]->make_from_proforma = $userInvoice->canMakeFromProforma();
+            $userInvoices[$k]->proforma_number = $userInvoice->getProformaNumber();
+            
+        }
         
         $out = [
             "total_rows" => $total,
@@ -123,6 +135,9 @@ class CustomerInvoicesController extends Controller
             throw new ObjectNotExist(__("Invoice does not exist"));
         
         $row->items = $row->items()->get();
+        $row->can_update = CustomerInvoice::checkOperation($row, "update");
+        $row->make_from_proforma = $row->canMakeFromProforma();
+        $row->proforma_number = $row->getProformaNumber();
         
         return $row;
     }
@@ -136,7 +151,7 @@ class CustomerInvoicesController extends Controller
             throw new ObjectNotExist(__("Invoice does not exist"));
 
         if(!CustomerInvoice::checkOperation($row, "update"))
-            return redirect()->route("panel.user_invoices.update", $id)->withErrors(["msg" => "Nie można edytować faktury"]);
+            throw new InvalidStatus(__("Cannot update invoice"));
         
         $validated = $request->validated();
 
@@ -171,6 +186,9 @@ class CustomerInvoicesController extends Controller
         $proforma = CustomerInvoice::find($proformaId);
         if(!$proforma || $proforma->type != SaleRegister::TYPE_PROFORMA)
             throw new ObjectNotExist(__("Proforma does not exist"));
+        
+        if(!$proforma->canMakeFromProforma())
+            throw new ObjectNotExist(__("The proforma invoice has already been issued"));
         
         $validated = $request->validated();
         
@@ -303,7 +321,20 @@ class CustomerInvoicesController extends Controller
     
     public function customerInvoiceData(Request $request)
     {
-        return FirmInvoicingData::customerInvoice()->first();
+        User::checkAccess("config:update");
+        
+        $config = Config::getConfig("invoice");
+        
+        $useInvoiceFirmData = !isset($config["use_invoice_firm_data"]) || !empty($config["use_invoice_firm_data"]);
+        if($useInvoiceFirmData)
+            $invoiceData = FirmInvoicingData::invoice()->first();
+        else
+            $invoiceData = FirmInvoicingData::customerInvoice()->first();
+            
+        return [
+            "data" => $invoiceData,
+            "use_invoice_firm_data" => $useInvoiceFirmData
+        ];
     }
     
     public function customerInvoiceDataUpdate(UpdateCustomerInvoiceDataRequest $request)
@@ -318,20 +349,41 @@ class CustomerInvoicesController extends Controller
         }
         
         $validated = $request->validated();
-        foreach($validated as $field => $value)
-            $invoicingData->{$field} = $value;
         
-        if($invoicingData->isDirty())
+        Config::saveConfig("invoice", "use_invoice_firm_data", !empty($validated["use_invoice_firm_data"]));
+        
+        if(empty($validated["use_invoice_firm_data"]))
         {
-            if($invoicingData->id > 0)
+            foreach($validated as $field => $value)
             {
-                $invoicingData->replicate()->save();
-                $invoicingData->delete();
+                if($field == "use_invoice_firm_data")
+                    continue;
+                
+                $invoicingData->{$field} = $value;
             }
-            else
-                $invoicingData->save();
+            
+            if($invoicingData->isDirty())
+            {
+                if($invoicingData->id > 0)
+                {
+                    $invoicingData->replicate()->save();
+                    $invoicingData->delete();
+                }
+                else
+                    $invoicingData->save();
+            }
         }
         
         return true;
+    }
+    
+    public function getInvoiceNextNumber(Request $request, $saleRegisterId)
+    {
+        $saleRegister = SaleRegister::find($saleRegisterId);
+        
+        if(!$saleRegister)
+            throw new ObjectNotExist(__("Sale register does not exist"));
+        
+        return CustomerInvoice::getInvoiceNextNumber($saleRegister->id);
     }
 }

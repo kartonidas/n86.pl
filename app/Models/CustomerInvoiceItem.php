@@ -8,6 +8,21 @@ use App\Models\CustomerInvoice;
 
 class CustomerInvoiceItem extends Model
 {
+    protected $casts = [
+        "vat_value" => "string",
+        "quantity" => "float",
+        "net_amount" => "float",
+        "total_net_amount" => "float",
+        "gross_amount" => "float",
+        "total_gross_amount" => "float",
+        "discount" => "float",
+        "net_amount_discount" => "float",
+        "gross_amount_discount" => "float",
+        "total_net_amount_discount" => "float",
+        "total_gross_amount_discount" => "float",
+        "vat_amount" => "float",
+    ];
+    
     public static function addItems(CustomerInvoice $invoice, $items = [], $force = false)
     {
         $usedIds = [-1];
@@ -29,7 +44,7 @@ class CustomerInvoiceItem extends Model
                     continue;
             }
 
-            $row->gtu = $item["gtu"];
+            $row->gtu = $item["gtu"] ?? "";
             $row->name = $item["name"];
             $row->quantity = $item["quantity"];
             $row->unit_type = $item["unit_type"];
@@ -38,6 +53,7 @@ class CustomerInvoiceItem extends Model
             $row->vat_value = $item["vat_value"];
             $row->gross_amount = Helper::calculateGrossAmount($item["net_amount"], $item["vat_value"]);
             $row->total_gross_amount = $row->gross_amount * $row->quantity;
+            $row->vat_amount = $row->total_gross_amount - $row->total_net_amount;
             $row->discount = !empty($item["discount"]) && $item["discount"] > 0 ? $item["discount"] : 0;
             if($row->discount > 0)
             {

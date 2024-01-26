@@ -25,6 +25,12 @@ class SaleRegisterController extends Controller
         $page = $validated["page"] ?? 1;
         
         $saleRegisterRows = SaleRegister::whereRaw("1=1");
+        
+        if(!empty($validated["search"]))
+        {
+            if(!empty($validated["search"]["type"]))
+                $saleRegisterRows->where("type", $validated["search"]["type"]);
+        }
             
         $total = $saleRegisterRows->count();
         

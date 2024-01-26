@@ -51,7 +51,7 @@ class StoreCustomerInvoicesRequest extends FormRequest
         $rules["items.*.unit_type"] = "required|string|max:50";
         $rules["items.*.net_amount"] = "required|numeric|gt:0";
         $rules["items.*.vat_value"] = ["required", Rule::in(array_keys(config("invoice.vat")))];
-        $rules["items.*.discount"] = "sometimes|numeric|gt:0";
+        $rules["items.*.discount"] = "sometimes|numeric|gte:0";
         return $rules;
     }
 }

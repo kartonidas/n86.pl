@@ -97,6 +97,9 @@
                     case 'fees':
                         breadcrumbs.push({'label' : this.$t('menu.fee_include_rent'), disabled : true });
                     break;
+                    case 'payment_types':
+                        breadcrumbs.push({'label' : this.$t('menu.payment_types'), disabled : true });
+                    break;
                 }
                 return breadcrumbs;
             },

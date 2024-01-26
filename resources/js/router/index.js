@@ -482,19 +482,19 @@ const router = createRouter({
                     path: '/app/dictionaries',
                     children: [
                         {
-                            path: '/app/dictionary/:type(fees|bills)',
+                            path: '/app/dictionary/:type(fees|bills|payment_types)',
                             name: 'dictionaries',
                             component: () => import('@/views/app/Dictionaries/List.vue'),
                             meta: {permission: 'dictionary:list'},
                         },
                         {
-                            path: '/app/dictionary/:type(fees|bills)/new',
+                            path: '/app/dictionary/:type(fees|bills|payment_types)/new',
                             name: 'dictionary_new',
                             component: () => import('@/views/app/Dictionaries/New.vue'),
                             meta: {permission: 'dictionary:create'},
                         },
                         {
-                            path: '/app/dictionary/:type(fees|bills)/:dictionaryId',
+                            path: '/app/dictionary/:type(fees|bills|payment_types)/:dictionaryId',
                             name: 'dictionary_edit',
                             component: () => import('@/views/app/Dictionaries/Edit.vue'),
                             meta: {permission: 'dictionary:update'},
@@ -530,6 +530,30 @@ const router = createRouter({
                     path: '/app/customer-invoices',
                     children: [
                         {
+                            path: '/app/customer-invoices',
+                            name: 'customer_invoices',
+                            component: () => import('@/views/app/CustomerInvoices/List.vue'),
+                            meta: {permission: 'customer_invoices:list'},
+                        },
+                        {
+                            path: '/app/customer-invoices/new',
+                            name: 'customer_invoices_new',
+                            component: () => import('@/views/app/CustomerInvoices/New.vue'),
+                            meta: {permission: 'customer_invoices:create'},
+                        },
+                        {
+                            path: '/app/customer-invoices/proforma/new/:customerInvoiceId',
+                            name: 'customer_invoices_new_from_proforma',
+                            component: () => import('@/views/app/CustomerInvoices/NewFromProforma.vue'),
+                            meta: {permission: 'customer_invoices:create'},
+                        },
+                        {
+                            path: '/app/customer-invoices/edit/:customerInvoiceId',
+                            name: 'customer_invoices_edit',
+                            component: () => import('@/views/app/CustomerInvoices/Edit.vue'),
+                            meta: {permission: 'customer_invoices:update'},
+                        },
+                        {
                             path: '/app/customer-invoices/sale-register',
                             name: 'sale_register',
                             component: () => import('@/views/app/CustomerInvoices/SaleRegister/List.vue'),
@@ -545,6 +569,12 @@ const router = createRouter({
                             path: '/app/customer-invoices/sale-register/edit/:saleRegisterId',
                             name: 'sale_register_edit',
                             component: () => import('@/views/app/CustomerInvoices/SaleRegister/Edit.vue'),
+                            meta: {permission: 'config:update'},
+                        },
+                        {
+                            path: '/app/customer-invoices/config',
+                            name: 'customer_invoices_config',
+                            component: () => import('@/views/app/CustomerInvoices/Config.vue'),
                             meta: {permission: 'config:update'},
                         },
                     ]

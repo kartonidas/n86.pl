@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use App\Exceptions\ObjectNotExist;
+use App\Models\Config;
 use App\Models\Customer;
 use App\Models\CustomerInvoiceItem;
 use App\Models\FirmInvoicingData;
@@ -24,7 +25,19 @@ class CustomerInvoice extends Model
         boot as traitBoot;
     }
 
+    protected $casts = [
+        "net_amount" => "float",
+        "gross_amount" => "float",
+        "net_amount_discount" => "float",
+        "gross_amount_discount" => "float",
+        "total_payments" => "float",
+        "balance" => "float",
+        "balance_correction" => "float",
+    ];
     protected $hidden = ["uuid"];
+    
+    public static $sortable = ["type", "full_number", "document_date", "net_amount", "gross_amount"];
+    public static $defaultSortable = ["document_date", "desc"];
     
     const SOURCE_DIRECT = "direct";
 
@@ -275,6 +288,8 @@ class CustomerInvoice extends Model
         $currentMonth = date("m");
 
         $config = SaleRegister::find($saleRegisterId);
+        if(!$config)
+            throw new ObjectNotExist(__("Sale register does not exist"));
 
         $maskConfig = [
             "mask" => $config->mask,
@@ -282,7 +297,7 @@ class CustomerInvoice extends Model
         ];
         $fullNumber = $maskConfig["mask"];
 
-        $lastNumberQuery = Numbering::where("type", "invoice")->where("invoice_sale_register_id", $saleRegisterId);
+        $lastNumberQuery = Numbering::where("sale_register_id", $saleRegisterId);
         switch($maskConfig["continuation"])
         {
             case "month":
@@ -407,10 +422,8 @@ class CustomerInvoice extends Model
     
     public static function getCurrentFirmInvoicingDataId()
     {
-        // TODO: zmienna pobierana z konfiguracji,
-        // gdzie będzie można albo ustawić dane faktury z aktualnych danych firmy,
-        // abo ustawić swoje własne
-        $useFirmInvoicingData = true;
+        $config = Config::getConfig("invoice");
+        $useFirmInvoicingData = !isset($config["use_invoice_firm_data"]) || !empty($config["use_invoice_firm_data"]);
         
         $firmInvoicingData = $useFirmInvoicingData ? FirmInvoicingData::invoice()->first() : FirmInvoicingData::customerInvoice()->first();
         if(!$firmInvoicingData)

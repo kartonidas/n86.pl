@@ -99,6 +99,15 @@ const model = ref([
         ]
     },
     {
+        label: t('menu.settlements'),
+        access: hasAccess('config:update') || hasAccess('customer_invoices:list'),
+        items: [
+            { label: t('menu.customer_invoices'), icon: 'pi pi-fw pi-file-pdf', to: { name: 'customer_invoices' }, access: hasAccess('customer_invoices:list'), regex: /^\/app\/customer\-invoices(\/(?!sale-register|config).*)?$/i },
+            { label: t('menu.sale_registries'), icon: 'pi pi-fw pi-folder', to: { name: 'sale_register' }, access: hasAccess('config:update'), regex: /^\/app\/customer\-invoices\/sale-register(\/(.*))?$/i },
+            { label: t('menu.customer_invoices_config'), icon: 'pi pi-fw pi-cog', to: { name: 'customer_invoices_config' }, access: hasAccess('config:update'), regex: /^\/app\/customer\-invoices\/config(\/(.*))?$/i },
+        ]
+    },
+    {
         label: t('menu.settings'),
         access: hasAccess('dictionary:list') || hasAccess('config:update') || hasAccess('owner'),
         items: [
@@ -108,18 +117,12 @@ const model = ref([
                 access: hasAccess('dictionary:list'),
                 items: [
                     { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
+                    { label: t('menu.payment_types'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'payment_types'} }, regex: /^\/app\/dictionary\/payment_types(s?)(\/(.*))?$/i },
                 ]
             },
             { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, access: hasAccess('config:update'), regex: /^\/app\/documents\/templates(\/(.*))?$/i },
             { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, access: hasAccess('config:update'), regex: /^\/app\/user\/config$/i },
             { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' }, regex: /^\/app\/firm\-data(\/(.*))?$/i},
-        ]
-    },
-    {
-        label: t('menu.settlements'),
-        access: hasAccess('config:update'),
-        items: [
-            { label: t('menu.sale_registries'), icon: 'pi pi-fw pi-folder', to: { name: 'sale_register' }, access: hasAccess('owner'), regex: /^\/app\/customer\-invoices(\/(.*))?$/i },
         ]
     },
     {

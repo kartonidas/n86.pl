@@ -238,6 +238,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/customer-invoice/{id}/pdf', [CustomerInvoicesController::class, "getPdf"])->where("id", "[0-9]+");
     $router->get('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceData"]);
     $router->put('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceDataUpdate"]);
+    $router->get('/customer-invoice/number/{srid}', [CustomerInvoicesController::class, "getInvoiceNextNumber"])->where("srid", "[0-9]+");
     
     
     // USUNIĘCIE KONTA
