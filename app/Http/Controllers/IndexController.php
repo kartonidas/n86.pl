@@ -87,6 +87,9 @@ class IndexController extends Controller
                 "end_date" => date("Y-m-d H:i:s", $subscription->end),
                 "items" => $subscription->items,
                 "days_to_end" => $subscription->calculateDaysToEnd(),
+                "current" => [
+                    "items" => Item::active()->count(),
+                ]
             ];
         }
         return $out;

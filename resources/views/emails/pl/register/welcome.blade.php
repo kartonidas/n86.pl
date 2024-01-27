@@ -14,7 +14,7 @@
         <p>
             Aby zalogować się na swoje konto kliknij w poniższy link:
             <div style="text-align: left; margin-top: 10px; margin-bottom: 10px">
-                <a href="{{ env("FRONTEND_URL") }}/sign-in" style="display:inline-block; background-color: #3B82F6; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+                <a href="{{ env("FRONTEND_URL") }}sign-in" style="display:inline-block; background-color: #3B82F6; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
                     Zaloguj się.
                 </a>
             </div>

@@ -38,16 +38,17 @@ class Firm extends Model
             "items" => \App\Models\Item::withoutGlobalScope("uuid")->where("uuid", $uuid)->count(),
             "customers" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_CUSTOMER)->count(),
             "tenants" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_TENANT)->count(),
-            "rentals" => \App\Models\Rental::withoutGlobalScope("uuid")->where("uuid", $uuid)->count(),
+            "rentals" => \App\Models\Rental::withoutGlobalScope("uuid")->active()->where("uuid", $uuid)->count(),
         ];
         
         @mkdir(storage_path("accounts/" . $uuid), 0777, true);
+        chmod(storage_path("accounts"), 0777);
+        chmod(storage_path("accounts/" . $uuid), 0777);
         
         $file = storage_path("accounts/" . $uuid . "/stats.json");
         $fp = fopen($file, "w");
         fwrite($fp, json_encode($stats));
         fclose($fp);
-        
         
         FirebaseHelper::updateStats($uuid, $stats);
     }

@@ -334,7 +334,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-6 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="customer_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer') }}</label>
                         <Dropdown id="customer_id" v-model="invoice.customer_id" filter :filterFields="['name','nip']" :loading="loadingCustomers" :options="customers" :class="{'p-invalid' : v.invoice.customer_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.customer')" class="w-full" :disabled="saving || loading || block">
                             <template #option="slotProps">
@@ -356,7 +356,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-6 mb-4">
+                    <div class="field col-12 md:col-6 mb-4">
                         <label for="created_user_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.issued') }}</label>
                         <Dropdown id="created_user_id" v-model="invoice.created_user_id" filter :loading="loadingUsers" :options="users" :class="{'p-invalid' : v.invoice.created_user_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.issued')" class="w-full" :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.created_user_id.$error">
@@ -364,7 +364,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-3 md:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
                         <label for="documentDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.document_date') }}</label>
                         <Calendar id="documentDate" v-model="invoice.document_date" :placeholder="$t('customer_invoices.document_date')" :class="{'p-invalid' : v.invoice.document_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.document_date.$error">
@@ -372,7 +372,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-3 md:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
                         <label for="sellDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.sell_date') }}</label>
                         <Calendar id="sellDate" v-model="invoice.sell_date" :placeholder="$t('customer_invoices.sell_date')" :class="{'p-invalid' : v.invoice.sell_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.sell_date.$error">
@@ -380,7 +380,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-3 md:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
                         <label for="paymentDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.payment_date') }}</label>
                         <Calendar id="paymentDate" v-model="invoice.payment_date" :placeholder="$t('customer_invoices.payment_date')" :class="{'p-invalid' : v.invoice.payment_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.payment_date.$error">
@@ -388,7 +388,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-3 md:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
                         <label for="payment_type_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.payment_type') }}</label>
                         <Dropdown id="payment_type_id" v-model="invoice.payment_type_id" :loading="loadingPaymentDictionary" :options="paymentTypes" :class="{'p-invalid' : v.invoice.payment_type_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.payment_type')" class="w-full" :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.payment_type_id.$error">

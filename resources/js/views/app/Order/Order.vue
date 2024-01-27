@@ -19,7 +19,7 @@
         },
         data() {
             return {
-                invoicingOk : false,
+                invoicingOk : true,
                 errors: [],
                 minItems: 1,
                 maxItems: 1000,
@@ -31,6 +31,7 @@
                 },
                 locale: getLocale(),
                 prices: getPrices(),
+                showForm: false,
             }
         },
         beforeMount() {
@@ -47,6 +48,8 @@
                     (response) => {
                         if(response.data.start != undefined)
                             this.$router.push({name: 'order_prolong'})
+                        else
+                            this.showForm = true
                     },
                     (errors) => {},
                 )
@@ -85,7 +88,7 @@
     }
 </script>
 <template>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4" v-if="showForm">
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('orders.buy_access') }}</h4>
         
         <template v-if="!invoicingOk">

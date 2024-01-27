@@ -15,7 +15,7 @@
     </div>
         
     <div style="text-align: left; margin-top: 10px; margin-bottom: 10px">
-        <a href="{{ env("FRONTEND_URL") }}/sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #3B82F6; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+        <a href="{{ env("FRONTEND_URL") }}sign-up/confirm/{{ $token->token }}" style="display:inline-block; background-color: #3B82F6; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
             Confirm your registration
         </a>
     </div>

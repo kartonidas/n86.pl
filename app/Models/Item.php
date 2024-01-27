@@ -220,4 +220,9 @@ class Item extends Model
             return $out;
         }
     }
+    
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereRaw("1=1");
+    }
 }

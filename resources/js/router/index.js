@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { appStore } from './../store.js';
 import UserService from '@/service/UserService';
+import OrderService from '@/service/OrderService'
 import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/AppLayout.vue';
 import AppItemLayout from '@/layout/AppItemLayout.vue'
@@ -10,6 +11,9 @@ import { hasAccess } from '@/utils/helper';
 
 const router = createRouter({
     history: createWebHistory(),
+    scrollBehavior(to, from, savedPosition) {
+        return { top: 0 }
+    },
     routes: [
         {
             path: '/',
@@ -96,23 +100,26 @@ const router = createRouter({
         {
             path: '/app',
             component: AppLayout,
-            meta: {requiresAuth: true},
+            meta: {requiresAuth: true, requiresPackage: true},
             children: [
                 {
                     path: '/app',
                     name: 'dashboard',
                     component: () => import('@/views/app/Dashboard.vue'),
+                    meta: {requiresPackage: false},
                 },
                 {
                     path: '/app/profile',
                     name: 'profile',
                     component: () => import('@/views/app/Profile.vue'),
+                    meta: {requiresPackage: false},
                 },
                 {
                     path: '/app/firm-data',
                     name: 'firm_data',
                     component: () => import('@/views/app/FirmData.vue'),
                     meta: {permission: 'owner'},
+                    meta: {requiresPackage: false},
                 },
                 {
                     path: '/app/users',
@@ -163,7 +170,7 @@ const router = createRouter({
                             path: '/app/item/new',
                             name: 'item_new',
                             component: () => import('@/views/app/Items/New.vue'),
-                            meta: {permission: 'item:create'},
+                            meta: {permission: 'item:create', checkItemsLimit : true},
                         },
                         {
                             path: '/app/item/new/customer/:customerId',
@@ -503,6 +510,7 @@ const router = createRouter({
                 },
                 {
                     path: '/app/order',
+                    meta: {requiresPackage: false},
                     children: [
                         {
                             path: '/app/order',
@@ -583,23 +591,25 @@ const router = createRouter({
                     path: '/app/invoices',
                     name: 'invoices',
                     component: () => import('@/views/app/Order/Invoices.vue'),
-                    meta: {permission: 'owner'},
+                    meta: {permission: 'owner', requiresPackage: false},
                 },
                 {
                     path: '/app/user/config',
                     name: 'config',
                     component: () => import('@/views/app/Config.vue'),
-                    meta: {permission: 'config:update'},
+                    meta: {permission: 'config:update', requiresPackage: false},
                 },
                 {
                     path: '/app/access-denied',
                     name: 'access_denied',
                     component: () => import('@/views/errors/AccessDenied.vue'),
+                    meta: {requiresPackage: false},
                 },
                 {
                     path: '/app/404',
                     name: 'objectnotfound',
                     component: () => import('@/views/app/404.vue'),
+                    meta: {requiresPackage: false},
                 },
             ]
         },
@@ -618,6 +628,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const userService = new UserService();
+    const orderService = new OrderService();
     
     if (to.meta.noAuth) {
         if (appStore().userId) {
@@ -637,10 +648,25 @@ router.beforeEach((to, from, next) => {
             if (!appStore().userId)
                 next({ name: 'signin' });
             else {
-                if (to.meta.permission != undefined && !hasAccess(to.meta.permission))
-                    next({ name: 'access_denied' });
-                else
-                    next();
+                if (to.meta.requiresPackage) {
+                    
+                    let checkItemLimit = to.meta.checkItemsLimit != undefined && to.meta.checkItemsLimit;
+                    orderService.getActiveSubscription()
+                        .then(
+                            (response) => {
+                                if(response.data.items != undefined && response.data.items && (!checkItemLimit || response.data.items > response.data.current.items))
+                                    next();
+                                else
+                                    next({ name: 'order' });
+                            },
+                            (errors) => {}
+                        )
+                } else {
+                    if (to.meta.permission != undefined && !hasAccess(to.meta.permission))
+                        next({ name: 'access_denied' });
+                    else
+                        next();
+                }
             }
         } else {
             next();

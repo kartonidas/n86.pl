@@ -20,6 +20,7 @@ use App\Exceptions\Exception;
 use App\Exceptions\ObjectNotExist;
 use App\Exceptions\Unauthorized;
 use App\Jobs\FirebaseRegister;
+use App\Libraries\Helper;
 use App\Mail\Register\InitMessage;
 use App\Mail\Register\WelcomeMessage;
 use App\Mail\User\ForgotPasswordMessage;
@@ -27,6 +28,7 @@ use App\Models\Config;
 use App\Models\Dictionary;
 use App\Models\Firm;
 use App\Models\PasswordResetToken;
+use App\Models\Subscription;
 use App\Models\UserPermission;
 use App\Models\UserRegisterToken;
 use App\Models\UserSetting;
@@ -270,6 +272,7 @@ class User extends Authenticatable
         Config::createDefaultConfiguration($this);
         
         $this->ensureAccountSettings();
+        $this->addTrialPackage();
     }
     
     public function getAllUserPermissions($uuid = null, $appReady = false)
@@ -407,5 +410,19 @@ class User extends Authenticatable
             return $identifier;
         
         return $this->generateFirmIdentifier();
+    }
+    
+    private function addTrialPackage()
+    {
+        $end = (new DateTime())->add(new DateInterval("P14D"));
+        $end = Helper::setDateTime($end, "23:59:59", true);
+        
+        $package = new Subscription;
+        $package->uuid = $this->getUuid();
+        $package->status = Subscription::STATUS_ACTIVE;
+        $package->items = 5;
+        $package->start = time();
+        $package->end = $end;
+        $package->save();
     }
 }

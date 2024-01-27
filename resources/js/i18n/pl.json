@@ -767,6 +767,12 @@
     },
     "dashboard": {
         "total_items" : "Ilość nieruchomości",
-        "total_active_rentals" : "Ilość wynajmów"
+        "total_active_rentals" : "Ilość wynajmów",
+        "ending_rentals" : "Kończące się wynajmy",
+        "empty_upcoming_bills_list" : "Brak zbliżających się opłat",
+        "empty_ending_rentals_list" : "Brak kończących się wynajmów",
+        "upcoming_bills" : "Zbliżające się opłaty",
+        "unpaid_bills" : "Nieopłacone rachunki",
+        "empty_unpaid_bills_list" : "Brak nieopłaconych rachunków"
     }
 }

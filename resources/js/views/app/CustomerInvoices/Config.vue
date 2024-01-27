@@ -51,7 +51,8 @@
                     (response) => {
                         if (response.data)
                         {
-                            this.invoicedata = response.data.data
+                            if (response.data.data != undefined && response.data.data.length)
+                                this.invoicedata = response.data.data
                             this.useInvoiceFirmData = response.data.use_invoice_firm_data
                         }
                         this.loading = false

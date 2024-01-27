@@ -48,14 +48,41 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/dashboard', [IndexController::class, "dashboard"]);
     $router->get('/subscription', [IndexController::class, "getActiveSubscription"]);
     $router->get('/current-stats', [IndexController::class, "getCurrentStats"]);
-    $router->get('/search', [IndexController::class, "search"]);
-    $router->get('/search/{source}', [IndexController::class, "searchIn"]);
     
+    $router->get('/get-firm-id', [UserController::class, "getFirmId"]);
+    $router->get('/get-id', [UserController::class, "getId"]);
     
+    // ZAMÓWIENIA / PŁATNOŚCI
+    $router->get('/payment/status/{md5}', [PaymentController::class, "status"]);
+    $router->post('/order/create', [OrderController::class, "create"]);
+    $router->post('/order/prolong', [OrderController::class, "prolong"]);
+    $router->post('/order/extend', [OrderController::class, "extend"]);
+    
+    $router->get('/invoices', [OrderController::class, "invoices"]);
+    $router->get('/invoice/{id}', [OrderController::class, "invoice"])->where("id", "[0-9]+");
+    $router->get('/validate-invoicing-data', [OrderController::class, "validateInvoicingData"]);
+    
+    $router->get('/firm-data', [UserController::class, "getFirmData"]);
+    $router->post('/firm-data', [UserController::class, "firmDataUpdate"]);
+    $router->get('/invoice-data', [UserController::class, "getInvoiceData"]);
+    $router->post('/invoice-data', [UserController::class, "invoiceDataUpdate"]);
+    
+    // KONFIGURACJA
+    $router->get('/config', [ConfigController::class, "get"]);
+    $router->put('/config', [ConfigController::class, "update"]);
+    
+    // USUNIĘCIE KONTA
+    $router->delete('removeAccount', [UserController::class, "removeAccount"]);
+});
+
+Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package', 'limit'])->group(function () use($router) {
+    $router->put('/item', [ItemController::class, "create"]);
+});
+
+Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(function () use($router) {
     // NIERUCHOMOŚCI
     $router->get('/items', [ItemController::class, "list"]);
     $router->get('/items/settings', [ItemController::class, "settings"]);
-    $router->put('/item', [ItemController::class, "create"]);
     $router->get('/item/{id}', [ItemController::class, "get"])->where("id", "[0-9]+");
     $router->put('/item/{id}', [ItemController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/item/{id}', [ItemController::class, "delete"])->where("id", "[0-9]+");
@@ -151,10 +178,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/settings', [UserController::class, "settings"]);
     $router->put('/settings', [UserController::class, "settingsUpdate"]);
     
-    $router->get('/get-firm-id', [UserController::class, "getFirmId"]);
-    $router->get('/get-id', [UserController::class, "getId"]);
-    $router->get('/user/getActiveTimer', [UserController::class, "getActiveTimer"]);
-    
     // UPRAWNIENIA
     $router->get('/permissions', [PermissionController::class, "list"]);
     $router->put('/permission', [PermissionController::class, "create"]);
@@ -165,35 +188,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->delete('/permission/{id}/del', [PermissionController::class, "removePermission"])->where("id", "[0-9]+");
     $router->get('/permission/modules', [PermissionController::class, "permissionModules"]);
     
-    // ZAMÓWIENIA / PŁATNOŚCI
-    $router->get('/payment/status/{md5}', [PaymentController::class, "status"]);
-    $router->post('/order/create', [OrderController::class, "create"]);
-    $router->post('/order/prolong', [OrderController::class, "prolong"]);
-    $router->post('/order/extend', [OrderController::class, "extend"]);
-    
-    $router->get('/invoices', [OrderController::class, "invoices"]);
-    $router->get('/invoice/{id}', [OrderController::class, "invoice"])->where("id", "[0-9]+");
-    $router->get('/validate-invoicing-data', [OrderController::class, "validateInvoicingData"]);
-    
-    $router->get('/firm-data', [UserController::class, "getFirmData"]);
-    $router->post('/firm-data', [UserController::class, "firmDataUpdate"]);
-    $router->get('/invoice-data', [UserController::class, "getInvoiceData"]);
-    $router->post('/invoice-data', [UserController::class, "invoiceDataUpdate"]);
-    
-    $router->get('/notifications', [NotificationController::class, "list"]);
-    $router->get('/notification/{id}', [NotificationController::class, "get"])->where("id", "[0-9]+");
-    $router->put('/notification/read/{id}', [NotificationController::class, "setRead"])->where("id", "[0-9]+");
-    
-    // STATYSTYKI
-    $router->get('/stats/user/{id}/daily', [StatsController::class, "userDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/user/{id}/monthly', [StatsController::class, "userMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/project/{id}/daily', [StatsController::class, "projectDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/project/{id}/monthly', [StatsController::class, "projectMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/task/{id}/daily', [StatsController::class, "taskDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/task/{id}/monthly', [StatsController::class, "taskMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/total', [StatsController::class, "total"]);
-    
-    
     // DOKUMENTY
     $router->get('/documents/templates', [DocumentTemplateController::class, "list"])->where("id", "[0-9]+");
     $router->get('/documents/templates/group', [DocumentTemplateController::class, "listGroupByType"])->where("id", "[0-9]+");
@@ -201,7 +195,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/documents/template/{id}', [DocumentTemplateController::class, "get"])->where("id", "[0-9]+");
     $router->put('/documents/template/{id}', [DocumentTemplateController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/documents/template/{id}', [DocumentTemplateController::class, "delete"])->where("id", "[0-9]+");
-    
     $router->get('/documents', [DocumentController::class, "list"])->where("id", "[0-9]+");
     $router->get('/document/{id}/pdf', [DocumentController::class, "getDocumentPdf"])->where("id", "[0-9]+");
     $router->get('/document/{id}', [DocumentController::class, "get"])->where("id", "[0-9]+");
@@ -213,9 +206,14 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/report/chart/item/{id}', [ReportController::class, "chartItemData"])->where("id", "[0-9]+");
     $router->get('/report/chart/rental/{id}', [ReportController::class, "chartRentalData"])->where("id", "[0-9]+");
     
-    // KONFIGURACJA
-    $router->get('/config', [ConfigController::class, "get"]);
-    $router->put('/config', [ConfigController::class, "update"]);
+    // STATYSTYKI
+    $router->get('/stats/user/{id}/daily', [StatsController::class, "userDaily"])->where("id", "[0-9]+");
+    $router->get('/stats/user/{id}/monthly', [StatsController::class, "userMonthly"])->where("id", "[0-9]+");
+    $router->get('/stats/project/{id}/daily', [StatsController::class, "projectDaily"])->where("id", "[0-9]+");
+    $router->get('/stats/project/{id}/monthly', [StatsController::class, "projectMonthly"])->where("id", "[0-9]+");
+    $router->get('/stats/task/{id}/daily', [StatsController::class, "taskDaily"])->where("id", "[0-9]+");
+    $router->get('/stats/task/{id}/monthly', [StatsController::class, "taskMonthly"])->where("id", "[0-9]+");
+    $router->get('/stats/total', [StatsController::class, "total"]);
     
     
     // REJESTR SPRZEDAŻY
@@ -224,7 +222,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/sale-register/{id}', [SaleRegisterController::class, "get"])->where("id", "[0-9]+");
     $router->put('/sale-register/{id}', [SaleRegisterController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/sale-register/{id}', [SaleRegisterController::class, "delete"])->where("id", "[0-9]+");
-    
     
     // FAKTURY
     $router->get('/customer-invoices', [CustomerInvoicesController::class, "list"]);
@@ -239,10 +236,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function () u
     $router->get('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceData"]);
     $router->put('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceDataUpdate"]);
     $router->get('/customer-invoice/number/{srid}', [CustomerInvoicesController::class, "getInvoiceNextNumber"])->where("srid", "[0-9]+");
-    
-    
-    // USUNIĘCIE KONTA
-    $router->delete('removeAccount', [UserController::class, "removeAccount"]);
 });
 
 Route::prefix('v1')->middleware(['locale'])->group(function () use($router) {

@@ -20,7 +20,7 @@
         },
         data() {
             return {
-                invoicingOk : false,
+                invoicingOk : true,
                 errors: [],
                 items: 0,
                 days_to_end: 0,

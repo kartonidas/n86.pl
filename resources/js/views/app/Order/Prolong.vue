@@ -18,7 +18,7 @@
         },
         data() {
             return {
-                invoicingOk : false,
+                invoicingOk : true,
                 errors: [],
                 items: 0,
                 end: 0,

@@ -4,9 +4,10 @@
     import Address from '@/views/app/_partials/Address.vue'
     import Package from './_partials/Package.vue';
     import DashboardService from '@/service/DashboardService'
+    import Skeleton from 'primevue/skeleton';
     
     export default {
-        components: { Address, Package },
+        components: { Address, Package, Skeleton },
         setup() {
             setMetaTitle('meta.title.dashboard')
             
@@ -51,15 +52,18 @@
 </script>
 
 <template>
+    
     <div class="grid">
         <div class="col-12 sm:col-4 xl:col-4">
-            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center">
+            <Skeleton class="h-full" v-if="loading"></Skeleton>
+            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center" v-if="!loading">
                 <div class="text-sm uppercase">{{ $t("dashboard.total_items") }}</div>
                 <div class="text-5xl mt-1">{{ dashboard.total_items }}</div>
             </div>
         </div>
         <div class="col-12 sm:col-4 xl:col-4">
-            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center">
+            <Skeleton class="h-full" v-if="loading"></Skeleton>
+            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center" v-if="!loading">
                 <div class="text-sm uppercase">{{ $t("dashboard.total_active_rentals") }}:</div>
                 <div class="text-5xl mt-1">{{ dashboard.total_rentals }}</div>
             </div>
@@ -74,7 +78,7 @@
                 <div class="grid">
                     <div class="col-12 xl:col-6">
                         <div class="mb-3 font-medium">
-                            Nieopłacone rachunki
+                            {{ $t("dashboard.unpaid_bills") }}
                         </div>
                         <DataTable size="small" :value="dashboard.unpaid_bills" stripedRows class="p-datatable-gridlines clickable" :lazy="true" :loading="loading" @row-click="rowBillClick($event)">
                             <Column :header="$t('items.bill_type')" style="min-width: 300px;">
@@ -95,14 +99,14 @@
                                 </template>
                             </Column>
                             <template #empty>
-                                {{ $t('customers.empty_list') }}
+                                {{ $t('dashboard.empty_unpaid_bills_list') }}
                             </template>
                         </DataTable>
                     </div>
                     
                     <div class="col-12 xl:col-6">
                         <div class="mb-3 font-medium">
-                            Zbliżające się opłaty
+                            {{ $t("dashboard.upcoming_bills") }}
                         </div>
                         <DataTable size="small" :value="dashboard.upcoming_bills" stripedRows class="p-datatable-gridlines clickable" :lazy="true" :loading="loading" @row-click="rowBillClick($event)">
                             <Column :header="$t('items.bill_type')" style="min-width: 300px;">
@@ -123,7 +127,7 @@
                                 </template>
                             </Column>
                             <template #empty>
-                                {{ $t('customers.empty_list') }}
+                                {{ $t('dashboard.empty_upcoming_bills_list') }}
                             </template>
                         </DataTable>
                     </div>
@@ -136,10 +140,10 @@
                 <div class="grid">
                     <div class="col-12">
                         <div class="mb-3 font-medium">
-                            Kończące się wynajmy
+                            {{ $t("dashboard.ending_rentals") }}
                         </div>
-                        <DataTable :value="dashboard.rentals" stripedRows class="p-datatable-gridlines clickable" :lazy="true" :loading="loading" @row-click="rowRentalClick($event)">
-                            <Column :header="$t('rent.number')" field="full_number" sortable>
+                        <DataTable :value="dashboard.rentals" size="small" stripedRows class="p-datatable-gridlines clickable" :lazy="true" :loading="loading" @row-click="rowRentalClick($event)">
+                            <Column :header="$t('rent.number')" field="full_number">
                                 <template #body="{ data }">
                                     <router-link :to="{name: 'rental_show', params: { rentalId : data.id }}">
                                         {{ data.full_number }}
@@ -149,15 +153,7 @@
                                     </div>
                                 </template>
                             </Column>
-                            <Column :header="$t('rent.status')">
-                                <template #body="{ data }">
-                                    {{ getValueLabel('rental.statuses', data.status) }}
-                                    <span v-if="data.termination && data.status == 'current'" class="mr-1" v-tooltip.top="$t('rent.rental_is_being_terminated')">
-                                        <i class="pi pi-delete-left" style="font-size: 1.2rem; color: var(--red-600)"></i>
-                                    </span>
-                                </template>
-                            </Column>
-                            <Column :header="$t('rent.balance')" field="balance" sortable>
+                            <Column :header="$t('rent.balance')" field="balance">
                                 <template #body="{ data }">
                                     {{ numeralFormat(data.balance, '0.00') }}
                                 </template>
@@ -176,8 +172,22 @@
                                     </div>
                                 </template>
                             </Column>
+                            <Column :header="$t('rent.tenant')" style="min-width: 300px;">
+                                <template #body="{ data }">
+                                    <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
+                                    <div class="mt-1">
+                                        {{ data.tenant.name }}
+                                        
+                                        <div>
+                                            <small>
+                                                <Address :object="data.tenant" :newline="true" emptyChar=""/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </template>
+                            </Column>
                             <template #empty>
-                                {{ $t('rent.empty_list') }}
+                                {{ $t('dashboard.empty_ending_rentals_list') }}
                             </template>
                         </DataTable>
                     </div>
@@ -185,9 +195,4 @@
             </div>
         </div>
     </div>
-    
-    <ul class="list-unstyled">
-        <li>Jakiś wykres ilośc nieruchomości per ilość wynajmów na miesiąc</li>
-        <li>Może wykres zarobków</li>
-    </ul>
 </template>
