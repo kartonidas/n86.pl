@@ -17,7 +17,11 @@ use App\Http\Controllers\PaymentController;
 
 $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
 $router->get('/pomoc/{any?}', [PageController::class, "help"]);
+
 $router->get('/', [PageController::class, "index"]);
+$router->get('/regulamin', [PageController::class, "regulations"])->name("regulations");
+$router->get('/polityka-prywatnosci', [PageController::class, "privacyPolicy"])->name("privacy_policy");
+$router->get('/ciasteczka', [PageController::class, "cookies"])->name("cookies");
 
 Route::get('{any?}', function () {
     return view('vue');

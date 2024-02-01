@@ -14,6 +14,21 @@ class PageController extends Controller
         return view("pages.index");
     }
     
+    public function regulations(Request $request)
+    {
+        return view("pages.regulations");
+    }
+    
+    public function privacyPolicy(Request $request)
+    {
+        return view("pages.privacy_policy");
+    }
+    
+    public function cookies(Request $request)
+    {
+        return view("pages.cookies");
+    }
+    
     public function help(Request $request, $slug = null)
     {
         if($slug !== null)

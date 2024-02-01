@@ -1,0 +1,58 @@
+body {
+    font-family: "Inter var", sans-serif;
+}
+
+@font-face {
+    font-family: "Inter var";
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    font-named-instance: "Regular";
+    src: url("/themes/lara-light-blue/fonts/Inter-roman-var.woff2?v=3.19") format("woff2");
+}
+@font-face {
+    font-family: "Inter var";
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: italic;
+    font-named-instance: "Italic";
+    src: url("/themes/lara-light-blue/fonts/Inter-italic-var.woff2?v=3.19") format("woff2");
+}
+
+.round-50 {
+    border-radius: 50px;
+}
+
+.navbar #navbarCollapse A.btn {
+    font-size: 0.9rem;
+}
+
+.fw-500 {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #3B82F6;
+    border-color: #3B82F6;
+}
+
+#main-page-intro {
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, rgb(238, 239, 175) 0%, rgb(195, 227, 250) 100%);
+    clip-path: ellipse(150% 87% at 93% 13%);
+}
+
+.regulations {
+    font-size: 13px;
+}
+
+.card-features-desc {
+    font-size: 0.8rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: initial;
+}
+
+.navbar-divider {
+    border-top: 1px solid #e2e2e2;
+}
