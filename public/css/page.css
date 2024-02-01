@@ -23,6 +23,10 @@ body {
     border-radius: 50px;
 }
 
+.round-20 {
+    border-radius: 20px;
+}
+
 .navbar #navbarCollapse A.btn {
     font-size: 0.9rem;
 }
@@ -45,8 +49,14 @@ body {
     font-size: 13px;
 }
 
-.card-features-desc {
+.card-features-desc,
+.card-features-readmore,
+.fs-8 {
     font-size: 0.8rem;
+}
+
+.fs-7 {
+    font-size: 0.9rem;
 }
 
 .navbar-toggler:focus {

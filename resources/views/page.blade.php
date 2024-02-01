@@ -5,7 +5,7 @@
         <link rel="icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            @yield("metatitle", "Wynajem nieruchomości");
+            @yield("metatitle", "Wynajem nieruchomości")
         </title>
             
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -37,10 +37,10 @@
                             <a class="nav-link text-body fw-500" href="/">Start</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-body fw-500" href="#app-features">Funkcje</a>
+                            <a class="nav-link text-body fw-500" href="#funkcje">Funkcje</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-body fw-500" href="#app-prices">Cennik</a>
+                            <a class="nav-link text-body fw-500" href="#cennik">Cennik</a>
                         </li>
                     </ul>
                         
@@ -70,7 +70,7 @@
                                 <a href="" class="text-body text-decoration-none">Kontakt</a>
                             </li>
                             <li class="mt-1 mb-1">
-                                <a href="" class="text-body text-decoration-none">Pomoc</a>
+                                <a href="{{ route("help") }}" class="text-body text-decoration-none">Pomoc</a>
                             </li>
                         </ul>
                     </div>

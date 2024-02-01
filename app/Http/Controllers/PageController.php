@@ -29,6 +29,27 @@ class PageController extends Controller
         return view("pages.cookies");
     }
     
+    public function features(Request $request)
+    {
+        $path = mb_strtolower($request->path());
+        $path = explode("/", $path);
+        
+        if(!in_array($path[0], ["najwazniejsze-funkcje"]))
+            abort(404);
+        
+        $pageFile = resource_path("views/html/" . app()->getLocale() . "/" . $path[1] . ".html");
+        if(!file_exists($pageFile))
+            abort(404);
+            
+        $html = file_get_contents($pageFile);
+        $xml = simplexml_load_string($html);
+            
+        return view("pages.features", [
+            "html" => (string)$xml->content,
+            "title" => (string)$xml->title,
+        ]);
+    }
+    
     public function help(Request $request, $slug = null)
     {
         if($slug !== null)

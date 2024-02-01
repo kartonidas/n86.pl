@@ -16,12 +16,22 @@ use App\Http\Controllers\PaymentController;
 */
 
 $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
-$router->get('/pomoc/{any?}', [PageController::class, "help"]);
+$router->get('/pomoc/{any?}', [PageController::class, "help"])->name("help");
 
 $router->get('/', [PageController::class, "index"]);
 $router->get('/regulamin', [PageController::class, "regulations"])->name("regulations");
 $router->get('/polityka-prywatnosci', [PageController::class, "privacyPolicy"])->name("privacy_policy");
 $router->get('/ciasteczka', [PageController::class, "cookies"])->name("cookies");
+
+$router->get('/najwazniejsze-funkcje/zarzadzanie-obiektami', [PageController::class, "features"])->name("zarzadzanie_obiektami");
+$router->get('/najwazniejsze-funkcje/zarzadzanie-klientami', [PageController::class, "features"])->name("zarzadzanie_klientami");
+$router->get('/najwazniejsze-funkcje/zarzadzanie-najemcami', [PageController::class, "features"])->name("zarzadzanie_najemcami");
+$router->get('/najwazniejsze-funkcje/obsluga-usterek', [PageController::class, "features"])->name("obsluga_usterek");
+$router->get('/najwazniejsze-funkcje/generowanie-dokumentow', [PageController::class, "features"])->name("generowanie_dokumentow");
+$router->get('/najwazniejsze-funkcje/powiadomienia', [PageController::class, "features"])->name("powiadomienia");
+$router->get('/najwazniejsze-funkcje/statystyki', [PageController::class, "features"])->name("statystyki");
+$router->get('/najwazniejsze-funkcje/kontrola-rachunkow', [PageController::class, "features"])->name("kontrola_rachunkow");
+$router->get('/najwazniejsze-funkcje/rozwiazania-chmurowe', [PageController::class, "features"])->name("rozwiazania_chmurowe");
 
 Route::get('{any?}', function () {
     return view('vue');
