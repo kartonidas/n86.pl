@@ -66,3 +66,13 @@ body {
 .navbar-divider {
     border-top: 1px solid #e2e2e2;
 }
+
+.input-error-info {
+    font-size: 0.7rem;
+    color: red;
+    display: block;
+}
+
+.gray-background {
+    background: #fbfbfb;
+}

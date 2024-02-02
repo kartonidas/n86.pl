@@ -411,4 +411,16 @@ class Helper
         
         return $amount;
     }
+    
+    public static function verifyCaptcha($response) {
+        $data = array();
+        $data["secret"] = env("RECAPTCHA_SECRET");
+        $data["response"] = $response;
+        $data["remoteip"] = $_SERVER['REMOTE_ADDR'];
+        
+        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?" . http_build_query($data));
+        $response = json_decode($response);
+        
+        return $response->success;
+    }
 }

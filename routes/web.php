@@ -23,6 +23,8 @@ $router->get('/regulamin', [PageController::class, "regulations"])->name("regula
 $router->get('/polityka-prywatnosci', [PageController::class, "privacyPolicy"])->name("privacy_policy");
 $router->get('/ciasteczka', [PageController::class, "cookies"])->name("cookies");
 
+$router->post('/kontakt', [PageController::class, "contact"])->name("contact");
+
 $router->get('/najwazniejsze-funkcje/zarzadzanie-obiektami', [PageController::class, "features"])->name("zarzadzanie_obiektami");
 $router->get('/najwazniejsze-funkcje/zarzadzanie-klientami', [PageController::class, "features"])->name("zarzadzanie_klientami");
 $router->get('/najwazniejsze-funkcje/zarzadzanie-najemcami', [PageController::class, "features"])->name("zarzadzanie_najemcami");

@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\ContactRequest;
+use App\Libraries\Helper;
+use App\Mail\ContactForm;
 
 use App\Exceptions\ObjectNotExist;
+use App\Exceptions\Unauthorized;
 
 class PageController extends Controller
 {
@@ -48,6 +55,23 @@ class PageController extends Controller
             "html" => (string)$xml->content,
             "title" => (string)$xml->title,
         ]);
+    }
+    
+    public function contact(ContactRequest $request)
+    {
+        $validated = $request->validated();
+        if(!Helper::verifyCaptcha($validated["g-recaptcha-response"]))
+            throw new Unauthorized("Udowodnij, że nie jesteś robotem");
+        
+        // wysyłka
+        $mailable = new ContactForm($validated);
+        $mailable->to(env("CONTACT_FORM_EMAIL"));
+        Mail::send($mailable);
+        
+        return [
+            "success" => true,
+            "html" => view("pages._contact-success")->render(),
+        ];
     }
     
     public function help(Request $request, $slug = null)
