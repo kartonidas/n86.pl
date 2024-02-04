@@ -20,7 +20,8 @@ class Dictionary extends Model
         return [
             "fees" => __("Fee included in the rent"),
             "bills" => __("Type of bill"),
-            "payment_types" => __("Payment types")
+            "payment_types" => __("Payment types"),
+            "fault_statuses" => __("Payment types")
         ];
     }
     

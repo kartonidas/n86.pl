@@ -45,6 +45,8 @@ class StoreItemRequest extends FormRequest
             $rules["id"] = Rule::exists('items', 'id')->where(function(Builder $query) {
                 return $query->where('uuid', Auth::user()->getUuid());
             });
+            
+            $rules["_update"] = "sometimes|boolean";
         }
         
         if(($this->ownership_type ?? "") == Item::OWNERSHIP_MANAGE)

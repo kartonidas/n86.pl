@@ -81,6 +81,9 @@
                     case 'payment_types':
                         breadcrumbs.push({'label' : this.$t('menu.payment_types'), route : {name : 'dictionaries', params : {type : 'payment_types'}} });
                     break;
+                    case 'fault_statuses':
+                        breadcrumbs.push({'label' : this.$t('menu.fault_statuses'), route : {name : 'dictionaries', params : {type : 'fault_statuses'}} });
+                    break;
                 }
                 
                 breadcrumbs.push({'label' : this.$t('dictionaries.add'), disabled: true });

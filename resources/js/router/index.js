@@ -483,25 +483,43 @@ const router = createRouter({
                             component: () => import('@/views/app/Faults/List.vue'),
                             meta: {permission: 'fault:list'},
                         },
+                        {
+                            path: '/app/fault/new',
+                            name: 'fault_new',
+                            component: () => import('@/views/app/Faults/New.vue'),
+                            meta: {permission: 'fault:create'},
+                        },
+                        {
+                            path: '/app/fault/edit/:faultId',
+                            name: 'fault_edit',
+                            component: () => import('@/views/app/Faults/Edit.vue'),
+                            meta: {permission: 'fault:update'},
+                        },
+                        {
+                            path: '/app/fault/:faultId',
+                            name: 'fault_show',
+                            component: () => import('@/views/app/Faults/Show.vue'),
+                            meta: {permission: 'fault:list'},
+                        },
                     ]
                 },
                 {
                     path: '/app/dictionaries',
                     children: [
                         {
-                            path: '/app/dictionary/:type(fees|bills|payment_types)',
+                            path: '/app/dictionary/:type(fees|bills|payment_types|fault_statuses)',
                             name: 'dictionaries',
                             component: () => import('@/views/app/Dictionaries/List.vue'),
                             meta: {permission: 'dictionary:list'},
                         },
                         {
-                            path: '/app/dictionary/:type(fees|bills|payment_types)/new',
+                            path: '/app/dictionary/:type(fees|bills|payment_types|fault_statuses)/new',
                             name: 'dictionary_new',
                             component: () => import('@/views/app/Dictionaries/New.vue'),
                             meta: {permission: 'dictionary:create'},
                         },
                         {
-                            path: '/app/dictionary/:type(fees|bills|payment_types)/:dictionaryId',
+                            path: '/app/dictionary/:type(fees|bills|payment_types|fault_statuses)/:dictionaryId',
                             name: 'dictionary_edit',
                             component: () => import('@/views/app/Dictionaries/Edit.vue'),
                             meta: {permission: 'dictionary:update'},

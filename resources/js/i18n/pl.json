@@ -287,7 +287,8 @@
         "settlements" : "Rozliczenia",
         "customer_invoices" : "Faktury",
         "payment_types" : "Sposoby płatności",
-        "customer_invoices_config": "Ustawienia"
+        "customer_invoices_config": "Ustawienia",
+        "fault_statuses" : "Statusy usterek"
     },
     "meta": {
         "title" : {
@@ -363,7 +364,10 @@
             "customer_invoices_list" : "Faktury",
             "customer_invoices_new" : "Nowa faktura",
             "customer_invoices_edit" : "Edycja faktury",
-            "customer_invoices_from_proforma" : "Nowa faktura z proformy"
+            "customer_invoices_from_proforma" : "Nowa faktura z proformy",
+            "new_fault" : "Nowe zgłoszenie",
+            "update_fault" : "Edycja zgloszenia",
+            "fault_show" : "Szczegóły zgłoszenia"
         }
     },
     "permissions" : {
@@ -559,7 +563,9 @@
         "terminate_mode" : "Rodzaj wypowiedzenia",
         "terminate_mode_date" : "Według daty",
         "terminate_mode_immediately" : "Natychmiast",
-        "terminate_end" : "Koniec wynajmu"
+        "terminate_end" : "Koniec wynajmu",
+        "update_tenant_data" : "Zaktualizuj kartotekę najemcy",
+        "update_item_data" : "Zaktualizuj kartotekę nieruchomości"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",
@@ -774,5 +780,21 @@
         "upcoming_bills" : "Zbliżające się opłaty",
         "unpaid_bills" : "Nieopłacone rachunki",
         "empty_unpaid_bills_list" : "Brak nieopłaconych rachunków"
+    },
+    "faults" : {
+        "start_date_list" : "Data zgłoszenia (od)",
+        "end_date_list" : "Data zgłoszenia (do)",
+        "item_address": "Adres nieruchomości",
+        "item_name": "Nazwa nieruchomości",
+        "add_fault" : "Dodaj usterkę",
+        "empty_list" : "Brak usterek",
+        "status" : "Status zgłoszenia",
+        "estate" : "Nieruchomość",
+        "new_fault" : "Nowe zgłoszenie",
+        "fault_added" : "Zgłoszenie zostało dodane",
+        "description" : "Opis",
+        "edit_fault": "Edycja zgłoszenia",
+        "fault_updated" : "Zgłoszenie zostało zaktualizowane",
+        "show_fault": "Szczegóły zgłoszenia"
     }
 }

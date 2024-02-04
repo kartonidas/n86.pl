@@ -38,6 +38,8 @@ class StoreTenantRequest extends FormRequest
             $rules["id"] = Rule::exists('customers', 'id')->where(function(Builder $query) {
                 return $query->where('role', Customer::ROLE_TENANT)->where('uuid', Auth::user()->getUuid());
             });
+            
+            $rules["_update"] = "sometimes|boolean";
         }
         
         if(($this->type ?? "") == Customer::TYPE_PERSON)

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 use DateTime;
@@ -197,10 +198,14 @@ class RentalController extends Controller
         $rental = DB::transaction(function () use($itemData, $tenantData, $rentData) {
             if(empty($itemData["id"]))
                 $itemData["id"] = $this->createItem($itemData);
+            elseif(!empty($itemData["_update"]))
+                $this->updateItem($itemData);
             
             if(empty($tenantData["id"]))
                 $tenantData["id"] = $this->createTenant($tenantData);
-                
+            elseif(!empty($tenantData["_update"]))
+                $this->updateTenant($tenantData);
+            
             $rental = new Rental;
             $rental->item_id = $itemData["id"];
             $rental->tenant_id = $tenantData["id"];
@@ -322,6 +327,25 @@ class RentalController extends Controller
         return $item->id;
     }
     
+    private function updateItem($data)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($data["id"]);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        foreach($data as $field => $value)
+        {
+            if(!Schema::hasColumn($item->getTable(), $field))
+                continue;
+            $item->{$field} = $value;
+        }
+        $item->save();
+        
+        return true;
+    }
+    
     private function createTenant($data)
     {
         $tenant = new Customer;
@@ -349,6 +373,29 @@ class RentalController extends Controller
             $tenant->updateContact($data["contacts"]);
             
         return $tenant->id;
+    }
+    
+    private function updateTenant($data)
+    {
+        User::checkAccess("tenant:update");
+        
+        $tenant = Customer::tenant()->find($data["id"]);
+        if(!$tenant || $tenant->role != Customer::ROLE_TENANT)
+            throw new ObjectNotExist(__("Tenant does not exist"));
+        
+        foreach($data as $field => $value)
+        {
+            if(!Schema::hasColumn($tenant->getTable(), $field))
+                continue;
+            
+            $tenant->{$field} = $value;
+        }
+        $tenant->save();
+        
+        if(!empty($data["contacts"]))
+            $tenant->updateContact($data["contacts"]);
+        
+        return true;
     }
     
     public function delete(Request $request, int $rentalId)

@@ -118,6 +118,7 @@ const model = ref([
                 items: [
                     { label: t('menu.bill_type'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'bills'} }, regex: /^\/app\/dictionary\/bill(s?)(\/(.*))?$/i },
                     { label: t('menu.payment_types'), icon: 'pi pi-fw pi-list', to: { name: 'dictionaries', params: {type:'payment_types'} }, regex: /^\/app\/dictionary\/payment_types(s?)(\/(.*))?$/i },
+                    { label: t('menu.fault_statuses'), icon: 'pi pi-fw pi-wrench', to: { name: 'dictionaries', params: {type:'fault_statuses'} }, regex: /^\/app\/dictionary\/fault_statuses(s?)(\/(.*))?$/i },
                 ]
             },
             { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, access: hasAccess('config:update'), regex: /^\/app\/documents\/templates(\/(.*))?$/i },

@@ -1,6 +1,7 @@
 <script>
     import { ref } from 'vue'
-    import { getResponseErrors, getValueLabel, getValues, setMetaTitle } from '@/utils/helper'
+    import { getResponseErrors, getValueLabel, getValues, setMetaTitle, hasAccess } from '@/utils/helper'
+    import { appStore } from '@/store.js'
     import ItemService from '@/service/ItemService'
     import RentalService from '@/service/RentalService'
     import TenantService from '@/service/TenantService'
@@ -31,7 +32,8 @@
                 tenantService,
                 rentalService,
                 item,
-                getValueLabel
+                getValueLabel,
+                hasAccess
             }
         },
         data() {
@@ -81,8 +83,16 @@
                         this.loading = false
                     },
                     (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                        this.tenantExists = false
+                        if(errors.response.status == 404)
+                        {
+                            appStore().setError404(errors.response.data.message);
+                            this.$router.push({name: 'objectnotfound'})
+                        }
+                        else
+                        {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                            this.tenantExists = false
+                        }
                     }
                 );
         },
@@ -110,6 +120,7 @@
                     .then(
                         (response) => {
                             this.item = response.data
+                            this.item._update = false
                             this.meta.items.loading = false
                             this.selectItemModalVisible = false
                             this.selectedItem = response.data.id
@@ -256,7 +267,18 @@
                             <Button :label="$t('rent.select_item')" :severity="selectedItem ? 'info' : 'secondary'" :outlined="!selectedItem ? true : false" @click="selectItemModal"/>
                         </div>
                     </div>
-                    <ItemForm @submit-form="setItemData" :item="item" source="rent" :saving="saving" :loading="loading" :errors="errors" />
+                    
+                    <template v-if="selectedItem && hasAccess('item:update')">
+                        <div class="mt-3 mb-5 text-right">
+                            <div class="flex align-items-center justify-content-end">
+                                <span class="mr-2">
+                                    {{ $t('rent.update_item_data') }}
+                                </span>
+                                <InputSwitch v-model="item._update" :trueValue="1"/>
+                            </div>
+                        </div>
+                    </template>
+                    <ItemForm @submit-form="setItemData" :item="item" source="rent" :saving="saving" :loading="loading" :disabled="selectedItem && !item._update" :errors="errors" />
                 </div>
                 <div v-else-if="activeStep == 1">
                     <RentForm @submit-form="setRentalData" :r="rent" :item="item" :errors="errors" @back="back"/>

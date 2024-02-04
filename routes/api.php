@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomerInvoicesController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentTemplateController;
+use App\Http\Controllers\FaultController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IndexController;
@@ -236,6 +237,13 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     $router->get('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceData"]);
     $router->put('/customer-invoice/invoice-data', [CustomerInvoicesController::class, "customerInvoiceDataUpdate"]);
     $router->get('/customer-invoice/number/{srid}', [CustomerInvoicesController::class, "getInvoiceNextNumber"])->where("srid", "[0-9]+");
+    
+    // USTERKI
+    $router->get('/faults', [FaultController::class, "list"]);
+    $router->put('/fault', [FaultController::class, "create"]);
+    $router->get('/fault/{id}', [FaultController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/fault/{id}', [FaultController::class, "update"])->where("id", "[0-9]+");
+    $router->delete('/fault/{id}', [FaultController::class, "delete"])->where("id", "[0-9]+");
 });
 
 Route::prefix('v1')->middleware(['locale'])->group(function () use($router) {

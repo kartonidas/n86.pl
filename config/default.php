@@ -11,6 +11,11 @@ return [
             "payment_types" => [
                 "Gotówka",
                 "Przelew",
+            ],
+            "fault_statuses" => [
+                "Nowe zgłoszenie",
+                "W trakcie",
+                "Zakończone"
             ]
         ]
     ]

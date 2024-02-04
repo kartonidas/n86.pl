@@ -100,6 +100,9 @@
                     case 'payment_types':
                         breadcrumbs.push({'label' : this.$t('menu.payment_types'), disabled : true });
                     break;
+                    case 'fault_statuses':
+                        breadcrumbs.push({'label' : this.$t('menu.fault_statuses'), disabled : true });
+                    break;
                 }
                 return breadcrumbs;
             },
