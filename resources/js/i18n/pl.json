@@ -589,7 +589,8 @@
         "terminate_mode_immediately" : "Natychmiast",
         "terminate_end" : "Koniec wynajmu",
         "update_tenant_data" : "Zaktualizuj kartotekę najemcy",
-        "update_item_data" : "Zaktualizuj kartotekę nieruchomości"
+        "update_item_data" : "Zaktualizuj kartotekę nieruchomości",
+        "of" : "z dnia"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",

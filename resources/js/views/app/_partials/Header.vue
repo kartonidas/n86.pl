@@ -114,8 +114,8 @@
 </script>
 
 <template>
-    <div class="flex align-items-center" :class="class">
-        <div class="w-full">
+    <div class="grid flex align-items-center" :class="class">
+        <div class="col-12 sm:col-9">
             <Badge :value="getType()" class="font-normal" severity="info"></Badge>
             <h3 class="mt-2 mb-1 text-color" :class="class">
                 <template v-if="type == 'item'">
@@ -127,12 +127,11 @@
                 <Address :object="object" />
             </div>
         </div>
-        <div class="text-right" style="width: 120px;" v-if="showEdit()">
-            <Button icon="pi pi-pencil" @click="edit" v-tooltip.left="$t('app.edit')"></Button>
-            
+        <div class="text-left sm:text-right col-12 sm:col-3" v-if="showEdit()">
+            <Button @click="edit" icon="pi pi-pencil" v-tooltip.left="$t('app.edit')"/>
             <template v-if="type == 'item'">
                 <Button v-if="object.mode == 'locked'" icon="pi pi-unlock" v-tooltip.bottom="$t('items.unlock')" severity="warning" class="ml-1" @click="showItemLockConfirmationModal" />
-                <Button v-if="object.mode == 'normal'" icon="pi pi-lock" v-tooltip.bottom="$t('items.lock')" severity="danger" class="ml-1" @click="showItemLockConfirmationModal" />
+                <Button v-if="object.mode == 'normal'" icon="pi pi-lock" v-tooltip.bottom="$t('items.lock')" severity="danger" class="ml-1" @click="showItemLockConfirmationModal"/>
             </template>
         </div>
     </div>

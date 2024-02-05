@@ -339,7 +339,8 @@
             <div class="card">
                 <div class="flex align-items-center">
                     <div class="w-full">
-                        <h3 class="mt-2 mb-1 text-color">{{ $t('rent.rental_agreement_no_of', [rental.full_number, rental.document_date]) }}</h3>
+                        <h3 class="mt-2 mb-0 text-color">{{ rental.full_number }}</h3>
+                        <div class="text-md mb-1">{{ $t('rent.of') }}: {{ rental.document_date }}</div>
                     </div>
                     <div class="text-right" v-if="rental.can_update && hasAccess('rent:update')">
                         <Button icon="pi pi-pencil" @click="edit" v-tooltip.left="$t('app.edit')"></Button>
