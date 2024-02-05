@@ -52,6 +52,10 @@
                     { label : this.$t('rent.rent_details'), icon : 'pi pi-dollar'},
                     { label : this.$t('rent.summary'), icon : 'pi pi-check'},
                 ],
+                rented: [
+                    {"id": 0, "name" : this.$t('items.free')},
+                    {"id": 1, "name" : this.$t('items.rented')},
+                ],
                 item_types: getValues('item_types'),
                 items: [],
                 meta: {
@@ -70,6 +74,8 @@
                         search: {
                             name : '',
                             type : '',
+                            rented : '',
+                            mode: 'normal'
                         }
                     }
                 }
@@ -298,6 +304,9 @@
                     <div class="col-12 md:col mb-3">
                         <Dropdown v-model="meta.items.search.type" :showClear="this.meta.items.search.type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('items.estate_type')" class="w-full" />
                     </div>
+                    <div class="col-12 md:col mb-3">
+                        <Dropdown v-model="meta.items.search.rented" :showClear="this.meta.items.search.rented != undefined ? true : false" :options="rented" optionLabel="name" optionValue="id" :placeholder="$t('items.status')" class="w-full" />
+                    </div>
                     <div class="col-12  mb-3" style="width: 120px;">
                         <Button type="submit" iconPos="left" icon="pi pi-search" class="mr-2"/>
                         <Button severity="secondary" outlined iconPos="left" icon="pi pi-filter-slash" @click="resetSearchItems"/>
@@ -319,6 +328,23 @@
                         </div>
                     </template>
                 </Column>
+                <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">
+                <template #body="{ data }">
+                    <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
+                    <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
+                    
+                    <template v-if="data.rentals">
+                        <div class="text-sm text-gray-600 mt-2">
+                            <div v-if="data.rentals.current">
+                                {{ $t('items.end') }}: {{ data.rentals.current.end }}
+                            </div>
+                            <div v-if="data.rentals.next">
+                                {{ $t('items.reservation_single') }}: {{ data.rentals.next.start }}-{{ data.rentals.next.end }}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </Column>
                 <template #empty>
                     {{ $t('items.empty_list') }}
                 </template>

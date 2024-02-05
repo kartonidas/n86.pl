@@ -166,16 +166,19 @@
                 <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                <router-link :to="{name: 'item_show', params: { itemId : data.item.id }}">
-                                    {{ data.item.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.item" :newline="true" emptyChar=""/>
-                                    </small>
+                            <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">
+                                <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <i class="pi pi-lock pr-1" v-if="data.item.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
+                                    <router-link :to="{name: 'item_show', params: { itemId : data.item.id }}">
+                                        {{ data.item.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.item" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -195,6 +198,7 @@
                     <Column :header="$t('rent.rent')">
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
+                            {{ data.currency }}
                         </template>
                     </Column>
                     

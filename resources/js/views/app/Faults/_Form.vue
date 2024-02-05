@@ -41,19 +41,25 @@
             source: { type: String, default: 'new' },
         },
         beforeMount() {
-            this.dictionaryService.listByType('fault_statuses', 999, 1)
-                .then(
-                    (response) => {
-                        this.faultStatuses = response.data.data
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    }
-                );
-                
+            this.getFaultStatuses()
             this.getItems()
         },
         methods: {
+            getFaultStatuses() {
+                this.loadingFaultStatuses = true
+                this.faultStatuses = []
+                this.dictionaryService.listByType('fault_statuses', 999, 1)
+                    .then(
+                        (response) => {
+                            this.faultStatuses = response.data.data
+                            this.loadingFaultStatuses = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    );
+            },
+            
             getItems() {
                 this.loadingItems = true
                 this.items = []
@@ -62,11 +68,7 @@
                         (response) => {
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
-                                    this.items.push({
-                                        "id" : i.id,
-                                        "name" : i.name,
-                                        "type" : i.type,
-                                    })
+                                    this.items.push(i)
                                     this.loadingItems = false
                                 })
                             }
@@ -118,7 +120,7 @@
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="status_id" v-required class="block text-900 font-medium mb-2">{{ $t('faults.status') }}</label>
-                        <Dropdown id="status_id" v-model="fault.status_id" :options="faultStatuses" :class="{'p-invalid' : v.fault.status_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.status')" class="w-full" :disabled="saving || loading"/>
+                        <Dropdown id="status_id" v-model="fault.status_id" :loading="loadingFaultStatuses" :options="faultStatuses" :class="{'p-invalid' : v.fault.status_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.status')" class="w-full" :disabled="saving || loading"/>
                         <div v-if="v.fault.status_id.$error">
                             <small class="p-error">{{ v.fault.status_id.$errors[0].$message }}</small>
                         </div>
@@ -126,17 +128,14 @@
                     
                     <div class="field col-12 md:col-6 mb-4">
                         <label for="item_id" v-required class="block text-900 font-medium mb-2">{{ $t('faults.estate') }}</label>
-                        <Dropdown id="item_id" v-model="fault.item_id" filter :filterFields="['name']" :loading="loadingItems" :options="items" :class="{'p-invalid' : v.fault.item_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.estate')" class="w-full" :disabled="saving || loading">
+                        <Dropdown id="item_id" v-model="fault.item_id" filter :filterFields="['name', 'street', 'city', 'zip']" :loading="loadingItems" :options="items" :class="{'p-invalid' : v.fault.item_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.estate')" class="w-full" :disabled="saving || loading">
                             <template #option="slotProps">
                                 <div class="">
                                     <div>
                                         {{ slotProps.option.name }}
                                     </div>
                                     <small class="font-italic text-gray-500">
-                                        {{ getValueLabel('item_types', slotProps.option.type) }}
-                                        <span v-if="slotProps.option.type=='firm'">
-                                            : {{ slotProps.option.nip }}
-                                        </span>
+                                        <Address :object="slotProps.option" :newline="false" emptyChar=""/>
                                     </small>
                                 </div>
                             </template>
@@ -148,7 +147,7 @@
                     
                     <div class="field col-12 mb-4">
                         <label for="description" v-required class="block text-900 font-medium mb-2">{{ $t('faults.description') }}</label>
-                        <Textarea id="description" type="text" :placeholder="$t('faults.description')" rows="3" class="w-full" :class="{'p-invalid' : v.fault.description.$error}" v-model="fault.description" :disabled="loading || saving"/>
+                        <Textarea id="description" type="text" :placeholder="$t('faults.description')" rows="20" class="w-full" :class="{'p-invalid' : v.fault.description.$error}" v-model="fault.description" :disabled="loading || saving"/>
                         <div v-if="v.fault.description.$error">
                             <small class="p-error">{{ v.fault.description.$errors[0].$message }}</small>
                         </div>

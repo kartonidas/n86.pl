@@ -4,6 +4,7 @@
     
     import Address from '@/views/app/_partials/Address.vue'
     import FaultService from '@/service/FaultService'
+    import DictionaryService from '@/service/DictionaryService'
     
     export default {
         components: { Address },
@@ -11,10 +12,12 @@
             setMetaTitle('meta.title.fault_show')
             
             const faultService = new FaultService()
+            const dictionaryService = new DictionaryService()
             return {
                 faultService,
                 hasAccess,
-                getValueLabel
+                getValueLabel,
+                dictionaryService
             }
         },
         data() {
@@ -25,6 +28,8 @@
                     status: {},
                     item: {},
                 },
+                faultStatuses: [],
+                loadingFaultStatuses: false,
             }
         },
         beforeMount() {
@@ -50,8 +55,25 @@
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
                     }
                 );
+                
+            this.getFaultStatuses()
         },
         methods: {
+            getFaultStatuses() {
+                this.loadingFaultStatuses = true
+                this.faultStatuses = []
+                this.dictionaryService.listByType('fault_statuses', 999, 1)
+                    .then(
+                        (response) => {
+                            this.faultStatuses = response.data.data
+                            this.loadingFaultStatuses = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    );
+            },
+            
             getBreadcrumbs() {
                 let items = [
                     {'label' : this.$t('menu.estates'), disabled : true },
@@ -61,12 +83,29 @@
                     
                 return items
             },
+            
             editFault() {
                 this.$router.push({name: 'fault_edit'})
             },
+            
             back() {
                 this.$router.push({name: 'faults'})
             },
+            
+            changeFaultStatus() {
+                let data = {
+                    status_id : this.fault.status_id
+                }
+                this.faultService.update(this.$route.params.faultId, data)
+                    .then(
+                        (response) => {
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('faults.status_was_changed'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        },
+                    )
+            }
         }
     }
 </script>
@@ -88,7 +127,8 @@
                                 <span class="font-medium">{{ $t('faults.status') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                {{ fault.status.name }}
+                                <Dropdown id="status_id" v-model="fault.status_id" :loading="loadingFaultStatuses" :options="faultStatuses" optionLabel="name" optionValue="id" :placeholder="$t('faults.status')" class="w-6 max-w-20rem mr-2"/>
+                                <Button icon="pi pi-save" @click="changeFaultStatus" :disabled="loadingFaultStatuses" v-tooltip.top="$t('app.save')"></Button>
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             
@@ -115,8 +155,7 @@
                             <div class="col-fixed pt-0 pb-1" style="width: 230px">
                                 <span class="font-medium">{{ $t('faults.description') }}:</span>
                             </div>
-                            <div class="col-12 sm:col-7 pt-0 pb-1">
-                                {{ fault.description }}
+                            <div class="col-12 sm:col-7 pt-0 pb-1" v-html="fault.description_html">
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                         </div>

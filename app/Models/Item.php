@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
@@ -39,6 +40,10 @@ class Item extends Model
     const OWNERSHIP_PROPERTY = "property";
     const OWNERSHIP_MANAGE = "manage";
     
+    const MODE_NORMAL = "normal";
+    const MODE_ARCHIVED = "archived";
+    const MODE_LOCKED = "locked";
+    
     public static $sortable = ["name"];
     public static $defaultSortable = ["name", "asc"];
     
@@ -60,11 +65,91 @@ class Item extends Model
         ];
     }
     
+    public function canArchive()
+    {
+        /*
+         * If item has currently active renatal cannot archive item
+         */
+        if(Rental::where("item_id", $this->id)->where("status", Rental::STATUS_CURRENT)->count())
+            return false;
+        
+        /*
+         * If item is in archived mode cannot archive item
+         */
+        if(in_array($this->mode, [self::MODE_ARCHIVED]))
+            return false;
+        
+        return true;
+    }
+    
+    public function archive()
+    {
+        if(!$this->canArchive())
+            throw new InvalidStatus("Cannot archive item");
+        
+        DB::transaction(function () {
+            $this->rented = 0;
+            $this->waiting_rentals = 0;
+            $this->mode = self::MODE_ARCHIVED;
+            $this->save();
+            
+            $waitingRentals = Rental::where("item_id", $this->id)->where("status", Rental::STATUS_WAITING)->get();
+            foreach($waitingRentals as $waitingRental)
+            {
+                $waitingRental->status = Rental::STATUS_CANCELED;
+                $waitingRental->save();
+            }
+        });
+        return true;
+    }
+    
+    public function canLock()
+    {
+        if(in_array($this->mode, [self::MODE_LOCKED, self::MODE_ARCHIVED]))
+            return false;
+        return true;
+    }
+    
+    public function lock()
+    {
+        if(!$this->canLock())
+            throw new InvalidStatus("Cannot archive item");
+        
+        DB::transaction(function () {
+            $this->waiting_rentals = 0;
+            $this->mode = self::MODE_LOCKED;
+            $this->save();
+            
+            $waitingRentals = Rental::where("item_id", $this->id)->where("status", Rental::STATUS_WAITING)->get();
+            foreach($waitingRentals as $waitingRental)
+            {
+                $waitingRental->status = Rental::STATUS_CANCELED;
+                $waitingRental->save();
+            }
+        });
+    }
+    
+    public function canUnlock()
+    {
+        if($this->mode != self::MODE_LOCKED)
+            return false;
+        return true;
+    }
+    
+    public function unlock()
+    {
+        if(!$this->canUnlock())
+            throw new InvalidStatus("Cannot archive item");
+        
+        $this->mode = self::MODE_NORMAL;
+        $this->save();
+    }
+    
     public function canDelete()
     {
         $c1 = Rental::where("item_id", $this->id)->count();
             
-        if($c1)
+        if($c1 || in_array($this->mode, [self::MODE_ARCHIVED, self::MODE_LOCKED]))
             return false;
         
         return true;
@@ -164,7 +249,7 @@ class Item extends Model
     {
         if($item->customer_id > 0)
         {
-            $totalItems = self::where("customer_id", $item->customer_id)->where("hidden", 0)->count();
+            $totalItems = self::where("customer_id", $item->customer_id)->where("hidden", 0)->active()->count();
             $customer = Customer::find($item->customer_id);
             if($customer)
             {
@@ -223,6 +308,49 @@ class Item extends Model
     
     public function scopeActive(Builder $query): void
     {
-        $query->whereRaw("1=1");
+        $query->whereIn("mode", [self::MODE_NORMAL, self::MODE_LOCKED]);
+    }
+    
+    public function canEdit()
+    {
+        if($this->mode == self::MODE_ARCHIVED)
+            return false;
+        
+        return true;
+    }
+    
+    public function canAddRental()
+    {
+        if(in_array($this->mode, [self::MODE_ARCHIVED, self::MODE_LOCKED]))
+            return false;
+        
+        return true;
+    }
+    
+    public function getRentalInfo()
+    {
+        $out = [];
+        $rental = $this->getCurrentRental();
+        if($rental)
+        {
+            $out["current"] = [
+                "start" => $rental->start,
+                "end" => $rental->period == Rental::PERIOD_INDETERMINATE ? mb_strtolower(__("Indeterminate_single")) : $rental->end,
+                "termination" => $rental->termination ? $rental->termination_time : null
+            ];
+        }
+        
+        $nextRental = Rental::where("item_id", $this->id)->where("status", Rental::STATUS_WAITING)->where("start", ">", time())->orderBy("start", "ASC")->first();
+        if($nextRental)
+        {
+            $nextRental->prepareViewData();
+            $out["next"] = [
+                "start" => $nextRental->start,
+                "end" => $nextRental->period == Rental::PERIOD_INDETERMINATE ? mb_strtolower(__("Indeterminate_single")) : $nextRental->end,
+                "termination" => $nextRental->termination ? $nextRental->termination_time : null
+            ];
+        }
+        
+        return $out;
     }
 }

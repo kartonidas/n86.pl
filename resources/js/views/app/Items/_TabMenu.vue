@@ -70,7 +70,7 @@
 
 <template>
     <div>
-        <Header :object="item" type="item" :showEditButton="true"/>
+        <Header :object="item" type="item" :showEditButton="item.can_edit" :class="[item.mode == 'archived' ? 'archived-item' : '']"/>
         
         <Menubar :model="items" class="mb-0 mt-5">
             <template #item="{ item, props, hasSubmenu }">

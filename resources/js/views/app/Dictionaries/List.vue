@@ -166,7 +166,7 @@
                     </Column>
                     <Column field="delete" v-if="hasAccess('dictionary:delete')" style="min-width: 45px; width: 45px" class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <Button icon="pi pi-trash" :disabled="!data.can_delete" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>
                     </Column>
                     <template #empty>

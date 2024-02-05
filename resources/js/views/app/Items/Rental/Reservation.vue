@@ -99,11 +99,19 @@
                 
                 <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                     <h5 class="inline-flex mb-0 text-color font-medium">{{ $t("items.reservations") }}</h5>
-                    <div v-if="hasAccess('rent:create')">
+                    <div v-if="hasAccess('rent:create') && item.can_add_rental">
                         <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
                     </div>
                 </div>
                 <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
+                    <Column :header="$t('rent.number')" field="full_number">
+                        <template #body="{ data }">
+                            {{ data.full_number }}
+                            <div>
+                                <small>{{ data.document_date }}</small>
+                            </div>
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.tenant')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
@@ -130,6 +138,7 @@
                     <Column :header="$t('rent.rent')">
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
+                            {{ data.currency }}
                         </template>
                     </Column>
                     <template #empty>

@@ -136,6 +136,13 @@ export const getRentalBoxColor = (status) => {
     }
 };
 
+export const getItemRowColor = (mode) => {
+    switch (mode) {
+        case "archived":
+            return "bg-gray-100 text-gray-400 archived-item";
+    }
+};
+
 export const getDatesFromRange = (start, end, interval) => {
     var days = [];
     for (var m = moment(start); m.isBefore(end); m.add(1, interval))

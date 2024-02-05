@@ -146,8 +146,6 @@
                                 this.errors = getResponseErrors(errors)
                             },
                         )
-                    
-                    console.log(cost)
                 }
             },
             
@@ -181,7 +179,7 @@
                     <Column :header="$t('items.from_day')" style="width: 180px;" field="from_time"></Column>
                     <Column :header="$t('items.value')" field="cost" class="text-right">
                         <template #body="{ data }">
-                            {{ numeralFormat(data.cost, '0.00') }}
+                            {{ numeralFormat(data.cost, '0.00') }} {{ data.currency }}
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">

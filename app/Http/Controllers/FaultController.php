@@ -56,7 +56,6 @@ class FaultController extends Controller
                 $faults->whereIn("item_id", !empty($itemIds) ? $itemIds : [-1]);
             }
             
-            
             if(!empty($validated["search"]["status"]))
                 $faults->where("status_id", $validated["search"]["status"]);
             
@@ -80,6 +79,7 @@ class FaultController extends Controller
         {
             $faults[$i]->item = $fault->getItem();
             $faults[$i]->status = $fault->getStatus();
+            $faults[$i]->prepareViewData();
         }
         
         $out = [
@@ -119,6 +119,7 @@ class FaultController extends Controller
         
         $fault->item = $fault->getItem();
         $fault->status = $fault->getStatus();
+        $fault->prepareViewData();
         
         return $fault;
     }

@@ -131,7 +131,7 @@
                                 <span class="font-medium">{{ $t('items.cost') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                {{ numeralFormat(bill.cost, '0.00') }}
+                                {{ numeralFormat(bill.cost, '0.00') }} {{ bill.currency }}
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             

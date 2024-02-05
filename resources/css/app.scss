@@ -105,3 +105,15 @@ LI.p-tabview-header:not(.p-highlight) A {
 .p-inputnumber.text-right .p-inputnumber-input {
     text-align: right;
 }
+
+.archived-item {
+    color: var(--gray-400) !important;
+}
+
+.archived-item A {
+    color: var(--gray-500) !important;
+}
+
+.archived-item .p-badge {
+    background: var(--gray-400);
+}

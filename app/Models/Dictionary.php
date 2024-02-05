@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Exceptions\InvalidStatus;
+use App\Models\CustomerInvoice;
+use App\Models\Fault;
+use App\Models\ItemBill;
+use App\Models\ItemCyclicalFee;
 use App\Models\User;
 
 class Dictionary extends Model
@@ -47,5 +52,36 @@ class Dictionary extends Model
                 }
             }
         }
+    }
+    
+    public function delete()
+    {
+        if(!$this->canDelete())
+            throw new InvalidStatus(__("Cannot delete dictionary"));
+        
+        return parent::delete();
+    }
+    
+    public function canDelete()
+    {
+        switch($this->type)
+        {
+            case "bills":
+                if(ItemBill::where("bill_type_id", $this->id)->count() || ItemCyclicalFee::where("bill_type_id", $this->id)->count())
+                    return false;
+            break;
+        
+            case "payment_types":
+                if(CustomerInvoice::where("payment_type_id", $this->id)->count())
+                    return false;
+            break;
+        
+            case "fault_statuses":
+                if(Fault::where("status_id", $this->id)->count())
+                    return false;
+            break;
+        }
+        
+        return true;
     }
 }

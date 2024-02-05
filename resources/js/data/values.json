@@ -215,6 +215,10 @@
                     "name": "Wypowiedziany"
                 },
                 {
+                    "id": "canceled",
+                    "name": "Anulowany"
+                },
+                {
                     "id": "during_termination",
                     "name": "W trakcie wypowiedzenia"
                 }

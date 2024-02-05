@@ -58,7 +58,7 @@
             getArchiveList() {
                 const search = {
                     item_id : this.$route.params.itemId,
-                    status_arr : ['archive', 'termination'],
+                    status_arr : ['archive', 'termination', 'canceled'],
                 };
                 this.rentalService.list(this.meta.archive_rentals.perPage, this.meta.archive_rentals.currentPage, 'end', -1, search)
                     .then(
@@ -94,6 +94,14 @@
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="rent:history" class="mb-5"/>
                 
                 <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.perPage" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">
+                    <Column :header="$t('rent.number')" field="full_number">
+                        <template #body="{ data }">
+                            {{ data.full_number }}
+                            <div>
+                                <small>{{ data.document_date }}</small>
+                            </div>
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.tenant')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('tenant_types', data.tenant.type)" class="font-normal" severity="info"></Badge>
@@ -110,6 +118,11 @@
                             </div>
                         </template>
                     </Column>
+                    <Column :header="$t('rent.status')">
+                        <template #body="{ data }">
+                            {{ getValueLabel('rental.statuses', data.status) }}
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.period_short')">
                         <template #body="{ data }">
                             {{ data.start }} - 
@@ -120,6 +133,7 @@
                     <Column :header="$t('rent.rent')">
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
+                            {{ data.currency }}
                         </template>
                     </Column>
                     <template #empty>

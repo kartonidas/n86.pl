@@ -334,14 +334,6 @@
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
     
-    <div class="mt-5 hidden">
-        <strong>TODO:</strong>
-        <ul>
-            <li>Zwrot kaucji</li>
-        </ul>
-    </div>
-    
-    
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card">
@@ -363,7 +355,7 @@
                         <div class="col-12 sm:col-6">
                             <div class="card text-center p-3 border-round-lg uppercase" :class="rental.balance < 0 ? 'text-red-600 border-red-600' : 'text-green-600  border-green-600'">
                                 <div class="text-4xl font-semibold">
-                                    <template v-if="rental.balance > 0">+</template>{{ numeralFormat(rental.balance, '0.00') }}
+                                    <template v-if="rental.balance > 0">+</template>{{ numeralFormat(rental.balance, '0.00') }} {{ rental.currency }}
                                 </div>
                                 <div class="text-sm mt-1">
                                     {{ $t('rent.balance') }}
@@ -479,7 +471,7 @@
                                 <span class="font-medium">{{ $t('rent.rent') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                {{ numeralFormat(rental.rent, '0.00') }}
+                                {{ numeralFormat(rental.rent, '0.00') }} {{ rental.currency }}
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             
@@ -514,7 +506,7 @@
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
                                 <span v-if="rental.deposit">
-                                    {{ numeralFormat(rental.deposit, '0.00') }}
+                                    {{ numeralFormat(rental.deposit, '0.00') }} {{ rental.currency }}
                                     <Badge :value="$t('rent.deposit_paid')" class="font-normal ml-1" severity="success" v-if="rental.has_paid_deposit"></Badge>
                                     <Badge :value="$t('rent.deposit_unpaid')" class="font-normal ml-1" severity="danger" v-if="!rental.has_paid_deposit"></Badge>
                                 </span>
@@ -606,7 +598,7 @@
                             </Column>
                             <Column :header="$t('items.cost')" class="text-right">
                                 <template #body="{ data }">
-                                    {{ numeralFormat(data.cost, '0.00') }}
+                                    {{ numeralFormat(data.cost, '0.00') }} {{ data.currency }}
                                 </template>
                             </Column>
                             <Column :header="$t('items.payment_date')" class="text-center">
@@ -706,7 +698,7 @@
                             </Column>
                             <Column :header="$t('rent.amount')" class="text-right">
                                 <template #body="{ data }">
-                                    {{ numeralFormat(data.amount, '0.00') }}
+                                    {{ numeralFormat(data.amount, '0.00') }} {{ data.currency }}
                                 </template>
                             </Column>
                             <Column :header="$t('rent.paid_date')" class="text-center" field="paid_date"></Column>

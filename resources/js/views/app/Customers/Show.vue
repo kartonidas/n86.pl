@@ -1,5 +1,5 @@
 <script>
-    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle } from '@/utils/helper'
+    import { getValueLabel, getResponseErrors, hasAccess, setMetaTitle, getItemRowColor } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -19,7 +19,8 @@
                 customerService,
                 itemService,
                 hasAccess,
-                getValueLabel
+                getValueLabel,
+                getItemRowColor
             }
         },
         data() {
@@ -78,7 +79,8 @@
             
             getItemsList() {
                 const search = {
-                    customer_id : this.$route.params.customerId
+                    customer_id : this.$route.params.customerId,
+                    mode: 'all'
                 };
                 this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, null, null, search)
                     .then(
@@ -190,11 +192,12 @@
                         <Button icon="pi pi-plus" @click="addItem" v-tooltip.left="$t('customers.add_new_item')"></Button>
                     </div>
                 </div>
-                <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
+                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
                             <div class="mt-1">
+                                <i class="pi pi-lock pr-1" v-if="data.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
                                 <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
                                     {{ data.name }}
                                 </router-link>
@@ -211,6 +214,17 @@
                         <template #body="{ data }">
                             <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
                             <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
+                            
+                            <template v-if="data.rentals">
+                                <div class="text-sm text-gray-600 mt-2">
+                                    <div v-if="data.rentals.current">
+                                        {{ $t('items.end') }}: {{ data.rentals.current.end }}
+                                    </div>
+                                    <div v-if="data.rentals.next">
+                                        {{ $t('items.reservation_single') }}: {{ data.rentals.next.start }}-{{ data.rentals.next.end }}
+                                    </div>
+                                </div>
+                            </template>
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">

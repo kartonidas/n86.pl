@@ -1,5 +1,5 @@
 <script>
-    import { hasAccess, setMetaTitle, getValueLabel, getValues } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValueLabel, getValues, getItemRowColor } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -15,7 +15,8 @@
             return {
                 itemService,
                 hasAccess,
-                getValueLabel
+                getValueLabel,
+                getItemRowColor
             }
         },
         data() {
@@ -23,6 +24,10 @@
                 items: [],
                 displayConfirmation: false,
                 deleteItemId: null,
+                lockConfirmationModal: false,
+                unlockConfirmationModal: false,
+                lockItemId: null,
+                unlockItemId: null,
                 item_types: getValues('item_types'),
                 rented: [
                     {"id": 0, "name" : this.$t('items.free')},
@@ -124,7 +129,61 @@
                 this.meta.search = {}
                 appStore().setTableFilter('items', this.meta.search)
                 this.getList()
-            }
+            },
+            
+            openUnlockConfirmation(id) {
+                this.unlockConfirmationModal = true
+                this.unlockItemId = id
+            },
+            
+            closeUnlockConfirmationModal() {
+                this.unlockConfirmationModal = false
+                this.unlockItemId = null
+            },
+            
+            confirmUnlockItem() {
+                this.itemService.unlock(this.unlockItemId)
+                    .then(
+                        (response) => {
+                            this.getList();
+                            this.unlockConfirmationModal = false
+                            this.unlockItemId = null
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.item_unlocked'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        },
+                    )
+            },
+            
+            openLockConfirmation(id) {
+                this.lockConfirmationModal = true
+                this.lockItemId = id
+            },
+            
+            closeLockConfirmationModal() {
+                this.lockConfirmationModal = false
+                this.lockItemId = null
+            },
+            
+            confirmLockItem() {
+                this.itemService.lock(this.lockItemId)
+                    .then(
+                        (response) => {
+                            this.getList();
+                            this.lockConfirmationModal = false
+                            this.lockItemId = null
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.item_locked'), life: 3000 });
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        },
+                    )
+            },
+            
+            archive(id) {
+                this.$router.push({name: 'item_archive', params: { itemId : id } })
+            },
         },
     }
 </script>
@@ -166,11 +225,12 @@
                     </div>
                 </form>
                 
-                <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
                             <div class="mt-1">
+                                <i class="pi pi-lock pr-1" v-if="data.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
                                 <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
                                     {{ data.name }}
                                 </router-link>
@@ -187,11 +247,31 @@
                         <template #body="{ data }">
                             <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
                             <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
+                            
+                            <template v-if="data.rentals">
+                                <div class="text-sm text-gray-600 mt-2">
+                                    <div v-if="data.rentals.current">
+                                        {{ $t('items.end') }}: {{ data.rentals.current.end }}
+                                    </div>
+                                    <div v-if="data.rentals.next">
+                                        {{ $t('items.reservation_single') }}: {{ data.rentals.next.start }}-{{ data.rentals.next.end }}
+                                    </div>
+                                </div>
+                            </template>
                         </template>
                     </Column>
-                    <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
+                    <Column field="delete" v-if="hasAccess('item:delete') || hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
-                            <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                            <template v-if="data.mode != 'archived'">
+                                <template v-if="hasAccess('item:delete')">
+                                    <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2 mr-2" style="width: auto" @click="openConfirmation(data.id)"/>
+                                </template>
+                                <template v-if="hasAccess('item:update')">
+                                    <Button v-if="data.mode == 'locked'" :disabled="!data.can_unlock" icon="pi pi-unlock" v-tooltip.bottom="$t('items.unlock')" severity="warning" class="p-2" style="width: auto" @click="openUnlockConfirmation(data.id)"/>
+                                    <Button v-if="data.mode == 'normal'" :disabled="!data.can_lock" icon="pi pi-lock" v-tooltip.bottom="$t('items.lock')" severity="danger" class="p-2" style="width: auto" @click="openLockConfirmation(data.id)"/>
+                                    <Button :disabled="!data.can_archive" icon="pi pi-inbox" v-tooltip.bottom="$t('items.archive')" severity="contrast" class="p-2 ml-2" style="width: auto" @click="archive(data.id)"/>
+                                </template>
+                            </template>
                         </template>
                     </Column>
                     <template #empty>
@@ -206,6 +286,30 @@
                     <template #footer>
                         <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
                         <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-danger" autofocus />
+                    </template>
+                </Dialog>
+                <Dialog v-model:visible="lockConfirmationModal" :closable="false" :style="{ width: '450px' }" :modal="true">
+                    <div class="text-center" style="color: var(--red-600)">
+                        <i class="pi pi-exclamation-triangle" style="font-size: 4rem" />
+                        <p class="line-height-3 mt-3">
+                            {{ $t('items.lock_confirmation_text') }}
+                        </p>
+                    </div>
+                    <template #footer>
+                        <Button :label="$t('app.no')" icon="pi pi-times" @click="closeLockConfirmationModal" class="p-button-secondary" autofocus/>
+                        <Button :label="$t('items.lock')" icon="pi pi-check" @click="confirmLockItem" class="p-button-danger"/>
+                    </template>
+                </Dialog>
+                <Dialog v-model:visible="unlockConfirmationModal" :closable="false" :style="{ width: '450px' }" :modal="true">
+                    <div class="text-center" style="color: var(--red-600)">
+                        <i class="pi pi-exclamation-triangle" style="font-size: 4rem" />
+                        <p class="line-height-3 mt-3">
+                            {{ $t('items.unlock_confirmation_text') }}
+                        </p>
+                    </div>
+                    <template #footer>
+                        <Button :label="$t('app.no')" icon="pi pi-times" @click="closeUnlockConfirmationModal" class="p-button-secondary" autofocus />
+                        <Button :label="$t('items.unlock')" icon="pi pi-check" @click="confirmUnlockItem" class="p-button-danger"/>
                     </template>
                 </Dialog>
             </div>

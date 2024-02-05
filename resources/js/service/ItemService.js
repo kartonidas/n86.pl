@@ -110,4 +110,16 @@ export default class ItemService {
     addCyclicalFeeCost(itemId, feeId, costData) {
         return axios.put('api/v1/item/' + itemId + "/fee/" + feeId + "/cost", removeNullValues(costData));
     }
+    
+    archive(itemId) {
+        return axios.post('api/v1/item/' + itemId + "/archive");
+    }
+    
+    lock(itemId) {
+        return axios.post('api/v1/item/' + itemId + "/lock");
+    }
+    
+    unlock(itemId) {
+        return axios.post('api/v1/item/' + itemId + "/unlock");
+    }
 }

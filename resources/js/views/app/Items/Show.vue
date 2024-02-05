@@ -43,6 +43,10 @@
             showRental() {
                 if (this.item.current_rental.id != undefined)
                     this.$router.push({name: 'rental_show', params: { rentalId : this.item.current_rental.id }})
+            },
+            
+            archive() {
+                this.$router.push({name: 'item_archive'})
             }
         },
     }
@@ -70,12 +74,13 @@
                     <div class="col text-center" v-if="item.default_rent">
                         <span class="font-medium">{{ $t('items.default_rent_value') }}: </span>
                         <br/>
-                        <i>{{ numeralFormat(item.default_rent, '0.00') }}</i>
+                        <i>{{ numeralFormat(item.default_rent, '0.00') }} {{ item.currency }}</i>
+                        
                     </div>
                     <div class="col text-center" v-if="item.default_deposit">
                         <span class="font-medium">{{ $t('items.default_deposit_value') }}: </span>
                         <br/>
-                        <i>{{ numeralFormat(item.default_deposit, '0.00') }}</i>
+                        <i>{{ numeralFormat(item.default_deposit, '0.00') }} {{ item.currency }}</i>
                     </div>
                     <div class="col text-center">
                         <span class="font-medium">{{ $t('items.ownership') }}: </span>
@@ -98,7 +103,7 @@
                     <i class="text-sm">{{ item.comments}}</i>
                 </p>
             </div>
-            <div class="card">
+            <div class="card" v-if="item.mode != 'archived'">
                 <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
                      <h4 class="inline-flex mb-0 mt-2 text-color font-medium">
                          {{ $t("items.currently_tenant") }}
@@ -126,6 +131,15 @@
                     </div>
                 </div>
             </div>
+            
+            <template v-if="item.mode != 'archived'">
+                <div class="text-right">
+                <template v-if="hasAccess('item:update') && item.can_archive">
+                    <Button :label="$t('items.archive')" icon="pi pi-inbox" v-tooltip.top="$t('items.archive')" severity="contrast" class="p-2 ml-2" style="width: auto" @click="archive()"/>
+                </template>
+                </div>
+            </template>
+            
         </div>
     </div>
 </template>

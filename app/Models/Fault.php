@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 use App\Models\Dictionary;
 use App\Models\Item;
@@ -18,6 +20,30 @@ class Fault extends Model
     }
     
     protected $hidden = ["uuid"];
+    
+    protected $casts = [
+        "created_at" => "datetime:Y-m-d",
+    ];
+    
+    protected function descriptionHtml(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => nl2br($attributes["description"]),
+        );
+    }
+    
+    protected function descriptionShort(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => Str::limit($attributes["description"], 250),
+        );
+    }
+    
+    public function prepareViewData()
+    {
+        $this->description_html = $this->descriptionHtml;
+        $this->description_short = $this->descriptionShort;
+    }
     
     public function getItem()
     {

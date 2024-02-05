@@ -195,6 +195,13 @@ class RentalController extends Controller
         
         Rental::checkDates($rentData, $itemData["id"] ?? null);
         
+        if(!empty($itemData["id"]))
+        {
+            $item = Item::find($itemData["id"]);
+            if(!$item || !$item->canAddRental())
+                throw new InvalidStatus("Cannot rental selected item");
+        }
+        
         $rental = DB::transaction(function () use($itemData, $tenantData, $rentData) {
             if(empty($itemData["id"]))
                 $itemData["id"] = $this->createItem($itemData);
@@ -263,7 +270,7 @@ class RentalController extends Controller
         if(!$rental)
             throw new ObjectNotExist(__("Rental does not exist"));
         
-        if(!in_array($rental->status, [Rental::STATUS_CURRENT, Rental::STATUS_WAITING]))
+        if(!$rental->canUpdate())
             throw new InvalidStatus(__("Cannot update rental"));
         
         $validated = $request->validated();

@@ -58,7 +58,7 @@ class IndexController extends Controller
         }
         
         $out = [
-            "total_items" => Item::count(),
+            "total_items" => Item::active()->count(),
             "total_rentals" => Rental::active()->count(),
             "unpaid_bills" => $unpaidBills,
             "upcoming_bills" => $upcomingBills,

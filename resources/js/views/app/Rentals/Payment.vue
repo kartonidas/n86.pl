@@ -159,7 +159,7 @@
                             <li v-for="(bill, index) in bills.data" class="pb-2">
                                 <Checkbox v-model="checked_bills" name="bills" :inputId="getCheckboxInputId(bill.id)" :value="bill.balance_document.id" @change="calculateTotalCost"/>
                                 <label :for="getCheckboxInputId(bill.id)" class="pl-2">
-                                    {{ bill.bill_type.name }}: <span class="font-medium">{{ numeralFormat(bill.cost, '0.00') }}</span>
+                                    {{ bill.bill_type.name }}: <span class="font-medium">{{ numeralFormat(bill.cost, '0.00') }} {{ bill.currency }}</span>
                                     ({{ bill.payment_date }})
                                 </label>
                             </li>    

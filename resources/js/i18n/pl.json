@@ -258,7 +258,28 @@
         "change" : "Zmień",
         "value" : "Wartość",
         "from_day" : "Od dnia",
-        "last_12_months" : "Ostatnie 12 miesięcy"
+        "last_12_months" : "Ostatnie 12 miesięcy",
+        "lock" : "Zablokuj",
+        "unlock" : "Odblokuj",
+        "archive" : "Zarchiwizuj",
+        "cannot_archive" : "Nie można zarchiwizować wybranej nieruchomości",
+        "archive_line_1" : "Zamierzasz zarchiwizować nieruchomość:",
+        "archive_line_2" : "Jest to proces nieodwracalny. Nieruchomość i cała związana z obiektem historia będzie nadal dostępna, ale nie będziesz mógł wjęcej wynajmować tej nieruchomości. Jeśli nieruchomość posiada rezerwacje zostaną one anulowane.",
+        "archive_line_3" : "Zarchiwizowana nieruchomość nie będzie wliczana do limitu nieruchomości.",
+        "archive_danger" : "Uwaga!",
+        "you_intend_to_archive_item" : "Zamierzesz zarchiwizować nieruchomość:",
+        "irreversible_process" : "Jest to proces nieodwracalny!",
+        "item_archived" : "Nieruchomość została zarchiwizowana",
+        "cannot_rental_archived_item" : "Nie można wynająć zarchiwizowanej nieruchomości",
+        "reservation_single" : "rezerwacja",
+        "end" : "koniec",
+        "lock_confirmation" : "Zablokuj nieruchomość",
+        "unlock_confirmation" : "Odblokuj nieruchomość",
+        "item_unlocked" : "Nieruchomość została odblokowana",
+        "item_locked" : "Nieruchomość została zablokowana",
+        "unlock_confirmation_text" : "Zamierzasz odblokować wybraną nieruchomość. Po odblokowaniu będzie możliwy wynajem nieruchomości. Kontynuować?",
+        "lock_confirmation_text" : "Zamierzasz zablokować wybraną nieruchomość. Po zablokowaniu nie będzie możliwy wynajem nieruchomości (do momentu odblokowania), a aktualne rezerwacje zostaną anulowane. Zablokować mimo wszystko?",
+        "locked" : "Zablokowana"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -288,7 +309,8 @@
         "customer_invoices" : "Faktury",
         "payment_types" : "Sposoby płatności",
         "customer_invoices_config": "Ustawienia",
-        "fault_statuses" : "Statusy usterek"
+        "fault_statuses" : "Statusy usterek",
+        "items_list_archived" : "Archiwalne"
     },
     "meta": {
         "title" : {
@@ -367,7 +389,9 @@
             "customer_invoices_from_proforma" : "Nowa faktura z proformy",
             "new_fault" : "Nowe zgłoszenie",
             "update_fault" : "Edycja zgloszenia",
-            "fault_show" : "Szczegóły zgłoszenia"
+            "fault_show" : "Szczegóły zgłoszenia",
+            "item_archive" : "Zarchiwizuj nieruchomość",
+            "items_list_archived" : "Lista archiwalnych nieruchomości"
         }
     },
     "permissions" : {
@@ -795,6 +819,8 @@
         "description" : "Opis",
         "edit_fault": "Edycja zgłoszenia",
         "fault_updated" : "Zgłoszenie zostało zaktualizowane",
-        "show_fault": "Szczegóły zgłoszenia"
+        "show_fault": "Szczegóły zgłoszenia",
+        "add_date" : "Data zgłoszenia",
+        "status_was_changed" : "Status został zmieniony"
     }
 }

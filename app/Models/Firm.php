@@ -35,7 +35,7 @@ class Firm extends Model
     public static function stats(string $uuid)
     {
         $stats = [
-            "items" => \App\Models\Item::withoutGlobalScope("uuid")->where("uuid", $uuid)->count(),
+            "items" => \App\Models\Item::withoutGlobalScope("uuid")->where("uuid", $uuid)->active()->count(),
             "customers" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_CUSTOMER)->count(),
             "tenants" => \App\Models\Customer::withoutGlobalScope("uuid")->where("uuid", $uuid)->where("role", Customer::ROLE_TENANT)->count(),
             "rentals" => \App\Models\Rental::withoutGlobalScope("uuid")->active()->where("uuid", $uuid)->count(),

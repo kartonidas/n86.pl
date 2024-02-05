@@ -62,6 +62,10 @@ class GenerateRentalBills extends Command
                 
                 foreach($rentals as $rental)
                 {
+                    $item = $rental->item()->first();
+                    if(!$item || $item->mode == Item::MODE_ARCHIVED)
+                        continue;
+                        
                     if($rental->next_rental && $firstDayOfMonth <= $rental->next_rental && $lastDayOfMonth >= $rental->next_rental)
                     {
                         $cost = $rental->rent;

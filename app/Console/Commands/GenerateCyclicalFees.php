@@ -58,11 +58,8 @@ class GenerateCyclicalFees extends Command
                     foreach($cyclicalFees as $cyclicalFee)
                     {
                         $item = Item::withoutGlobalScopes()->find($cyclicalFee->item_id);
-                        if(!$item)
-                        {
-                            // Być może trzeba usunąć ten wpis skoro nie istnieje nieruchomość?
+                        if(!$item || $item->mode == Item::MODE_ARCHIVED)
                             continue;
-                        }
                         
                         $paymentDate = (new DateTime())->setTimestamp($time)->setTime(23, 59, 59);
                         $paymentDate->setDate(date("Y"), date("m"), $cyclicalFee->payment_day);

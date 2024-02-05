@@ -167,6 +167,12 @@ const router = createRouter({
                             meta: {permission: 'item:list'},
                         },
                         {
+                            path: '/app/items/archived',
+                            name: 'items_archived',
+                            component: () => import('@/views/app/Items/Archived.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
                             path: '/app/item/new',
                             name: 'item_new',
                             component: () => import('@/views/app/Items/New.vue'),
@@ -182,6 +188,12 @@ const router = createRouter({
                             path: '/app/item/edit/:itemId',
                             name: 'item_edit',
                             component: () => import('@/views/app/Items/Edit.vue'),
+                            meta: {permission: 'item:update'},
+                        },
+                        {
+                            path: '/app/item/archive/:itemId',
+                            name: 'item_archive',
+                            component: () => import('@/views/app/Items/Archive.vue'),
                             meta: {permission: 'item:update'},
                         },
                         {

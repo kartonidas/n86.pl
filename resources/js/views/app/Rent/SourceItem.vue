@@ -86,6 +86,11 @@
                         this.item = response.data
                         this.loading = false
                         this.rent.item_id = response.data.id
+                        
+                        if (!this.item.can_add_rental) {
+                            appStore().setError404(this.$t('items.cannot_rental_archived_item'));
+                            this.$router.push({name: 'objectnotfound'})
+                        }
                     },
                     (errors) => {
                         if(errors.response.status == 404)

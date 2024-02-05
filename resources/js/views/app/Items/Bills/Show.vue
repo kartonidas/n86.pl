@@ -109,7 +109,7 @@
                 </div>
                 
                 <div class="grid mt-3">
-                    <div class="col-12 md:col-8">
+                    <div class="col-12" :class="[!item.can_edit ? '' : 'md:col-8']">
                         <div class="grid">
                             <div class="col-fixed pt-0 pb-1" style="width: 230px">
                                 <span class="font-medium">{{ $t('items.bill_type') }}:</span>
@@ -123,7 +123,7 @@
                                 <span class="font-medium">{{ $t('items.cost') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                {{ numeralFormat(bill.cost, '0.00') }}
+                                {{ numeralFormat(bill.cost, '0.00') }} {{ bill.currency }}
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             
@@ -205,7 +205,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-12 md:col-4" v-if="item.can_edit">
                         <Button :label="$t('items.update_bill')" @click="editBill" type="button" severity="primary" iconPos="right" icon="pi pi-pencil" class="w-full text-center" v-if="hasAccess('item:update')" :disabled="bill.paid" />
                         <Button :label="$t('items.add_payment')" @click="payment" type="button" severity="secondary" iconPos="right" icon="pi pi-dollar" class="w-full text-center mt-3" v-if="hasAccess('item:update')" :disabled="bill.paid" />
                     </div>

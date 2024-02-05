@@ -30,7 +30,12 @@ class DictionaryController extends Controller
             $out[$type] = [];
             $dictionaries = Dictionary::where("type", $type)->orderBy("name", "ASC")->take($size)->get();
             foreach($dictionaries as $dictionary)
+            {
+                foreach($dictionary as $i => $dict)
+                    $dictionary[$i]->can_delete = $dict->canDelete();
+                
                 $out[$type][] = $dictionary;
+            }
         }
         
         return $out;
@@ -58,6 +63,11 @@ class DictionaryController extends Controller
             ->orderBy("name", "ASC")
             ->get();
             
+        foreach($dictionaries as $i => $dictionary)
+        {
+            $dictionaries[$i]->can_delete = $dictionary->canDelete();
+        }
+        
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),

@@ -13,7 +13,7 @@ class FaultRequest extends ListRequest
             "search.status" => "sometimes|integer",
             "search.item_name" => "nullable|string",
             "search.item_address" => "nullable|string",
-            "search.start" => ["nullable|date_format:Y-m-d"],
+            "search.start" => "nullable|date_format:Y-m-d",
             "search.end" => "nullable|date_format:Y-m-d",
         ]);
     }

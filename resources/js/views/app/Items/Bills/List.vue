@@ -143,7 +143,7 @@
                     {{ $t('help.bill_desc')}} 
                 </div>
                 
-                <div class="text-right mb-4" v-if="hasAccess('item:update')">
+                <div class="text-right mb-4" v-if="hasAccess('item:update') && item.can_edit">
                     <Button icon="pi pi-plus" :label="$t('items.add_bill_short')" size="small" v-tooltip.left="$t('items.add_bill')" @click="newBill" class="text-center"></Button>
                 </div>
                 
@@ -184,7 +184,7 @@
                     </Column>
                     <Column :header="$t('items.cost')" class="text-right">
                         <template #body="{ data }">
-                            {{ numeralFormat(data.cost, '0.00') }}
+                            {{ numeralFormat(data.cost, '0.00') }} {{ data.currency }}
                         </template>
                     </Column>
                     <Column :header="$t('items.payment_date')" class="text-center">
@@ -203,7 +203,7 @@
                             </div>
                         </template>
                     </Column>
-                    <Column field="delete" v-if="hasAccess('item:update')" style="min-width: 60px; width: 60px" class="text-center">
+                    <Column field="delete" v-if="hasAccess('item:update') && item.can_edit" style="min-width: 60px; width: 60px" class="text-center">
                         <template #body="{ data }">
                             <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmation(data.id)"/>
                         </template>

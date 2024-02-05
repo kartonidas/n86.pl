@@ -236,18 +236,22 @@
                     <Column :header="$t('rent.balance')" field="balance" sortable>
                         <template #body="{ data }">
                             {{ numeralFormat(data.balance, '0.00') }}
+                            {{ data.currency }}
                         </template>
                     </Column>
                     <Column :header="$t('rent.estate')" style="min-width: 300px;">
                         <template #body="{ data }">
-                            <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                {{ data.item.name }}
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data.item" :newline="true" emptyChar=""/>
-                                    </small>
+                            <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">
+                                <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <i class="pi pi-lock pr-1" v-if="data.item.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
+                                    {{ data.item.name }}
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.item" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </template>

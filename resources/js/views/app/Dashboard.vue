@@ -95,7 +95,7 @@
                             </Column>
                             <Column :header="$t('items.cost')" class="text-right">
                                 <template #body="{ data }">
-                                    {{ numeralFormat(data.cost, '0.00') }}
+                                    {{ numeralFormat(data.cost, '0.00') }} {{ data.currency }}
                                 </template>
                             </Column>
                             <template #empty>
@@ -123,7 +123,7 @@
                             </Column>
                             <Column :header="$t('items.cost')" class="text-right">
                                 <template #body="{ data }">
-                                    {{ numeralFormat(data.cost, '0.00') }}
+                                    {{ numeralFormat(data.cost, '0.00') }} {{ data.currency }}
                                 </template>
                             </Column>
                             <template #empty>
@@ -155,7 +155,7 @@
                             </Column>
                             <Column :header="$t('rent.balance')" field="balance">
                                 <template #body="{ data }">
-                                    {{ numeralFormat(data.balance, '0.00') }}
+                                    {{ numeralFormat(data.balance, '0.00') }} {{ data.currency }}
                                 </template>
                             </Column>
                             <Column :header="$t('rent.estate')" style="min-width: 300px;">

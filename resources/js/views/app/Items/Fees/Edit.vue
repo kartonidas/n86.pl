@@ -95,7 +95,7 @@
         <div class="col-12">
             <div class="card">
                 <TabMenu activeIndex="fees:const" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
-                <CyclicalFeeForm @submit-form="updateCyclicalFee" :fee="fee" source="update" :saving="saving" :loading="loading" :errors="errors" />
+                <CyclicalFeeForm @submit-form="updateCyclicalFee" :fee="fee" source="update" :saving="saving" :loading="loading" :errors="errors" :blockEdit="!item.can_edit" />
             </div>
         </div>
     </div>

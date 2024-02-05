@@ -35,6 +35,7 @@
             loading: { type: Boolean },
             errors: { type: Array },
             source: { type: String, default: 'new' },
+            blockEdit: { type: Boolean, default: false }
         },
         beforeMount() {
             this.dictionaryService.listByType('bills', 999, 1)
@@ -49,13 +50,16 @@
         },
         methods: {
             async submitForm() {
-                let fee = Object.assign({}, this.fee);
-                    
-                const result = await this.v.$validate()
-                if (result)
-                    this.$emit('submit-form', fee)
-                else
-                    this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
+                if(!this.blockEdit)
+                {
+                    let fee = Object.assign({}, this.fee);
+                        
+                    const result = await this.v.$validate()
+                    if (result)
+                        this.$emit('submit-form', fee)
+                    else
+                        this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
+                }
             },
             
             changeCost() {
@@ -112,7 +116,7 @@
                                 <InputNumber id="cost" :useGrouping="false" locale="pl-PL" :minFractionDigits="2" :maxFractionDigits="2" :placeholder="$t('items.cost')" class="w-full" :class="{'p-invalid' : v.fee.cost.$error}" v-model="fee.cost" :disabled="loading || saving || source == 'update'"/>
                             </div>
                             <div class="col-fixed pr-0" style="width:100px" v-if="source == 'update'">
-                                <Button severity="secondary" :label="$t('items.change')" @click="changeCost"/>
+                                <Button severity="secondary" :label="$t('items.change')" @click="changeCost" :disabled="blockEdit"/>
                             </div>
                         </div>
                         <small>{{ $t("help.cyclical_fee_cost") }}</small>
@@ -190,7 +194,7 @@
             
             <div class="flex justify-content-between align-items-center">
                 <Button type="button" :label="$t('app.cancel')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
-                <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center"></Button>
+                <Button type="submit" :label="$t('app.save')" v-if="!loading" :loading="saving" iconPos="right" icon="pi pi-save" class="w-auto text-center" :disabled="blockEdit"></Button>
             </div>
         </div>
     </form>

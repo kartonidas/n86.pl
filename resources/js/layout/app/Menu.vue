@@ -47,7 +47,7 @@ const model = ref([
                 icon: 'pi pi-fw pi-building',
                 to: { name: 'items' },
                 access: hasAccess('item:list'),
-                regex: /^\/app\/item(s?)(\/(.*))?$/i,
+                regex: /^\/app\/item(s?)(\/(?!archived).*)?$/i,
                 count: [{'index' : 'items', 'class' : 'info'}]
             },
             {

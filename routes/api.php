@@ -109,6 +109,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     $router->put('/item/{id}/fee/{fid}', [ItemController::class, "feeUpdate"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
     $router->delete('/item/{id}/fee/{fid}', [ItemController::class, "feeDelete"])->where("id", "[0-9]+")->where("fid", "[0-9]+");
     
+    $router->post('/item/{id}/archive', [ItemController::class, "archive"])->where("id", "[0-9]+");
+    $router->post('/item/{id}/lock', [ItemController::class, "lock"])->where("id", "[0-9]+");
+    $router->post('/item/{id}/unlock', [ItemController::class, "unlock"])->where("id", "[0-9]+");
+    
     // NAJEMCY
     $router->get('/tenants', [TenantController::class, "list"]);
     $router->put('/tenant', [TenantController::class, "create"]);

@@ -80,6 +80,16 @@ class ItemController extends Controller
                 $items->where("rented", !empty($validated["search"]["rented"]) ? 1 : 0);
         }
         
+        if(empty($validated["search"]["mode"]))
+        {
+            $items->where("mode", "!=", Item::MODE_ARCHIVED);
+        }
+        else
+        {
+            if($validated["search"]["mode"] !== "all")
+                $items->where("mode", $validated["search"]["mode"]);
+        }
+        
         $total = $items->count();
         
         $orderBy = $this->getOrderBy($request, Item::class, "name,asc");
@@ -89,7 +99,15 @@ class ItemController extends Controller
             ->get();
             
         foreach($items as $i => $item)
+        {
             $items[$i]->can_delete = $item->canDelete();
+            $items[$i]->can_archive = $item->canArchive();
+            $items[$i]->can_lock = $item->canLock();
+            $items[$i]->can_unlock = $item->canUnlock();
+            $items[$i]->can_edit = $item->canEdit();
+            $items[$i]->can_add_rental = $item->canAddRental();
+            $items[$i]->rentals = $item->getRentalInfo();
+        }
             
         $out = [
             "total_rows" => $total,
@@ -146,6 +164,11 @@ class ItemController extends Controller
         
         $item->customer = $item->getCustomer();
         $item->current_rental = $item->getCurrentRental();
+        $item->can_archive = $item->canArchive();
+        $item->can_lock = $item->canLock();
+        $item->can_unlock = $item->canUnlock();
+        $item->can_edit = $item->canEdit();
+        $item->can_add_rental = $item->canAddRental();
         
         return $item;
     }
@@ -157,6 +180,9 @@ class ItemController extends Controller
         $item = Item::find($itemId);
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
+        
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot update item"));
         
         $validated = $request->validated();
         
@@ -236,6 +262,9 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot add bill. Item was archived"));
+        
         $validated = $request->validated();
         
         if(!empty($validated["charge_current_tenant"]))
@@ -286,6 +315,9 @@ class ItemController extends Controller
         if($bill->paid)
             throw new InvalidStatus(__("Cannot edit paid bill"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot edit bill. Item was archived"));
+        
         $validated = $request->validated();
         
         foreach($validated as $field => $value)
@@ -311,6 +343,9 @@ class ItemController extends Controller
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot delete bill. Item was archived"));
+        
         $bill->delete();
         return true;
     }
@@ -327,6 +362,9 @@ class ItemController extends Controller
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot paid bill. Item was archived"));
+        
         return $bill->paid();
     }
     
@@ -341,6 +379,9 @@ class ItemController extends Controller
         $bill = ItemBill::find($billId);
         if(!$bill || $bill->item_id != $item->id)
             throw new ObjectNotExist(__("Bill does not exist"));
+        
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot unpaid bill. Item was archived"));
         
         return $bill->unpaid();
     }
@@ -359,6 +400,9 @@ class ItemController extends Controller
         
         if($bill->paid)
             throw new InvalidStatus(__("Bill is already paid"));
+        
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot paid bill. Item was archived"));
         
         $validated = $request->validated();
         
@@ -433,6 +477,9 @@ class ItemController extends Controller
         if(!$item)
             throw new ObjectNotExist(__("Item does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot add fees. Item was archived"));
+        
         $validated = $request->validated();
         
         $cyclicalFee = DB::transaction(function () use($item, $validated) {
@@ -482,6 +529,9 @@ class ItemController extends Controller
         if(!$fee || $fee->item_id != $item->id)
             throw new ObjectNotExist(__("Fee does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot update fee. Item was archived"));
+        
         $validated = $request->validated();
         
         foreach($validated as $field => $value)
@@ -506,6 +556,9 @@ class ItemController extends Controller
         $fee = ItemCyclicalFee::find($feeId);
         if(!$fee || $fee->item_id != $item->id)
             throw new ObjectNotExist(__("Fee does not exist"));
+        
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot delete fee. Item was archived"));
         
         $fee->delete();
         return true;
@@ -568,6 +621,9 @@ class ItemController extends Controller
         if(!$fee)
             throw new ObjectNotExist(__("Cyclical fee does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot add cost. Item was archived"));
+        
         $validated = $request->validated();
         
         $cnt = ItemCyclicalFeeCost
@@ -626,6 +682,9 @@ class ItemController extends Controller
         if(!$cost || $cost->item_cyclical_fee_id != $feeId)
             throw new ObjectNotExist(__("Cost does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot update cost. Item was archived"));
+        
         $validated = $request->validated();
         
         foreach($validated as $field => $value)
@@ -655,7 +714,55 @@ class ItemController extends Controller
         if(!$cost || $cost->item_cyclical_fee_id != $feeId)
             throw new ObjectNotExist(__("Fee does not exist"));
         
+        if(!$item->canEdit())
+            throw new InvalidStatus(__("Cannot delete cost. Item was archived"));
+        
         $cost->delete();
+        return true;
+    }
+    
+    public function archive(Request $request, int $itemId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        if(!$item->canArchive())
+            throw new ObjectNotExist(__("Cannot archive item"));
+        
+        $item->archive();
+        return true;
+    }
+    
+    public function lock(Request $request, int $itemId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        if(!$item->canLock())
+            throw new ObjectNotExist(__("Cannot lock item"));
+        
+        $item->lock();
+        return true;
+    }
+    
+    public function unlock(Request $request, int $itemId)
+    {
+        User::checkAccess("item:update");
+        
+        $item = Item::find($itemId);
+        if(!$item)
+            throw new ObjectNotExist(__("Item does not exist"));
+        
+        if(!$item->canUnlock())
+            throw new ObjectNotExist(__("Cannot unlock item"));
+        
+        $item->unlock();
         return true;
     }
 }

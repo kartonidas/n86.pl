@@ -6,6 +6,7 @@
     import Address from '@/views/app/_partials/Address.vue'
     import FaultService from '@/service/FaultService'
     import DictionaryService from '@/service/DictionaryService'
+    import moment from 'moment'
     
     export default {
         components: { Address },
@@ -234,8 +235,19 @@
                                     <small>
                                         <Address :object="data.item" :newline="true" emptyChar=""/>
                                     </small>
-                                    
                                 </div>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('faults.add_date')" class="text-center">
+                        <template #body="{ data }">
+                            {{ data.created_at }}
+                        </template>
+                    </Column>
+                    <Column :header="$t('faults.description')">
+                        <template #body="{ data }">
+                            <div style="white-space: normal">
+                                {{ data.description_short }}
                             </div>
                         </template>
                     </Column>

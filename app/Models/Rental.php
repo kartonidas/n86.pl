@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 use App\Exceptions\InvalidRentalDates;
 use App\Exceptions\InvalidStatus;
@@ -18,6 +19,7 @@ use App\Libraries\Helper;
 use App\Models\Balance;
 use App\Models\BalanceDocument;
 use App\Models\Config;
+use App\Models\Item;
 use App\Models\ItemBill;
 use App\Traits\NumberingTrait;
 
@@ -31,6 +33,7 @@ class Rental extends Model
     const STATUS_CURRENT = "current";
     const STATUS_WAITING = "waiting";
     const STATUS_TERMINATION = "termination";
+    const STATUS_CANCELED = "canceled";
     
     const PERIOD_MONTH = "month";
     const PERIOD_INDETERMINATE = "indeterminate";
@@ -129,6 +132,7 @@ class Rental extends Model
             self::STATUS_CURRENT => __("Current"),
             self::STATUS_WAITING => __("Waiting"),
             self::STATUS_TERMINATION => __("Termination"),
+            self::STATUS_CANCELED => __("Canceled"),
         ];
         
         if($duringTermination)
@@ -153,8 +157,14 @@ class Rental extends Model
 
     public function canUpdate()
     {
-        if(in_array($this->status, [self::STATUS_WAITING, self::STATUS_CURRENT]))
+        if(in_array($this->status, [self::STATUS_WAITING, self::STATUS_CURRENT]) && !$this->termination)
+        {
+            $item = $this->item()->first();
+            if(!$item || $item->mode != Item::MODE_NORMAL)
+                return false;
+            
             return true;
+        }
         
         return false;
     }
@@ -348,22 +358,28 @@ class Rental extends Model
     
     private function setWaiting()
     {
-        $this->status = self::STATUS_WAITING;
-        $this->saveQuietly();
-        
-        $item = $this->item()->withoutGlobalScopes()->first();
-        if($item)
-            $item->setRentedFlag();
+        DB::transaction(function () {
+            $this->status = self::STATUS_WAITING;
+            $this->saveQuietly();
+            
+            $item = $this->item()->withoutGlobalScopes()->first();
+            if($item)
+                $item->setRentedFlag();
+        });
     }
     
     private function setCurrent()
     {
-        $this->status = self::STATUS_CURRENT;
-        $this->saveQuietly();
-        
-        $item = $this->item()->withoutGlobalScopes()->first();
-        if($item)
+        DB::transaction(function () {
+            $this->status = self::STATUS_CURRENT;
+            $this->saveQuietly();
+            
+            $item = $this->item()->withoutGlobalScopes()->first();
+            if(!$item || !$item->canAddRental())
+                throw new InvalidStatus(__("Cannot rented item"));
+            
             $item->setRentedFlag();
+        });
     }
     
     private function setArchive()
