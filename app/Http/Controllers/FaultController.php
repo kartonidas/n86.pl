@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Exceptions\Exception;
+use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Http\Requests\FaultRequest;
 use App\Http\Requests\StoreFaultRequest;
@@ -131,6 +132,10 @@ class FaultController extends Controller
         $fault = Fault::find($faultId);
         if(!$fault)
             throw new ObjectNotExist(__("Fault does not exist"));
+        
+        $item = $fault->item()->first();
+        if(!$item || !$item->canEdit())
+            throw new InvalidStatus(__("Cannot update fault"));
         
         $validated = $request->validated();
         

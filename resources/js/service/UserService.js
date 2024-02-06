@@ -128,4 +128,28 @@ export default class UserService {
     updateInvoiceData(invoiceData) {
         return axios.post('api/v1/invoice-data', removeNullValues(invoiceData));
     }
+    
+    notifications(size, page) {
+        var data = {
+            size: size,
+            page: page,
+        };
+        return axios.get('api/v1/my-notifications', { params : removeNullValues(data) });
+    }
+    
+    createNotification(notificationData) {
+        return axios.put('api/v1/my-notification', removeNullValues(notificationData));
+    }
+    
+    getNotification(notificationId) {
+        return axios.get('api/v1/my-notification/' + notificationId);
+    }
+    
+    updateNotification(notificationId, notificationData) {
+        return axios.put('api/v1/my-notification/' + notificationId, removeNullValues(notificationData));
+    }
+    
+    removeNotification(notificationId) {
+        return axios.delete('api/v1/my-notification/' + notificationId);
+    }
 }

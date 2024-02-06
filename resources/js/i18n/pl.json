@@ -310,7 +310,8 @@
         "payment_types" : "Sposoby płatności",
         "customer_invoices_config": "Ustawienia",
         "fault_statuses" : "Statusy usterek",
-        "items_list_archived" : "Archiwalne"
+        "items_list_archived" : "Archiwalne",
+        "my_notifications" : "Moje powiadomienia"
     },
     "meta": {
         "title" : {
@@ -391,7 +392,9 @@
             "update_fault" : "Edycja zgloszenia",
             "fault_show" : "Szczegóły zgłoszenia",
             "item_archive" : "Zarchiwizuj nieruchomość",
-            "items_list_archived" : "Lista archiwalnych nieruchomości"
+            "items_list_archived" : "Lista archiwalnych nieruchomości",
+            "new_user_notification" : "Nowe powiadomienie",
+            "my_notifications" : "Moje powiadomienia"
         }
     },
     "permissions" : {
@@ -823,5 +826,16 @@
         "show_fault": "Szczegóły zgłoszenia",
         "add_date" : "Data zgłoszenia",
         "status_was_changed" : "Status został zmieniony"
+    },
+    "notifications" : {
+        "new_user_notification" : "Nowe powiadomienie",
+        "edit_user_notification" : "Edycja powiadomienia",
+        "notification_added" : "Powiadomienie zostało dodane",
+        "notification_updated" : "Powiadomienie zostało zaktualizowane",
+        "add_notification" : "Dodaj powiadomienie",
+        "type" : "Rodzaj zdarzenia",
+        "days" : "Ilość dni do zdarzenia",
+        "mode" : "Rodzaj wiadomości",
+        "deleted" : "Powiadomienie zostało usunięte"
     }
 }

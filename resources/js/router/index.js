@@ -539,6 +539,26 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/app/notifications',
+                    children: [
+                        {
+                            path: '/app/notifications',
+                            name: 'notifications',
+                            component: () => import('@/views/app/UserNotifications/List.vue'),
+                        },
+                        {
+                            path: '/app/notification/new',
+                            name: 'notification_new',
+                            component: () => import('@/views/app/UserNotifications/New.vue'),
+                        },
+                        {
+                            path: '/app/notification/:notificationId',
+                            name: 'notification_edit',
+                            component: () => import('@/views/app/UserNotifications/Edit.vue'),
+                        },
+                    ]
+                },
+                {
                     path: '/app/order',
                     meta: {requiresPackage: false},
                     children: [

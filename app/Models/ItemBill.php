@@ -87,7 +87,7 @@ class ItemBill extends Model
         }
         
         if(!isset(self::$cachedBillTypes[$this->bill_type_id]))
-            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::find($this->bill_type_id);
+            self::$cachedBillTypes[$this->bill_type_id] = Dictionary::withoutGlobalScopes()->where("uuid", $this->uuid)->find($this->bill_type_id);
         
         return self::$cachedBillTypes[$this->bill_type_id];
     }

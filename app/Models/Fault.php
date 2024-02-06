@@ -21,6 +21,9 @@ class Fault extends Model
     
     protected $hidden = ["uuid"];
     
+    public static $sortable = ["created_at"];
+    public static $defaultSortable = ["created_at", "desc"];
+    
     protected $casts = [
         "created_at" => "datetime:Y-m-d",
     ];

@@ -109,7 +109,6 @@ const model = ref([
     },
     {
         label: t('menu.settings'),
-        access: hasAccess('dictionary:list') || hasAccess('config:update') || hasAccess('owner'),
         items: [
             {
                 label: t('menu.dictionaries'),
@@ -124,6 +123,7 @@ const model = ref([
             { label: t('menu.document_templates'), icon: 'pi pi-fw pi-file-edit', to: { name: 'documents_templates' }, access: hasAccess('config:update'), regex: /^\/app\/documents\/templates(\/(.*))?$/i },
             { label: t('menu.configuration'), icon: 'pi pi-fw pi-cog', to: { name: 'config' }, access: hasAccess('config:update'), regex: /^\/app\/user\/config$/i },
             { label: t('menu.firm_data'), icon: 'pi pi-fw pi-wallet', access: hasAccess('owner'), to: { name: 'firm_data' }, regex: /^\/app\/firm\-data(\/(.*))?$/i},
+            { label: t('menu.my_notifications'), icon: 'pi pi-fw pi-bell', to: { name: 'notifications' }, regex: /^\/app\/notification(s?)(\/(.*))?$/i},
         ]
     },
     {

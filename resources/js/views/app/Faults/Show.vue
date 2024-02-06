@@ -117,18 +117,23 @@
             <div class="card">
                 <div class="flex justify-content-between align-items-center">
                     <Button type="button" :label="$t('app.back')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>
-                    <Button icon="pi pi-pencil" @click="editFault" v-tooltip.left="$t('app.edit')"></Button>
+                    <Button icon="pi pi-pencil" @click="editFault" v-tooltip.left="$t('app.edit')" v-if="fault.item.mode != 'archived'"></Button>
                 </div>
                 
                 <div class="grid mt-5">
                     <div class="col-12">
                         <div class="grid">
-                            <div class="col-fixed pt-0 pb-1" style="width: 230px">
+                            <div class="col-fixed pt-0 pb-1 align-self-center" style="width: 230px">
                                 <span class="font-medium">{{ $t('faults.status') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                <Dropdown id="status_id" v-model="fault.status_id" :loading="loadingFaultStatuses" :options="faultStatuses" optionLabel="name" optionValue="id" :placeholder="$t('faults.status')" class="w-6 max-w-20rem mr-2"/>
-                                <Button icon="pi pi-save" @click="changeFaultStatus" :disabled="loadingFaultStatuses" v-tooltip.top="$t('app.save')"></Button>
+                                <template v-if="fault.item.mode != 'archived'">
+                                    <Dropdown id="status_id" v-model="fault.status_id" :loading="loadingFaultStatuses" :options="faultStatuses" optionLabel="name" optionValue="id" :placeholder="$t('faults.status')" class="w-6 max-w-20rem mr-2"/>
+                                    <Button icon="pi pi-save" @click="changeFaultStatus" :disabled="loadingFaultStatuses" v-tooltip.top="$t('app.save')"></Button>
+                                </template>
+                                <template v-else>
+                                    {{ fault.status.name }}
+                                </template>
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             
@@ -136,19 +141,19 @@
                                 <span class="font-medium">{{ $t('faults.estate') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">
-                                
-                                <Badge :value="getValueLabel('item_types', fault.item.type)" class="font-normal" severity="info"></Badge>
-                                <div class="mt-1">
-                                    {{ fault.item.name }}
-                                            
-                                    <div>
-                                        <small>
-                                            <Address :object="fault.item" :newline="true" emptyChar=""/>
-                                        </small>
+                                <div :class="fault.item.mode == 'archived' ? 'archived-item' : ''">
+                                    <Badge :value="getValueLabel('item_types', fault.item.type)" class="font-normal" severity="info"></Badge>
+                                    <div class="mt-1">
+                                        <i class="pi pi-lock pr-1" v-if="fault.item.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
+                                        {{ fault.item.name }}
                                         
+                                        <div>
+                                            <small>
+                                                <Address :object="fault.item" :newline="true" emptyChar=""/>
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
-                                
                             </div>
                             <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
                             

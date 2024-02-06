@@ -14,6 +14,7 @@ use App\Http\Controllers\FaultController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\MyNotificationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -248,6 +249,13 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     $router->get('/fault/{id}', [FaultController::class, "get"])->where("id", "[0-9]+");
     $router->put('/fault/{id}', [FaultController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/fault/{id}', [FaultController::class, "delete"])->where("id", "[0-9]+");
+    
+    // POWIADOMIENIA
+    $router->get('/my-notifications', [MyNotificationController::class, "list"]);
+    $router->put('/my-notification', [MyNotificationController::class, "create"]);
+    $router->get('/my-notification/{id}', [MyNotificationController::class, "get"])->where("id", "[0-9]+");
+    $router->put('/my-notification/{id}', [MyNotificationController::class, "update"])->where("id", "[0-9]+");
+    $router->delete('/my-notification/{id}', [MyNotificationController::class, "delete"])->where("id", "[0-9]+");
 });
 
 Route::prefix('v1')->middleware(['locale'])->group(function () use($router) {

@@ -220,26 +220,29 @@
                     </div>
                 </form>
                 <DataTable :value="faults" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
-                    <Column :header="$t('faults.status')" field="status_id" sortable>
+                    <Column :header="$t('faults.status')">
                         <template #body="{ data }">
                             {{ data.status.name }}
                         </template>
                     </Column>
                     <Column :header="$t('faults.estate')">
                         <template #body="{ data }">
-                            <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                {{ data.item.name }}
-                                        
-                                <div>
-                                    <small>
-                                        <Address :object="data.item" :newline="true" emptyChar=""/>
-                                    </small>
+                            <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">
+                                <Badge :value="getValueLabel('item_types', data.item.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <i class="pi pi-lock pr-1" v-if="data.item.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
+                                    {{ data.item.name }}
+                                            
+                                    <div>
+                                        <small>
+                                            <Address :object="data.item" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </template>
                     </Column>
-                    <Column :header="$t('faults.add_date')" class="text-center">
+                    <Column :header="$t('faults.add_date')" class="text-center" sortable field="created_at">
                         <template #body="{ data }">
                             {{ data.created_at }}
                         </template>

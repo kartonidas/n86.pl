@@ -5,7 +5,7 @@
                 <img src="{{ $message->embed(public_path("images/logo_mail.png")) }}">
 			</div>
 			<div style="font-size:13px;margin:0;padding:0;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;line-height:1.5;height:100%!important;width:100%!important">
-				<div style="margin:0;margin-bottom:30px;color:#474747;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;font-size:15px;font-weight:300">
+				<div style="margin:0;margin-bottom:{{ !empty($mb) ? $mb : "30px" }};color:#474747;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;font-size:15px;font-weight:300">
 					<h2 style="margin:0;margin-bottom:30px;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;font-weight:300;line-height:1.5;font-size:18px;color:#2d2d2d!important">
 						@yield("title")
 					</h2>

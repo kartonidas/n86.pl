@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\BalanceDocument;
+use App\Models\ConfigNotification;
 use App\Models\Customer;
 use App\Models\DocumentTemplate;
 use App\Models\Item;
@@ -107,6 +108,15 @@ class GenAppValues extends Command
             
             foreach(config("invoice.gtu") as $type => $name)
                 $toJson[$lang]["invoices"]["gtu"][] = ["id" => $type, "name" => $name];
+            
+            foreach(ConfigNotification::getAllowedOwners() as $type => $name)
+                $toJson[$lang]["notifications"]["owner"][] = ["id" => $type, "name" => $name];
+                
+            foreach(ConfigNotification::getAllowedTypes() as $type => $row)
+                $toJson[$lang]["notifications"]["types"][] = array_merge(["id" => $type], $row);
+                
+            foreach(ConfigNotification::getAllowedModes() as $type => $name)
+                $toJson[$lang]["notifications"]["modes"][] = ["id" => $type, "name" => $name];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

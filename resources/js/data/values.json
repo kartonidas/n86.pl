@@ -525,6 +525,113 @@
                     "name": "\u015awiadczenie us\u0142ug transportowych i gospodarki magazynowej"
                 }
             ]
+        },
+        "notifications": {
+            "owner": [
+                {
+                    "id": "user",
+                    "name": "U\u017cytkownik"
+                },
+                {
+                    "id": "tenant",
+                    "name": "Najecma"
+                },
+                {
+                    "id": "customer",
+                    "name": "Klient"
+                }
+            ],
+            "types": [
+                {
+                    "id": "unpaid_bills",
+                    "name": "Nieop\u0142acone rachunki",
+                    "days": true,
+                    "allowed_days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "modes": [
+                        "single",
+                        "group",
+                        "group_object"
+                    ]
+                },
+                {
+                    "id": "rental_ending",
+                    "name": "Zbli\u017caj\u0105cy si\u0119 koniec wynajmu",
+                    "days": true,
+                    "allowed_days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29,
+                        30
+                    ],
+                    "modes": [
+                        "single",
+                        "group"
+                    ]
+                },
+                {
+                    "id": "rental_ended",
+                    "name": "Zako\u0144czenie wynajmu",
+                    "days": false,
+                    "modes": [
+                        "single"
+                    ]
+                }
+            ],
+            "modes": [
+                {
+                    "id": "single",
+                    "name": "Pojedynczy"
+                },
+                {
+                    "id": "group",
+                    "name": "Grupuj"
+                },
+                {
+                    "id": "group_object",
+                    "name": "Grupuj w ramach obiektu"
+                }
+            ]
         }
     }
 }
