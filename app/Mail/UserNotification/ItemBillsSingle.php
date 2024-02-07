@@ -2,6 +2,7 @@
 
 namespace App\Mail\UserNotification;
 
+use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,13 +19,13 @@ class ItemBillsSingle extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $data, public ConfigNotification $notification)
+    public function __construct(public $data, public ConfigNotification $notification, public DateTime $paymentDate)
     {
     }
     
     public function getTitle()
     {
-        return __('Unpaid bill: ');
+        return sprintf("Przypomnienie: za %d %s upłynie termin płatności rachunku: %s %s (%s)", $this->notification["days"], Helper::plurals($this->notification["days"], "dzień", "dni", "dni"), mb_strtolower($this->data["bill"]["bill_type"]), Helper::amount($this->data["bill"]["cost"]) . " " . $this->data["bill"]["currency"], $this->data["item"]["name"]);
     }
 
     /**
@@ -33,7 +34,7 @@ class ItemBillsSingle extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->getTitle() . $this->data["item"]["name"] . ", " . Helper::amount($this->data["bill"]["cost"]) . $this->data["bill"]["currency"],
+            subject: $this->getTitle(),
         );
     }
 

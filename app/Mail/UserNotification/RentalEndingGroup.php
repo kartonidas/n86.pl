@@ -2,6 +2,7 @@
 
 namespace App\Mail\UserNotification;
 
+use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,13 +19,21 @@ class RentalEndingGroup extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $data, public ConfigNotification $notification)
+    public function __construct(public $data, public ConfigNotification $notification, public DateTime $endDate)
     {
     }
     
     public function getTitle()
     {
-        return __('Ending rentals due within: ');
+        $totalEnding = count($this->data);
+        
+        return sprintf("Przypomnienie: za %d %s %s się %d %s",
+            $this->notification["days"],
+            Helper::plurals($this->notification["days"], "dzień", "dni", "dni"),
+            Helper::plurals($totalEnding, "zakończy", "zakończą", "zakończy"),
+            $totalEnding,
+            Helper::plurals($totalEnding, "wynajem", "wynajmy", "wynajmów")
+        );
     }
 
     /**
@@ -33,7 +42,7 @@ class RentalEndingGroup extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->getTitle() . $this->notification["days"] . " " . Helper::plurals($this->notification["days"], _("day_1"), __("day_2"), __("day_3")),
+            subject: $this->getTitle(),
         );
     }
 

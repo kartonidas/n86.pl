@@ -332,11 +332,17 @@
     "Item bills single": "Item bills single",
     "Item bills group": "Item bills group",
     "Unpaid bills due within: ": "Nieop\u0142acone rachunki, p\u0142atne w ci\u0105gu: ",
-    "day_1": "dnia",
+    "day_1": "dzie\u0144",
     "day_2": "dni",
     "day_3": "dni",
-    "day_2\"), __(\"day_3": "day_2\"), __(\"day_3",
     "Unpaid bill: ": "Nieop\u0142acony rachunek: ",
-    "Ending rental: ": "Kończący się wynajem: ",
-    "Ending rentals due within: ": "Kończące się wynajmy w ciągu najbliższych: "
+    "Ending rental: ": "Ko\u0144cz\u0105cy si\u0119 wynajem: ",
+    "Ending rentals due within: ": "Ko\u0144cz\u0105ce si\u0119 wynajmy w ci\u0105gu najbli\u017cszych: ",
+    "The rental was ended: ": "Zako\u0144czenie wynajmu: ",
+    "Wyra\u017cam zgod\u0119 na przetwarzanie moich danych osobowych przez Artur Patura \u2013 netextend.pl, w\u00a0celu\u00a0odpowiedzi na moje zapytanie, a\u00a0tak\u017ce przes\u0142ania oferty handlowej (je\u017celi dotyczy jej moje zapytanie": "Wyra\u017cam zgod\u0119 na przetwarzanie moich danych osobowych przez Artur Patura \u2013 netextend.pl, w\u00a0celu\u00a0odpowiedzi na moje zapytanie, a\u00a0tak\u017ce przes\u0142ania oferty handlowej (je\u017celi dotyczy jej moje zapytanie",
+    "%s' does not contain a list of actions.": "%s' does not contain a list of actions.",
+    "%s' contain invalid action '%s'.": "%s' contain invalid action '%s'.",
+    "Unsupported file type for file '%s": "Unsupported file type for file '%s",
+    "E-mail max :max characters\", [\"max\" => 50]": "E-mail max :max characters\", [\"max\" => 50]",
+    "The payment deadline will be in: ": "The payment deadline will be in: "
 }

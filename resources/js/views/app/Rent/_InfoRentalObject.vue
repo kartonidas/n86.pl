@@ -88,20 +88,20 @@
             </span>
         </div>
         <div class="mb-1">
-            {{ $t('rent.deposit') }}: {{ numeralFormat(object.deposit, '0.00') }}
+            {{ $t('rent.deposit') }}: {{ numeralFormat(object.deposit, '0.00') }} {{ object.currency }}
         </div>
         <div class="mb-1">
             {{ $t('rent.payment') }}: {{ getValueLabel('rental.payments', object.payment) }}
         </div>
         <div class="mb-1">
-            {{ $t('rent.rent') }}: {{ numeralFormat(object.rent, '0.00') }}
+            {{ $t('rent.rent') }}: {{ numeralFormat(object.rent, '0.00') }} {{ object.currency }}
         </div>
         <div v-if="object.payment == 'cyclical'">
             <div class="mb-1" v-if="object.first_month_different_amount">
-                {{ $t('rent.first_month_different_amount') }}: {{ numeralFormat(object.first_month_different_amount_value, '0.00') }}
+                {{ $t('rent.first_month_different_amount') }}: {{ numeralFormat(object.first_month_different_amount_value, '0.00') }} {{ object.currency }}
             </div>
             <div class="mb-1" v-if="object.last_month_different_amount">
-                {{ $t('rent.last_month_different_amount') }}: {{ numeralFormat(object.last_month_different_amount_value, '0.00') }}
+                {{ $t('rent.last_month_different_amount') }}: {{ numeralFormat(object.last_month_different_amount_value, '0.00') }} {{ object.currency }}
             </div>
             <div class="mb-1">
                 {{ $t('rent.payment_day') }}: {{ object.payment_day }}{{ $t("rent.payment_day_postfix") }} {{ $t("rent.each_month") }}

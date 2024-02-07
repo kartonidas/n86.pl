@@ -134,7 +134,15 @@ class RentalController extends Controller
             if(!empty($validated["search"]["end"]))
             {
                 $end = Helper::setDateTime($validated["search"]["end"], "23:59:59", true);
-                $rentals->where("end", "<=", $end);
+                $rentals->where(function($q) use($end) {
+                    $q
+                        ->where("end", "<=", $end)
+                        ->orWhere(function($q2) use ($end) {
+                            $q2
+                                ->where("termination", 1)
+                                ->where("termination_time", "<=", $end);
+                        });
+                });
             }
             
             if(!empty($validated["search"]["number"]))

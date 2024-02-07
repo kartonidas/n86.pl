@@ -5,27 +5,30 @@ namespace App\Providers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Event;
-use App\Models\UserInvitation;
-use App\Observers\UserInvitationObserver;
-use App\Models\File;
-use App\Observers\FileObserver;
-use App\Models\Firm;
-use App\Observers\FirmObserver;
-use App\Models\Rental;
-use App\Observers\RentalObserver;
-use App\Models\Item;
-use App\Observers\ItemObserver;
-use App\Models\ItemBill;
-use App\Observers\ItemBillObserver;
-use App\Models\ItemCyclicalFee;
-use App\Observers\ItemCyclicalFeeObserver;
-use App\Models\BalanceDocument;
+
+use App\Listeners\LogUserSentMessage;
 use App\Observers\BalanceDocumentObserver;
-use App\Models\Customer;
 use App\Observers\CustomerObserver;
-use App\Models\CustomerInvoice;
 use App\Observers\CustomerInvoiceObserver;
+use App\Observers\FileObserver;
+use App\Observers\FirmObserver;
+use App\Observers\ItemObserver;
+use App\Observers\ItemBillObserver;
+use App\Observers\ItemCyclicalFeeObserver;
+use App\Observers\RentalObserver;
+use App\Observers\UserInvitationObserver;
+use App\Models\BalanceDocument;
+use App\Models\Customer;
+use App\Models\CustomerInvoice;
+use App\Models\File;
+use App\Models\Firm;
+use App\Models\Item;
+use App\Models\ItemBill;
+use App\Models\ItemCyclicalFee;
+use App\Models\Rental;
+use App\Models\UserInvitation;
 
 
 class EventServiceProvider extends ServiceProvider
@@ -38,6 +41,10 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        
+        MessageSent::class => [
+            LogUserSentMessage::class,
         ],
     ];
 

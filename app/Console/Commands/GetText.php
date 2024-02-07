@@ -95,18 +95,34 @@ class GetText extends Command
                                         {
                                             if(strpos($match, "__") !== false)
                                             {
-                                                preg_match_all('/__\([(\s+?)?]*[\'"](.*)[\'"][(\s+?)?]*\)/i', trim($match), $texts);
+                                                //preg_match_all('/__\([(\s+?)?]*[\'"](.*)[\'"][(\s+?)?]*\)/i', trim($match), $texts);
+                                                preg_match_all('/__\(([^\)]*)\)/i', trim($match), $texts);
                                                 if(isset($texts[1]))
-                                                    $allTexts[] = $texts[1][0];
+                                                {
+                                                    foreach($texts[1] as $singleText)
+                                                    {
+                                                        $singleText = trim($singleText, "'\"");
+                                                        $allTexts[] = $singleText;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    preg_match_all('/__\([(\s+?)?]*[\'"](.*)[\'"][(\s+?)?]*\)/i', $line, $texts);
-                                    if(isset($texts[1][0]))
-                                        $allTexts[] = $texts[1][0];
+                                    //preg_match_all('/__\([(\s+?)?]*[\'"](.*)[\'"][(\s+?)?]*\)/i', $line, $texts);
+                                    //if(isset($texts[1][0]))
+                                        //$allTexts[] = $texts[1][0];
+                                    preg_match_all('/__\(([^\)]*)\)/i', $line, $texts);
+                                    if(isset($texts[1]))
+                                    {
+                                        foreach($texts[1] as $singleText)
+                                        {
+                                            $singleText = trim($singleText, "'\"");
+                                            $allTexts[] = $singleText;
+                                        }
+                                    }
                                 }
                             }
                             fclose($file);

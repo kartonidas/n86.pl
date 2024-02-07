@@ -10,17 +10,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
 use App\Exceptions\InvalidRentalDates;
 use App\Exceptions\InvalidStatus;
 use App\Exceptions\ObjectNotExist;
 use App\Libraries\Data;
 use App\Libraries\Helper;
+use App\Mail\UserNotification\RentalEndedSingle;
 use App\Models\Balance;
 use App\Models\BalanceDocument;
 use App\Models\Config;
 use App\Models\Item;
 use App\Models\ItemBill;
+use App\Models\User;
 use App\Traits\NumberingTrait;
 
 class Rental extends Model
@@ -223,7 +225,20 @@ class Rental extends Model
                 ->whereIn("status", $statuses)
                 ->where("start", "<=", $startDate)
                 ->where(function($q) use($startDate) {
-                    $q->where("end", ">=", $startDate)->orWhereNull("end");
+                    $q->where(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 1)
+                            ->where("termination_time", ">=", $startDate);
+                    })
+                    ->orWhere(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 0)
+                            ->where(function($q3) use($startDate) {
+                                $q3
+                                    ->where("end", ">=", $startDate)
+                                    ->orWhereNull("end");
+                            });
+                    });
                 });
             if($rentalId)
                 $c1->where("id", "!=", $rentalId);
@@ -233,8 +248,21 @@ class Rental extends Model
                 ::where("item_id", $itemId)
                 ->whereIn("status", $statuses)
                 ->where("start", "<=", $endDate)
-                ->where(function($q) use($endDate) {
-                    $q->where("end", ">=", $endDate)->orWhereNull("end");
+                ->where(function($q) use($startDate) {
+                    $q->where(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 1)
+                            ->where("termination_time", ">=", $startDate);
+                    })
+                    ->orWhere(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 0)
+                            ->where(function($q3) use($startDate) {
+                                $q3
+                                    ->where("end", ">=", $startDate)
+                                    ->orWhereNull("end");
+                            });
+                    });
                 });
             if($rentalId)
                 $c2->where("id", "!=", $rentalId);
@@ -246,7 +274,15 @@ class Rental extends Model
                 ->where(function($q) use($startDate, $endDate) {
                     $q
                         ->whereBetween("start", [$startDate, $endDate])
-                        ->orWhereBetween("end", [$startDate, $endDate]);
+                        ->orWhere(function($q2) use($startDate, $endDate) {
+                            $q2
+                                ->where(function($q3) use($startDate, $endDate) {
+                                    $q3->where("termination", 0)->whereBetween("end", [$startDate, $endDate]);
+                                })
+                                ->orWhere(function($q3) use($startDate, $endDate) {
+                                    $q3->where("termination", 1)->whereBetween("termination_time", [$startDate, $endDate]);
+                                });
+                        });
                 });
             if($rentalId)
                 $c3->where("id", "!=", $rentalId);
@@ -258,7 +294,25 @@ class Rental extends Model
         elseif($startDate)
         {
             // na czas nieokreślony nie moga istnieć żadne przyszłe rezerwacje!!!!!!
-            $c1 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->where("end", ">=", $startDate);
+            $c1 = self::where("item_id", $itemId)
+                ->whereIn("status", $statuses)
+                ->where("start", "<=", $startDate)
+                ->where(function($q) use($startDate) {
+                    $q->where(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 1)
+                            ->where("termination_time", ">=", $startDate);
+                    })
+                    ->orWhere(function($q2) use($startDate) {
+                        $q2
+                            ->where("termination", 0)
+                            ->where(function($q3) use($startDate) {
+                                $q3
+                                    ->where("end", ">=", $startDate)
+                                    ->orWhereNull("end");
+                            });
+                    });
+                });
             if($rentalId)
                 $c1->where("id", "!=", $rentalId);
             $c1 = $c1->count();
@@ -268,12 +322,12 @@ class Rental extends Model
                 $c2->where("id", "!=", $rentalId);
             $c2 = $c2->count();
             
-            $c3 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->whereNull("end");
-            if($rentalId)
-                $c3->where("id", "!=", $rentalId);
-            $c3 = $c3->count();
+            //$c3 = self::where("item_id", $itemId)->whereIn("status", $statuses)->where("start", "<=", $startDate)->whereNull("end");
+            //if($rentalId)
+            //    $c3->where("id", "!=", $rentalId);
+            //$c3 = $c3->count();
             
-            if($c1 || $c2 || $c3)
+            if($c1 || $c2)
                 throw new InvalidRentalDates(__("Cannot rented during the given time period"));
         }
     }
@@ -390,6 +444,8 @@ class Rental extends Model
         $item = $this->item()->withoutGlobalScopes()->first();
         if($item)
             $item->setRentedFlag();
+            
+        $item->notifyRentalEnded();
     }
     
     private function setTerminated()
@@ -400,6 +456,8 @@ class Rental extends Model
         $item = $this->item()->withoutGlobalScopes()->first();
         if($item)
             $item->setRentedFlag();
+        
+        $item->notifyRentalEnded();
     }
     
     public function initStatus()
@@ -619,5 +677,32 @@ class Rental extends Model
     public function scopeActive(Builder $query): void
     {
         $query->whereIn("status", [self::STATUS_CURRENT, self::STATUS_WAITING]);
+    }
+    
+    private function notifyRentalEnded()
+    {
+        $configuredNotifications = ConfigNotification
+            ::withoutGlobalScopes()
+            ->where("uuid", $this->uuid)
+            ->where("type", ConfigNotification::TYPE_RENTAL_ENDED)
+            ->get();
+        
+        $item = $this->item()->first();
+        if(!$item || $item->mode == Item::MODE_ARCHIVED)
+            return;
+        
+        $data = [
+            "rental" => $this->toArray(),
+            "item" => $item->toArray(),
+        ];
+        
+        foreach($configuredNotifications as $notification)
+        {
+            $user = User::find($notification->owner_id);
+            if(!$user || $user->deleted)
+                continue;
+            
+            Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndedSingle($data, $notification));
+        }
     }
 }

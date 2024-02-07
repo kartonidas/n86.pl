@@ -2,7 +2,6 @@
 
 namespace App\Mail\UserNotification;
 
-use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -12,20 +11,20 @@ use Illuminate\Queue\SerializesModels;
 use App\Libraries\Helper;
 use App\Models\ConfigNotification;
 
-class ItemBillsGroupObject extends Mailable
+class RentalEndedSingle extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public $data, public ConfigNotification $notification, public DateTime $paymentDate)
+    public function __construct(public $data, public ConfigNotification $notification)
     {
     }
     
     public function getTitle()
     {
-        return sprintf("Przypomnienie: za %d %s upłynie termin płatności rachunków dla: %s", $this->notification["days"], Helper::plurals($this->notification["days"], "dzień", "dni", "dni"), $this->data["item"]["name"]);
+        return __('The rental was ended: ');
     }
 
     /**
@@ -34,7 +33,7 @@ class ItemBillsGroupObject extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->getTitle(),
+            subject: $this->getTitle() . $this->data["rental"]["full_number"] . ", " . $this->data["item"]["name"]
         );
     }
 
@@ -43,9 +42,9 @@ class ItemBillsGroupObject extends Mailable
      */
     public function content(): Content
     {
-        $view = 'emails.' . $this->locale . '.user-notification.item-bills-group-object';
+        $view = 'emails.' . $this->locale . '.user-notification.rental-ended-single';
         if(!view()->exists($view))
-            $view = 'emails.'.config("api.default_language").'.user-notification.item-bills-group-object';
+            $view = 'emails.'.config("api.default_language").'.user-notification.rental-ended-single';
         
         return new Content(
             view: $view,

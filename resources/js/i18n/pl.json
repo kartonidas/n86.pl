@@ -593,7 +593,10 @@
         "terminate_end" : "Koniec wynajmu",
         "update_tenant_data" : "Zaktualizuj kartotekę najemcy",
         "update_item_data" : "Zaktualizuj kartotekę nieruchomości",
-        "of" : "z dnia"
+        "of" : "z dnia",
+        "success_info_line_1" : "Gratulacje! Nieruchomość:",
+        "success_info_line_2" : "została wynajęta w okresie:",
+        "new" : "Nowy"
     },
     "tenants": {
         "account_type" : "Rodzaj konta",

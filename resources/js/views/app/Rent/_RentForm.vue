@@ -31,6 +31,7 @@
                 first_month_different_amount: false,
                 last_month_different_amount: false,
                 number_of_people: 1,
+                currency: this.item.currency
             })
             
             const period = getValues('rental.periods');

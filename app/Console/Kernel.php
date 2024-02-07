@@ -24,6 +24,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:check-termination-rentals')->hourly();
         $schedule->command('app:generate-cyclical-fees')->monthlyOn(1, '00:10');
         $schedule->command('app:generate-rental-bills')->monthlyOn(1, '00:20');
+        
+        $schedule->command('app:notification-user')
+            ->hourly()
+            ->timezone("Europe/Warsaw")
+            ->between("8:00", "20:00");
     }
 
     /**

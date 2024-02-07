@@ -335,7 +335,7 @@ class Item extends Model
         {
             $out["current"] = [
                 "start" => $rental->start,
-                "end" => $rental->period == Rental::PERIOD_INDETERMINATE ? mb_strtolower(__("Indeterminate_single")) : $rental->end,
+                "end" => $rental->termination ? $rental->termination_time : ($rental->period == Rental::PERIOD_INDETERMINATE ? mb_strtolower(__("Indeterminate_single")) : $rental->end),
                 "termination" => $rental->termination ? $rental->termination_time : null
             ];
         }

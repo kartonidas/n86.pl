@@ -145,7 +145,7 @@ export const getItemRowColor = (mode) => {
 
 export const getDatesFromRange = (start, end, interval) => {
     var days = [];
-    for (var m = moment(start); m.isBefore(end); m.add(1, interval))
+    for (var m = moment(start); m.isSameOrBefore(end); m.add(1, interval))
         days.push(m.toDate());
     return days;
 };

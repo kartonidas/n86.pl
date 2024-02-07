@@ -225,6 +225,18 @@
                             </div>
                         </template>
                     </Column>
+                    <Column :header="$t('rent.period_short')">
+                        <template #body="{ data }">
+                            {{ data.start }} -
+                            <template v-if="data.termination">
+                                <span>{{ data.termination_time }}</span>
+                            </template>
+                            <template v-else>
+                                <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
+                                <span v-else>{{ data.end }}</span>
+                            </template>
+                        </template>
+                    </Column>
                     <Column :header="$t('rent.status')">
                         <template #body="{ data }">
                             {{ getValueLabel('rental.statuses', data.status) }}
@@ -273,13 +285,7 @@
                     <Column :header="$t('rent.rent')" field="rent" sortable>
                         <template #body="{ data }">
                             {{ numeralFormat(data.rent, '0.00') }}
-                        </template>
-                    </Column>
-                    <Column :header="$t('rent.period_short')">
-                        <template #body="{ data }">
-                            {{ data.start }} - 
-                            <span v-if="data.period == 'indeterminate'">{{ $t("rent.indeterminate") }}</span>
-                            <span v-else>{{ data.end }}</span>
+                            {{ data.currency }}
                         </template>
                     </Column>
                     <Column field="delete" v-if="hasAccess('rent:delete')" style="min-width: 60px; width: 60px" class="text-center">

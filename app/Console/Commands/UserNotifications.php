@@ -44,7 +44,7 @@ class UserNotifications extends Command
      */
     public function handle(): void
     {
-        $date = (new DateTime())->setTime(23, 59, 59);
+        $date = new DateTime();
         
         $configuredNotifications = ConfigNotification
             ::withoutGlobalScopes()
@@ -67,10 +67,6 @@ class UserNotifications extends Command
                 
                     case ConfigNotification::TYPE_RENTAL_ENDING:
                         $this->sendRentalEnding($notification, $date);
-                    break;
-                
-                    case ConfigNotification::TYPE_RENTAL_ENDED:
-                        $this->sendRentalEnded($notification, $date);
                     break;
                 }
                 
@@ -107,7 +103,8 @@ class UserNotifications extends Command
             ->whereNotIn("item_id", $ignoreItemIds)
             ->whereNotIn("id", $ignoreObjectIds)
             ->where("payment_date", ">", $date->getTimestamp())
-            ->where("payment_date", "<=", $paymentDate->getTimestamp())
+            ->where("payment_date", ">=", $paymentDate->setTime(0, 0, 0)->getTimestamp())
+            ->where("payment_date", "<=", $paymentDate->setTime(23, 59, 59)->getTimestamp())
             ->orderBy("payment_date", "ASC")
             ->get();
         
@@ -119,16 +116,16 @@ class UserNotifications extends Command
         {
             case ConfigNotification::MODE_SINGLE:
                 foreach($groupedBills as $bill)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsSingle($bill, $notification));
+                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsSingle($bill, $notification, $paymentDate));
             break;
                 
             case ConfigNotification::MODE_GROUP:
-                Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroup($groupedBills, $notification));
+                Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroup($groupedBills, $notification, $paymentDate));
             break;
                 
             case ConfigNotification::MODE_GROUP_OBJECT:
                 foreach($groupedBills as $bills)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroupObject($bills, $notification));
+                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroupObject($bills, $notification, $paymentDate));
             break;
         }
         
@@ -157,28 +154,30 @@ class UserNotifications extends Command
             ->pluck("object_id")
             ->all();
             
-        $ignoreItemIds = $this->getIgnoreItemIds($notification);
         $endDate = (new DateTime())->add(new DateInterval("P" . $notification->days . "D"));
         
         $endingRentals = Rental
             ::withoutGlobalScopes()
             ->where("uuid", $notification->uuid)
-            ->whereNotIn("item_id", $ignoreItemIds)
             ->whereNotIn("id", $ignoreObjectIds)
             ->where("end", ">", $date->getTimestamp())
-            ->where(function($q) use($date, $endDate) {
+            ->where(function($q) use($endDate) {
                 $q
-                    ->where("end", "<=", $endDate->getTimestamp())
-                    ->orWhere(function($q2) use($date, $endDate) {
+                    ->where(function($q2) use($endDate) {
+                        $q2
+                            ->where("end", ">=", $endDate->setTime(0, 0, 0)->getTimestamp())
+                            ->where("end", "<=", $endDate->setTime(23, 59, 59)->getTimestamp());
+                    })
+                    ->orWhere(function($q2) use($endDate) {
                         $q2
                             ->where("termination", 1)
-                            ->where("termination_time", ">", $date->getTimestamp())
-                            ->where("termination_time", "<=", $endDate->getTimestamp());
+                            ->where("termination_time", ">=", $endDate->setTime(0, 0, 0)->getTimestamp())
+                            ->where("termination_time", "<=", $endDate->setTime(23, 59, 59)->getTimestamp());
                     });
             })
             ->orderByRaw("CASE WHEN termination THEN termination_time ELSE end END ASC")
             ->get();
-        
+            
         $groupedRentals = $this->groupObjectRentals($endingRentals, $notification->mode);
         if(empty($groupedRentals))
             return;
@@ -187,11 +186,10 @@ class UserNotifications extends Command
         {
             case ConfigNotification::MODE_SINGLE:
                 foreach($groupedRentals as $rental)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingSingle($rental, $notification));
+                    Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingSingle($rental, $notification, $endDate));
             break;
-                
             case ConfigNotification::MODE_GROUP:
-                Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingGroup($groupedRentals, $notification));
+                Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingGroup($groupedRentals, $notification, $endDate));
             break;
         }
         
@@ -203,25 +201,6 @@ class UserNotifications extends Command
             $log->object_id = $rental->id;
             $log->save();
         }
-    }
-    
-    private function sendRentalEnded(ConfigNotification $notification, DateTime $date)
-    {
-        if($notification->type != ConfigNotification::TYPE_RENTAL_ENDED)
-            return;
-        
-        $user = User::find($notification->owner_id);
-        if(!$user || $user->deleted)
-            return;
-        
-        $ignoreObjectIds = SendingNotificationObject
-            ::where("config_notification_id", $notification->id)
-            ->pluck("object_id")
-            ->all();
-            
-        $ignoreItemIds = $this->getIgnoreItemIds($notification);
-        
-        echo "getRentalEnded\n";
     }
     
     private function getIgnoreItemIds(ConfigNotification $notification)
@@ -263,29 +242,15 @@ class UserNotifications extends Command
             switch($mode)
             {
                 case ConfigNotification::MODE_GROUP_OBJECT:
-                    if(!isset($out[$row->item_id]))
-                        $out[$row->item_id] = [
-                            "item" => $items[$row->item_id]->toArray(),
-                            "bills" => []
-                        ];
-                        
-                    if(!isset($out[$row->item_id][$date]))
-                        $out[$row->item_id]["bills"][$date] = [];
-                        
-                    $out[$row->item_id]["bills"][$date][] = $row->toArray();
-                break;
-            
                 case ConfigNotification::MODE_GROUP:
-                    if(!isset($out[$date]))
-                        $out[$date] = [];
-                        
-                    if(!isset($out[$date][$row->item_id]))
+                    if(!isset($out[$row->item_id]))
                     {
-                        $out[$date][$row->item_id]["item"] = $items[$row->item_id]->toArray();
-                        $out[$date][$row->item_id]["bills"] = [];
+                        $out[$row->item_id] = [];
+                        $out[$row->item_id]["item"] = $items[$row->item_id]->toArray();
+                        $out[$row->item_id]["bills"] = [];
                     }
                         
-                    $out[$date][$row->item_id]["bills"][] = $row->toArray();
+                    $out[$row->item_id]["bills"][] = $row->toArray();
                 break;
             
                 case ConfigNotification::MODE_SINGLE:
@@ -322,16 +287,14 @@ class UserNotifications extends Command
             switch($mode)
             {
                 case ConfigNotification::MODE_GROUP:
-                    if(!isset($out[$date]))
-                        $out[$date] = [];
-                        
-                    if(!isset($out[$date][$row->item_id]))
+                    if(!isset($out[$row->item_id]))
                     {
-                        $out[$date][$row->item_id]["item"] = $items[$row->item_id]->toArray();
-                        $out[$date][$row->item_id]["rentals"] = [];
+                        $out[$row->item_id] = [];
+                        $out[$row->item_id]["item"] = $items[$row->item_id]->toArray();
+                        $out[$row->item_id]["rental"] = [];
                     }
                         
-                    $out[$date][$row->item_id]["rentals"][] = $row->toArray();
+                    $out[$row->item_id]["rental"] = $row->toArray();
                 break;
             
                 case ConfigNotification::MODE_SINGLE:

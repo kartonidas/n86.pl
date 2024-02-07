@@ -56,9 +56,13 @@
             </span>
         </i>
     </div>
+    
+    <div class="mb-2 text-red-500 font-medium" v-if="object.termination">
+        Umowa w trakcie wypowiedzenia. Koniec wynajmu: {{ object.termination_time }}
+    </div>
         
     <div class="mb-2">
-        <span class="font-medium">{{ $t('rent.rent') }}: </span> <i>{{ numeralFormat(object.rent, '0.00') }}</i>
+        <span class="font-medium">{{ $t('rent.rent') }}: </span> <i>{{ numeralFormat(object.rent, '0.00') }} {{ object.currency }}</i>
     </div>
     <div v-if="object.payment == 'cyclical'">
         <div class="mb-2">
