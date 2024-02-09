@@ -19,7 +19,7 @@
                 Dane kontaktowe Usługodawcy:<br/>
                 <ol type="a">
                     <li>numer telefonu: +48 723 310 782,</li>
-                    <li>adres e-mail: support@ninjatask.eu.</li>
+                    <li>adres e-mail: biuro@n86.pl.</li>
                 </ol>
             </p>
             <p>
@@ -44,7 +44,17 @@
                     prawo przyznaje zdolność prawną, która korzysta usług świadczonych przez Usługodawcę
                 </li>
                 <li>
-                    <strong>Administrator konta</strong> – Usługobiorca rejestrujący i zarządzający Kontem usługobiorcy w Serwisie.
+                    <strong>Okres Abonamentowy</strong> - okres świadczenia Usług, za jaki Usługobiorca uiszcza Opłatę Abonamentową.
+                </li>
+                <li>
+                    <strong>Opłata Abonamentowa</strong> – opłata z tytułu korzystania z usług Serwisu przez Usługobiorcę w wysokości określonej w wybranym Planie Abonamentowym.
+                </li>
+                <li>
+                    <strong>Plan Abonamentowy</strong> - wybrany przez Usługobiorcę Plan Abonamentowy spośród dostępnych na Koncie Usługobiorcy.
+                </li>
+                </li>
+                <li>
+                    <strong>Administrator konta</strong> – Usługobiorca rejestrujący i zarządzający Kontem Usługobiorcy w Serwisie.
                 </li>
                 <li>
                     <strong>Użytkownik</strong> – Usługobiorca uprawniony do dostępu do Konta usługobiorcy przez Administratora konta.
@@ -54,7 +64,7 @@
                 </li>
                 <li>
                     <strong>Konto usługobiorcy</strong> - zbiór zasobów w systemie teleinformatycznym Usługodawcy, w którym gromadzone są informacje
-                    na temat Usługobiorcy, w tym lista projektów i zadań oraz informacje adresowe oraz historia zamówień.
+                    na temat Usługobiorcy, w tym lista nieruchomości, wynajmów, klientów, najemcmów, informacje adresowe oraz historia zamówień.
                 </li>
             </ol>
         </div>
@@ -114,7 +124,7 @@
                     w Serwisie celem korzystania przez Usługobiorcę z funkcjonalności Serwisu.
                 </li>
                 <li>
-                    Usługodawca świadczy usługi bezpłatne lub odpłatnie na zasadach określonych Regulaminem.
+                    Usługodawca świadczy usługi odpłatnie na zasadach określonych Regulaminem.
                 </li>
                 <li>
                     Informacje znajdujące się na stronie Serwisu stanowią zaproszenie do zawarcia umowy w rozumieniu art. 71 ustawy z dnia
@@ -190,7 +200,7 @@
                     Administrator konta odpowiada za działania Użytkowników w Serwisie jak za działania własne.
                 </li>
                 <li>
-                    Administrator konta może korzystać z funkcjonalności Serwisu w dostępie bezpłatnym lub w dostępie płatnym.
+                    Administrator konta może korzystać z funkcjonalności Serwisu w dostępie bezpłatnym (przez pierwsze 14 dni) lub w dostępie płatnym.
                 </li>
             </ol>
         </div>
@@ -198,17 +208,15 @@
         <div>
             <h5 class="text-center mt-5">§5. Dostęp bezpłatny</h5>
             <ol>
+                <li>Dostęp bezpłatny (czasowy) obowiązuje przez pierwsze 14 dni licząc od dnia potwierdzenia rejestracji konta,</li>
                 <li>
                     Z funkcjonalności Serwisu w ramach dostępu bezpłatnego może korzystać każdy zarejestrowany Administrator konta.
                 </li>
                 <li>
                     W ramach dostępu bezpłatnego Usługodawca umożliwia:
                     <ol type="a">
-                        <li>dostęp do Konta usługobiorcy poprzez aplikację mobilną dla systemów Android,</li>
                         <li>dodawanie przez Administratora konta nieograniczonej liczby Użytkowników,</li>
-                        <li>utworzenie i prowadzenie w jednym czasie nie więcej niż dwóch projektów,</li>
-                        <li>utworzenie nie więcej niż 10 zadań do projektów,</li>
-                        <li>przechowywanie plików w łącznym rozmiarze nie większym niż 10 MB.</li>
+                        <li>utworzenie i prowadzenie w jednym czasie nie więcej niż dwóch nieruchomości,</li>
                     </ol>
                 </li>
                 <li>
@@ -234,14 +242,16 @@
                     pkt 2 Regulaminu).
                 </li>
                 <li>
+                    Opłaty Abonamentowe są wnoszone z góry za kolejne Okresy Abonamentowe.
+                    Dostępne są miesięczne oraz roczne Okresy Abonamentowe. Cena Planu Abonamentowego zależy od liczby
+                    zamawianych licencji przez Użytkownika oraz długości Okresu Abonamentowego.
+                </li>
+                <li>
                     W ramach dostępu płatnego Usługodawca umożliwia:
                     <ol type="a">
-                        <li>dostęp do Konta usługobiorcy poprzez aplikację mobilną dla systemów Android,</li>
                         <li>dodawanie przez Administratora konta nieograniczonej liczby Użytkowników,</li>
-                        <li>utworzenie i prowadzenie nieograniczonej liczby projektów,</li>
-                        <li>utworzenie nieograniczonej liczby zadań do projektów,</li>
-                        <li>przechowywanie plików w łącznym rozmiarze nie większym niż 200 MB,</li>
-                        <!--<li>korzystanie z menadżera plików.</li>-->
+                        <li>utworzenie i prowadzenie nieruchomości zgodnie z ilością wykupionych licencji,</li>
+                        <li>utworzenie nieograniczonej liczby najemców, klientów, wynajmów</li>
                     </ol>
                 </li>
                 <li>

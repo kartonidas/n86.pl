@@ -19,7 +19,7 @@
                     adresem ul. Łódzka 46 lok. 48, 97-300 Piotrków Trybunalski, NIP: 7712671332, REGON: 101425394.
                 </li>
                 <li>
-                    Adres e-mail administratora danych: support@ninjatask.eu.
+                    Adres e-mail administratora danych: biuro@n86.pl.
                 </li>
                 <li>
                     Administrator w myśl art. 32 ust. 1 RODO przestrzega zasady ochrony danych osobowych oraz stosuje
