@@ -1,7 +1,7 @@
 @extends("page")
 
 @section("metatitle")
-    Polityka prywatności
+    Polityka prywatności | {{ config("page.meta.title_postfix") }}
 @endsection
 
 @section("content")

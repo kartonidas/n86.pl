@@ -50,10 +50,16 @@ class PageController extends Controller
             
         $html = file_get_contents($pageFile);
         $xml = simplexml_load_string($html);
-            
+        
         return view("pages.features", [
-            "html" => (string)$xml->content,
+            "html" => self::prepareVariables((string)$xml->content),
             "title" => (string)$xml->title,
+            "subtitle" => (string)($xml->subtitle ?? null),
+            "current" => $path[1],
+            "meta" => [
+                "title" => self::prepareVariables((string)($xml->meta->title ?? (string)$xml->title)),
+                "description" => (string)($xml->meta->description ?? null),
+            ]
         ]);
     }
     
@@ -127,5 +133,23 @@ class PageController extends Controller
             default:
                 return "/pomoc/";
         }
+    }
+    
+    private static function prepareVariables($html)
+    {
+        $html = str_replace(
+            [
+                "[APP_NAME]",
+                "[TRY_FOR_FREE]",
+                "[META_TITLE]",
+            ],
+            [
+                env("APP_NAME"),
+                view("pages._features_try_for_free")->render(),
+                config("page.meta.title_postfix"),
+            ],
+            $html
+        );
+        return $html;
     }
 }

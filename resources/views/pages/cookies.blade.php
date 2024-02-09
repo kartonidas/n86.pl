@@ -1,7 +1,7 @@
 @extends("page")
 
 @section("metatitle")
-    Polityka cookies
+    Polityka cookies | {{ config("page.meta.title_postfix") }}
 @endsection
 
 @section("content")

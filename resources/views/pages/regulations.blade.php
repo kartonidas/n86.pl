@@ -1,7 +1,7 @@
 @extends("page")
 
 @section("metatitle")
-    Regulamin świadczenia usług
+    Regulamin świadczenia usług | {{ config("page.meta.title_postfix") }}
 @endsection
 
 @section("content")

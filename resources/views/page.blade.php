@@ -4,15 +4,15 @@
         <meta charset="UTF-8">
         <link rel="icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            @yield("metatitle", "Wynajem nieruchomości")
-        </title>
+        <title>@yield("metatitle", "Aplikacja do zarządzania wynajmem")</title>
+        <meta name="description" content="@yield("metadesc", "Aplikacja do zarządzania wynajmem: mieszkań, domów, lokali usługowych, komercyjnych. Generowanie umów, umów okazjonalnych, zarządzanie najemcami, analiza zysków i kosztów generowanych przez nieruchomość. Obsługa niercuhomośći w imieniu klientów. Zarządzanie kosztami generowanymi przez obiekt, przypomnienia o płatnościach.")">
             
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         
         <link rel="stylesheet" href="/css/page.css">
+        <link rel="stylesheet" href="/js/magnific-popup/dist/magnific-popup.css">
         <script src='//www.google.com/recaptcha/api.js'></script>
         
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -103,6 +103,7 @@
         LOCALE = "pl";
     </script>
     <script src="/js/jquery/jquery.min.js"></script>
+    <script src="/js/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
     <script src="/js/functions.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/validator.js"></script>

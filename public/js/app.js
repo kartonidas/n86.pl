@@ -1,5 +1,14 @@
 App =
 {
+    initMagnificPopupImage: function() {
+        $(".open-image").magnificPopup({
+            type: "image",
+            gallery: {
+                enabled: true,
+            }
+        });
+    },
+    
     validForm : function() {
         $("FORM.validate").submit(function(e) {
             var $this = $(this);
@@ -139,4 +148,5 @@ App =
 
 $(document).ready(function(){
     App.validForm();
+    App.initMagnificPopupImage();
 });

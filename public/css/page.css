@@ -76,3 +76,23 @@ body {
 .gray-background {
     background: #fbfbfb;
 }
+
+.green-box-bg {
+    background: #cdf1c4;
+}
+
+.blue-box-bg {
+    background: #c3e6ff;
+}
+
+.pink-box-bg {
+    background: #fff3fc;
+}
+
+.gray-box-bg {
+    background: #fbfbfb;
+}
+
+.more-info {
+    color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+}
