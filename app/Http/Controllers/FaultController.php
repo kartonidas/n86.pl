@@ -59,6 +59,9 @@ class FaultController extends Controller
             
             if(!empty($validated["search"]["status"]))
                 $faults->where("status_id", $validated["search"]["status"]);
+                
+            if(!empty($validated["search"]["priority"]))
+                $faults->where("priority", $validated["search"]["priority"]);
             
             if(!empty($validated["search"]["start"]))
                 $faults->whereDate("created_at", ">=", $validated["search"]["start"]);
@@ -103,6 +106,7 @@ class FaultController extends Controller
         $fault = new Fault;
         $fault->status_id = $validated["status_id"];
         $fault->item_id = $validated["item_id"];
+        $fault->priority = $validated["priority"];
         $fault->description = $validated["description"];
         $fault->created_user_id = Auth::user()->id;
         $fault->save();

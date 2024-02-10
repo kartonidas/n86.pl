@@ -616,6 +616,31 @@
                     "modes": [
                         "single"
                     ]
+                },
+                {
+                    "id": "rental_coming",
+                    "name": "Zbli\u017caj\u0105ce si\u0119 najmy",
+                    "days": true,
+                    "allowed_days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "modes": [
+                        "single",
+                        "group"
+                    ]
                 }
             ],
             "modes": [
@@ -630,6 +655,122 @@
                 {
                     "id": "group_object",
                     "name": "Grupuj w ramach obiektu"
+                }
+            ]
+        },
+        "faults": {
+            "priorities": [
+                {
+                    "id": "low",
+                    "name": "Niski priorytet"
+                },
+                {
+                    "id": "normal",
+                    "name": "Normalny priorytet"
+                },
+                {
+                    "id": "high",
+                    "name": "Wysoki priorytet"
+                }
+            ]
+        },
+        "templates": {
+            "variables": [
+                {
+                    "var": "[numer]",
+                    "label": "Numer umowy"
+                },
+                {
+                    "var": "[data_umowy]",
+                    "label": "Data umowy"
+                },
+                {
+                    "var": "[najemca_nazwa]",
+                    "label": "Nazwa najemcy"
+                },
+                {
+                    "var": "[najemca_adres]",
+                    "label": "Adres najemcy"
+                },
+                {
+                    "var": "[najemca_dokument_rodzaj]",
+                    "label": "Dokument najemcy - nazwa"
+                },
+                {
+                    "var": "[najemca_dokument_numer]",
+                    "label": "Dokument najemcy - numer"
+                },
+                {
+                    "var": "[najemca_nip]",
+                    "label": "NIP najemcy"
+                },
+                {
+                    "var": "[najemca_regon]",
+                    "label": "Regon najemcy"
+                },
+                {
+                    "var": "[najemca_pesel]",
+                    "label": "Pesel najemcy"
+                },
+                {
+                    "var": "[lokal_powierzchnia]",
+                    "label": "Powierzchnia lokalu"
+                },
+                {
+                    "var": "[lokal_ilosc_pomieszczen]",
+                    "label": "Ilo\u015b\u0107 pokoi"
+                },
+                {
+                    "var": "[lokal_adres]",
+                    "label": "Adres lokalu"
+                },
+                {
+                    "var": "[kaucja]",
+                    "label": "Kaucja"
+                },
+                {
+                    "var": "[czynsz]",
+                    "label": "Czynsz"
+                },
+                {
+                    "var": "[dzien_platnosci]",
+                    "label": "Dzie\u0144 p\u0142atno\u015bci"
+                },
+                {
+                    "var": "[umowa_okres_od]",
+                    "label": "Pocz\u0105tek wynajmu"
+                },
+                {
+                    "var": "[umowa_okres_do]",
+                    "label": "Koniec wynajmu"
+                },
+                {
+                    "var": "[okres_wypowiedzenia]",
+                    "label": "Okres wypowiedzenia"
+                },
+                {
+                    "var": "[wlasciciel_nazwa]",
+                    "label": "Nazwa w\u0142a\u015bciciela"
+                },
+                {
+                    "var": "[wlasciciel_adres]",
+                    "label": "Adres w\u0142a\u015bciciela"
+                },
+                {
+                    "var": "[wlasciciel_dokument_rodzaj]",
+                    "label": "Dokument w\u0142a\u015bciciela - nazwa"
+                },
+                {
+                    "var": "[wlasciciel_dokument_numer]",
+                    "label": "Dokument w\u0142a\u015bciciela - numer"
+                },
+                {
+                    "var": "[wlasciciel_nip]",
+                    "label": "NIP w\u0142a\u015bciciela"
+                },
+                {
+                    "var": "[wlasciciel_regon]",
+                    "label": "Regon w\u0142a\u015bciciela"
                 }
             ]
         }

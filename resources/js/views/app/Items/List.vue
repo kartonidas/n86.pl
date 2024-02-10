@@ -3,6 +3,7 @@
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
+    import CustomerService from '@/service/CustomerService'
     import ItemService from '@/service/ItemService'
     
     export default {
@@ -10,10 +11,12 @@
         setup() {
             setMetaTitle('meta.title.items_list')
             
+            const customerService = new CustomerService()
             const itemService = new ItemService()
             
             return {
                 itemService,
+                customerService,
                 hasAccess,
                 getValueLabel,
                 getItemRowColor
@@ -33,8 +36,14 @@
                     {"id": 0, "name" : this.$t('items.free')},
                     {"id": 1, "name" : this.$t('items.rented')},
                 ],
+                ownership_types: [
+                    {"id": "all", "name" : this.$t('items.all')},
+                    {"id": "property", "name" : this.$t('items.own')},
+                    {"id": "manage", "name" : this.$t('items.i_managed')},
+                ],
+                customers: [],
+                loadingCustomers: false,
                 meta: {
-                    search: {},
                     loading: false,
                     currentPage: 1,
                     perPage: this.rowsPerPage,
@@ -58,8 +67,33 @@
                 appStore().setToastMessage(null)
             }
             this.getList()
+            this.getCustomers()
         },
         methods: {
+            getCustomers() {
+                this.loadingCustomers = true
+                this.customers = []
+                this.customerService.list(9999, 1)
+                    .then(
+                        (response) => {
+                            if (response.data.data.length) {
+                                response.data.data.forEach((i) => {
+                                    this.customers.push({
+                                        "id" : i.id,
+                                        "name" : i.name,
+                                        "type" : i.type,
+                                        "nip" : i.nip,
+                                    })
+                                    this.loadingCustomers = false
+                                })
+                            }
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        }
+                    )
+            },
+            
             getList() {
                 this.meta.loading = true
                 this.itemService.list(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
@@ -202,16 +236,38 @@
                 
                 <form v-on:submit.prevent="search">
                     <div class="formgrid grid mb-1">
-                        <div class="col-12 md:col-6 mb-3">
+                        <div class="col-12 md:col-4 mb-3">
                             <Dropdown v-model="meta.search.type" :showClear="this.meta.search.type ? true : false" :options="item_types" optionLabel="name" optionValue="id" :placeholder="$t('items.estate_type')" class="w-full" />
                         </div>
                         
-                        <div class="col-12 md:col-6 mb-3">
+                        <div class="col-12 md:col-4 mb-3">
                             <InputText type="text" :placeholder="$t('items.name')" class="w-full" v-model="meta.search.name"/>
                         </div>
                         
-                        <div class="col-12 md:col-6 mb-3">
+                        <div class="col-12 md:col-4 mb-3">
                             <InputText type="text" :placeholder="$t('items.address')" class="w-full" v-model="meta.search.address"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-3 mb-3">
+                            <Dropdown id="ownership_type" v-model="meta.search.ownership_type" :options="ownership_types" optionLabel="name" optionValue="id" :placeholder="$t('items.ownership_type')" class="w-full"/>
+                        </div>
+                        
+                        <div class="col-12 md:col-4 mb-3">
+                            <Dropdown id="customer_id" v-model="meta.search.customer_id" filter :filterFields="['name','nip']" :loading="loadingCustomers" :options="customers" optionLabel="name" optionValue="id" :placeholder="$t('items.customer')" class="w-full">
+                                <template #option="slotProps">
+                                    <div class="">
+                                        <div>
+                                            {{ slotProps.option.name }}
+                                        </div>
+                                        <small class="font-italic text-gray-500">
+                                            {{ getValueLabel('tenant_types', slotProps.option.type) }}
+                                            <span v-if="slotProps.option.type=='firm'">
+                                                : {{ slotProps.option.nip }}
+                                            </span>
+                                        </small>
+                                    </div>
+                                </template>
+                            </Dropdown>
                         </div>
                         
                         <div class="col-12 md:col-3 sm:col-8 mb-3">
@@ -241,6 +297,27 @@
                                     </small>
                                 </div>
                             </div>
+                        </template>
+                    </Column>
+                    <Column :header="$t('items.owner')">
+                        <template #body="{ data }">
+                            <template v-if="data.ownership_type == 'manage'">
+                                <Badge :value="getValueLabel('customer_types', data.customer.type)" class="font-normal" severity="info"></Badge>
+                                <div class="mt-1">
+                                    <router-link :to="{name: 'customer_show', params: { customerId : data.id }}">
+                                        {{ data.customer.name }}
+                                    </router-link>
+                                    
+                                    <div>
+                                        <small>
+                                            <Address :object="data.customer" :newline="true" emptyChar=""/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                {{ $t('items.own') }}
+                            </template> 
                         </template>
                     </Column>
                     <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">

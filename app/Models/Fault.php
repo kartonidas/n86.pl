@@ -19,6 +19,10 @@ class Fault extends Model
         boot as traitBoot;
     }
     
+    const LEVEL_LOW = "low";
+    const LEVEL_NORMAL = "normal";
+    const LEVEL_HIGH = "high";
+    
     protected $hidden = ["uuid"];
     
     public static $sortable = ["created_at"];
@@ -27,6 +31,15 @@ class Fault extends Model
     protected $casts = [
         "created_at" => "datetime:Y-m-d",
     ];
+    
+    public static function getPriorities()
+    {
+        return [
+            self::LEVEL_LOW => __("Low priority"),
+            self::LEVEL_NORMAL => __("Normal priority"),
+            self::LEVEL_HIGH => __("High priority"),
+        ];
+    }
     
     protected function descriptionHtml(): Attribute
     {

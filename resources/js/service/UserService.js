@@ -3,8 +3,8 @@ import { appStore } from './../store.js';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class UserService {
-    register(email) {
-        return axios.post('api/v1/register', {email : email});
+    register(registerData) {
+        return axios.post('api/v1/register', removeNullValues(registerData));
     }
     
     registerConfirm(token, firstname, lastname, password, phone, firm_identifier) {

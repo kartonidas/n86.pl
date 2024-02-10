@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Exceptions\ObjectNotExist;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Models\UserRegisterToken;
 use App\Rules\FirmIdentifier;
@@ -26,14 +27,11 @@ class RegisterController extends Controller
     * @response 422 {"error":true,"message":"The provided email is already registered.","errors":{"email":["The provided email is already registered."]}}
     * @group User registation
     */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            "email" => "required|email",
-            "source" => ["nullable", Rule::in("app", "www")],
-        ]);
+        $validated = $request->validated();
         
-        $user = User::where("email", $request->email)->where("activated", 1)->where("owner", 1)->first();
+        $user = User::where("email", $validated["email"])->where("activated", 1)->where("owner", 1)->first();
         if($user)
         {
             throw ValidationException::withMessages([
@@ -41,11 +39,11 @@ class RegisterController extends Controller
             ]);
         }
         
-        $user = User::where("email", $request->email)->where("activated", 0)->where("owner", 1)->first();
+        $user = User::where("email", $validated["email"])->where("activated", 0)->where("owner", 1)->first();
         if(!$user)
         {
             $user = new User;
-            $user->email = $request->email;
+            $user->email = $validated["email"];
             $user->password = "";
             $user->activated = 0;
             $user->owner = 1;
@@ -55,7 +53,7 @@ class RegisterController extends Controller
         }
         
         $token = $user->generateRegisterToken();
-        $user->sendInitMessage($token, $request->input("source", "www"));
+        $user->sendInitMessage($token, $validated["email"] ?? "www");
         
         return true;
     }

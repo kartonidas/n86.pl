@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\UserNotification\ItemBillsGroup;
 use App\Mail\UserNotification\ItemBillsGroupObject;
 use App\Mail\UserNotification\ItemBillsSingle;
+use App\Mail\UserNotification\RentalComingGroup;
+use App\Mail\UserNotification\RentalComingSingle;
 use App\Mail\UserNotification\RentalEndingGroup;
 use App\Mail\UserNotification\RentalEndingSingle;
-
 use App\Models\ConfigNotification;
 use App\Models\Item;
 use App\Models\ItemBill;
@@ -67,6 +68,10 @@ class UserNotifications extends Command
                 
                     case ConfigNotification::TYPE_RENTAL_ENDING:
                         $this->sendRentalEnding($notification, $date);
+                    break;
+                
+                    case ConfigNotification::TYPE_RENTAL_COMING:
+                        $this->sendRentalComing($notification, $date);
                     break;
                 }
                 
@@ -194,6 +199,61 @@ class UserNotifications extends Command
         }
         
         foreach($endingRentals as $rental)
+        {
+            $log = new SendingNotificationObject;
+            $log->config_notification_id = $notification->id;
+            $log->date = $date->format("Y-m-d");
+            $log->object_id = $rental->id;
+            $log->save();
+        }
+    }
+    
+    private function sendRentalComing(ConfigNotification $notification, DateTime $date)
+    {
+        if($notification->type != ConfigNotification::TYPE_RENTAL_COMING)
+            return;
+        
+        $user = User::find($notification->owner_id);
+        if(!$user || $user->deleted)
+            return;
+        
+        $ignoreObjectIds = SendingNotificationObject
+            ::where("config_notification_id", $notification->id)
+            ->where("date", $date->format("Y-m-d"))
+            ->pluck("object_id")
+            ->all();
+            
+        $ignoreItemIds = $this->getIgnoreItemIds($notification);
+        $comingDate = (new DateTime())->add(new DateInterval("P" . $notification->days . "D"));
+        
+        $comingRentals = Rental
+            ::withoutGlobalScopes()
+            ->where("uuid", $notification->uuid)
+            ->where("status", Rental::STATUS_WAITING)
+            ->whereNotIn("item_id", $ignoreItemIds)
+            ->whereNotIn("id", $ignoreObjectIds)
+            ->where("start", ">=", $comingDate->setTime(0, 0, 0)->getTimestamp())
+            ->where("start", "<=", $comingDate->setTime(23, 59, 59)->getTimestamp())
+            ->orderBy("start", "ASC")
+            ->get();
+            
+        
+        $groupedRentals = $this->groupObjectRentals($comingRentals, $notification->mode);
+        if(empty($groupedRentals))
+            return;
+        
+        switch($notification->mode)
+        {
+            case ConfigNotification::MODE_SINGLE:
+                foreach($groupedRentals as $rental)
+                    Mail::to($user->email)->locale($user->default_locale)->queue(new RentalComingSingle($rental, $notification, $comingDate));
+            break;
+            case ConfigNotification::MODE_GROUP:
+                Mail::to($user->email)->locale($user->default_locale)->queue(new RentalComingGroup($groupedRentals, $notification, $comingDate));
+            break;
+        }
+        
+        foreach($comingRentals as $rental)
         {
             $log = new SendingNotificationObject;
             $log->config_notification_id = $notification->id;

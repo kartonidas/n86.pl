@@ -124,6 +124,14 @@
                     <div class="col-12">
                         <div class="grid">
                             <div class="col-fixed pt-0 pb-1 align-self-center" style="width: 230px">
+                                <span class="font-medium">{{ $t('faults.priority') }}:</span>
+                            </div>
+                            <div class="col-12 sm:col-7 pt-0 pb-1">
+                                {{ getValueLabel("faults.priorities", fault.priority) }}
+                            </div>
+                            <div class="col-12 pb-2 pt-2"><div class="border-bottom-1 border-gray-200"></div></div>
+                            
+                            <div class="col-fixed pt-0 pb-1 align-self-center" style="width: 230px">
                                 <span class="font-medium">{{ $t('faults.status') }}:</span>
                             </div>
                             <div class="col-12 sm:col-7 pt-0 pb-1">

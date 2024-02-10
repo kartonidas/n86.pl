@@ -27,10 +27,12 @@
             }
         },
         data() {
+            const priorities = getValues('faults.priorities');
             return {
                 faultStatuses: [],
                 loadingItems: false,
                 items: [],
+                priorities,
             }
         },
         props: {
@@ -98,6 +100,7 @@
                 fault: {
                     status_id: { required },
                     item_id: { required },
+                    priority: { required },
                     description: { required },
                 }
             }
@@ -127,6 +130,14 @@
                     </div>
                     
                     <div class="field col-12 md:col-6 mb-4">
+                        <label for="priority" v-required class="block text-900 font-medium mb-2">{{ $t('faults.priority') }}</label>
+                        <Dropdown id="priority" v-model="fault.priority" :options="priorities" :class="{'p-invalid' : v.fault.priority.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.priority')" class="w-full" :disabled="saving || loading"/>
+                        <div v-if="v.fault.priority.$error">
+                            <small class="p-error">{{ v.fault.priority.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 mb-4">
                         <label for="item_id" v-required class="block text-900 font-medium mb-2">{{ $t('faults.estate') }}</label>
                         <Dropdown id="item_id" v-model="fault.item_id" filter :filterFields="['name', 'street', 'city', 'zip']" :loading="loadingItems" :options="items" :class="{'p-invalid' : v.fault.item_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('faults.estate')" class="w-full" :disabled="saving || loading">
                             <template #option="slotProps">

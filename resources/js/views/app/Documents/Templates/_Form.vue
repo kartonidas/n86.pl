@@ -40,7 +40,8 @@
             return {
                 template_types: getValues('documents.types'),
                 v: useVuelidate(rules, state),
-                toValidate: toValidate
+                toValidate: toValidate,
+                variables: getValues("templates.variables")
             }
         },
         props: {
@@ -75,7 +76,7 @@
                 </li>
             </ul>
         </Message>
-        <div class="mb-4">
+        <div>
             <div class="p-fluid">
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6 mb-4">
@@ -107,6 +108,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="mb-4">
+            {{ $t('documents.allowed_variables') }}:
+            <ul>
+                <li v-for="value in variables">
+                    {{ value.var }} - {{ value.label }}
+                </li>
+            </ul>
         </div>
         
         <div class="form-footer">

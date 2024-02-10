@@ -19,7 +19,9 @@
             return {
                 errors: [],
                 saving: false,
-                fault: {},
+                fault: {
+                    priority: "normal"
+                },
             }
         },
         methods: {

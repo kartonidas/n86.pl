@@ -97,6 +97,17 @@
                 </div>
             </div>
         </footer>
+            
+        @if(!request()->cookie("cookie"))
+            <div class="position-fixed cookie-info shadow">
+                {{ __("Nasz serwis internetowy używa plików cookies w celach określonych w") }}
+                <a href="{{ route("privacy_policy") }}">{{ __("polityce prywatności") }}</a>
+                {{ __("a w szczególności w celu dostosowania wyglądu serwisu do indywidualnych preferencji użytkowników (personalizacja). Korzystanie z serwisu bez zmiany ustawień przeglądarki dotyczących cookies oznacza, że zostaną one zapisane i przechowywane w pamięci urządzenia za pośrednictwem którego korzystasz z Internetu i będą używane przez nasz serwis w celach określonych powyżej. Jeżeli nie chcesz żeby pliki cookies były zapisywane w pamięci i używane przez nasz serwis, zmień ustawienia swojej przeglądarki.") }}
+                <div class="text-center mt-2">
+                    <button type="button" class="btn btn-primary btn-sm mt-1" onclick="App.acceptCookie();">{{ __("Akceptuję") }}</button>
+                </div>
+            </div>
+        @endif
     </body>
     
     <script>

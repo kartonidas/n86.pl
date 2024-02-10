@@ -21,6 +21,7 @@ class ConfigNotification extends Model
     const TYPE_UNPAID_BILLS = "unpaid_bills";
     const TYPE_RENTAL_ENDING = "rental_ending";
     const TYPE_RENTAL_ENDED = "rental_ended";
+    const TYPE_RENTAL_COMING = "rental_coming";
     const MODE_SINGLE = "single";
     const MODE_GROUP = "group";
     const MODE_GROUP_OBJECT = "group_object";
@@ -54,6 +55,12 @@ class ConfigNotification extends Model
                 "days" => false,
                 "modes" => [self::MODE_SINGLE]
             ],
+            self::TYPE_RENTAL_COMING => [
+                "name" => __("Rental coming"),
+                "days" => true,
+                "allowed_days" => [1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+                "modes" => [self::MODE_SINGLE, self::MODE_GROUP]
+            ]
         ];
     }
     

@@ -117,3 +117,7 @@ LI.p-tabview-header:not(.p-highlight) A {
 .archived-item .p-badge {
     background: var(--gray-400);
 }
+
+.p-checkbox[invalid="true"] .p-checkbox-box {
+    border-color: #e24c4c;
+}

@@ -344,5 +344,13 @@
     "%s' contain invalid action '%s'.": "%s' contain invalid action '%s'.",
     "Unsupported file type for file '%s": "Unsupported file type for file '%s",
     "E-mail max :max characters\", [\"max\" => 50]": "E-mail max :max characters\", [\"max\" => 50]",
-    "The payment deadline will be in: ": "The payment deadline will be in: "
+    "The payment deadline will be in: ": "The payment deadline will be in: ",
+    "Low priority": "Niski priorytet",
+    "Normal priority": "Normalny priorytet",
+    "High priority": "Wysoki priorytet",
+    "Rental coming": "Zbliżające się najmy",
+    "Nasz serwis internetowy u\u017cywa plik\u00f3w cookies w celach okre\u015blonych w": "Nasz serwis internetowy u\u017cywa plik\u00f3w cookies w celach okre\u015blonych w",
+    "polityce prywatno\u015bci": "polityce prywatno\u015bci",
+    "a w szczeg\u00f3lno\u015bci w celu dostosowania wygl\u0105du serwisu do indywidualnych preferencji u\u017cytkownik\u00f3w (personalizacja": "a w szczeg\u00f3lno\u015bci w celu dostosowania wygl\u0105du serwisu do indywidualnych preferencji u\u017cytkownik\u00f3w (personalizacja",
+    "Akceptuj\u0119": "Akceptuj\u0119"
 }

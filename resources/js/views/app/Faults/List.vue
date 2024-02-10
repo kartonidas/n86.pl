@@ -1,6 +1,6 @@
 <script>
     import { ref } from 'vue'
-    import { hasAccess, setMetaTitle, getValueLabel } from '@/utils/helper'
+    import { hasAccess, setMetaTitle, getValues, getValueLabel } from '@/utils/helper'
     import { appStore } from '@/store.js'
     
     import Address from '@/views/app/_partials/Address.vue'
@@ -32,6 +32,7 @@
                 deleteFaultId: null,
                 loadingFaultStatusesDictionary: false,
                 faultStatuses: [],
+                priorities: getValues('faults.priorities'),
                 meta: {
                     search: {},
                     currentPage: 1,
@@ -191,11 +192,14 @@
                 </div>
                 <form v-on:submit.prevent="search">
                     <div class="formgrid grid mb-1">
-                        <div class="col-12 md:col-6 mb-3">
+                        <div class="col-12 md:col-4 mb-3">
                             <InputText type="text" :placeholder="$t('faults.item_name')" class="w-full" v-model="meta.search.item_name"/>
                         </div>
-                        <div class="col-12 md:col-6 mb-3">
+                        <div class="col-12 md:col-4 mb-3">
                             <InputText type="text" :placeholder="$t('faults.item_address')" class="w-full" v-model="meta.search.item_address"/>
+                        </div>
+                        <div class="col-12 md:col-4 mb-3">
+                            <Dropdown id="priority" v-model="meta.search.priority" :options="priorities" optionLabel="name" optionValue="id" :placeholder="$t('faults.priority')" class="w-full"/>
                         </div>
                         
                         <div class="col-12 md:col-4 sm:col-12 mb-3">
@@ -222,6 +226,9 @@
                 <DataTable :value="faults" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
                     <Column :header="$t('faults.status')">
                         <template #body="{ data }">
+                            <i class="pi pi-arrow-down" v-if="data.priority == 'low'" style="font-size: 0.8rem; color: var(--gray-300)"></i>
+                            <i class="pi pi-arrow-up" v-if="data.priority == 'normal'" style="font-size: 0.8rem; color: var(--base-500)"></i>
+                            <i class="pi pi-exclamation-circle" v-if="data.priority == 'high'" style="font-size: 0.8rem; color: var(--red-500)"></i>
                             {{ data.status.name }}
                         </template>
                     </Column>

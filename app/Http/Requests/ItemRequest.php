@@ -17,6 +17,7 @@ class ItemRequest extends ListRequest
             "search.address" => "nullable|string",
             "search.rented" => "nullable|boolean",
             "search.mode" => ["nullable", Rule::in([Item::MODE_NORMAL, Item::MODE_ARCHIVED, Item::MODE_LOCKED, "all"])],
+            "search.ownership_type" => ["nullable", Rule::in(["all", "manage", "property"])],
         ]);
     }
 }

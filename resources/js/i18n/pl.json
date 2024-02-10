@@ -127,7 +127,8 @@
         "document_updated" : "Dokument został zaktualizowany",
         "estate" : "Nieruchomość",
         "rental" : "Wynajem",
-        "item_name" : "Nazwa nieruchomości"
+        "item_name" : "Nazwa nieruchomości",
+        "allowed_variables" : "Dostępne wartości"
     },
     "history" : {
         "date": "Data operacji",
@@ -279,7 +280,8 @@
         "item_locked" : "Nieruchomość została zablokowana",
         "unlock_confirmation_text" : "Zamierzasz odblokować wybraną nieruchomość. Po odblokowaniu będzie możliwy wynajem nieruchomości. Kontynuować?",
         "lock_confirmation_text" : "Zamierzasz zablokować wybraną nieruchomość. Po zablokowaniu nie będzie możliwy wynajem nieruchomości (do momentu odblokowania), a aktualne rezerwacje zostaną anulowane. Zablokować mimo wszystko?",
-        "locked" : "Zablokowana"
+        "locked" : "Zablokowana",
+        "all" : "Wszystkie"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -469,7 +471,12 @@
         "signin" : "Zaloguj się",
         "signup_confirm" : "Potwierdź rejestrację",
         "thank_for_registering" : "Dziękujemy za rejestrację. Na podany przez Ciebie adres e-mail zostało wysłane potwierdzenie rejestracji.",
-        "thank_for_registering_2" : "Kliknij w otrzymany link aby dokończyć rejestrację i móc w pełni korzystać z serwisu."
+        "thank_for_registering_2" : "Kliknij w otrzymany link aby dokończyć rejestrację i móc w pełni korzystać z serwisu.",
+        "accept": "Akceptuję",
+        "regulations" : "regulamin",
+        "privacy_policy" : "politykę prywatności",
+        "regulations_url" : "/regulamin",
+        "privacy_policy_url" : "/polityka-prywatnosci"
     },
     "rent" : {
         "add_new_item" : "Dodaj nową nieruchomość",
@@ -828,7 +835,8 @@
         "fault_updated" : "Zgłoszenie zostało zaktualizowane",
         "show_fault": "Szczegóły zgłoszenia",
         "add_date" : "Data zgłoszenia",
-        "status_was_changed" : "Status został zmieniony"
+        "status_was_changed" : "Status został zmieniony",
+        "priority" : "Priorytet"
     },
     "notifications" : {
         "new_user_notification" : "Nowe powiadomienie",

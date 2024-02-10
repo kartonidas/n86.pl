@@ -90,6 +90,18 @@ class ItemController extends Controller
                 $items->where("mode", $validated["search"]["mode"]);
         }
         
+        if(!empty($validated["search"]["ownership_type"]))
+        {
+            switch($validated["search"]["ownership_type"])
+            {
+                case "property": break;
+                    $items->where("ownership_type", Item::OWNERSHIP_PROPERTY);
+                case "manage":
+                    $items->where("ownership_type", Item::OWNERSHIP_MANAGE);
+                break;
+            }
+        }
+        
         $total = $items->count();
         
         $orderBy = $this->getOrderBy($request, Item::class, "name,asc");
@@ -107,6 +119,7 @@ class ItemController extends Controller
             $items[$i]->can_edit = $item->canEdit();
             $items[$i]->can_add_rental = $item->canAddRental();
             $items[$i]->rentals = $item->getRentalInfo();
+            $items[$i]->customer = $item->getCustomer();
         }
             
         $out = [

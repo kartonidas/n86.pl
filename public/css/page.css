@@ -96,3 +96,17 @@ body {
 .more-info {
     color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
 }
+
+.cookie-info {
+    bottom: 20px;
+    right: 20px;
+    background: #fbfbfb;
+    padding: 10px;
+    width: 450px;
+    max-width: calc(100% - 40px);
+    font-size: 11px;
+    color: #525252;
+    line-height: 15px;
+    border-radius: 5px;
+    border: 1px solid #e2e2e2;
+}

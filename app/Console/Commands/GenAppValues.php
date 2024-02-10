@@ -3,15 +3,18 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Libraries\Templates\Rental as TemplateRental;
 use App\Models\BalanceDocument;
 use App\Models\ConfigNotification;
 use App\Models\Customer;
 use App\Models\DocumentTemplate;
+use App\Models\Fault;
 use App\Models\Item;
 use App\Models\ItemCyclicalFee;
 use App\Models\Numbering;
 use App\Models\Rental;
 use App\Models\SaleRegister;
+
 
 class GenAppValues extends Command
 {
@@ -117,6 +120,12 @@ class GenAppValues extends Command
                 
             foreach(ConfigNotification::getAllowedModes() as $type => $name)
                 $toJson[$lang]["notifications"]["modes"][] = ["id" => $type, "name" => $name];
+                
+            foreach(Fault::getPriorities() as $type => $name)
+                $toJson[$lang]["faults"]["priorities"][] = ["id" => $type, "name" => $name];
+                
+            foreach(TemplateRental::getAvailableVars()["fields"] as $variable => $variableInfo)
+                $toJson[$lang]["templates"]["variables"][] = ["var" => "[" . $variable . "]", "label" => $variableInfo[0]];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");
