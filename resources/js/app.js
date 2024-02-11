@@ -45,7 +45,8 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 
-axios.defaults.baseURL = 'https://estate.netextend.pl/';
+
+axios.defaults.baseURL = import.meta.env.VITE_API_ENDPOINT;
 axios.defaults.params = {
     '_locale': i18n.global.locale.value
 }

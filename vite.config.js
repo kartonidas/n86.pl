@@ -26,7 +26,7 @@ export default defineConfig({
             cert: fs.readFileSync("../cert/cert1.pem"),
         },
         hmr: {
-            host: 'estate.netextend.pl',
+            host: 'n86.pl',
         },
     },
 });

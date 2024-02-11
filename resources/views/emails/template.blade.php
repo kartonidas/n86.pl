@@ -22,8 +22,8 @@
                         processing restrictions, the right to transfer data, the right to object and the right to withdraw consent
                         data processing at any time. Detailed information on data processing
                         personal data can be found in our GDPR information clause available at
-                        <a href="{{ env("SITE_URL") }}en/privacy-policy">
-                            {{ env("APP_URL") }}en/privacy-policy
+                        <a href="{{ env("APP_URL") }}/en/privacy-policy">
+                            {{ env("APP_URL") }}/en/privacy-policy
                         </a>
                     @else
                         Informujemy, iż administratorem danych osobowych jest Artur Patura wykonujący działalność gospodarczą pod
@@ -35,8 +35,8 @@
                         ograniczenia przetwarzania, prawo do przenoszenia danych, prawo sprzeciwu oraz prawo do cofnięcia zgody na
                         przetwarzanie danych w dowolnym momencie. Szczegółowe informacje na temat przetwarzania danych
                         osobowych znajdują się w naszej w klauzuli informacyjnej RODO dostępnej pod adresem
-                        <a href="{{ env("SITE_URL") }}polityka-prywatnosci">
-                            {{ env("APP_URL") }}polityka-prywatnosci
+                        <a href="{{ env("APP_URL") }}/polityka-prywatnosci">
+                            {{ env("APP_URL") }}/polityka-prywatnosci
                         </a>
                     @endif
 				</div>
