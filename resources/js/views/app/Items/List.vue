@@ -53,6 +53,7 @@
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.estate_list'), disabled : true },
                     ],
+                    search: {}
                 }
             }
         },
