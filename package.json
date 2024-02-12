@@ -3,6 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite --mode dev",
+        "dev-build": "vite build --mode dev",
         "build": "vite build",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
         "vue-i18n-extract": "vue-i18n-extract report --vueFiles './resources/js/**/*.?(js|vue)' --languageFiles './resources/js/i18n/pl.json'"
