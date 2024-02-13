@@ -9,7 +9,7 @@
                 Zaawanoswane narzędzie do zarządzania wynajmem nieruchomości. Obsługuj wynajem nieruchomości w swoim imieniu lub w imieniu swoich klientów.
             </p>
                 
-            <a href="/sign-up" class="btn btn-primary round-50 mt-2 mb-2 p-3 ps-5 pe-5">Wypróbuj za darmo przez 14 dni!</a>
+            <a href="/sign-up" class="btn btn-primary round-50 mt-2 mb-2 p-3 px-3">Wypróbuj za darmo przez 14 dni!</a>
                 
             <div class="d-flex justify-content-center justify-content-md-end">
                 <img src="/images/intro-screen.png" alt="Tablica i telefon" class="w-auto" style="max-width: 100%">
