@@ -2,6 +2,8 @@
 
 @section("content")
     <main class="container mt-2 mb-5 regulations">
+        W przygotowaniu...
+        <!--
         @foreach($categories as $category => $help)
             <h3>{{ $category }}</h3>
             <div>
@@ -12,5 +14,6 @@
                 </ul>
             </div>
         @endforeach
+        -->
     </main>
 @endsection
