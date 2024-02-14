@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Libraries\Templates\Rental as TemplateRental;
+use App\Libraries\Data;
 use App\Models\BalanceDocument;
 use App\Models\ConfigNotification;
 use App\Models\Customer;
@@ -126,6 +127,10 @@ class GenAppValues extends Command
                 
             foreach(TemplateRental::getAvailableVars()["fields"] as $variable => $variableInfo)
                 $toJson[$lang]["templates"]["variables"][] = ["var" => "[" . $variable . "]", "label" => $variableInfo[0]];
+                
+            $systemBillTypes = Data::getSystemBillTypes();
+            foreach($systemBillTypes as $systemBillType)
+                $toJson[$lang]["bills"]["system_types"][] = ["id" => $systemBillType[0], "name" => $systemBillType[1]];
         }
         
         $fp = fopen(resource_path("js/data/values.json"), "w");

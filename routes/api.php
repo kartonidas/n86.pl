@@ -256,6 +256,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     $router->get('/my-notification/{id}', [MyNotificationController::class, "get"])->where("id", "[0-9]+");
     $router->put('/my-notification/{id}', [MyNotificationController::class, "update"])->where("id", "[0-9]+");
     $router->delete('/my-notification/{id}', [MyNotificationController::class, "delete"])->where("id", "[0-9]+");
+    
+    // RACHUNKI
+    $router->get('/bills', [BalanceController::class, "bills"]);
+    $router->get('/deposits', [BalanceController::class, "deposits"]);
 });
 
 Route::prefix('v1')->middleware(['locale'])->group(function () use($router) {

@@ -88,6 +88,13 @@ const model = ref([
                 access: hasAccess('fault:list'),
                 regex: /^\/app\/fault(s?)(\/(.*))?$/i
             },
+            {
+                label: t('menu.bills'),
+                icon: 'pi pi-fw pi-dollar',
+                to: { name: 'bills' },
+                access: hasAccess('item:list'),
+                regex: /^\/app\/bills?$/i,
+            },
         ]
     },
     {

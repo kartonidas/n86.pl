@@ -146,4 +146,42 @@ class BalanceDocument extends Model
             return static::$cacheCreatedBy[$this->user_id];
         }
     }
+    
+    private static $cacheItems = [];
+    public function getItem()
+    {
+        if($this->item_id > 0)
+        {
+            if(empty(static::$cacheItems[$this->item_id]))
+            {
+                $item = Item::withTrashed()->find($this->item_id);
+                if($item)
+                    static::$cacheItems[$this->item_id] = $item;
+            }
+            
+            return static::$cacheItems[$this->item_id] ?? null;
+        }
+    }
+    
+    public function getAssociatedBills()
+    {
+        $associatedBills = [];
+        $deposits = $this->getDepositAssociatedDocument();
+        if($deposits)
+        {
+            foreach($deposits as $deposit)
+            {
+                if($deposit->object_type == BalanceDocument::OBJECT_TYPE_BILL)
+                {
+                    $bill = ItemBill::find($deposit->object_id);
+                    if($bill)
+                    {
+                        $bill->bill_type = $bill->getBillType();
+                        $associatedBills[] = $bill;
+                    }
+                }
+            }
+        }
+        return $associatedBills;
+    }
 }

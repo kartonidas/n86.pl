@@ -155,6 +155,7 @@
         "recipient_bank_account": "Numer konta bankowego",
         "new_bill" : "Nowy rachunek",
         "empty_bills_list" : "Brak rachunków",
+        "empty_deposits_list" : "Brak wpłat",
         "update_bill" : "Aktualizuj rachunek",
         "bill_added" : "Rachunek został dodany",
         "bill_updated" : "Rachunek został zaktualizowany",
@@ -281,7 +282,14 @@
         "unlock_confirmation_text" : "Zamierzasz odblokować wybraną nieruchomość. Po odblokowaniu będzie możliwy wynajem nieruchomości. Kontynuować?",
         "lock_confirmation_text" : "Zamierzasz zablokować wybraną nieruchomość. Po zablokowaniu nie będzie możliwy wynajem nieruchomości (do momentu odblokowania), a aktualne rezerwacje zostaną anulowane. Zablokować mimo wszystko?",
         "locked" : "Zablokowana",
-        "all" : "Wszystkie"
+        "all" : "Wszystkie",
+        "payment_status" : "Status płatności",
+        "unpaid" : "Nieopłacone",
+        "payment_date_from" : "Data płatności (od)",
+        "payment_date_to" : "Data płatności (do)",
+        "estate" : "Nieruchomość",
+        "paid_date_from" : "Data wpłaty (od)",
+        "paid_date_to" : "Data wpłaty (do)"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -313,7 +321,9 @@
         "customer_invoices_config": "Ustawienia",
         "fault_statuses" : "Statusy usterek",
         "items_list_archived" : "Archiwalne",
-        "my_notifications" : "Moje powiadomienia"
+        "my_notifications" : "Moje powiadomienia",
+        "bills" : "Rachunki",
+        "deposits" : "Wpłaty"
     },
     "meta": {
         "title" : {
@@ -396,7 +406,9 @@
             "item_archive" : "Zarchiwizuj nieruchomość",
             "items_list_archived" : "Lista archiwalnych nieruchomości",
             "new_user_notification" : "Nowe powiadomienie",
-            "my_notifications" : "Moje powiadomienia"
+            "my_notifications" : "Moje powiadomienia",
+            "bills" : "Rachunki",
+            "deposits" : "Wpłaty"
         }
     },
     "permissions" : {

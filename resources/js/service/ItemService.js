@@ -122,4 +122,26 @@ export default class ItemService {
     unlock(itemId) {
         return axios.post('api/v1/item/' + itemId + "/unlock");
     }
+    
+    allBills(size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get("api/v1/bills", { params : data });
+    }
+    
+    allDeposits(size, page, sort, order, search) {
+        var data = {
+            size: size,
+            page: page,
+            sort: sort,
+            order: order,
+            search: search
+        };
+        return axios.get("api/v1/deposits", { params : data });
+    }
 }

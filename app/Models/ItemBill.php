@@ -187,4 +187,20 @@ class ItemBill extends Model
             return static::$cacheRentals[$this->rental_id] ?? null;
         }
     }
+    
+    private static $cacheItems = [];
+    public function getItem()
+    {
+        if($this->item_id > 0)
+        {
+            if(empty(static::$cacheItems[$this->item_id]))
+            {
+                $item = Item::withTrashed()->find($this->item_id);
+                if($item)
+                    static::$cacheItems[$this->item_id] = $item;
+            }
+            
+            return static::$cacheItems[$this->item_id] ?? null;
+        }
+    }
 }

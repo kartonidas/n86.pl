@@ -513,6 +513,18 @@ const router = createRouter({
                             component: () => import('@/views/app/Faults/Show.vue'),
                             meta: {permission: 'fault:list'},
                         },
+                        {
+                            path: '/app/bills',
+                            name: 'bills',
+                            component: () => import('@/views/app/Bills.vue'),
+                            meta: {permission: 'item:list'},
+                        },
+                        {
+                            path: '/app/deposits',
+                            name: 'deposits',
+                            component: () => import('@/views/app/Deposits.vue'),
+                            meta: {permission: 'item:list'},
+                        },
                     ]
                 },
                 {

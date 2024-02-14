@@ -800,25 +800,7 @@ class RentalController extends Controller
         foreach($payments as $k => $payment)
         {
             $payments[$k]->prepareViewData();
-            $associatedBills = [];
-            $deposits = $payment->getDepositAssociatedDocument();
-            if($deposits)
-            {
-                foreach($deposits as $deposit)
-                {
-                    if($deposit->object_type == BalanceDocument::OBJECT_TYPE_BILL)
-                    {
-                        $bill = ItemBill::find($deposit->object_id);
-                        if($bill)
-                        {
-                            $bill->bill_type = $bill->getBillType();
-                            $associatedBills[] = $bill;
-                        }
-                    }
-                }
-            }
-            
-            $payments[$k]->associated_documents = $associatedBills;
+            $payments[$k]->associated_documents = $payment->getAssociatedBills();
             $payments[$k]->created_by = $payment->getCreatedBy();
         }
             

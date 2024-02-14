@@ -12,6 +12,9 @@ class BasicAuthDevelopment
     {
         if(env("APP_DEV_MODE", false))
         {
+            if($request->is("api/*"))
+                return $next($request);
+            
             $user = $_SERVER["PHP_AUTH_USER"] ?? "";
             $pass = $_SERVER["PHP_AUTH_PW"] ?? "";
 

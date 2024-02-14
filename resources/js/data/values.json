@@ -773,6 +773,18 @@
                     "label": "Regon w\u0142a\u015bciciela"
                 }
             ]
+        },
+        "bills": {
+            "system_types": [
+                {
+                    "id": -1,
+                    "name": "Czynsz"
+                },
+                {
+                    "id": -2,
+                    "name": "Kaucja"
+                }
+            ]
         }
     }
 }
