@@ -114,10 +114,10 @@ class ReportController extends Controller
             $report[date("Y-m", $bill->payment_date)]["balance"] += (-$bill->cost);
         }
         
+        $allowedYears = [];
         $firstBalanceDocument = BalanceDocument::where("item_id", $item->id)->orderBy("time", "ASC")->first();
         if($firstBalanceDocument)
         {
-            $allowedYears = [];
             $firstYear = date("Y", $firstBalanceDocument->time);
             while($firstYear <= date("Y"))
                 $allowedYears[] = intval($firstYear++);
@@ -206,9 +206,10 @@ class ReportController extends Controller
             })
             ->orderBy("payment_date", "ASC")
             ->first();
+            
+        $allowedYears = [];
         if($firstBill)
         {
-            $allowedYears = [];
             $firstYear = date("Y", $firstBill->paid_date);
             while($firstYear <= date("Y"))
                 $allowedYears[] = intval($firstYear++);
@@ -301,10 +302,10 @@ class ReportController extends Controller
                 $report[date("Y-m", $balanceDocument->time)]["deposit"] += abs($balanceDocument->amount);
         }
         
+        $allowedYears = [];
         $firstBalanceDocument = BalanceDocument::where("item_id", $item->id)->orderBy("time", "ASC")->first();
         if($firstBalanceDocument)
         {
-            $allowedYears = [];
             $firstYear = date("Y", $firstBalanceDocument->time);
             while($firstYear <= date("Y"))
                 $allowedYears[] = intval($firstYear++);
