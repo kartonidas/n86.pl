@@ -31,13 +31,15 @@
                 deleteTenantId: null,
                 tenant_types: getValues('tenant_types'),
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-tenants-table"),
+                        size: this.rowsPerPage,
+                        sort: 'name',
+                        order: 1,
+                    },
                     search: {},
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'name',
-                    sortOrder: 1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.tenant_list'), disabled : true },
@@ -48,8 +50,8 @@
         beforeMount() {
             let order = appStore().getTableOrder('tenants');
             if (order != undefined) {
-                this.meta.sortField = order.col;
-                this.meta.sortOrder = order.dir;
+                this.meta.list.sort = order.col;
+                this.meta.list.order = order.dir;
             }
             
             let filter = appStore().getTableFilter('tenants');
@@ -66,7 +68,7 @@
         methods: {
             getList() {
                 this.loading = true
-                this.tenantService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, this.meta.search)
+                this.tenantService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.tenants = response.data.data
@@ -81,16 +83,16 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
             sort(event) {
-                this.meta.sortField = event['sortField']
-                this.meta.sortOrder = event['sortOrder']
-                this.meta.currentPage = 1
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 
-                appStore().setTableOrder('tenants', this.meta.sortField, this.meta.sortOrder);
+                appStore().setTableOrder('tenants', this.meta.list.sort, this.meta.list.order);
                 
                 this.getList()
             },
@@ -134,13 +136,13 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('tenants', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('tenants', this.meta.search)
                 this.getList()
@@ -187,7 +189,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-tenants-table">
                     <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>

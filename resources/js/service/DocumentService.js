@@ -2,15 +2,9 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class DocumentService {
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/documents', { params : data });
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/documents', { params : removeNullValues(data) });
     }
     
     get(documentId) {

@@ -35,8 +35,10 @@
                     from_time: new Date()
                 },
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     loading: false,
                     totalRecords: null,
                     totalPages: null,
@@ -55,7 +57,7 @@
         },
         methods: {
             getHistory() {
-                this.itemService.cyclicalFeeCosts(this.$route.params.itemId, this.$route.params.feeId, this.meta.perPage, this.meta.currentPage)
+                this.itemService.cyclicalFeeCosts(this.$route.params.itemId, this.$route.params.feeId, this.meta.list)
                     .then(
                         (response) => {
                             this.history = response.data.data
@@ -70,7 +72,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getHistory()
             },
             
@@ -175,7 +177,7 @@
                     <Button type="button" icon="pi pi-plus" @click="addNewCost" class="p-button-primary" v-tooltip.left="$t('items.items_cyclical_fee_add_cost')"></Button>
                 </div>
                 
-                <DataTable :value="history" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading">
+                <DataTable :value="history" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading">
                     <Column :header="$t('items.from_day')" style="width: 180px;" field="from_time"></Column>
                     <Column :header="$t('items.value')" field="cost" class="text-right">
                         <template #body="{ data }">

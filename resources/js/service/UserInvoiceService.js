@@ -2,15 +2,9 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class UserInvoiceService {
-    invoices(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search,
-        };
-        return axios.get('api/v1/customer-invoices', { params : data });
+    invoices(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/customer-invoices', { params : removeNullValues(data) });
     }
     
     invoiceCreate(data) {
@@ -42,13 +36,9 @@ export default class UserInvoiceService {
         return axios.get('api/v1/customer-invoice/number/' + saleRegisterId);
     }
     
-    saleRegisterList(size, page, search) {
-        var data = {
-            size: size,
-            page: page,
-            search: search,
-        };
-        return axios.get('api/v1/sale-register', { params : data });
+    saleRegisterList(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/sale-register', { params : removeNullValues(data) });
     }
     
     saleRegisterCreate(data) {

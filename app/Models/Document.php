@@ -16,6 +16,9 @@ class Document extends Model
         boot as traitBoot;
     }
     
+    public static $sortable = ["title"];
+    public static $defaultSortable = ["created_at", "desc"];
+    
     protected $casts = [
         "created_at" => 'datetime:Y-m-d H:i',
         "updated_at" => 'datetime:Y-m-d H:i',

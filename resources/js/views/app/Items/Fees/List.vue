@@ -26,9 +26,11 @@
                 displayConfirmation: false,
                 deleteFeeId: null,
                 meta: {
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     loading: false,
                     totalRecords: null,
                     totalPages: null,
@@ -63,7 +65,7 @@
             getList() {
                 this.meta.loading = true
                 
-                this.itemService.cyclicalFees(this.$route.params.itemId, this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
+                this.itemService.cyclicalFees(this.$route.params.itemId, this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.fees = response.data.data
@@ -86,7 +88,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -121,12 +123,12 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 this.getList()
             }
@@ -150,7 +152,7 @@
                     <Button icon="pi pi-plus" :label="$t('items.add_cyclical_fee_short')" size="small" v-tooltip.left="$t('items.add_cyclical_fee')" @click="newCyclicalFee" class="text-center"></Button>
                 </div>
                 
-                <DataTable :value="fees" stripedRows class="p-datatable-gridlines" :class="hasAccess('item:update') ? 'clickable' : ''" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :value="fees" stripedRows class="p-datatable-gridlines" :class="hasAccess('item:update') ? 'clickable' : ''" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div class="mb-1">

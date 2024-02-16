@@ -27,13 +27,15 @@
                 deleteCustomerInvoiceId: null,
                 documentTypes: getValues('invoices.types'),
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-customer-invoices-table"),
+                        size: this.rowsPerPage,
+                        sort: 'title',
+                        order: 1
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'title',
-                    sortOrder: 1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.settlements'), disabled : true },
                         {'label' : this.$t('menu.customer_invoices'), disabled : true },
@@ -44,8 +46,8 @@
         beforeMount() {
             let order = appStore().getTableOrder('customer_invoices');
             if (order != undefined) {
-                this.meta.sortField = order.col;
-                this.meta.sortOrder = order.dir;
+                this.meta.list.sort = order.col;
+                this.meta.list.order = order.dir;
             }
             
             let filter = appStore().getTableFilter('customer_invoices');
@@ -68,7 +70,7 @@
                 search.date_from = search.date_from ? moment(search.date_from).format("YYYY-MM-DD") : null
                 search.date_to = search.date_to ? moment(search.date_to).format("YYYY-MM-DD") : null
                 
-                this.userInvoiceService.invoices(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, search)
+                this.userInvoiceService.invoices(this.meta.list, search)
                     .then(
                         (response) => {
                             this.customerInvoices = response.data.data
@@ -83,7 +85,7 @@
             },
             
             getSaleRegistries() {
-                this.userInvoiceService.saleRegisterList(100, 1)
+                this.userInvoiceService.saleRegisterList({size: 100, first: 0})
                     .then(
                         (response) => {
                             response.data.data.forEach((i) => {
@@ -97,7 +99,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -140,23 +142,23 @@
             },
             
             sort(event) {
-                this.meta.sortField = event['sortField']
-                this.meta.sortOrder = event['sortOrder']
-                this.meta.currentPage = 1
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 
-                appStore().setTableOrder('customer_invoices', this.meta.sortField, this.meta.sortOrder);
+                appStore().setTableOrder('customer_invoices', this.meta.list.sort, this.meta.list.order);
                 
                 this.getList()
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('customer_invoices', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('customer_invoices', this.meta.search)
                 this.getList()
@@ -239,7 +241,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="customerInvoices" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)" @sort="sort($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="customerInvoices" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)" @sort="sort($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-customer-invoices-table">
                     <Column class="text-left" style="min-width: 60px; width: 60px;">
                         <template #body="{ data }">
                             <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('customer_invoices.download_invoice')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>

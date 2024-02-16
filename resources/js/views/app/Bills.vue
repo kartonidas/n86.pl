@@ -32,9 +32,11 @@
                 billTypes: getValues("bills.system_types"),
                 loadingBillTypesDictionary: false,
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-bills-table"),
+                        size: this.rowsPerPage,
+                    },
                     loading: false,
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -70,7 +72,7 @@
                 search.payment_date_from = search.payment_date_from ? moment(search.payment_date_from).format("YYYY-MM-DD") : null
                 search.payment_date_to = search.payment_date_to ? moment(search.payment_date_to).format("YYYY-MM-DD") : null
                 
-                this.itemService.allBills(this.meta.perPage, this.meta.currentPage, null, null, search)
+                this.itemService.allBills(this.meta.list, search)
                     .then(
                         (response) => {
                             this.bills = response.data.data
@@ -87,7 +89,7 @@
             getBillTypes() {
                 this.billTypes = getValues("bills.system_types")
                 this.loadingBillTypesDictionary = true
-                this.dictionaryService.listByType('bills', 999, 1)
+                this.dictionaryService.listByType('bills', {size: 999, first: 0})
                     .then(
                         (response) => {
                             response.data.data.forEach((type) => {
@@ -102,18 +104,18 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('bills', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('bills', this.meta.search)
                 this.getList()
@@ -170,7 +172,7 @@
                     </div>
                 </form>
                 
-                <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" stateStorage="session" stateKey="dt-state-bills-table">
+                <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" stateStorage="session" stateKey="dt-state-bills-table">
                     <Column :header="$t('items.estate')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">

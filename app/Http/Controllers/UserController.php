@@ -282,17 +282,18 @@ class UserController extends Controller
     {
         User::checkAccess("user:list");
         
-        $request->validate([
+        $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
+            "first" => "nullable|integer|gte:0",
             "lastname" => "nullable|max:200",
             "email" => "nullable|max:200",
             "phone" => "nullable|max:200",
             "permission" => ["nullable", Rule::in(array_merge(UserPermission::getIds(), ["owner", "superuser"]))],
         ]);
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $searchLastname = $request->input("lastname", null);
         $searchEmail = $request->input("email", null);
@@ -320,7 +321,7 @@ class UserController extends Controller
         $total = $users->count();
             
         $users = $users->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("owner", "DESC")
             ->orderBy("superuser", "DESC")
             ->orderBy("lastname", "ASC")
@@ -346,8 +347,6 @@ class UserController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $users,
         ];
             

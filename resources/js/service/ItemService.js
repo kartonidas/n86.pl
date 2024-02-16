@@ -6,15 +6,9 @@ export default class ItemService {
         return axios.get('api/v1/items/settings');
     }
     
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/items', { params : data });
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/items', { params : removeNullValues(data) });
     }
     
     create(itemData) {
@@ -37,15 +31,9 @@ export default class ItemService {
         return axios.post('api/v1/item/validate', removeNullValues(itemData));
     }
     
-    bills(itemId, size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/item/' + itemId + "/bills", { params : data });
+    bills(itemId, meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/item/' + itemId + "/bills", { params : removeNullValues(data) });
     }
     
     createBill(itemId, billData) {
@@ -68,15 +56,9 @@ export default class ItemService {
         return axios.post('api/v1/item/' + itemId + "/bill/" + billId + "/payment", paymentData);
     }
     
-    cyclicalFees(itemId, size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/item/' + itemId + "/fees", { params : data });
+    cyclicalFees(itemId, meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/item/' + itemId + "/fees", { params : removeNullValues(data) });
     }
     
     createCyclicalFee(itemId, feeData) {
@@ -95,12 +77,8 @@ export default class ItemService {
         return axios.delete('api/v1/item/' + itemId + "/fee/" + feeId);
     }
     
-    cyclicalFeeCosts(itemId, feeId, size, page) {
-        var data = {
-            size: size,
-            page: page,
-        };
-        return axios.get('api/v1/item/' + itemId + "/fee/" + feeId + "/costs", { params : data });
+    cyclicalFeeCosts(itemId, feeId, meta) {
+        return axios.get('api/v1/item/' + itemId + "/fee/" + feeId + "/costs", { params : removeNullValues(meta) });
     }
     
     removeCyclicalFeeCost(itemId, feeId, costId) {
@@ -123,25 +101,13 @@ export default class ItemService {
         return axios.post('api/v1/item/' + itemId + "/unlock");
     }
     
-    allBills(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get("api/v1/bills", { params : data });
+    allBills(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get("api/v1/bills", { params : removeNullValues(data) });
     }
     
-    allDeposits(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get("api/v1/deposits", { params : data });
+    allDeposits(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get("api/v1/deposits", { params : removeNullValues(data) });
     }
 }

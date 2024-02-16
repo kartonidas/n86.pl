@@ -63,13 +63,15 @@
                         {'label' : this.$t('rent.new_rent'), disabled : true },
                     ],
                     tenants: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                            sort: 'name',
+                            order: 1,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: false,
-                        sortField: 'name',
-                        sortOrder: 1,
                         search: {
                             name : '',
                             pesel_nip : '',
@@ -150,18 +152,19 @@
             },
             
             changeTenantsPage(event) {
-                this.meta.tenants.currentPage = event["page"] + 1;
+                this.meta.tenants.list.first = event["first"];
                 this.getTenantsList()
             },
             
             sortTenants(event) {
-                this.meta.tenants.sortField = event['sortField']
-                this.meta.tenants.sortOrder = event['sortOrder']
-                this.meta.tenants.currentPage = 1
+                this.meta.tenants.list.sort = event['sortField']
+                this.meta.tenants.list.order = event['sortOrder']
+                this.meta.tenants.list.first = 0
                 this.getTenantsList()
             },
             
             searchTenants() {
+                this.meta.tenants.list.first = 0
                 this.getTenantsList()
             },
             
@@ -169,17 +172,18 @@
                 this.meta.tenants.search.name = '';
                 this.meta.tenants.search.pesel_nip = '';
                 this.meta.tenants.search.type = '';
+                this.meta.tenants.list.first = 0
                 this.getTenantsList()
             },
             
             getTenantsList() {
                 this.meta.tenants.loading = true
-                this.tenantService.list(this.meta.tenants.perPage, this.meta.tenants.currentPage, this.meta.tenants.sortField, this.meta.tenants.sortOrder, this.meta.tenants.search)
+                this.tenantService.list(this.meta.tenants.list, this.meta.tenants.search)
                     .then(
                         (response) => {
                             this.tenants = response.data.data
-                            this.meta.totalRecords = response.data.total_rows
-                            this.meta.totalPages = response.data.total_pages
+                            this.meta.tenants.totalRecords = response.data.total_rows
+                            this.meta.tenants.totalPages = response.data.total_pages
                             this.meta.tenants.loading = false
                         },
                         (errors) => {
@@ -326,7 +330,7 @@
                 </div>
             </form>
         
-            <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
+            <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.list.size" :first="meta.tenants.list.first" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.list.sort" :sortOrder="this.meta.tenants.list.order">
                 <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                     <template #body="{ data }">
                         <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>

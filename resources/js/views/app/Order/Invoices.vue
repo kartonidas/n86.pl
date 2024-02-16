@@ -1,5 +1,6 @@
 <script>
     import { getResponseErrors, setMetaTitle } from '@/utils/helper'
+    import { appStore } from '@/store.js'
     import OrderService from '@/service/OrderService'
     
     export default {
@@ -16,10 +17,12 @@
             return {
                 invoices : [],
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-invoices-table"),
+                        size: this.rowsPerPage,
+                    },
                     search: {},
                     loading: false,
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -30,24 +33,30 @@
             }
         },
         beforeMount() {
-            this.orderService.invoices(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
-                .then(
-                    (response) => {
-                        this.invoices = response.data.data
-                        this.meta.totalRecords = response.data.total_rows
-                        this.meta.totalPages = response.data.total_pages
-                        this.meta.loading = false
-                    },
-                    (errors) => {
-                        this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                    },
-                )
+            this.getList()
         },
         methods: {
+            getList() {
+                this.meta.loading = true
+                
+                this.orderService.invoices(this.meta.list, this.meta.search)
+                    .then(
+                        (response) => {
+                            this.invoices = response.data.data
+                            this.meta.totalRecords = response.data.total_rows
+                            this.meta.totalPages = response.data.total_pages
+                            this.meta.loading = false
+                        },
+                        (errors) => {
+                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
+                        },
+                    )
+            },
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
+            
             downloadPDF(invoiceId) {
                 this.orderService.getPDFInvoice(invoiceId)
                     .then(
@@ -80,7 +89,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card">
-                <DataTable :value="invoices" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading">
+                <DataTable :value="invoices" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" stateStorage="session" stateKey="dt-state-invoices-table">
                     <Column field="full_number" :header="$t('invoices.number')" class="text-left"></Column>
                     <Column field="amount" :header="$t('invoices.amount')" class="text-right">
                         <template #body="{ data }">

@@ -2,15 +2,9 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class TenantService {
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search,
-        };
-        return axios.get('api/v1/tenants', { params : data });
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/tenants', { params : removeNullValues(data) });
     }
     
     create(tenantData) {

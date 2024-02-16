@@ -25,8 +25,10 @@
                 displayConfirmation: false,
                 deleteUserId: null,
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-users-table"),
+                        size: this.rowsPerPage,
+                    },
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -47,7 +49,7 @@
         methods: {
             getList() {
                 this.loading = true
-                this.usersService.list(this.meta.perPage, this.meta.currentPage)
+                this.usersService.list(this.meta.list)
                     .then(
                         (response) => {
                             this.users = response.data.data
@@ -70,7 +72,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -119,7 +121,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="users" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="users" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)" stateStorage="session" stateKey="dt-state-users-table">
                     <Column field="name" :header="$t('users.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'user_edit', params: { userId : data.id }}" v-if="hasAccess('user:update')">

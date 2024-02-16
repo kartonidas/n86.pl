@@ -1,16 +1,10 @@
 import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
-export default class FaulrService {
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/faults', { params : data });
+export default class FaultService {
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/faults', { params : removeNullValues(data) });
     }
     
     create(faultData) {

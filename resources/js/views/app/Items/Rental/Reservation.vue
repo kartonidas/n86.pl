@@ -27,8 +27,12 @@
                 rentals: [],
                 meta: {
                     rentals: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                            sort: 'start',
+                            order: 1,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: true
@@ -64,7 +68,7 @@
                     item_id : this.$route.params.itemId,
                     status : 'waiting',
                 };
-                this.rentalService.list(this.meta.rentals.perPage, this.meta.rentals.currentPage, 'start', 1, search)
+                this.rentalService.list(this.meta.rentals.list, search)
                     .then(
                         (response) => {
                             this.rentals = response.data.data
@@ -78,7 +82,7 @@
             },
             
             changeRentalsPage(event) {
-                this.meta.rentals.currentPage = event["page"] + 1;
+                this.meta.rentals.list.first = event["first"];
                 this.getReservationList()
             },
             
@@ -103,7 +107,7 @@
                         <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('items.add_new_tenant')"></Button>
                     </div>
                 </div>
-                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
+                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.list.size" :first="meta.rentals.list.first" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
                     <Column :header="$t('rent.number')" field="full_number">
                         <template #body="{ data }">
                             {{ data.full_number }}

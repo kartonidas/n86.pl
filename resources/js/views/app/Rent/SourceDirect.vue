@@ -77,13 +77,15 @@
                         {'label' : this.$t('rent.new_rent'), disabled : true },
                     ],
                     items: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                            sort: 'name',
+                            order: 1,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: false,
-                        sortField: 'name',
-                        sortOrder: 1,
                         search: {
                             name : '',
                             type : '',
@@ -92,13 +94,15 @@
                         }
                     },
                     tenants: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                            sort: 'name',
+                            order: 1,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: false,
-                        sortField: 'name',
-                        sortOrder: 1,
                         search: {
                             name : '',
                             pesel_nip : '',
@@ -150,22 +154,24 @@
             },
             
             changeItemsPage(event) {
-                this.meta.items.currentPage = event["page"] + 1;
+                this.meta.items.list.first = event["first"];
                 this.getItemsList()
             },
             
             sortItems(event) {
-                this.meta.items.sortField = event['sortField']
-                this.meta.items.sortOrder = event['sortOrder']
-                this.meta.items.currentPage = 1
+                this.meta.items.list.sort = event['sortField']
+                this.meta.items.list.order = event['sortOrder']
+                this.meta.items.list.first = 0
                 this.getItemsList()
             },
             
             searchItems() {
+                this.meta.items.list.first = 0
                 this.getItemsList()
             },
             
             resetSearchItems() {
+                this.meta.items.list.first = 0
                 this.meta.items.search.name = '';
                 this.meta.items.search.pesel_nip = '';
                 this.meta.items.search.type = '';
@@ -174,12 +180,12 @@
             
             getItemsList() {
                 this.meta.items.loading = true
-                this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, this.meta.items.sortField, this.meta.items.sortOrder, this.meta.items.search)
+                this.itemService.list(this.meta.items.list, this.meta.items.search)
                     .then(
                         (response) => {
                             this.items = response.data.data
-                            this.meta.totalRecords = response.data.total_rows
-                            this.meta.totalPages = response.data.total_pages
+                            this.meta.items.totalRecords = response.data.total_rows
+                            this.meta.items.totalPages = response.data.total_pages
                             this.meta.items.loading = false
                         },
                         (errors) => {
@@ -244,22 +250,24 @@
             },
             
             changeTenantsPage(event) {
-                this.meta.tenants.currentPage = event["page"] + 1;
+                this.meta.tenants.list.first = event["first"];
                 this.getTenantsList()
             },
             
             sortTenants(event) {
-                this.meta.tenants.sortField = event['sortField']
-                this.meta.tenants.sortOrder = event['sortOrder']
-                this.meta.tenants.currentPage = 1
+                this.meta.tenants.list.sort = event['sortField']
+                this.meta.tenants.list.order = event['sortOrder']
+                this.meta.tenants.list.first = 0
                 this.getTenantsList()
             },
             
             searchTenants() {
+                this.meta.tenants.list.first = 0
                 this.getTenantsList()
             },
             
             resetSearchTenants() {
+                this.meta.tenants.list.first = 0
                 this.meta.tenants.search.name = '';
                 this.meta.tenants.search.pesel_nip = '';
                 this.meta.tenants.search.type = '';
@@ -268,12 +276,12 @@
             
             getTenantsList() {
                 this.meta.tenants.loading = true
-                this.tenantService.list(this.meta.tenants.perPage, this.meta.tenants.currentPage, this.meta.tenants.sortField, this.meta.tenants.sortOrder, this.meta.tenants.search)
+                this.tenantService.list(this.meta.tenants.list, this.meta.tenants.search)
                     .then(
                         (response) => {
                             this.tenants = response.data.data
-                            this.meta.totalRecords = response.data.total_rows
-                            this.meta.totalPages = response.data.total_pages
+                            this.meta.tenants.totalRecords = response.data.total_rows
+                            this.meta.tenants.totalPages = response.data.total_pages
                             this.meta.tenants.loading = false
                         },
                         (errors) => {
@@ -435,7 +443,7 @@
             </div>
         </form>
     
-        <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.perPage" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="this.meta.tenants.sortField" :sortOrder="this.meta.tenants.sortOrder">
+        <DataTable :value="tenants" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.tenants.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.tenants.totalPages" :rows="meta.tenants.list.size" :first="meta.tenants.list.first" @sort="sortTenants($event)" @page="changeTenantsPage" :loading="meta.tenants.loading" @row-click="selectTenant($event)" :sortField="meta.tenants.list.sort" :sortOrder="meta.tenants.list.order">
             <Column field="name" sortable :header="$t('tenants.name')" style="min-width: 300px;">
                 <template #body="{ data }">
                     <Badge :value="getValueLabel('tenant_types', data.type)" class="font-normal" severity="info"></Badge>
@@ -480,7 +488,7 @@
             </div>
         </form>
     
-        <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="this.meta.items.sortField" :sortOrder="this.meta.items.sortOrder">
+        <DataTable :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.list.size" :first="meta.items.list.first" @sort="sortItems($event)" @page="changeItemsPage" :loading="meta.items.loading" @row-click="selectItem($event)" :sortField="meta.items.list.sort" :sortOrder="meta.items.list.order">
             <Column field="name" sortable :header="$t('items.name')" style="min-width: 300px;">
                 <template #body="{ data }">
                     <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

@@ -18,6 +18,7 @@ class TenantRequest extends FormRequest
         return [
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
+            "first" => "nullable|integer|gte:0",
             "sort" => "nullable",
             "order" => "nullable|integer",
             "search.name" => "nullable|string",

@@ -31,13 +31,15 @@
                 tenant_types: getValues('tenant_types'),
                 statuses: getValues('rental.statuses'),
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-rentals-table"),
+                        size: this.rowsPerPage,
+                        sort: 'full_number',
+                        order: -1,
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'full_number',
-                    sortOrder: -1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.rentals_list'), disabled : true },
@@ -48,8 +50,8 @@
         beforeMount() {
             let order = appStore().getTableOrder('rentals');
             if (order != undefined) {
-                this.meta.sortField = order.col;
-                this.meta.sortOrder = order.dir;
+                this.meta.list.sort = order.col;
+                this.meta.list.order = order.dir;
             }
             
             let filter = appStore().getTableFilter('rentals');
@@ -75,7 +77,7 @@
                 search.start = search.start ? moment(search.start).format("YYYY-MM-DD") : null
                 search.end = search.end ? moment(search.end).format("YYYY-MM-DD") : null
                 
-                this.rentalService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, search)
+                this.rentalService.list(this.meta.list, search)
                     .then(
                         (response) => {
                             this.rentals = response.data.data
@@ -98,16 +100,16 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
             sort(event) {
-                this.meta.sortField = event['sortField']
-                this.meta.sortOrder = event['sortOrder']
-                this.meta.currentPage = 1
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 
-                appStore().setTableOrder('rentals', this.meta.sortField, this.meta.sortOrder);
+                appStore().setTableOrder('rentals', this.meta.list.sort, this.meta.list.order);
                 
                 this.getList()
             },
@@ -117,13 +119,13 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('rentals', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('rentals', this.meta.search)
                 this.getList()
@@ -216,7 +218,7 @@
                         </div>
                     </div>
                 </form>
-                <DataTable :rowClass="({ status }) => getRentalRowColor(status)" :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :rowClass="({ status }) => getRentalRowColor(status)" :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-rentals-table">
                     <Column :header="$t('rent.number')" field="full_number" sortable>
                         <template #body="{ data }">
                             {{ data.full_number }}

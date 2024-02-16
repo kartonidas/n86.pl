@@ -44,9 +44,11 @@
                 customers: [],
                 loadingCustomers: false,
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-items-table"),
+                        size: this.rowsPerPage,
+                    },
                     loading: false,
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -74,7 +76,7 @@
             getCustomers() {
                 this.loadingCustomers = true
                 this.customers = []
-                this.customerService.list(9999, 1)
+                this.customerService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
                             if (response.data.data.length) {
@@ -97,7 +99,7 @@
             
             getList() {
                 this.meta.loading = true
-                this.itemService.list(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
+                this.itemService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.items = response.data.data
@@ -120,7 +122,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -154,13 +156,13 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('items', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('items', this.meta.search)
                 this.getList()
@@ -282,7 +284,7 @@
                     </div>
                 </form>
                 
-                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" stateStorage="session" stateKey="dt-state-items-table">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

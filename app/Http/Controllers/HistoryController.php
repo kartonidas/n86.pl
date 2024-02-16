@@ -26,7 +26,7 @@ class HistoryController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $history = History
             ::where("object_type", self::getObjectClassName($object))
@@ -36,7 +36,7 @@ class HistoryController extends Controller
         
         $orderBy = $this->getOrderBy($request, History::class, "created_at,desc");
         $history = $history->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
@@ -56,8 +56,6 @@ class HistoryController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $historyOut,
         ];
             

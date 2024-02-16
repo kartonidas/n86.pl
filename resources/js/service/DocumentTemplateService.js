@@ -2,23 +2,13 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class DocumentTemplateService {
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/documents/templates', { params : data });
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/documents/templates', { params : removeNullValues(data) });
     }
     
-    listGroupByType(size, page) {
-        var data = {
-            size: size,
-            page: page,
-        };
-        return axios.get('api/v1/documents/templates/group', { params : data });
+    listGroupByType(meta) {
+        return axios.get('api/v1/documents/templates/group', { params : removeNullValues(meta) });
     }
     
     create(documentTemplateData) {

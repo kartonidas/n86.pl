@@ -2,14 +2,8 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class RentalService {
-    list(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
+    list(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
         return axios.get('api/v1/rentals', { params : removeNullValues(data) });
     }
     
@@ -43,14 +37,8 @@ export default class RentalService {
         return axios.post('api/v1/rental/' + rentalId + '/terminate', terminateData);
     }
     
-    bills(rentalId, size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
+    bills(rentalId, meta, search) {
+        let data = Object.assign(meta, { "search" : search });
         return axios.get('api/v1/rental/' + rentalId + '/bills', { params : removeNullValues(data) });
     }
     
@@ -94,14 +82,8 @@ export default class RentalService {
         return axios.put('api/v1/rental/' + rentalId + "/document/" + documentId, documentData);
     }
     
-    getDocuments(rentalId, size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
+    getDocuments(rentalId, meta, search) {
+        let data = Object.assign(meta, { "search" : search });
         return axios.get('api/v1/rental/' + rentalId + "/documents", { params : removeNullValues(data) });
     }
     
@@ -113,14 +95,8 @@ export default class RentalService {
         return axios.get('api/v1/rental/' + rentalId + "/document/" + documentId + "/pdf", {'responseType': 'blob'});
     }
     
-    payments(rentalId, size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
+    payments(rentalId, meta, search) {
+        let data = Object.assign(meta, { "search" : search });
         return axios.get('api/v1/rental/' + rentalId + "/payments", { params : removeNullValues(data) });
     }
     

@@ -27,8 +27,12 @@
                 archive_rentals: [],
                 meta: {
                     archive_rentals: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                            sort: "end",
+                            order: -1
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: true
@@ -60,7 +64,7 @@
                     item_id : this.$route.params.itemId,
                     status_arr : ['archive', 'termination', 'canceled'],
                 };
-                this.rentalService.list(this.meta.archive_rentals.perPage, this.meta.archive_rentals.currentPage, 'end', -1, search)
+                this.rentalService.list(this.meta.archive_rentals.list, search)
                     .then(
                         (response) => {
                             this.archive_rentals = response.data.data
@@ -74,7 +78,7 @@
             },
             
             changeArchivePage(event) {
-                this.meta.archive_rentals.currentPage = event["page"] + 1;
+                this.meta.archive_rentals.list.first = event["first"];
                 this.getArchiveList()
             },
             
@@ -93,7 +97,7 @@
             <div class="card">
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="rent:history" class="mb-5"/>
                 
-                <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.perPage" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">
+                <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.list.size" :first="meta.archive_rentals.list.first" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">
                     <Column :header="$t('rent.number')" field="full_number">
                         <template #body="{ data }">
                             {{ data.full_number }}

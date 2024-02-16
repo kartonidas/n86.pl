@@ -28,17 +28,18 @@ class PermissionController extends Controller
     {
         User::checkAccess("permission:list");
         
-        $request->validate([
+        $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
+            "first" => "nullable|integer|gte:0",
         ]);
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $permissions = UserPermission
             ::take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("name", "ASC")
             ->get();
             
@@ -63,8 +64,6 @@ class PermissionController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $permissions,
         ];
             

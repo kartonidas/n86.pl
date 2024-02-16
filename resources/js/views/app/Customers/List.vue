@@ -29,13 +29,15 @@
                 deleteCustomerId: null,
                 customer_types: getValues('customer_types'),
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-customers-table"),
+                        size: this.rowsPerPage,
+                        sort: 'name',
+                        order: 1,
+                    },
                     search: {},
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'name',
-                    sortOrder: 1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.customer_list'), disabled : true },
@@ -46,8 +48,8 @@
         beforeMount() {
             let order = appStore().getTableOrder('customers');
             if (order != undefined) {
-                this.meta.sortField = order.col;
-                this.meta.sortOrder = order.dir;
+                this.meta.list.sort = order.col;
+                this.meta.list.order = order.dir;
             }
             
             let filter = appStore().getTableFilter('customers');
@@ -61,14 +63,10 @@
             }
             this.getList()
         },
-        updated() {
-            this.type = this.route.params.type
-            this.currentPage = 1
-        },
         methods: {
             getList() {
                 this.loading = true
-                this.customerService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, this.meta.search)
+                this.customerService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.customers = response.data.data
@@ -83,16 +81,16 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
             sort(event) {
-                this.meta.sortField = event['sortField']
-                this.meta.sortOrder = event['sortOrder']
-                this.meta.currentPage = 1
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 
-                appStore().setTableOrder('customers', this.meta.sortField, this.meta.sortOrder);
+                appStore().setTableOrder('customers', this.meta.list.sort, this.meta.list.order);
                 
                 this.getList()
             },
@@ -135,13 +133,13 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('customers', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('customers', this.meta.search)
                 this.getList()
@@ -188,7 +186,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="customers" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="customers" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @sort="sort($event)" @page="changePage" :loading="loading" @row-click="rowClick($event)" :sortField="meta.list.sort" :sortOrder="meta.list.order" stateStorage="session" stateKey="dt-state-customers-table">
                     <Column field="name" sortable :header="$t('customers.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('customer_types', data.type)" class="font-normal" severity="info"></Badge>

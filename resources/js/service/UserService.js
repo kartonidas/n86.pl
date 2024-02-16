@@ -129,12 +129,8 @@ export default class UserService {
         return axios.post('api/v1/invoice-data', removeNullValues(invoiceData));
     }
     
-    notifications(size, page) {
-        var data = {
-            size: size,
-            page: page,
-        };
-        return axios.get('api/v1/my-notifications', { params : removeNullValues(data) });
+    notifications(meta) {
+        return axios.get('api/v1/my-notifications', { params : removeNullValues(meta) });
     }
     
     createNotification(notificationData) {

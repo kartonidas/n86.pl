@@ -131,7 +131,7 @@ class BalanceController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $bills = ItemBill::whereRaw("1=1");
             
@@ -184,7 +184,7 @@ class BalanceController extends Controller
         
         $orderBy = $this->getOrderBy($request, ItemBill::class, "payment_date,asc");
         $bills = $bills->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
         
@@ -200,8 +200,6 @@ class BalanceController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $bills,
         ];
             
@@ -215,7 +213,7 @@ class BalanceController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $itemIds = Item::pluck("id")->all();
         
@@ -266,7 +264,7 @@ class BalanceController extends Controller
         
         $orderBy = $this->getOrderBy($request, ItemBill::class, "paid_date,desc");
         $deposits = $deposits->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
         
@@ -280,8 +278,6 @@ class BalanceController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $deposits,
         ];
             

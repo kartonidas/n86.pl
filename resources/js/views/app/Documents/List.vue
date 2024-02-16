@@ -23,14 +23,16 @@
                 displayDocumentConfirmation: false,
                 deleteDocumentId: null,
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-documents-table"),
+                        size: this.rowsPerPage,
+                        sort: 'title',
+                        order: 1,
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     loading: false,
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'title',
-                    sortOrder: 1,
                     breadcrumbItems: [
                         {'label' : this.$t('menu.estates'), disabled : true },
                         {'label' : this.$t('menu.documents'), disabled : true },
@@ -50,7 +52,7 @@
             getList() {
                 this.meta.loading = true
                 
-                this.documentService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, this.meta.search)
+                this.documentService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.documents = response.data.data
@@ -65,18 +67,25 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 this.getList()
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
+                this.getList()
+            },
+            
+            sort(event) {
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 this.getList()
             },
             
@@ -169,7 +178,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="documents" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @sort="sort($event)" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-documents-table">
                     <Column :header="$t('documents.estate')">
                         <template #body="{ data }">
                             <span v-if="data.item">

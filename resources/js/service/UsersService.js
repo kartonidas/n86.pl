@@ -2,12 +2,8 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class UsersService {
-    list(size, page) {
-        var data = {
-            size: size,
-            page: page
-        };
-        return axios.get('api/v1/users', { params : data });
+    list(meta) {
+        return axios.get('api/v1/users', { params : removeNullValues(meta) });
     }
     
     create(userData) {

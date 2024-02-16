@@ -50,7 +50,7 @@
             getFaultStatuses() {
                 this.loadingFaultStatuses = true
                 this.faultStatuses = []
-                this.dictionaryService.listByType('fault_statuses', 999, 1)
+                this.dictionaryService.listByType('fault_statuses', {size: 999, first: 0})
                     .then(
                         (response) => {
                             this.faultStatuses = response.data.data
@@ -65,13 +65,13 @@
             getItems() {
                 this.loadingItems = true
                 this.items = []
-                this.itemService.list(9999, 1)
+                this.itemService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
+                            this.loadingItems = false
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
                                     this.items.push(i)
-                                    this.loadingItems = false
                                 })
                             }
                         },

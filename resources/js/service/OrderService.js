@@ -22,15 +22,9 @@ export default class OrderService {
         return axios.get('api/v1/validate-invoicing-data');
     }
     
-    invoices(size, page, sort, order, search) {
-        var data = {
-            size: size,
-            page: page,
-            sort: sort,
-            order: order,
-            search: search
-        };
-        return axios.get('api/v1/invoices', { params : data });
+    invoices(meta, search) {
+        let data = Object.assign(meta, { "search" : search });
+        return axios.get('api/v1/invoices', { params : removeNullValues(data) });
     }
     
     getPDFInvoice(invoiceId) {

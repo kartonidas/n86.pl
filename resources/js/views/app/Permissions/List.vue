@@ -25,8 +25,10 @@
                 displayConfirmation: false,
                 deletePermissionId: null,
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -47,7 +49,7 @@
         methods: {
             getList() {
                 this.loading = true
-                this.permissionService.list(this.meta.perPage, this.meta.currentPage)
+                this.permissionService.list(this.meta.list)
                     .then(
                         (response) => {
                             this.permissions = response.data.data
@@ -70,7 +72,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -119,7 +121,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="permissions" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="permissions" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                      <Column :header="$t('permissions.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'permission_edit', params: { permissionId : data.id }}" v-if="hasAccess('permission:update')">

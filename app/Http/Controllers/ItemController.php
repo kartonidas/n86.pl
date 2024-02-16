@@ -55,7 +55,7 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $items = Item::whereRaw("1=1");
         
@@ -106,7 +106,7 @@ class ItemController extends Controller
         
         $orderBy = $this->getOrderBy($request, Item::class, "name,asc");
         $items = $items->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
@@ -125,8 +125,6 @@ class ItemController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $items,
         ];
             
@@ -229,7 +227,7 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $itemBills = ItemBill
             ::where("item_id", $itemId);
@@ -242,7 +240,7 @@ class ItemController extends Controller
         $total = $itemBills->count();
         
         $itemBills = $itemBills->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("paid", "ASC")
             ->orderByRaw("CASE WHEN paid = 1 THEN payment_date ELSE -payment_date END DESC")
             ->get();
@@ -259,8 +257,6 @@ class ItemController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $itemBills,
         ];
             
@@ -447,7 +443,7 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $itemFees = ItemCyclicalFee
             ::where("item_id", $itemId);
@@ -461,7 +457,7 @@ class ItemController extends Controller
         
         $orderBy = $this->getOrderBy($request, ItemCyclicalFee::class, "created_at,desc");
         $itemFees = $itemFees->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
@@ -474,8 +470,6 @@ class ItemController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $itemFees,
         ];
             
@@ -592,7 +586,7 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $itemFeeCosts = ItemCyclicalFeeCost
             ::where("item_cyclical_fee_id", $feeId);
@@ -601,7 +595,7 @@ class ItemController extends Controller
         
         $orderBy = $this->getOrderBy($request, ItemCyclicalFeeCost::class, "from_time,desc");
         $itemFeeCosts = $itemFeeCosts->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
         
@@ -614,8 +608,6 @@ class ItemController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $itemFeeCosts,
         ];
             

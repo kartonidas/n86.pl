@@ -45,13 +45,14 @@ class DictionaryController extends Controller
     {
         User::checkAccess("dictionary:list");
         
-        $request->validate([
+        $validated = $request->validate([
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
+            "first" => "nullable|integer|gte:0",
         ]);
         
-        $size = $request->input("size", config("api.list.size"));
-        $page = $request->input("page", 1);
+        $size = $validated["size"] ?? config("api.list.size");
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $dictionaries = Dictionary
             ::where("type", $type);
@@ -59,7 +60,7 @@ class DictionaryController extends Controller
         $total = $dictionaries->count();
             
         $dictionaries = $dictionaries->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("name", "ASC")
             ->get();
             
@@ -71,8 +72,6 @@ class DictionaryController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $dictionaries,
         ];
             

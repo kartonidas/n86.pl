@@ -38,7 +38,7 @@
                 .then(
                     (response) => {
                         this.rental = response.data
-                        this.rentalService.bills(this.$route.params.rentalId, 100, 1, null, null, {"paid" : 0})
+                        this.rentalService.bills(this.$route.params.rentalId, {size: 100, first: 0}, {"paid" : 0})
                             .then(
                                 (response) => {
                                     this.loading = false

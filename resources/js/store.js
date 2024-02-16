@@ -62,6 +62,17 @@ export const appStore = defineStore('store', {
         getTableFilter(table) {
             return this.tableFilter[table];
         },
+        
+        getDTSessionStateFirst(key) {
+            let s = sessionStorage.getItem(key);
+            if (s != undefined) {
+                s = JSON.parse(s);
+                if (s.first != undefined)
+                    return s.first;
+            }
+            
+            return 0;
+        }
     },
     persist: true,
 })

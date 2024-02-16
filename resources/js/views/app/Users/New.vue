@@ -40,7 +40,7 @@
             }
         },
         beforeMount() {
-            this.permissionService.list(9999, 1)
+            this.permissionService.list({size: 9999, first: 0})
                 .then(
                     (response) => {
                         this.permissions = response.data.data

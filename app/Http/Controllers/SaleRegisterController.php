@@ -22,7 +22,7 @@ class SaleRegisterController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $saleRegisterRows = SaleRegister::whereRaw("1=1");
         
@@ -35,7 +35,7 @@ class SaleRegisterController extends Controller
         $total = $saleRegisterRows->count();
         
         $saleRegisterRows = $saleRegisterRows->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("name", "ASC")
             ->get();
         
@@ -45,8 +45,6 @@ class SaleRegisterController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $saleRegisterRows,
         ];
             

@@ -24,9 +24,11 @@
                 displayConfirmation: false,
                 deleteNotificationId: null,
                 meta: {
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -49,7 +51,7 @@
             getList() {
                 this.loading = true
                 
-                this.userService.notifications(this.meta.perPage, this.meta.currentPage)
+                this.userService.notifications(this.meta.list)
                     .then(
                         (response) => {
                             this.notifications = response.data.data
@@ -72,7 +74,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -120,7 +122,7 @@
                         <Button icon="pi pi-plus" v-tooltip.left="$t('notifications.add_notification')" @click="newNotification" class="text-center"></Button>
                     </div>
                 </div>
-                <DataTable :value="notifications" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="notifications" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('notifications.type')" field="type">
                         <template #body="{ data }">
                             {{ getValueLabel("notifications.types", data.type) }}

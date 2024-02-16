@@ -58,7 +58,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 createHead()
 
-app.config.globalProperties.rowsPerPage = 25;
+app.config.globalProperties.rowsPerPage = 2;
 app.use(i18n);
 app.use(router);
 app.use(globalDirectives);

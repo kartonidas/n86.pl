@@ -109,7 +109,7 @@
                 this.loadingSaleRegister = true
                 this.saleRegistries = []
                 if (this.invoice.type != undefined) {
-                    this.userInvoiceService.saleRegisterList(100, 1, {type : this.invoice.type})
+                    this.userInvoiceService.saleRegisterList({size: 100, first: 0}, {type : this.invoice.type})
                         .then(
                             (response) => {
                                 if (response.data.data.length) {
@@ -131,7 +131,7 @@
             getCustomers() {
                 this.loadingCustomers = true
                 this.customers = []
-                this.customerService.list(9999, 1)
+                this.customerService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
                             if (response.data.data.length) {
@@ -155,16 +155,16 @@
             getUsers() {
                 this.loadingUsers = true
                 this.users = []
-                this.usersService.list(9999, 1)
+                this.usersService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
+                            this.loadingUsers = false
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
                                     this.users.push({
                                         "id" : i.id,
                                         "name" : i.firstname + " " + i.lastname,
                                     })
-                                    this.loadingUsers = false
                                 })
                             }
                         },
@@ -177,13 +177,13 @@
             getPaymentTypes() {
                 this.loadingPaymentDictionary = true
                 this.paymentTypes = []
-                this.dictionaryService.listByType("payment_types", 100, 1)
+                this.dictionaryService.listByType("payment_types", {size: 100, first: 0})
                     .then(
                         (response) => {
+                            this.loadingPaymentDictionary = false
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
                                     this.paymentTypes.push({"id" : i.id, "name" : i.name })
-                                    this.loadingPaymentDictionary = false
                                 })
                                 
                                 if(this.source == "new")

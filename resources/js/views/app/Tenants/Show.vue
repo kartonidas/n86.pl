@@ -29,8 +29,10 @@
                 rentals: [],
                 meta: {
                     rentals: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: true
@@ -78,7 +80,7 @@
                 const search = {
                     tenant_id : this.$route.params.tenantId
                 };
-                this.rentalService.list(this.meta.rentals.perPage, this.meta.rentals.currentPage, null, null, search)
+                this.rentalService.list(this.meta.rentals.list, search)
                     .then(
                         (response) => {
                             this.rentals = response.data.data
@@ -92,8 +94,8 @@
             },
             
             changeRentalsPage(event) {
-                this.meta.items.currentPage = event["page"] + 1;
-                this.getItemsList()
+                this.meta.rentals.list.first = event["first"];
+                this.getRentalsList()
             },
             
             rowRentalsClick(event) {
@@ -163,7 +165,7 @@
                         <Button icon="pi pi-plus" @click="rentItem" v-tooltip.left="$t('app.rent')"></Button>
                     </div>
                 </div>
-                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.perPage" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
+                <DataTable :value="rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.rentals.totalPages" :rows="meta.rentals.list.size" :first="meta.rentals.list.first" @page="changeRentalsPage" :loading="meta.rentals.loading" @row-click="rowRentalsClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">

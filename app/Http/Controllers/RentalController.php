@@ -57,7 +57,7 @@ class RentalController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $rentals = Rental::whereRaw("1=1");
         
@@ -153,7 +153,7 @@ class RentalController extends Controller
         
         $orderBy = $this->getOrderBy($request, Rental::class, "full_number,desc");
         $rentals = $rentals->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
         
@@ -168,8 +168,6 @@ class RentalController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $rentals,
         ];
             
@@ -454,7 +452,7 @@ class RentalController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $rentalBills = ItemBill
             ::where("rental_id", $rentalId);
@@ -468,7 +466,7 @@ class RentalController extends Controller
         $total = $rentalBills->count();
         
         $rentalBills = $rentalBills->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy("paid", "ASC")
             ->orderByRaw("CASE WHEN paid = 1 THEN payment_date ELSE -payment_date END DESC")
             ->get();
@@ -485,8 +483,6 @@ class RentalController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $rentalBills,
         ];
             
@@ -694,7 +690,7 @@ class RentalController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $documents = Document::select("id", "item_id", "rental_id", "title", "type", "user_id", "created_at", "updated_at");
         $documents->where("rental_id", $rentalId);
@@ -702,15 +698,13 @@ class RentalController extends Controller
         
         $orderBy = $this->getOrderBy($request, Document::class, "created_at,desc");
         $documents = $documents->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
         
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $documents,
         ];
             
@@ -780,7 +774,7 @@ class RentalController extends Controller
         $validated = $request->validated();
         
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $balance = $rental->getBalanceRow();
         
@@ -793,7 +787,7 @@ class RentalController extends Controller
         
         $orderBy = $this->getOrderBy($request, BalanceDocument::class, "created_at,desc");
         $payments = $payments->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
@@ -807,8 +801,6 @@ class RentalController extends Controller
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $payments,
         ];
             

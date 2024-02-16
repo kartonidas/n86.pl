@@ -23,14 +23,16 @@
                 deleteTemplateId: null,
                 template_types: getValues('documents.types'),
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-document-templates-table"),
+                        size: this.rowsPerPage,
+                        sort: 'title',
+                        order: 1,
+                    },
                     search: {},
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     loading: false,
                     totalRecords: null,
                     totalPages: null,
-                    sortField: 'title',
-                    sortOrder: 1,
                 }
             }
         },
@@ -54,7 +56,7 @@
             getList() {
                 this.meta.loading = true
                 
-                this.documentTemplateService.list(this.meta.perPage, this.meta.currentPage, this.meta.sortField, this.meta.sortOrder, this.meta.search)
+                this.documentTemplateService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.templates = response.data.data
@@ -77,7 +79,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -111,20 +113,20 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.getList()
             },
             
             sort(event) {
-                this.meta.sortField = event['sortField']
-                this.meta.sortOrder = event['sortOrder']
-                this.meta.currentPage = 1
+                this.meta.list.sort = event['sortField']
+                this.meta.list.order = event['sortOrder']
+                this.meta.list.first = 0
                 
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 this.getList()
             }
@@ -161,7 +163,7 @@
                     </div>
                 </form>
                 
-                <DataTable :value="templates" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @sort="sort($event)" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" :sortField="this.meta.sortField" :sortOrder="this.meta.sortOrder">
+                <DataTable :value="templates" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="this.meta.list.first" @sort="sort($event)" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-document-templates-table">
                     <Column field="type" :header="$t('documents.template_type')">
                         <template #body="{ data }">
                             {{ getValueLabel('documents.types', data.type) }}

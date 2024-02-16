@@ -46,33 +46,41 @@
                         {'label' : this.$t('rent.details'), disabled : true },
                     ],
                     bills: {
+                        list: {
+                            first: 0,
+                            size: 10,
+                        },
                         search: {},
-                        currentPage: 1,
-                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
                     },
                     documents: {
+                        list: {
+                            first: 0,
+                            size: 10,
+                        },
                         search: {},
-                        currentPage: 1,
-                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
                     },
                     payments: {
+                        list: {
+                            first: 0,
+                            size: 10,
+                        },
                         search: {},
-                        currentPage: 1,
-                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
                     },
                     history: {
+                        list: {
+                            first: 0,
+                            size: 10,
+                        },
                         search: {},
-                        currentPage: 1,
-                        perPage: 10,
                         loading: false,
                         totalRecords: null,
                         totalPages: null,
@@ -117,7 +125,7 @@
             getBillList() {
                 this.meta.bills.loading = true
                 
-                this.rentalService.bills(this.$route.params.rentalId, this.meta.bills.perPage, this.meta.bills.currentPage, null, null, this.meta.bills.search)
+                this.rentalService.bills(this.$route.params.rentalId, this.meta.bills.list, this.meta.bills.search)
                     .then(
                         (response) => {
                             this.bills = response.data.data
@@ -132,7 +140,7 @@
             },
             
             changeBillsPage(event) {
-                this.meta.bills.currentPage = event["page"] + 1;
+                this.meta.bills.list.first = event["first"];
                 this.getBillList()
             },
             
@@ -164,7 +172,7 @@
             getDocumentList() {
                 this.meta.documents.loading = true
                 
-                this.rentalService.getDocuments(this.$route.params.rentalId, this.meta.documents.perPage, this.meta.documents.currentPage, null, null, this.meta.documents.search)
+                this.rentalService.getDocuments(this.$route.params.rentalId, this.meta.documents.list, this.meta.documents.search)
                     .then(
                         (response) => {
                             this.documents = response.data.data
@@ -179,7 +187,7 @@
             },
             
             changeDocumentsPage(event) {
-                this.meta.documents.currentPage = event["page"] + 1;
+                this.meta.documents.list.first = event["first"];
                 this.getDocumentList()
             },
             
@@ -261,7 +269,7 @@
             getPaymentList() {
                 this.meta.payments.loading = true
                 
-                this.rentalService.payments(this.$route.params.rentalId, this.meta.payments.perPage, this.meta.payments.currentPage, null, null, this.meta.payments.search)
+                this.rentalService.payments(this.$route.params.rentalId, this.meta.payments.list, this.meta.payments.search)
                     .then(
                         (response) => {
                             this.payments = response.data.data
@@ -276,7 +284,7 @@
             },
             
             changePaymentsPage(event) {
-                this.meta.payments.currentPage = event["page"] + 1;
+                this.meta.payments.list.first = event["first"];
                 this.getPaymentList()
             },
             
@@ -309,7 +317,7 @@
             getHistoryList() {
                 this.meta.history.loading = true
                 
-                this.historyService.list("rental", this.$route.params.rentalId, this.meta.history.perPage, this.meta.history.currentPage, null, null, this.meta.history.search)
+                this.historyService.list("rental", this.$route.params.rentalId, this.meta.history.list, this.meta.history.search)
                     .then(
                         (response) => {
                             this.histories = response.data.data
@@ -324,7 +332,7 @@
             },
             
             changeHistoryPage(event) {
-                this.meta.history.currentPage = event["page"] + 1;
+                this.meta.history.list.first = event["first"];
                 this.getHistoryList()
             },
         },
@@ -574,7 +582,7 @@
                             </div>
                         </div>
                     
-                        <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.bills.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.bills.totalPages" :rows="meta.bills.perPage" @page="changeBillsPage" :loading="meta.bills.loading" @row-click="rowBillsClick($event)">
+                        <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="bills" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.bills.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.bills.totalPages" :rows="meta.bills.list.size" :first="meta.bills.list.first" @page="changeBillsPage" :loading="meta.bills.loading" @row-click="rowBillsClick($event)">
                             <Column :header="$t('items.bill_type')" style="min-width: 300px;">
                                 <template #body="{ data }">
                                     <div class="mb-1 flex">
@@ -647,7 +655,7 @@
                             </div>
                         </div>
                         
-                        <DataTable :value="documents" stripedRows class="p-datatable-gridlines" :class="hasAccess('rent:update') ? 'clickable' : ''" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.perPage" @page="changeDocumentsPage" :loading="meta.documents.loading">
+                        <DataTable :value="documents" stripedRows class="p-datatable-gridlines" :class="hasAccess('rent:update') ? 'clickable' : ''" @row-click="rowDocumentsClick($event)" :totalRecords="meta.documents.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.documents.totalPages" :rows="meta.documents.list.size" :first="meta.documents.list.first" @page="changeDocumentsPage" :loading="meta.documents.loading">
                             <Column :header="$t('rent.document_title')" field="title" style="min-width: 300px;"></Column>
                             <Column :header="$t('rent.document_created')" class="text-center" field="created_at"></Column>
                             <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
@@ -685,7 +693,7 @@
                             </div>
                         </div>
                     
-                        <DataTable :value="payments" stripedRows class="p-datatable-gridlines" :totalRecords="meta.payments.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.payments.totalPages" :rows="meta.payments.perPage" @page="changePaymentsPage" :loading="meta.payments.loading">
+                        <DataTable :value="payments" stripedRows class="p-datatable-gridlines" :totalRecords="meta.payments.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.payments.totalPages" :rows="meta.payments.list.size" :first="meta.payments.list.first" @page="changePaymentsPage" :loading="meta.payments.loading">
                             <Column :header="$t('rent.due')">
                                 <template #body="{ data }">
                                     <ul class="list-unstyled">
@@ -743,7 +751,7 @@
                             <h5 class="mb-3 mt-2 text-color font-medium">{{ $t('rent.history') }}</h5>
                         </div>
                     
-                        <DataTable :value="histories" stripedRows class="p-datatable-gridlines" :totalRecords="meta.history.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.history.totalPages" :rows="meta.payments.perPage" @page="changeHistoryPage" :loading="meta.history.loading">
+                        <DataTable :value="histories" stripedRows class="p-datatable-gridlines" :totalRecords="meta.history.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.history.totalPages" :rows="meta.history.list.size" :first="meta.history.list.first" @page="changeHistoryPage" :loading="meta.history.loading">
                             <Column :header="$t('history.user')" field="user"></Column>
                             <Column :header="$t('history.event')" field="event"></Column>
                             <Column :header="$t('history.diff')">

@@ -15,7 +15,6 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\MyNotificationController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
@@ -24,7 +23,6 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleRegisterController;
-use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
@@ -214,16 +212,6 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     $router->get('/report/balance/rental/{id}', [ReportController::class, "balanceRentalData"])->where("id", "[0-9]+");
     $router->get('/report/profit/item/{id}', [ReportController::class, "profitItemData"])->where("id", "[0-9]+");
     $router->get('/report/profit/rental/{id}', [ReportController::class, "profitRentalData"])->where("id", "[0-9]+");
-    
-    // STATYSTYKI
-    $router->get('/stats/user/{id}/daily', [StatsController::class, "userDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/user/{id}/monthly', [StatsController::class, "userMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/project/{id}/daily', [StatsController::class, "projectDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/project/{id}/monthly', [StatsController::class, "projectMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/task/{id}/daily', [StatsController::class, "taskDaily"])->where("id", "[0-9]+");
-    $router->get('/stats/task/{id}/monthly', [StatsController::class, "taskMonthly"])->where("id", "[0-9]+");
-    $router->get('/stats/total', [StatsController::class, "total"]);
-    
     
     // REJESTR SPRZEDAŻY
     $router->get('/sale-register', [SaleRegisterController::class, "list"]);

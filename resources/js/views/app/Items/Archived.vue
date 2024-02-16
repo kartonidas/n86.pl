@@ -26,10 +26,12 @@
                 deleteItemId: null,
                 item_types: getValues('item_types'),
                 meta: {
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     search: {},
                     loading: false,
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -56,7 +58,7 @@
         methods: {
             getList() {
                 this.meta.loading = true
-                this.itemService.list(this.meta.perPage, this.meta.currentPage, null, null, this.meta.search)
+                this.itemService.list(this.meta.list, this.meta.search)
                     .then(
                         (response) => {
                             this.items = response.data.data
@@ -75,7 +77,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -84,13 +86,13 @@
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('items_archived', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('items_archived', this.meta.search)
                 this.getList()
@@ -129,7 +131,7 @@
                     </div>
                 </form>
                 
-                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
+                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" @row-click="rowClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>

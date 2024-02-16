@@ -62,7 +62,7 @@
             getFaultStatuses() {
                 this.loadingFaultStatuses = true
                 this.faultStatuses = []
-                this.dictionaryService.listByType('fault_statuses', 999, 1)
+                this.dictionaryService.listByType('fault_statuses', {size: 999, first: 0})
                     .then(
                         (response) => {
                             this.faultStatuses = response.data.data

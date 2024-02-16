@@ -6,19 +6,12 @@ export default class DictionaryService {
         return axios.get('api/v1/dictionary/types');
     }
     
-    list(page) {
-        var data = {
-            page: page
-        };
-        return axios.get('api/v1/dictionaries', data);
+    list(meta) {
+        return axios.get('api/v1/dictionaries', { params : removeNullValues(meta) });
     }
     
-    listByType(type, size, page) {
-        var data = {
-            size: size,
-            page: page
-        };
-        return axios.get('api/v1/dictionaries/' + type, data);
+    listByType(type, meta) {
+        return axios.get('api/v1/dictionaries/' + type, { params : removeNullValues(meta) });
     }
     
     create(type, active, name) {

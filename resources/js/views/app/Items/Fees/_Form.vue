@@ -38,7 +38,7 @@
             blockEdit: { type: Boolean, default: false }
         },
         beforeMount() {
-            this.dictionaryService.listByType('bills', 999, 1)
+            this.dictionaryService.listByType('bills', {size: 999, first: 0})
                 .then(
                     (response) => {
                         this.billTypes = response.data.data

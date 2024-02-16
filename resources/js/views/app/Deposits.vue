@@ -27,9 +27,11 @@
                 deposits: [],
                 paymentMethods: getValues("payments.methods"),
                 meta: {
+                    list: {
+                        first: appStore().getDTSessionStateFirst("dt-state-deposits-table"),
+                        size: this.rowsPerPage,
+                    },
                     loading: false,
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -64,7 +66,7 @@
                 search.paid_date_from = search.paid_date_from ? moment(search.paid_date_from).format("YYYY-MM-DD") : null
                 search.paid_date_to = search.paid_date_to ? moment(search.paid_date_to).format("YYYY-MM-DD") : null
                 
-                this.itemService.allDeposits(this.meta.perPage, this.meta.currentPage, null, null, search)
+                this.itemService.allDeposits(this.meta.list, search)
                     .then(
                         (response) => {
                             this.deposits = response.data.data
@@ -79,18 +81,18 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
             search() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 appStore().setTableFilter('deposits', this.meta.search)
                 this.getList()
             },
             
             resetSearch() {
-                this.meta.currentPage = 1
+                this.meta.list.first = 0
                 this.meta.search = {}
                 appStore().setTableFilter('deposits', this.meta.search)
                 this.getList()
@@ -139,7 +141,7 @@
                     </div>
                 </form>
                 
-                <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="deposits" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="meta.loading" stateStorage="session" stateKey="dt-state-deposits-table">
+                <DataTable :rowClass="({ out_off_date }) => out_off_date ? 'bg-red-100': null" :value="deposits" stripedRows class="p-datatable-gridlines" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="meta.loading" stateStorage="session" stateKey="dt-state-deposits-table">
                     <Column :header="$t('items.estate')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <div :class="data.item.mode == 'archived' ? 'archived-item' : ''">

@@ -45,7 +45,7 @@
                     (response) => {
                         this.rental = response.data
                         
-                        this.documentTemplateService.listGroupByType(999, 1)
+                        this.documentTemplateService.listGroupByType({size: 999, first: 0})
                             .then(
                                 (response) => {
                                     this.document_templates = response.data;

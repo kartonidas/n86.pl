@@ -24,7 +24,7 @@ class DocumentTemplateController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $documentTemplates = DocumentTemplate::whereRaw("1=1");
         
@@ -40,15 +40,13 @@ class DocumentTemplateController extends Controller
         
         $orderBy = $this->getOrderBy($request, DocumentTemplate::class, "title,asc");
         $documentTemplates = $documentTemplates->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
             
         $out = [
             "total_rows" => $total,
             "total_pages" => ceil($total / $size),
-            "current_page" => $page,
-            "has_more" => ceil($total / $size) > $page,
             "data" => $documentTemplates,
         ];
             
@@ -60,18 +58,16 @@ class DocumentTemplateController extends Controller
         $validated = $request->validated();
 
         $size = $validated["size"] ?? config("api.list.size");
-        $page = $validated["page"] ?? 1;
+        $skip = isset($validated["first"]) ? $validated["first"] : (($validated["page"] ?? 1)-1)*$size;
         
         $documentTemplates = DocumentTemplate::whereRaw("1=1");
         $total = $documentTemplates->count();
         
         $orderBy = $this->getOrderBy($request, DocumentTemplate::class, "title,asc");
         $documentTemplates = $documentTemplates->take($size)
-            ->skip(($page-1)*$size)
+            ->skip($skip)
             ->orderBy($orderBy[0], $orderBy[1])
             ->get();
-        
-        
         
         $out = [];
         

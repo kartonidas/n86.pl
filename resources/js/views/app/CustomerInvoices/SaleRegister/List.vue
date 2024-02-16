@@ -22,8 +22,10 @@
                 displayConfirmation: false,
                 deleteSaleRegisterId: null,
                 meta: {
-                    currentPage: 1,
-                    perPage: this.rowsPerPage,
+                    list: {
+                        first: 0,
+                        size: this.rowsPerPage,
+                    },
                     totalRecords: null,
                     totalPages: null,
                     breadcrumbItems: [
@@ -44,7 +46,7 @@
         methods: {
             getList() {
                 this.loading = true
-                this.userInvoiceService.saleRegisterList(this.meta.perPage, this.meta.currentPage)
+                this.userInvoiceService.saleRegisterList(this.meta.list)
                     .then(
                         (response) => {
                             this.saleRegistries = response.data.data
@@ -59,7 +61,7 @@
             },
             
             changePage(event) {
-                this.meta.currentPage = event["page"] + 1;
+                this.meta.list.first = event["first"];
                 this.getList()
             },
             
@@ -117,7 +119,7 @@
                     </div>
                 </div>
                 
-                <DataTable :value="saleRegistries" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.perPage" @page="changePage" :loading="loading" @row-click="rowClick($event)">
+                <DataTable :value="saleRegistries" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)">
                     <Column :header="$t('customer_invoices.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <router-link :to="{name: 'sale_register_edit', params: { saleRegisterId : data.id }}" v-if="hasAccess('dictionary:update')">

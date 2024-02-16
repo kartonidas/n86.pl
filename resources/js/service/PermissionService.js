@@ -2,12 +2,8 @@ import axios from 'axios';
 import { removeNullValues } from './../utils/helper.js';
 
 export default class PermissionService {
-    list(size, page) {
-        var data = {
-            size: size,
-            page: page
-        };
-        return axios.get('api/v1/permissions', { params : data });
+    list(meta) {
+        return axios.get('api/v1/permissions', { params : removeNullValues(meta) });
     }
     
     modules() {

@@ -32,8 +32,10 @@
                 deleteItemId: null,
                 meta: {
                     items: {
-                        currentPage: 1,
-                        perPage: this.rowsPerPage,
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                        },
                         totalRecords: null,
                         totalPages: null,
                         loading: true
@@ -82,7 +84,7 @@
                     customer_id : this.$route.params.customerId,
                     mode: 'all'
                 };
-                this.itemService.list(this.meta.items.perPage, this.meta.items.currentPage, null, null, search)
+                this.itemService.list(this.meta.items.list, search)
                     .then(
                         (response) => {
                             this.items = response.data.data
@@ -96,7 +98,7 @@
             },
             
             changeItemsPage(event) {
-                this.meta.items.currentPage = event["page"] + 1;
+                this.meta.items.list.first = event["first"];
                 this.getItemsList()
             },
             
@@ -192,7 +194,7 @@
                         <Button icon="pi pi-plus" @click="addItem" v-tooltip.left="$t('customers.add_new_item')"></Button>
                     </div>
                 </div>
-                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.perPage" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
+                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.list.size" :first="meta.items.list.first" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
                     <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
                         <template #body="{ data }">
                             <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
