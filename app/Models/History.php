@@ -118,17 +118,17 @@ class History extends Model
             case "App\Models\ItemBill":
                 if($object->rental_id)
                 {
-                    $rental = Rental::withTrashed()->find($object->rental_id);
+                    $rental = Rental::withTrashed()->withoutGlobalScope("uuid")->where("uuid", $object->uuid)->find($object->rental_id);
                     if($rental)
                         $relatedObjects[] = $rental;
                 }
-                $item = Item::withTrashed()->find($object->item_id);
+                $item = Item::withTrashed()->withoutGlobalScope("uuid")->where("uuid", $object->uuid)->find($object->item_id);
                 if($item)
                     $relatedObjects[] = $item;
             break;
         
             case "App\Models\ItemCyclicalFee":
-                $item = Item::withTrashed()->find($object->item_id);
+                $item = Item::withTrashed()->withoutGlobalScope("uuid")->where("uuid", $object->uuid)->find($object->item_id);
                 if($item)
                     $relatedObjects[] = $item;
             break;

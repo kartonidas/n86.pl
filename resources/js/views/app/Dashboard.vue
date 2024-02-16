@@ -56,14 +56,14 @@
     <div class="grid">
         <div class="col-12 sm:col-4 xl:col-4">
             <Skeleton class="h-full" v-if="loading"></Skeleton>
-            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center" v-if="!loading">
+            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center shadow-3" v-if="!loading">
                 <div class="text-sm uppercase">{{ $t("dashboard.total_items") }}</div>
                 <div class="text-5xl mt-1">{{ dashboard.total_items }}</div>
             </div>
         </div>
         <div class="col-12 sm:col-4 xl:col-4">
             <Skeleton class="h-full" v-if="loading"></Skeleton>
-            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center" v-if="!loading">
+            <div class="bg-gray-200 p-3 text-center text-sm border-round-lg h-full flex flex-column justify-content-center shadow-3" v-if="!loading">
                 <div class="text-sm uppercase">{{ $t("dashboard.total_active_rentals") }}:</div>
                 <div class="text-5xl mt-1">{{ dashboard.total_rentals }}</div>
             </div>

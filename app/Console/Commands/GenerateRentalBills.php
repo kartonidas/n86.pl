@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 use App\Libraries\Data;
 use App\Libraries\Helper;
+use App\Models\Item;
 use App\Models\ItemBill;
 use App\Models\Rental;
 
@@ -65,22 +67,24 @@ class GenerateRentalBills extends Command
                     $item = $rental->item()->first();
                     if(!$item || $item->mode == Item::MODE_ARCHIVED)
                         continue;
-                        
-                    if($rental->next_rental && $firstDayOfMonth <= $rental->next_rental && $lastDayOfMonth >= $rental->next_rental)
-                    {
-                        $cost = $rental->rent;
-                        if($rental->end && $rental->end <= $lastDayOfMonth && $rental->last_month_different_amount > 0)
-                            $cost = $rental->last_month_different_amount;
-                        
-                        $rent = new ItemBill;
-                        $rent->uuid = $rental->uuid;
-                        $rent->item_id = $rental->item_id;
-                        $rent->rental_id = $rental->id;
-                        $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
-                        $rent->payment_date = $rental->next_rental;
-                        $rent->cost = $cost;
-                        $rent->save();
-                    }
+                    
+                    DB::transaction(function () use($rental, $firstDayOfMonth, $lastDayOfMonth) {
+                        if($rental->next_rental && $firstDayOfMonth <= $rental->next_rental && $lastDayOfMonth >= $rental->next_rental)
+                        {
+                            $cost = $rental->rent;
+                            if($rental->end && $rental->end <= $lastDayOfMonth && $rental->last_month_different_amount > 0)
+                                $cost = $rental->last_month_different_amount;
+                            
+                            $rent = new ItemBill;
+                            $rent->uuid = $rental->uuid;
+                            $rent->item_id = $rental->item_id;
+                            $rent->rental_id = $rental->id;
+                            $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
+                            $rent->payment_date = $rental->next_rental;
+                            $rent->cost = $cost;
+                            $rent->save();
+                        }
+                    });
                 }
             }
         }

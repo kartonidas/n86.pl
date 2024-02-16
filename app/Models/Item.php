@@ -249,8 +249,8 @@ class Item extends Model
     {
         if($item->customer_id > 0)
         {
-            $totalItems = self::where("customer_id", $item->customer_id)->where("hidden", 0)->active()->count();
-            $customer = Customer::find($item->customer_id);
+            $totalItems = self::withoutGlobalScope("uuid")->where("uuid", $item->uuid)->where("customer_id", $item->customer_id)->where("hidden", 0)->active()->count();
+            $customer = Customer::withoutGlobalScope("uuid")->where("uuid", $item->uuid)->find($item->customer_id);
             if($customer)
             {
                 $customer->total_items = $totalItems;

@@ -289,7 +289,15 @@
         "payment_date_to" : "Data płatności (do)",
         "estate" : "Nieruchomość",
         "paid_date_from" : "Data wpłaty (od)",
-        "paid_date_to" : "Data wpłaty (do)"
+        "paid_date_to" : "Data wpłaty (do)",
+        "report_cost" : "Obciążenia / wpłaty",
+        "report_profit" : "Zysk",
+        "report_profit_deposit" : "Wpływy",
+        "report_profit_cost" : "Poniesione koszty",
+        "report_profit_profit" : "Zysk",
+        "report_balance_charge" : "Obciążenia",
+        "report_balance_deposit" : "Wpłaty",
+        "report_balance_balance" : "Saldo"
     },
     "menu": {
         "bill_type" : "Rodzaje rachunków",
@@ -860,5 +868,19 @@
         "days" : "Ilość dni do zdarzenia",
         "mode" : "Rodzaj wiadomości",
         "deleted" : "Powiadomienie zostało usunięte"
+    },
+    "reports" : {
+        "total_rent_amount" : "Wpływy z czynszu",
+        "help_total_rent_amount" : "Suma wpłat za czynsz od momentu dodania nieruchomości (pod uwagę brane są tylko należności oznaczone jako opłacone).",
+        "total_fee_amount" : "Opłaty",
+        "help_total_fee_amount" : "Suma wszystkich opłat od momentu dodania nieruchomości (pod uwagę brane są tylko należności przypisane do właściciela i oznaczone jako opłacone).",
+        "total_profit_amount" : "Łączny zysk",
+        "help_total_profit_amount" : "Jest to różnica pomiędzy wpływami z czynszu a opłatami od momentu dodania nieruchomości.",
+        "help_report_balance_charge" : "Suma wszystkich obciążęń (włączając w to czynsz, kaucje oraz wzystkie opłaty) w zadanym okresie czasu.",
+        "help_report_balance_deposit" : "Suma wszystkich wpłat (włączając w to wpłaty klienta i właściciela nieruchomości) w zadanym okresie czasu.",
+        "help_report_balance_balance" : "Jest to różnica pomiędzy wszystkimi obciążeniami a wszystkimi wpłatami w zadanym okresie czasu",
+        "help_report_profit_charge" : "Suma wszystkich dokonanych wpłat za czynsz (pod uwagę brane są tylko należności oznaczone jako opłacone) w zadanym okresie czasu.",
+        "help_report_profit_fee" : "Suma wszystkich opłaconych rachunków (pod uwagę brane są tylko należności przypisane do właściciela i oznaczone jako opłacone) w zadanym okresie czasu.",
+        "help_report_profit_balance" : "Jest to różnica pomiędzy sumą wszystkich dokonanych wpłat za czynsz a sumą wszystkich opłaconych rachunków w zadanym okresie czasu."
     }
 }

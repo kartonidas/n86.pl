@@ -60,7 +60,7 @@
 <template>
     <Skeleton style="min-height:120px" v-if="loading"></Skeleton>
     <template v-if="!loading">
-        <div v-if="activeSubscription" class="bg-green-100 p-3 text-center text-sm border-round-lg" :class="class">
+        <div v-if="activeSubscription" class="bg-green-100 p-3 text-center text-sm border-round-lg shadow-3" :class="class">
             {{ $t("orders.currently_package", [items, p(items, $t('orders.estate_1'), $t('orders.estate_2'), $t('orders.estate_3'))]) }}<br/>({{ end_date }})
             <div class="mt-2 mb-2">
                 <Button severity="warning" size="small" class="mr-1" @click="prolong">{{ $t("orders.prolong") }}</Button>

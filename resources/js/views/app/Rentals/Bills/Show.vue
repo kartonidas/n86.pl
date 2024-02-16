@@ -88,7 +88,7 @@
                 this.$router.push({name: 'rental_bill_edit'})
             },
             back() {
-                this.$router.push({name: 'rental_show'})
+                this.$router.back()
             },
             payment() {
                 this.$router.push({name: 'rental_bill_payment'})

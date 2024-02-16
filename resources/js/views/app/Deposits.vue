@@ -25,8 +25,7 @@
         data() {
             return {
                 deposits: [],
-                paymentMethods: [],
-                loadingPaymentMethodDictionary: false,
+                paymentMethods: getValues("payments.methods"),
                 meta: {
                     loading: false,
                     currentPage: 1,
@@ -56,7 +55,6 @@
                 appStore().setToastMessage(null)
             }
             this.getList()
-            this.getPaymentMethods()
         },
         methods: {
             getList() {
@@ -73,21 +71,6 @@
                             this.meta.totalRecords = response.data.total_rows
                             this.meta.totalPages = response.data.total_pages
                             this.meta.loading = false
-                        },
-                        (errors) => {
-                            this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
-                        }
-                    );
-            },
-            
-            getPaymentMethods() {
-                this.paymentMethods = []
-                this.loadingPaymentMethodDictionary = true
-                this.dictionaryService.listByType('payment_types', 999, 1)
-                    .then(
-                        (response) => {
-                            this.paymentMethods = response.data.data
-                            this.loadingPaymentMethodDictionary = false
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -135,7 +118,7 @@
                         </div>
                         
                         <div class="col-12 md:col-4 sm:col-12 mb-3">
-                            <Dropdown id="payment_method" v-model="meta.search.payment_method" :loading="loadingPaymentMethodDictionary" :options="paymentMethods" optionLabel="name" optionValue="id" :placeholder="$t('items.payment_method')" class="w-full"/>
+                            <Dropdown id="payment_method" v-model="meta.search.payment_method" :options="paymentMethods" optionLabel="name" optionValue="id" :placeholder="$t('items.payment_method')" class="w-full"/>
                         </div>
                         
                         <div class="col-12 md:col-7 sm:col-9 mb-3">

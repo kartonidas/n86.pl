@@ -209,8 +209,11 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale', 'package'])->group(fu
     
     $router->get('/history/{type}/{id}', [HistoryController::class, "list"])->where("id", "[0-9]+");
     
-    $router->get('/report/chart/item/{id}', [ReportController::class, "chartItemData"])->where("id", "[0-9]+");
-    $router->get('/report/chart/rental/{id}', [ReportController::class, "chartRentalData"])->where("id", "[0-9]+");
+    $router->get('/report/item/{id}', [ReportController::class, "item"])->where("id", "[0-9]+");
+    $router->get('/report/balance/item/{id}', [ReportController::class, "balanceItemData"])->where("id", "[0-9]+");
+    $router->get('/report/balance/rental/{id}', [ReportController::class, "balanceRentalData"])->where("id", "[0-9]+");
+    $router->get('/report/profit/item/{id}', [ReportController::class, "profitItemData"])->where("id", "[0-9]+");
+    $router->get('/report/profit/rental/{id}', [ReportController::class, "profitRentalData"])->where("id", "[0-9]+");
     
     // STATYSTYKI
     $router->get('/stats/user/{id}/daily', [StatsController::class, "userDaily"])->where("id", "[0-9]+");

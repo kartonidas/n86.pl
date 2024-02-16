@@ -16,7 +16,6 @@ class ListRequest extends FormRequest
         return [
             "size" => "nullable|integer|gt:0",
             "page" => "nullable|integer|gt:0",
-            "start" => "nullable|integer|gt:0",
             "sort" => "nullable",
             "order" => "nullable|integer",
         ];

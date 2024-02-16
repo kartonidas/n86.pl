@@ -445,7 +445,7 @@ class Rental extends Model
         if($item)
             $item->setRentedFlag();
             
-        $item->notifyRentalEnded();
+        $this->notifyRentalEnded();
     }
     
     private function setTerminated()
@@ -457,7 +457,7 @@ class Rental extends Model
         if($item)
             $item->setRentedFlag();
         
-        $item->notifyRentalEnded();
+        $this->notifyRentalEnded();
     }
     
     public function initStatus()
@@ -491,11 +491,11 @@ class Rental extends Model
     
     public static function recalculate(Rental $rental)
     {
-        $tenant = Customer::find($rental->tenant_id);
+        $tenant = Customer::withoutGlobalScope("uuid")->where("uuid", $rental->uuid)->find($rental->tenant_id);
         if($tenant)
         {
-            $totalActive = self::where("status", self::STATUS_CURRENT)->where("tenant_id", $rental->tenant_id)->count();
-            $totalWaiting = self::where("status", self::STATUS_WAITING)->where("tenant_id", $rental->tenant_id)->count();
+            $totalActive = self::withoutGlobalScope("uuid")->where("uuid", $rental->uuid)->where("status", self::STATUS_CURRENT)->where("tenant_id", $rental->tenant_id)->count();
+            $totalWaiting = self::withoutGlobalScope("uuid")->where("uuid", $rental->uuid)->where("status", self::STATUS_WAITING)->where("tenant_id", $rental->tenant_id)->count();
             
             $tenant->total_active_rentals = $totalActive;
             $tenant->total_waiting_rentals = $totalWaiting;
@@ -525,34 +525,37 @@ class Rental extends Model
     
     public function generateInitialItemBills()
     {
-        if($this->deposit > 0)
-        {
-            $deposit = new ItemBill;
-            $deposit->item_id = $this->item_id;
-            $deposit->rental_id = $this->id;
-            $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
-            $deposit->payment_date = $this->first_payment_date;
-            $deposit->cost = $this->deposit;
-            $deposit->save();
-        }
-        
-        $cost = $this->rent;
-        if($this->first_month_different_amount)
-            $cost = $this->first_month_different_amount;
-        
-        $rent = new ItemBill;
-        $rent->item_id = $this->item_id;
-        $rent->rental_id = $this->id;
-        $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
-        $rent->payment_date = $this->first_payment_date;
-        $rent->cost = $cost;
-        $rent->save();
-        
-        if($this->payment == self::PAYMENT_CYCLICAL)
-        {
-            $this->next_rental = $this->calculateNextRental($this->start);
-            $this->save();
-        }
+        DB::transaction(function() {
+            if($this->deposit > 0)
+            {
+    
+                $deposit = new ItemBill;
+                $deposit->item_id = $this->item_id;
+                $deposit->rental_id = $this->id;
+                $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
+                $deposit->payment_date = $this->first_payment_date;
+                $deposit->cost = $this->deposit;
+                $deposit->save();
+            }
+            
+            $cost = $this->rent;
+            if($this->first_month_different_amount)
+                $cost = $this->first_month_different_amount;
+            
+            $rent = new ItemBill;
+            $rent->item_id = $this->item_id;
+            $rent->rental_id = $this->id;
+            $rent->bill_type_id = Data::getSystemBillTypes()["rent"][0];
+            $rent->payment_date = $this->first_payment_date;
+            $rent->cost = $cost;
+            $rent->save();
+            
+            if($this->payment == self::PAYMENT_CYCLICAL)
+            {
+                $this->next_rental = $this->calculateNextRental($this->start);
+                $this->save();
+            }
+        });
     }
     
     public function terminate(int $end, string $reason)
@@ -620,39 +623,41 @@ class Rental extends Model
     
     public function updateItemBills()
     {
-        $rents = ItemBill
-            ::where("rental_id", $this->id)
-            ->where("payment_date", ">", time())
-            ->where("bill_type_id", Data::getSystemBillTypes()["rent"][0])
-            ->where("paid", 0)
-            ->get();
+        DB::transaction(function() {
+            $rents = ItemBill
+                ::where("rental_id", $this->id)
+                ->where("payment_date", ">", time())
+                ->where("bill_type_id", Data::getSystemBillTypes()["rent"][0])
+                ->where("paid", 0)
+                ->get();
+                
+            foreach($rents as $rent)
+            {
+                $rent->cost = $this->rent;
+                $rent->save();
+            }
             
-        foreach($rents as $rent)
-        {
-            $rent->cost = $this->rent;
-            $rent->save();
-        }
-        
-        $depositBill = ItemBill
-            ::where("rental_id", $this->id)
-            ->where("bill_type_id", Data::getSystemBillTypes()["deposit"][0])
-            ->first();
-            
-        if($depositBill)
-        {
-            $depositBill->cost = $this->deposit;
-            $depositBill->save();
-        }
-        elseif($this->deposit > 0)
-        {
-            $deposit = new ItemBill;
-            $deposit->item_id = $this->item_id;
-            $deposit->rental_id = $this->id;
-            $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
-            $deposit->payment_date = $this->first_payment_date;
-            $deposit->cost = $this->deposit;
-            $deposit->save();
-        }
+            $depositBill = ItemBill
+                ::where("rental_id", $this->id)
+                ->where("bill_type_id", Data::getSystemBillTypes()["deposit"][0])
+                ->first();
+                
+            if($depositBill)
+            {
+                $depositBill->cost = $this->deposit;
+                $depositBill->save();
+            }
+            elseif($this->deposit > 0)
+            {
+                $deposit = new ItemBill;
+                $deposit->item_id = $this->item_id;
+                $deposit->rental_id = $this->id;
+                $deposit->bill_type_id = Data::getSystemBillTypes()["deposit"][0];
+                $deposit->payment_date = $this->first_payment_date;
+                $deposit->cost = $this->deposit;
+                $deposit->save();
+            }
+        });
     }
     
     public function getBalanceRow()
