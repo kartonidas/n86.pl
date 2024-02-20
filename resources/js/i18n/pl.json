@@ -21,7 +21,7 @@
     },
     "config": {
         "rental_numbering_mask" : "Maska numeru umowy najmu",
-        "rental_numbering_mask_help" : "{'@N1.9 - numer zlecenia, @M - miesiąc, @Y - rok'}",
+        "rental_numbering_mask_help" : "{'@N1.9 - numer umowy, @M - miesiąc, @Y - rok'}",
         "rental_numbering_continuation" : "Ciągłość",
         "owner_type" : "Rodzaj konta",
         "firstname_lastname" : "Imię i nazwisko",
@@ -441,7 +441,8 @@
         "updated" : "Grupa została zaktualizowana",
         "user" : "Użytkownicy",
         "rent" : "Wynajem",
-        "config" : "Konfiguracja"
+        "config" : "Konfiguracja",
+        "customer_invoices" : "Faktury"
     },
     "profile" : {
         "apartment_no" : "Nr lokalu",
@@ -500,7 +501,7 @@
     },
     "rent" : {
         "add_new_item" : "Dodaj nową nieruchomość",
-        "add_new_tenant" : "Dodaj nowego najemce",
+        "add_new_tenant" : "Dodaj nowego najemcę",
         "add_rent": "Dodaj wynajem",
         "additional_data" : "Dodatkowe informacje",
         "balance" : "Saldo",
@@ -567,7 +568,7 @@
         "select_payment" : "Wybierz płatność",
         "select_payment_day" : "Wybierz dzień płatności",
         "select_period" : "Wybierz czas trwania najmu",
-        "select_tenant" : "Wybierz najemce z listy",
+        "select_tenant" : "Wybierz najemcę z listy",
         "select_termination_period" : "Wybierz okres wypowiedzenie",
         "start_date" : "Rozpoczęcie wynajmu",
         "status" : "Status",
@@ -784,7 +785,7 @@
         "continuation" : "Ciągłość",
         "document_type" : "Rodzaj dokumentu",
         "mask" : "Maska",
-        "continuation_help" : "{'@N1.9 - numer zlecenia, @M - miesiąc, @Y - rok'}",
+        "continuation_help" : "{'@N1.9 - numer faktury, @M - miesiąc, @Y - rok'}",
         "invoice_deleted" : "Faktura została usunięta",
         "number" : "Numer",
         "empty_list" : "Brak faktur",

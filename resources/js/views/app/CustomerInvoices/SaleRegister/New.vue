@@ -60,7 +60,7 @@
                     )
             },
             back() {
-                this.$router.push({name: 'sale_register'})
+                this.$goBack('sale_register');
             }
         }
     }

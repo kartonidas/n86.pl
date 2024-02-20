@@ -115,7 +115,7 @@
             },
             
             back() {
-                this.$router.push({name: 'customer_show', params: { customerId : this.customer.id }})
+                this.$goBack('customer_show');
             }
         }
     };

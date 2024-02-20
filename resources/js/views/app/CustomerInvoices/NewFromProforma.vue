@@ -96,7 +96,7 @@
                     )
             },
             back() {
-                this.$router.push({name: 'customer_invoices'})
+                this.$goBack('customer_invoices');
             }
         }
     }

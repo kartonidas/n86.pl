@@ -81,7 +81,7 @@
                 return items
             },
             back() {
-                this.$router.push({name: 'rental_show'})
+                this.$goBack('rental_show');
             },
             getCheckboxInputId(id) {
                 return "bill-" + id

@@ -79,7 +79,7 @@
                 this.$router.push({name: 'item_bill_edit'})
             },
             back() {
-                this.$router.back()
+                this.$goBack('item_bills');
             },
             payment() {
                 this.$router.push({name: 'item_bill_payment'})

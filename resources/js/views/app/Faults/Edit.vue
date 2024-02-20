@@ -77,7 +77,7 @@
             },
             
             back() {
-                this.$router.push({name: 'fault_show'})
+                this.$goBack('fault_show', true);
             }
         }
     }

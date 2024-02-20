@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\ContactRequest;
+use App\Libraries\Data;
 use App\Libraries\Helper;
 use App\Mail\ContactForm;
 
@@ -84,7 +85,12 @@ class PageController extends Controller
     {
         if($slug !== null)
         {
-            $helpFile = resource_path("views/help/html/" . app()->getLocale() . "/" . $slug . ".html");
+            $slug = explode("/", $slug);
+            
+            if(count($slug) != 2 || !in_array($slug[0], Data::getHelpCategories()))
+                abort(404);
+                
+            $helpFile = resource_path("views/help/html/" . app()->getLocale() . "/" . $slug[0] . "/" . $slug[1] . ".html");
             if(file_exists($helpFile))
             {
                 $html = file_get_contents($helpFile);
@@ -93,6 +99,7 @@ class PageController extends Controller
                 return view("help.details", [
                     "help" => (string)$xml->content,
                     "title" => (string)$xml->title,
+                    "category" => array_flip(Data::getHelpCategories())[$slug[0]],
                 ]);
             }
             else
@@ -101,21 +108,25 @@ class PageController extends Controller
         else
         {
             $helpCategories = [];
-            $path = "views/help/html/" . app()->getLocale() . "/";
-            
-            $allHelpFiles = scandir(resource_path($path));
-            foreach($allHelpFiles as $helpFile)
+            foreach(Data::getHelpCategories() as $categoryName => $categoryPath)
             {
-                if($helpFile == "." || $helpFile == ".." || substr($helpFile, -5) != ".html")
-                    continue;
+                $path = "views/help/html/" . app()->getLocale() . "/" . $categoryPath . "/";
                 
-                $html = file_get_contents(resource_path($path) . $helpFile);
-                $xml = simplexml_load_string($html);
-                
-                $helpCategories[(string)$xml->attributes()["category"]][] = [
-                    "title" => (string)$xml->title,
-                    "slug" => self::getHelpPrefixUrl() . substr($helpFile, 0, -5),
-                ];
+                $allHelpFiles = scandir(resource_path($path));
+                foreach($allHelpFiles as $helpFile)
+                {
+                    if($helpFile == "." || $helpFile == ".." || substr($helpFile, -5) != ".html")
+                        continue;
+                    
+                    $html = file_get_contents(resource_path($path) . $helpFile);
+                    $xml = simplexml_load_string($html);
+                    
+                    $helpCategories[$categoryName][(int)$xml->attributes()["sort"] ?? 999][] = [
+                        "title" => (string)$xml->title,
+                        "slug" => self::getHelpPrefixUrl() . $categoryPath . "/" . substr($helpFile, 0, -5),
+                    ];
+                }
+                ksort($helpCategories[$categoryName]);
             }
             
             return view("help.index", [

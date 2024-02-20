@@ -82,4 +82,15 @@ class Data
         }
         return null;
     }
+    
+    public static function getHelpCategories()
+    {
+        return [
+            "Nieruchomości" => "nieruchomosci",
+            "Wynajem" => "wynajem",
+            "Rozliczenia" => "rozliczenia",
+            "Użytkownicy" => "uzytkownicy",
+            "Pakiety" => "pakiety",
+        ];
+    }
 }

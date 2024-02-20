@@ -67,7 +67,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_fees'})
+                this.$goBack('item_fees');
             }
         },
         validations () {

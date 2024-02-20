@@ -34,6 +34,10 @@ return [
             "module" => "Permissions",
             "operation" => ["list", "create", "update", "delete"]
         ],
+        "customer_invoices" => [
+            "module" => "Customer invoices",
+            "operation" => ["list", "create", "update", "delete"]
+        ],
         "dictionary" => [
             "module" => "Dictionaries",
             "operation" => ["list", "create", "update", "delete"]
@@ -42,9 +46,5 @@ return [
             "module" => "Configurations",
             "operation" => ["update"]
         ],
-        "customer_invoices" => [
-            "module" => "Customer invoices",
-            "operation" => ["list", "create", "update", "delete"]
-        ]
     ]
 ];

@@ -83,7 +83,7 @@
                 }
             },
             back() {
-                this.$router.push({name: 'documents'})
+                this.$goBack('documents');
             }
         },
         validations () {

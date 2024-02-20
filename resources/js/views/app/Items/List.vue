@@ -79,6 +79,7 @@
                 this.customerService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
+                            this.loadingCustomers = false
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
                                     this.customers.push({
@@ -87,7 +88,6 @@
                                         "type" : i.type,
                                         "nip" : i.nip,
                                     })
-                                    this.loadingCustomers = false
                                 })
                             }
                         },

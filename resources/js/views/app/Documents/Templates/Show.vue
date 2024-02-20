@@ -58,9 +58,6 @@
             editTemplate() {
                 this.$router.push({name: 'documents_templates_edit'})
             },
-            back() {
-                this.$router.push({name: 'documents_templates'})
-            },
             getType() {
                 return getValueLabel("documents.types", this.template.type)
             },

@@ -141,7 +141,7 @@
                 </div>
                 
                 <div class="field col-12 md:col-5 mb-4">
-                    <label for="template" v-required class="block text-900 font-medium mb-2">{{ $t('rent.document_template') }}</label>
+                    <label for="template" class="block text-900 font-medium mb-2">{{ $t('rent.document_template') }}</label>
                     <Dropdown id="type" v-model="document.template" :options="templates()" optionLabel="name" optionValue="id" :placeholder="$t('rent.document_template')" class="w-full" :disabled="saving || loading"/>
                 </div>
                 

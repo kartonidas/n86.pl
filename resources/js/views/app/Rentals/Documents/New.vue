@@ -67,7 +67,7 @@
                     )
             },
             back() {
-                this.$router.push({name: 'rental_show'})
+                this.$goBack('rental_show');
             },
             setRental(rental) {
                 this.rental = rental;

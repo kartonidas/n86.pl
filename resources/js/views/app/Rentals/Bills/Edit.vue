@@ -104,7 +104,7 @@
             },
             
             back() {
-                this.$router.push({name: 'rental_bill_show'})
+                this.$goBack('rental_bill_show');
             }
         }
     }

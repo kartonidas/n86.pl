@@ -263,7 +263,7 @@ class User extends Authenticatable
         $defaultPermissions = new UserPermission;
         $defaultPermissions->withoutGlobalScopes();
         $defaultPermissions->uuid = $this->getUuid();
-        $defaultPermissions->name = "Read only";
+        $defaultPermissions->name = __("Read only");
         $defaultPermissions->is_default = 1;
         $defaultPermissions->permissions = implode(";", $permissions);
         $defaultPermissions->saveQuietly();

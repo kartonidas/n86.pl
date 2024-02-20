@@ -114,3 +114,14 @@ body {
 .navbar-toggler {
     border: 0;
 }
+
+.help-img {
+    text-align: center;
+}
+
+.help-img IMG {
+    max-width: 75%;
+    border: 1px solid #dddddd;
+    padding: 10px;
+    border-radius: 10px;
+}

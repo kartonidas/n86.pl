@@ -89,7 +89,7 @@
             },
             
             back() {
-                this.$router.push({name: 'faults'})
+                this.$goBack('faults');
             },
             
             changeFaultStatus() {

@@ -78,7 +78,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_show', params: { itemId : this.item.id }})
+                this.$goBack('item_show');
             },
             
             backFromRent() {

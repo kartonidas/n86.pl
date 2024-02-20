@@ -116,7 +116,7 @@
             },
             
             back() {
-                this.$router.push({name: 'tenant_show', params: { tenantId : this.tenant.id }})
+                this.$goBack('tenant_show');
             }
         }
     };

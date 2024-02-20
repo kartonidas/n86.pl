@@ -57,7 +57,7 @@
             },
             
             back() {
-                this.$router.push({name: 'notifications'})
+                this.$goBack('notifications');
             }
         }
     }

@@ -65,6 +65,4 @@ const isOutsideClicked = (event) => {
         </div>
     </div>
     <Toast />
-    
-    <component src="/js/tawk.js" :is="'script'"></component>
 </template>

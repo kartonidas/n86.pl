@@ -117,7 +117,7 @@
                     this.$toast.add({ severity: 'error', summary: this.$t('app.form_error_title'), detail: this.$t('app.form_error_message'), life: 3000 });
             },
             back() {
-                this.$router.push({name: 'item_bill_show'})
+                this.$goBack('item_bill_show');
             },
         },
         validations () {

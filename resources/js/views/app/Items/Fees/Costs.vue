@@ -152,7 +152,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_cyclical_fee_edit'})
+                this.$goBack('item_cyclical_fee_edit');
             }
         },
         validations () {

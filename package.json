@@ -16,6 +16,7 @@
         "vue-i18n-extract": "^2.0.7"
     },
     "dependencies": {
+        "@tawk.to/tawk-messenger-vue-3": "^1.0.3",
         "@vitejs/plugin-basic-ssl": "^1.0.1",
         "@vitejs/plugin-vue": "^5.0.3",
         "@vuelidate/core": "^2.0.3",

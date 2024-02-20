@@ -93,7 +93,7 @@
             },
             
             back() {
-                this.$router.push({name: 'item_bill_show'})
+                this.$goBack('item_bill_show');
             }
         }
     }

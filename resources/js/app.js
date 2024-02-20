@@ -44,7 +44,7 @@ import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
-
+import TawkMessengerVue from '@tawk.to/tawk-messenger-vue-3';
 
 axios.defaults.baseURL = import.meta.env.VITE_API_ENDPOINT;
 axios.defaults.params = {
@@ -59,6 +59,23 @@ pinia.use(piniaPluginPersistedstate)
 createHead()
 
 app.config.globalProperties.rowsPerPage = 25;
+
+app.config.globalProperties.$goBack = (routeName, forceRouteName) => {
+    forceRouteName = forceRouteName == undefined ? false : forceRouteName;
+    
+    if (routeName != undefined && forceRouteName)
+        router.push({name: routeName});
+    else
+    {
+        if(router.options.history.state.back != undefined)
+            router.back();
+        else if (routeName != undefined)
+            router.push({name: routeName});
+        else
+            router.push({name: 'dashboard'});
+    }
+},
+
 app.use(i18n);
 app.use(router);
 app.use(globalDirectives);
@@ -68,6 +85,11 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(VueNumerals, { locale: i18n.global.locale.value });
+
+app.use(TawkMessengerVue, {
+    propertyId : '65cbcba70ff6374032cd2517',
+    widgetId : '1hmi171ke'
+});
 
 app.component('Badge', Badge);
 app.component('Breadcrumb', AppBreadcrumb);

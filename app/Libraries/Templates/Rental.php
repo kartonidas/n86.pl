@@ -112,7 +112,7 @@ class Rental extends TemplateManager implements Template
         {
             $out = array_merge($out, $this->addPrefixToArrayKeys("owner", (array)$owner));
             $out["owner.address"] = Helper::generateAddress($owner, ", ");
-            $out["owner.document_type"] = mb_strtolower(Customer::getDocumentTypes()[$out["owner.document_type"]] ?? $out["owner.document_type"]);
+            $out["owner.document_type"] = isset($out["owner.document_type"]) ? mb_strtolower(Customer::getDocumentTypes()[$out["owner.document_type"]] ?? $out["owner.document_type"]) : "";
         }
 
         return $out;

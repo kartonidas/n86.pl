@@ -8,6 +8,7 @@
     import UserService from '@/service/UserService'
 
     export default {
+        inject : ['setAttributes', 'onLoad'],
         setup() {
             setMetaTitle('meta.title.signin')
             
@@ -68,6 +69,12 @@
                             this.userService.login(this.email, this.password, this.firmId)
                                 .then(
                                     (response) => {
+                                        this.setAttributes({
+                                            email : this.email,
+                                            name : response.firstname + " " + response.lastname,
+                                            user_id: response.id
+                                        }, function(error) {});
+                                        
                                         if (response.id != undefined)
                                             this.router.push({name: 'dashboard'})
                                         this.loading = false

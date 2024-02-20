@@ -16,7 +16,7 @@ use App\Http\Controllers\PaymentController;
 */
 
 $router->post('/ipn/paynow', [PaymentController::class, "ipnPaynow"]);
-$router->get('/pomoc/{any?}', [PageController::class, "help"])->name("help");
+$router->get('/pomoc/{any?}', [PageController::class, "help"])->name("help")->where('any', '.*');
 
 $router->get('/', [PageController::class, "index"]);
 $router->get('/regulamin', [PageController::class, "regulations"])->name("regulations");

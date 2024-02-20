@@ -112,10 +112,12 @@
                     this.userInvoiceService.saleRegisterList({size: 100, first: 0}, {type : this.invoice.type})
                         .then(
                             (response) => {
+                                this.loadingSaleRegister = false
+                                if(this.source == "new" || this.source == "proforma")
+                                    this.invoice.sale_register_id = null
                                 if (response.data.data.length) {
                                     response.data.data.forEach((i) => {
                                         this.saleRegistries.push({"id" : i.id, "name" : i.name })
-                                        this.loadingSaleRegister = false
                                     })
                                     if(this.source == "new" || this.source == "proforma")
                                         this.invoice.sale_register_id = response.data.data[0].id
@@ -134,6 +136,7 @@
                 this.customerService.list({size: 9999, first: 0})
                     .then(
                         (response) => {
+                            this.loadingCustomers = false
                             if (response.data.data.length) {
                                 response.data.data.forEach((i) => {
                                     this.customers.push({
@@ -142,7 +145,6 @@
                                         "type" : i.type,
                                         "nip" : i.nip,
                                     })
-                                    this.loadingCustomers = false
                                 })
                             }
                         },
@@ -197,7 +199,7 @@
             },
             
             getNumber() {
-                if (this.source == "new" || this.source == "proforma") {
+                if ((this.source == "new" || this.source == "proforma") && this.invoice.sale_register_id) {
                     this.loadingInvoiceNumber = true
                     this.userInvoiceService.getNumber(this.invoice.sale_register_id)
                         .then(
@@ -397,7 +399,7 @@
                     </div>
                     
                     <div class="field col-12 mb-4">
-                        <label for="comment" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.comment') }}</label>
+                        <label for="comment" class="block text-900 font-medium mb-2">{{ $t('customer_invoices.comment') }}</label>
                         <Textarea id="comment" type="text" :placeholder="$t('customer_invoices.comment')" rows="3" class="w-full" :class="{'p-invalid' : v.invoice.comment.$error}" v-model="invoice.comment" :disabled="loading || saving || block"/>
                         <div v-if="v.invoice.comment.$error">
                             <small class="p-error">{{ v.invoice.comment.$errors[0].$message }}</small>

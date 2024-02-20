@@ -61,7 +61,7 @@
             },
             
             back() {
-                this.$router.push({name: 'documents_templates_show', params: { templateId : this.template.id }})
+                this.$router.push({name: 'documents_templates_show'})
             }
         }
     };

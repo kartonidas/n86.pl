@@ -1,0 +1,35 @@
+<help category="Rozliczenia" sort="1">
+    <title>Rejestr sprzedaży</title>
+    
+    <content>
+        <![CDATA[
+            Każda wystawiona przez Ciebie faktura musi być przypisana do odpowiedniego rejestru sprzedaży.
+            Dzięki rejestrom możliwe jest prowadzenie oddzielnych numeracji faktur dla poszczególnych rejestrów.
+            Aby dodać nowy rejestr sprzedaży, wybierz z menu "rozliczenia" &raquo; "rejestry sprzedaży" i kliknij przycisk "+"
+            znajdujący sie po prawej stronie nad tabelą.
+            
+            <div class="mt-4 mb-4 help-img">
+                <img src="/images/help/rejestr-sprzedazy-lista.png" alt="Rejestr sprzedaży">
+            </div>
+            
+            W formularzu należy uzupełnić pola:
+            
+            
+            <ul class="list-unstyled">
+                <li><strong>Nazwa</strong>: dowolna nazwa, po której będziesz mógł zidentyfikować dany rejestr,</li>
+                <li><strong>Rodzaj dokumentu</strong>: przypisany do rejestru rodzaj dokumentu, którego dotyczy. Do wyboru: faktura bądź proforma,</li>
+                <li><strong>Ciągłość</strong>: ciągłość numeracji. Miesięczna: numer kolejny będzie oddzielny dla każdego miesiąca (co miesiąc numeracja będzie startowała od początku), roczna: numer kolejny będzie oddzielny dla każdego roku (co rok numeracja będzie startowała od początku), ciągła: numeracja będzie ciągła (nie będzie startowała od nowa),</li>
+                <li><strong>Maska</strong>: maska dla wygenerowanego numeru dokumentu. Dostępne zmienne:
+                    @N1.9 - numer kolejny faktury,
+                    @M - aktualny miesiąc,
+                    @Y - aktualny rok.
+                    Przykładowo: @N1/@M/@Y wygeneruje numer: 1/03/2024, @N4/@M/@Y wygeneruje numer: 0001/03/2024, 
+                </li>
+            </ul>
+    
+            <div class="mt-4 mb-4 help-img">
+                <img src="/images/help/rejestr-sprzedazy-formularz.png" alt="Nowy rejestr sprzedaży">
+            </div>
+        ]]>
+    </content>
+</help>
