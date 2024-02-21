@@ -45,6 +45,7 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import TawkMessengerVue from '@tawk.to/tawk-messenger-vue-3';
+import Help from '@/views/app/_partials/Help.vue';
 
 axios.defaults.baseURL = import.meta.env.VITE_API_ENDPOINT;
 axios.defaults.params = {
@@ -118,6 +119,7 @@ app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
 app.component('Textarea', Textarea);
 app.component('Toast', Toast);
+app.component('Help', Help);
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
 

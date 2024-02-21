@@ -138,7 +138,8 @@
     
      <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental:document,template" mark="rental:template" class="text-right mb-3"/>
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.document_templates') }}</h4>
                     <div class="text-right mb-0 inline-flex" v-if="hasAccess('config:update')">

@@ -189,7 +189,8 @@
         
         <div class="grid mt-1">
             <div class="col col-12">
-                <div class="card">
+                <div class="card pt-4">
+                    <Help show="rental" class="text-right mb-3"/>
                     <h3 class="mb-5 text-color">
                         {{ $t('rent.rental_agreement_no_of', [rental.full_number, rental.document_date]) }}
                     </h3>

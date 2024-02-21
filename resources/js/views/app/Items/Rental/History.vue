@@ -94,7 +94,8 @@
     
     <div class="grid mt-1">
         <div class="col col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental:history,status|item" class="text-right mb-3"/>
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="rent:history" class="mb-5"/>
                 
                 <DataTable :value="archive_rentals" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.archive_rentals.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.archive_rentals.totalPages" :rows="meta.archive_rentals.list.size" :first="meta.archive_rentals.list.first" @page="changeArchivePage" :loading="meta.archive_rentals.loading" @row-click="rowRentalsClick($event)">

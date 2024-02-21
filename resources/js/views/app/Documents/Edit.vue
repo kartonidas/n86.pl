@@ -100,7 +100,8 @@
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
     
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="rental:document,template" mark="rental:document" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('documents.update_document') }}</h4>
         <form v-on:submit.prevent="submitForm" class="sticky-footer-form">
             <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">

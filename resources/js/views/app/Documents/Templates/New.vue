@@ -64,7 +64,8 @@
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="rental:document,template" mark="rental:template" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('documents.new_template') }}</h4>
         <TemplateForm @submit-form="createTemplate" :template="template" :saving="saving" :errors="errors" />
     </div>

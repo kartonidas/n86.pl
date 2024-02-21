@@ -104,7 +104,8 @@
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="settlement" mark="settlement:invoice" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('customer_invoices.new_invoice_from_proforma') }}</h4>
         <InvoiceForm @submit-form="createInvoiceFromProforma" @back="back" :invoice="invoice" source="proforma" :saving="saving" :errors="errors" />
     </div>

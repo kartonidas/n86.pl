@@ -141,7 +141,7 @@
                     .then(
                         (response) => {
                             this.getList()
-                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('items.deleted'), life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: this.$t('app.success'), detail: this.$t('rent.deleted'), life: 3000 });
                         },
                         (errors) => {
                             this.$toast.add({ severity: 'error', summary: this.$t('app.error'), detail: errors.response.data.message, life: 3000 });
@@ -164,7 +164,8 @@
     
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental" class="text-right mb-3"/>
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.rentals_list') }}</h4>
                     <div class="text-right mb-0 inline-flex" v-if="hasAccess('rent:create')">

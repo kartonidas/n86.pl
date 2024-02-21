@@ -81,7 +81,8 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="grid mt-1">
         <div class="col">
-            <div class="card p-fluid">
+            <div class="card p-fluid pt-4">
+                <Help show="item" class="text-right mb-3"/>
                 <h4 class="mb-5 header-border-bottom pb-2 text-color font-medium">{{ $t('items.new_item') }}</h4>
                 <ItemForm @submit-form="createItem" @set-errors="setErrors" :item="item" :saving="saving" :errors="errors" :fromCustomer="fromCustomer"/>
             </div>

@@ -88,7 +88,8 @@
     
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="item:fault" class="text-right mb-3"/>
                 <FaultForm @submit-form="updateFault" @back="back" :fault="fault" source="update" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>

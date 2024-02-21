@@ -87,7 +87,8 @@
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="settlement" mark="settlement:register" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('customer_invoices.edit_sale_register') }}</h4>
         <RegisterForm @submit-form="updateSaleRegister" @back="back" :register="register" source="edit" :saving="saving" :loading="loading" :errors="errors" />
     </div>

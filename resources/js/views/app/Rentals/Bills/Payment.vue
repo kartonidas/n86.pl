@@ -144,7 +144,8 @@
     <Breadcrumb :model="getBreadcrumbs()"/>
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental" class="text-right mb-3"/>
                 <form v-on:submit.prevent="submitForm" class="sticky-footer-form">
                     <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
                         <ul class="list-unstyled">

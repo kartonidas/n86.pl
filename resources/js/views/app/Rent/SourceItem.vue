@@ -254,7 +254,8 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     
     <div v-if="itemExists">
-        <div class="card p-fluid mt-4">
+        <div class="card p-fluid mt-4 pt-4">
+            <Help show="rental" mark="rental:new" class="text-right mb-3"/>
             <div class="mb-5">
                 <div class="grid align-items-center">
                     <div class="col-12 md:col-5" v-if="activeStep > 0">

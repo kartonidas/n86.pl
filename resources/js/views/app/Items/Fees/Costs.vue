@@ -169,7 +169,8 @@
 <template>
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="item" class="text-right mb-3"/>
                 <TabMenu activeIndex="fees:const" :item="item" class="mb-3" :showEditButton="false" :showDivider="true"/>
                 
                 <div class="mb-3 flex justify-content-between w-full">

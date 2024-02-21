@@ -268,7 +268,8 @@
     
     <div class="grid mt-1">
         <div class="col col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="item" class="text-right mb-3"/>
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="report" class="mb-5"/>
                 
                 <div class="grid">

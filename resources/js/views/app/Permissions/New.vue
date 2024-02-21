@@ -117,7 +117,8 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="grid mt-1">
         <div class="col">
-            <div class="card p-fluid">
+            <div class="card p-fluid pt-4">
+                <Help show="user" mark="user:permission" class="text-right mb-3"/>
                 <form v-on:submit.prevent="createGroup" class="sticky-footer-form">
                     <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
                         <ul class="list-unstyled">

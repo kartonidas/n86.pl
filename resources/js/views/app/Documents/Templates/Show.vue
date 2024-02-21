@@ -69,7 +69,8 @@
     <Breadcrumb :model="getBreadcrumbs()"/>
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental:document,template" mark="rental:template" class="text-right mb-3"/>
                 <div class="flex align-items-center mb-3">
                     <div class="w-full">
                         <Badge :value="getType()" class="font-normal" severity="info"></Badge>

@@ -68,7 +68,8 @@
     
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental:notify" class="text-right mb-3"/>
                 <NotificationForm @submit-form="createNotification" @back="back" :notification="notification" :saving="saving" :errors="errors" />
             </div>
         </div>

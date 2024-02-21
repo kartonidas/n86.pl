@@ -132,7 +132,8 @@
     <Breadcrumb :model="meta.breadcrumbItems"/>
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="item:bill" class="text-right mb-3"/>
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.bills') }}</h4>
                 </div>

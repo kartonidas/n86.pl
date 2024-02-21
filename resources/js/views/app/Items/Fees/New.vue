@@ -73,7 +73,8 @@
     <Breadcrumb :model="getBreadcrumbs()"/>
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="item" class="text-right mb-3"/>
                 <TabMenu activeIndex="fees:const" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
                 <CyclicalFeeForm @submit-form="createCyclicalFee" :fee="fee" :saving="saving" :errors="errors" />
             </div>

@@ -239,9 +239,9 @@ class Item extends Model
     
     public function setRentedFlag()
     {
-        $cnt = Rental::where("status", Rental::STATUS_CURRENT)->where("item_id", $this->id)->withoutGlobalScopes()->count();
+        $cnt = Rental::where("status", Rental::STATUS_CURRENT)->where("item_id", $this->id)->withoutGlobalScope("uuid")->count();
         $this->rented = $cnt > 0 ? 1 : 0;
-        $this->waiting_rentals = Rental::where("status", Rental::STATUS_WAITING)->where("item_id", $this->id)->withoutGlobalScopes()->count();
+        $this->waiting_rentals = Rental::where("status", Rental::STATUS_WAITING)->where("item_id", $this->id)->withoutGlobalScope("uuid")->count();
         $this->saveQuietly();
     }
     

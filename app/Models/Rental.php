@@ -501,6 +501,16 @@ class Rental extends Model
             $tenant->total_waiting_rentals = $totalWaiting;
             $tenant->saveQuietly();
         }
+        
+        if($rental->item_id > 0)
+        {
+            $item = Item::withoutGlobalScope("uuid")->where("uuid", $rental->uuid)->find($rental->item_id);
+            if($item)
+            {
+                $item->waiting_rentals = self::where("status", self::STATUS_WAITING)->where("item_id", $item->id)->withoutGlobalScope("uuid")->count();
+                $item->saveQuietly();
+            }
+        }
     }
     
     public function setCurrentRentalImmediately()

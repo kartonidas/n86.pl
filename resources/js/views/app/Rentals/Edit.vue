@@ -187,7 +187,8 @@
     <Breadcrumb :model="getBreadcrumbs()"/>
     <div class="grid mt-1">
         <div class="col col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental" class="text-right mb-3"/>
                 <h3 class="mt-2 mb-6 text-color">{{ $t('rent.rental_agreement_no', [rent.full_number]) }}</h3>
                 
                 <form v-on:submit.prevent="submitForm" class="sticky-footer-form">

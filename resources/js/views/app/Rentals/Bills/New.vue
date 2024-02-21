@@ -98,7 +98,8 @@
     
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="rental" class="text-right mb-3"/>
                 <BillForm @submit-form="createBill" @back="back" :bill="bill" :saving="saving" :errors="errors" />
             </div>
         </div>
