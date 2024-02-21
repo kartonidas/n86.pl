@@ -252,7 +252,7 @@
                     </Column>
                     <Column :header="$t('customer_invoices.number')" field="full_number" style="min-width: 300px;" sortable>
                         <template #body="{ data }">
-                            <div class="font-medium mb-1 text-lg">{{ data.customer.name }}</div>
+                            <div class="font-medium mb-1 text-lg">{{ data.customer_name }}</div>
                             <div class="text-sm text-gray-500">{{ data.full_number }}</div>
                             <template v-if="data.proforma_number">
                                 <div class="mt-2 text-sm">

@@ -828,7 +828,20 @@
         "from_proforma" : "Z proformy",
         "use_invoice_firm_data_info_1" : "Przy wystawianiu faktur używaj danych firmowych zdefiniowanych na podstronie",
         "use_invoice_firm_data_info_link" : "Ustawienia => Firma",
-        "use_invoice_firm_data_info_2" : "zakładka \"Dane do faktury\". Jeśli chcesz używać innych danych odznacz to pole i uzupełnij formularz."
+        "use_invoice_firm_data_info_2" : "zakładka \"Dane do faktury\". Jeśli chcesz używać innych danych odznacz to pole i uzupełnij formularz.",
+        "firstname_lastname" : "Imię i nazwisko",
+        "firm_name" : "Nazwa firmy",
+        "customer_type" : "Rodzaj",
+        "customer_name" : "Nazwa",
+        "customer_nip" : "NIP",
+        "customer_street" : "Ulica",
+        "customer_house_no" : "Numer domu",
+        "customer_apartment_no" : "Numer lokalu",
+        "select_country" : "Wybierz kraj",
+        "customer_country" : "Kraj",
+        "customer_zip" : "Kod pocztowy",
+        "customer_city" : "Miejscowość",
+        "customer_data" : "Dane klienta"
     },
     "dashboard": {
         "total_items" : "Ilość nieruchomości",

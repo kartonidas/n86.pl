@@ -78,6 +78,7 @@
                             <div class="lh-1 mt-3 mb-3">
                                 <span class="text-primary fs-1 fw-bold">{{ config("packages.allowed.p1.price_vat") }} zł</span>
                                 <div class="text-muted">brutto / miesięcznie</div>
+                                <div class="text-muted mt-1" style="font-size: 13px;">(za jedną nieruchomość)</div>
                             </div>
                                 
                             <ul class="list-unstyled mt-4 fs-7 text-start lh-lg">
@@ -103,6 +104,7 @@
                             <div class="lh-1 mt-3 mb-3">
                                 <span class="text-primary fs-1 fw-bold">{{ config("packages.allowed.p12.price_vat") }} zł</span>
                                 <div class="text-muted">brutto / rocznie</div>
+                                <div class="text-muted mt-1" style="font-size: 13px;">(za jedną nieruchomość)</div>
                             </div>
                             
                             <ul class="list-unstyled mt-4 fs-7 text-start lh-lg">

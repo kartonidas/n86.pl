@@ -16,17 +16,21 @@ class CustomerInvoicePrinter
 {
     public static function generatePDF(CustomerInvoice $invoice)
     {
-        $invoice->customer = $invoice->customer()->first();
         $invoice->recipient = $invoice->recipient()->first();
         $invoice->payer = $invoice->payer()->first();
         $invoice->sale_register = $invoice->saleRegister()->first();
         
+        $paymentTypesArr = [];
+        $paymentTypes = Dictionary::where("type", "payment_types")->get();
+        foreach($paymentTypes as $paymentType)
+            $paymentTypesArr[$paymentType->id] = $paymentType->name;
+            
         $data = [
             "invoice" => $invoice,
             "items" => $invoice->items()->get(),
             "grouped_items" => $invoice->getGroupedItems(),
             "dictionary" => [
-                "payment_types" => Dictionary::where("type", "payment_types")->get(),
+                "payment_types" => $paymentTypesArr,
             ],
             "firm_data" => $invoice->getFirmInvoicingData(),
         ];

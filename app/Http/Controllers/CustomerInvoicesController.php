@@ -74,7 +74,6 @@ class CustomerInvoicesController extends Controller
         {
             $userInvoices[$k]->can_delete = $userInvoice->canDelete();
             $userInvoices[$k]->can_update = CustomerInvoice::checkOperation($userInvoice, "update");
-            $userInvoices[$k]->customer = $userInvoice->customer()->first();
             $userInvoices[$k]->sale_register = $userInvoice->saleRegister()->first();
             $userInvoices[$k]->make_from_proforma = $userInvoice->canMakeFromProforma();
             $userInvoices[$k]->proforma_number = $userInvoice->getProformaNumber();
@@ -102,9 +101,16 @@ class CustomerInvoicesController extends Controller
             $row->type = $validated["type"];
             $row->sale_register_id = $validated["sale_register_id"];
             $row->created_user_id = $validated["created_user_id"];
-            $row->customer_id = $validated["customer_id"];
-            $row->recipient_id = $validated["recipient_id"] ?? null;
-            $row->payer_id = $validated["payer_id"] ?? null;
+            $row->customer_id = $validated["customer_id"] ?? null;
+            $row->customer_type = $validated["customer_type"];
+            $row->customer_name = $validated["customer_name"];
+            $row->customer_street = $validated["customer_street"];
+            $row->customer_house_no = $validated["customer_house_no"] ?? "";
+            $row->customer_apartment_no = $validated["customer_apartment_no"] ?? "";
+            $row->customer_city = $validated["customer_city"];
+            $row->customer_zip = $validated["customer_zip"];
+            $row->customer_country = $validated["customer_country"];
+            $row->customer_nip = $validated["customer_type"] == CustomerInvoice::TYPE_FIRM ? $validated["customer_nip"] : "";
             $row->comment = $validated["comment"] ?? null;
             $row->document_date = $validated["document_date"];
             $row->sell_date = $validated["sell_date"];
@@ -155,9 +161,16 @@ class CustomerInvoicesController extends Controller
 
         $row = DB::transaction(function () use($row, $validated) {
             $row->created_user_id = $validated["created_user_id"];
-            $row->customer_id = $validated["customer_id"];
-            $row->recipient_id = $validated["recipient_id"] ?? null;
-            $row->payer_id = $validated["payer_id"] ?? null;
+            $row->customer_id = $validated["customer_id"] ?? null;
+            $row->customer_type = $validated["customer_type"];
+            $row->customer_name = $validated["customer_name"];
+            $row->customer_street = $validated["customer_street"];
+            $row->customer_house_no = $validated["customer_house_no"] ?? "";
+            $row->customer_apartment_no = $validated["customer_apartment_no"] ?? "";
+            $row->customer_city = $validated["customer_city"];
+            $row->customer_zip = $validated["customer_zip"];
+            $row->customer_country = $validated["customer_country"];
+            $row->customer_nip = $validated["customer_type"] == CustomerInvoice::TYPE_FIRM ? $validated["customer_nip"] : "";
             $row->comment = $validated["comment"] ?? null;
             $row->document_date = $validated["document_date"];
             $row->sell_date = $validated["sell_date"];
@@ -198,8 +211,15 @@ class CustomerInvoicesController extends Controller
             $row->sale_register_id = $validated["sale_register_id"];
             $row->created_user_id = $validated["created_user_id"];
             $row->customer_id = $validated["customer_id"];
-            $row->recipient_id = $validated["recipient_id"] ?? null;
-            $row->payer_id = $validated["payer_id"] ?? null;
+            $row->customer_type = $validated["customer_type"];
+            $row->customer_name = $validated["customer_name"];
+            $row->customer_street = $validated["customer_street"];
+            $row->customer_house_no = $validated["customer_house_no"] ?? "";
+            $row->customer_apartment_no = $validated["customer_apartment_no"] ?? "";
+            $row->customer_city = $validated["customer_city"];
+            $row->customer_zip = $validated["customer_zip"];
+            $row->customer_country = $validated["customer_country"];
+            $row->customer_nip = $validated["customer_type"] == CustomerInvoice::TYPE_FIRM ? $validated["customer_nip"] : "";
             $row->comment = $validated["comment"] ?? null;
             $row->document_date = $validated["document_date"];
             $row->sell_date = $validated["sell_date"];
@@ -239,8 +259,15 @@ class CustomerInvoicesController extends Controller
             $row->sale_register_id = $validated["sale_register_id"];
             $row->created_user_id = $validated["created_user_id"];
             $row->customer_id = $invoice->customer_id;
-            $row->recipient_id = $invoice->recipient_id;
-            $row->payer_id = $invoice->payer_id;
+            $row->customer_type = $invoice->customer_type;
+            $row->customer_name = $invoice->customer_name;
+            $row->customer_street = $invoice->customer_street;
+            $row->customer_house_no = $invoice->customer_house_no;
+            $row->customer_apartment_no = $invoice->customer_apartment_no;
+            $row->customer_city = $invoice->customer_city;
+            $row->customer_zip = $invoice->customer_zip;
+            $row->customer_country = $invoice->customer_country;
+            $row->customer_nip = $invoice->customer_nip;
             $row->comment = $validated["comment"] ?? null;
             $row->document_date = $validated["document_date"];
             $row->sell_date = $validated["sell_date"];

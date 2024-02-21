@@ -24,6 +24,9 @@ class CustomerInvoice extends Model
     use \App\Traits\UuidTrait {
         boot as traitBoot;
     }
+    
+    public const TYPE_FIRM = "firm";
+    public const TYPE_PERSON = "person";
 
     protected $casts = [
         "net_amount" => "float",

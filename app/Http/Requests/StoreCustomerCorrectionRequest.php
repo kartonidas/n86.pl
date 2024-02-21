@@ -16,8 +16,15 @@ class StoreCustomerCorrectionRequest extends StoreCustomerInvoicesRequest
         
         unset($rules["type"]);
         unset($rules["customer_id"]);
-        unset($rules["recipient_id"]);
-        unset($rules["payer_id"]);
+        unset($rules["customer_type"]);
+        unset($rules["customer_name"]);
+        unset($rules["customer_street"]);
+        unset($rules["customer_house_no"]);
+        unset($rules["customer_apartment_no"]);
+        unset($rules["customer_city"]);
+        unset($rules["customer_zip"]);
+        unset($rules["customer_country"]);
+        unset($rules["customer_nip"]);
         unset($rules["payment_type_id"]);
         unset($rules["language"]);
         unset($rules["currency"]);

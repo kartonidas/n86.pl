@@ -2,7 +2,9 @@
     import { ref, reactive, computed } from 'vue'
     import { useVuelidate } from '@vuelidate/core'
     import { required, helpers, maxLength, minValue } from '@/utils/i18n-validators'
+    import { nip } from '@/utils/validators'
     import { getValues, getValueLabel } from '@/utils/helper'
+    import Countries from '@/data/countries.json'
     import CustomerService from '@/service/CustomerService'
     import DictionaryService from '@/service/DictionaryService'
     import UserInvoiceService from '@/service/UserInvoiceService'
@@ -48,12 +50,20 @@
                         payment_date: { required },
                         payment_type_id: { required },
                         created_user_id: { required },
-                        customer_id: { required },
                         comment: {maxLengthValue: maxLength(5000)},
                         account_number: {maxLengthValue: maxLength(60)},
                         swift_number: {maxLengthValue: maxLength(60)},
+                        customer_type: { required },
+                        customer_name: { required, maxLengthValue: maxLength(80) },
+                        customer_street: { required, maxLengthValue: maxLength(80) },
+                        customer_house_no: { maxLengthValue: maxLength(20) },
+                        customer_apartment_no: { maxLengthValue: maxLength(20) },
+                        customer_city: { required, maxLengthValue: maxLength(120) },
+                        customer_zip: { required, maxLengthValue: maxLength(10) },
                     }
                 }
+                
+                rules.invoice.customer_nip = state.invoice.customer_type == "firm" ? { nip: helpers.withMessage(this.$t('validations.nip'), nip) } : {};
                 
                 rules.invoice.items = {}
                 if(state.invoice.items != undefined && state.invoice.items.length)
@@ -70,6 +80,7 @@
                             total_gross_amount : {required, minValue: minValue(0.01)},
                         })
                 }
+                
                 return rules
             })
             
@@ -88,6 +99,8 @@
                 loadingInvoiceNumber: false,
                 loadingCustomers: false,
                 loadingUsers: false,
+                countries: Countries[this.$i18n.locale],
+                customerTypes: getValues('customer_types'),
             }
         },
         props: {
@@ -103,6 +116,13 @@
             this.getPaymentTypes()
             this.getCustomers()
             this.getUsers()
+        },
+        computed: {
+            labelCustomerTypeName: {
+                get: function () {
+                    return this.invoice.customer_type == 'person' ? this.$t('customer_invoices.firstname_lastname') : this.$t('customer_invoices.firm_name')
+                },
+            }
         },
         methods: {
             getSaleRegistries() {
@@ -142,8 +162,19 @@
                                     this.customers.push({
                                         "id" : i.id,
                                         "name" : i.name,
-                                        "type" : i.type,
                                         "nip" : i.nip,
+                                        "data" : {
+                                            "customer_id" : i.id,
+                                            "customer_name" : i.name,
+                                            "customer_type" : i.type,
+                                            "customer_nip" : i.nip,
+                                            "customer_street" : i.street,
+                                            "customer_house_no" : i.house_no,
+                                            "customer_apartment_no" : i.apartment_no,
+                                            "customer_zip" : i.zip,
+                                            "customer_city" : i.city,
+                                            "customer_country" : i.country
+                                        }
                                     })
                                 })
                             }
@@ -298,6 +329,32 @@
                     this.invoice.net_amount += row.total_net_amount;
                     this.invoice.gross_amount += row.total_gross_amount;
                 });
+            },
+            
+            selectCustomer(event) {
+                if(event.value != undefined)
+                {
+                    let id = parseInt(event.value);
+                    this.customers.every((c) => {
+                        if (c.id == id) {
+                            this.invoice.customer_id = c.id
+                            this.invoice.customer_type = c.data.customer_type
+                            this.invoice.customer_name = c.data.customer_name
+                            this.invoice.customer_nip = c.data.customer_nip
+                            this.invoice.customer_street = c.data.customer_street
+                            this.invoice.customer_house_no = c.data.customer_house_no
+                            this.invoice.customer_apartment_no = c.data.customer_apartment_no
+                            this.invoice.customer_country = c.data.customer_country
+                            this.invoice.customer_zip = c.data.customer_zip
+                            this.invoice.customer_city = c.data.customer_city
+                            
+                            return false
+                        }
+                        return true
+                    })
+                }
+                else
+                    this.invoice.customer_id = null
             }
         }
     };
@@ -315,12 +372,12 @@
         <div class="mb-4">
             <div class="p-fluid">
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-6 mb-4">
+                    <div class="field col-12 xl:col-6 mb-4">
                         <label for="number" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.number') }}</label>
                         <InputText id="number" type="text" :placeholder="$t('customer_invoices.number')" class="w-full" v-model="invoice.full_number" :disabled="true"/>
                     </div>
                     
-                    <div class="field col-12 md:col-3 mb-4">
+                    <div class="field col-12 lg:col-6 xl:col-3 mb-4">
                         <label for="type" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.document_type') }}</label>
                         <Dropdown id="type" v-model="invoice.type" :options="types" optionLabel="name" :class="{'p-invalid' : v.invoice.type.$error}" optionValue="id" :placeholder="$t('customer_invoices.sale_register')" class="w-full" :disabled="saving || loading || source == 'edit' || source == 'proforma' || block"/>
                         <div v-if="v.invoice.type.$error">
@@ -328,7 +385,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-3 mb-4">
+                    <div class="field col-12 lg:col-6 xl:col-3 mb-4">
                         <label for="sale_register_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.sale_register') }}</label>
                         <Dropdown id="sale_register_id" v-model="invoice.sale_register_id" :loading="loadingSaleRegister" :options="saleRegistries" :class="{'p-invalid' : v.invoice.sale_register_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.sale_register')" class="w-full" :disabled="saving || loading || source == 'edit' || block"/>
                         <div v-if="v.invoice.sale_register_id.$error">
@@ -336,37 +393,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 md:col-6 mb-4">
-                        <label for="customer_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer') }}</label>
-                        <Dropdown id="customer_id" v-model="invoice.customer_id" filter :filterFields="['name','nip']" :loading="loadingCustomers" :options="customers" :class="{'p-invalid' : v.invoice.customer_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.customer')" class="w-full" :disabled="saving || loading || block">
-                            <template #option="slotProps">
-                                <div class="">
-                                    <div>
-                                        {{ slotProps.option.name }}
-                                    </div>
-                                    <small class="font-italic text-gray-500">
-                                        {{ getValueLabel('tenant_types', slotProps.option.type) }}
-                                        <span v-if="slotProps.option.type=='firm'">
-                                            : {{ slotProps.option.nip }}
-                                        </span>
-                                    </small>
-                                </div>
-                            </template>
-                        </Dropdown>
-                        <div v-if="v.invoice.customer_id.$error">
-                            <small class="p-error">{{ v.invoice.customer_id.$errors[0].$message }}</small>
-                        </div>
-                    </div>
-                    
-                    <div class="field col-12 md:col-6 mb-4">
-                        <label for="created_user_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.issued') }}</label>
-                        <Dropdown id="created_user_id" v-model="invoice.created_user_id" filter :loading="loadingUsers" :options="users" :class="{'p-invalid' : v.invoice.created_user_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.issued')" class="w-full" :disabled="saving || loading || block"/>
-                        <div v-if="v.invoice.created_user_id.$error">
-                            <small class="p-error">{{ v.invoice.created_user_id.$errors[0].$message }}</small>
-                        </div>
-                    </div>
-                    
-                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-4 mb-4">
                         <label for="documentDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.document_date') }}</label>
                         <Calendar id="documentDate" v-model="invoice.document_date" :placeholder="$t('customer_invoices.document_date')" :class="{'p-invalid' : v.invoice.document_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.document_date.$error">
@@ -374,7 +401,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-4 mb-4">
                         <label for="sellDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.sell_date') }}</label>
                         <Calendar id="sellDate" v-model="invoice.sell_date" :placeholder="$t('customer_invoices.sell_date')" :class="{'p-invalid' : v.invoice.sell_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.sell_date.$error">
@@ -382,7 +409,7 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 xl:col-4 mb-4">
                         <label for="paymentDate" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.payment_date') }}</label>
                         <Calendar id="paymentDate" v-model="invoice.payment_date" :placeholder="$t('customer_invoices.payment_date')" :class="{'p-invalid' : v.invoice.payment_date.$error}" showIcon :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.payment_date.$error">
@@ -390,11 +417,19 @@
                         </div>
                     </div>
                     
-                    <div class="field col-12 sm:col-6 xl:col-3 mb-4">
+                    <div class="field col-12 sm:col-6 md:col-6 mb-4">
                         <label for="payment_type_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.payment_type') }}</label>
                         <Dropdown id="payment_type_id" v-model="invoice.payment_type_id" :loading="loadingPaymentDictionary" :options="paymentTypes" :class="{'p-invalid' : v.invoice.payment_type_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.payment_type')" class="w-full" :disabled="saving || loading || block"/>
                         <div v-if="v.invoice.payment_type_id.$error">
                             <small class="p-error">{{ v.invoice.payment_type_id.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 xl:col-6 mb-4">
+                        <label for="created_user_id" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.issued') }}</label>
+                        <Dropdown id="created_user_id" v-model="invoice.created_user_id" filter :loading="loadingUsers" :options="users" :class="{'p-invalid' : v.invoice.created_user_id.$error}" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.issued')" class="w-full" :disabled="saving || loading || block"/>
+                        <div v-if="v.invoice.created_user_id.$error">
+                            <small class="p-error">{{ v.invoice.created_user_id.$errors[0].$message }}</small>
                         </div>
                     </div>
                     
@@ -403,6 +438,104 @@
                         <Textarea id="comment" type="text" :placeholder="$t('customer_invoices.comment')" rows="3" class="w-full" :class="{'p-invalid' : v.invoice.comment.$error}" v-model="invoice.comment" :disabled="loading || saving || block"/>
                         <div v-if="v.invoice.comment.$error">
                             <small class="p-error">{{ v.invoice.comment.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="formgrid grid ">
+                    <div class="col-12">
+                        <Divider align="left" class="mb-5">
+                            {{ $t('customer_invoices.customer_data') }}
+                        </Divider>
+                    </div>
+                </div>
+                
+                <div class="formgrid grid mb-3">
+                    <div class="field col-12 md:col-12 mb-4">
+                        <label for="customer_id" class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer') }}</label>
+                        <Dropdown id="customer_id" v-model="invoice.customer_id" :showClear="invoice.customer_id ? true : false" filter :filterFields="['name','nip']" :loading="loadingCustomers" :options="customers" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.customer')" class="w-full" @change="selectCustomer" :disabled="saving || loading || block">
+                            <template #option="slotProps">
+                                <div class="">
+                                    <div>
+                                        {{ slotProps.option.data.customer_name }}
+                                    </div>
+                                    <small class="font-italic text-gray-500">
+                                        {{ getValueLabel('tenant_types', slotProps.option.data.customer_type) }}
+                                        <span v-if="slotProps.option.data.customer_type=='firm'">
+                                            : {{ slotProps.option.data.customer_nip }}
+                                        </span>
+                                    </small>
+                                </div>
+                            </template>
+                        </Dropdown>
+                    </div>
+                    
+                    <div class="field col-12 md:col-3 mb-4">
+                        <label for="customer_type" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_type') }}</label>
+                        <Dropdown id="customer_type" v-model="invoice.customer_type" :options="customerTypes" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.customer_type')" class="w-full" :disabled="saving || loading || block"/>
+                        <div v-if="v.invoice.customer_type.$error">
+                            <small class="p-error">{{ v.invoice.customer_type.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 mb-4" :class="[invoice.customer_type == 'firm' ? 'md:col-5' : 'md:col-9']">
+                        <label for="customer_name" v-required class="block text-900 font-medium mb-2">{{ labelCustomerTypeName }}</label>
+                        <InputText id="customer_name" type="text" :placeholder="$t('customer_invoices.customer_name')" class="w-full" :class="{'p-invalid' : v.invoice.customer_name.$error}" v-model="invoice.customer_name" :disabled="saving || loading || block"/>
+                        <div v-if="v.invoice.customer_name.$error">
+                            <small class="p-error">{{ v.invoice.customer_name.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-4 mb-4" v-if="invoice.customer_type == 'firm'">
+                        <label for="customer_nip" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_nip') }}</label>
+                        <InputText id="customer_nip" type="text" :placeholder="$t('customer_invoices.customer_nip')" class="w-full" :class="{'p-invalid' : v.invoice.customer_nip.$error}" v-model="invoice.customer_nip" :disabled="saving || loading || block" />
+                        <div v-if="v.invoice.customer_nip.$error">
+                            <small class="p-error">{{ v.invoice.customer_nip.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-6 mb-4">
+                        <label for="customer_street" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_street') }}</label>
+                        <InputText id="customer_street" type="text" :placeholder="$t('customer_invoices.customer_street')" class="w-full" :class="{'p-invalid' : v.invoice.customer_street.$error}" v-model="invoice.customer_street" :disabled="saving || loading || block" />
+                        <div v-if="v.invoice.customer_street.$error">
+                            <small class="p-error">{{ v.invoice.customer_street.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-3 sm:col-6 mb-4">
+                        <label for="customer_house_no" class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_house_no') }}</label>
+                        <InputText id="customer_house_no" type="text" :placeholder="$t('customer_invoices.customer_house_no')" class="w-full" :class="{'p-invalid' : v.invoice.customer_house_no.$error}" v-model="invoice.customer_house_no" :disabled="saving || loading || block" />
+                        <div v-if="v.invoice.customer_house_no.$error">
+                            <small class="p-error">{{ v.invoice.customer_house_no.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-3 sm:col-6 mb-4">
+                        <label for="customer_apartment_no" class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_apartment_no') }}</label>
+                        <InputText id="customer_apartment_no" type="text" :placeholder="$t('customer_invoices.customer_apartment_no')" class="w-full" :class="{'p-invalid' : v.invoice.customer_apartment_no.$error}" v-model="invoice.customer_apartment_no" :disabled="saving || loading || block" />
+                        <div v-if="v.invoice.customer_apartment_no.$error">
+                            <small class="p-error">{{ v.invoice.customer_apartment_no.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-4 sm:col-12 mb-4">
+                        <label for="customer_country" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_country') }}</label>
+                        <Dropdown id="customer_country" v-model="invoice.customer_country" filter :options="countries" optionLabel="name" optionValue="code" :placeholder="$t('customer_invoices.select_country')" class="w-full" :disabled="saving || loading || block"/>
+                    </div>
+                    
+                    <div class="field col-12 md:col-3 sm:col-4 mb-4">
+                        <label for="customer_zip" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_zip') }}</label>
+                        <InputText id="customer_zip" type="text" :placeholder="$t('customer_invoices.customer_zip')" class="w-full" :class="{'p-invalid' : v.invoice.customer_zip.$error}" v-model="invoice.customer_zip" :disabled="saving || loading || block" />
+                        <div v-if="v.invoice.customer_zip.$error">
+                            <small class="p-error">{{ v.invoice.customer_zip.$errors[0].$message }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="field col-12 md:col-5 sm:col-8 mb-4">
+                        <label for="customer_city" v-required class="block text-900 font-medium mb-2">{{ $t('customer_invoices.customer_city') }}</label>
+                        <InputText id="customer_city" type="text" :placeholder="$t('customer_invoices.customer_city')" class="w-full" :class="{'p-invalid' : v.invoice.customer_city.$error}" v-model="invoice.customer_city" :disabled="saving || loading || block"/>
+                        <div v-if="v.invoice.customer_city.$error">
+                            <small class="p-error">{{ v.invoice.customer_city.$errors[0].$message }}</small>
                         </div>
                     </div>
                 </div>
