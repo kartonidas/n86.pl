@@ -67,13 +67,13 @@
                     switch(showCategory) {
                         case "item":
                             let itemMenu = [
-                                { label : this.$t('help.items.title'), disabled : true, class : "font-semibold surface-200" },
+                                { label : this.$t('help.items.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-building" },
                                 { id : "new", label : this.$t('help.items.new_item'), url : this.$t('help.items.new_item_url'), target : "_blank" },
                                 { id : "bill", label : this.$t('help.items.new_bill'), url : this.$t('help.items.new_bill_url'), target : "_blank" },
                                 { id : "cyclical", label : this.$t('help.items.new_cyclical_fee'), url : this.$t('help.items.new_cyclical_fee_url'), target : "_blank" },
                                 { id : "payment", label : this.$t('help.items.payment'), url : this.$t('help.items.payment_url'), target : "_blank" },
                                 { id : "fault", label : this.$t('help.items.faults'), url : this.$t('help.items.faults_url'), target : "_blank" },
-                                { id : "archvive", label : this.$t('help.items.archive_block_item'), url : this.$t('help.items.archive_block_item_url'), target : "_blank" },
+                                { id : "archive", label : this.$t('help.items.archive_block_item'), url : this.$t('help.items.archive_block_item_url'), target : "_blank" },
                             ];
                             itemMenu = this.filterItems(itemMenu, showItems)
                             this.markImportant(showCategory, itemMenu)
@@ -82,7 +82,7 @@
                         
                         case "rental":
                             let rentalMenu = [
-                                { label : this.$t('help.rentals.title'), disabled : true, class : "font-semibold surface-200" },
+                                { label : this.$t('help.rentals.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-dollar" },
                                 { id : "new", label : this.$t('help.rentals.start_rental'), url : this.$t('help.rentals.start_rental_url'), target : "_blank" },
                                 { id : "template", label : this.$t('help.rentals.document_templates'), url : this.$t('help.rentals.document_templates_url'), target : "_blank" },
                                 { id : "document", label : this.$t('help.rentals.generate_documents'), url : this.$t('help.rentals.generate_documents_url'), target : "_blank" },
@@ -98,7 +98,7 @@
                         
                         case "settlement":
                             let settlementMenu = [
-                                { label : this.$t('help.settlements.title'), disabled : true, class : "font-semibold surface-200" },
+                                { label : this.$t('help.settlements.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-file-pdf" },
                                 { id : "register", label : this.$t('help.settlements.sale_registries'), url : this.$t('help.settlements.sale_registries_url'), target : "_blank" },
                                 { id : "invoice", label : this.$t('help.settlements.create_invoice'), url : this.$t('help.settlements.create_invoice_url'), target : "_blank" },
                             ];
@@ -109,7 +109,7 @@
                         
                         case "user":
                             let userMenu = [
-                                { label : this.$t('help.users.title'), disabled : true, class : "font-semibold surface-200" },
+                                { label : this.$t('help.users.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-user" },
                                 { id : "manage", label : this.$t('help.users.manage'), url : this.$t('help.users.manage_url'), target : "_blank" },
                                 { id : "permission", label : this.$t('help.users.permissions'), url : this.$t('help.users.permissions_url'), target : "_blank" },
                             ];
@@ -120,9 +120,9 @@
                         
                         case "package":
                             let packageMenu = [
-                                { label : this.$t('help.packages.title'), disabled : true, class : "font-semibold surface-200" },
+                                { label : this.$t('help.packages.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-box" },
+                                { id : "prolong", label : this.$t('help.packages.prolong_package'), url : this.$t('help.packages.prolong_package_url'), target : "_blank" },
                                 { id : "extend", label : this.$t('help.packages.extend_package'), url : this.$t('help.packages.extend_package_url'), target : "_blank" },
-                                { id : "increase", label : this.$t('help.packages.increase_package'), url : this.$t('help.packages.increase_package_url'), target : "_blank" },
                             ];
                             packageMenu = this.filterItems(packageMenu, showItems)
                             this.markImportant(showCategory, packageMenu)
@@ -146,9 +146,9 @@
     <template v-if="showMenu()">
         <div :class="class">
             <Menu ref="menu" :model="getMenuItems()" :popup="true" />
-            <a href="#" @click="toggleHelpMenu">
+            <Button type="button" class="button py-0 px-2 w-auto" outlined text @click="toggleHelpMenu">
                 {{ $t('app.need_help') }}
-            </a>
+            </Button>
         </div>
     </template>
 </template>

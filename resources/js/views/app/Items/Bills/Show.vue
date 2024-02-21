@@ -93,7 +93,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="item" class="text-right mb-3"/>
+                <Help show="item" mark="item:bill|item:payment" class="text-right mb-3"/>
                 <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
                 <div class="flex justify-content-between align-items-center">
                     <Button type="button" :label="$t('app.back')" iconPos="left" icon="pi pi-angle-left" @click="back" class="p-button-secondary w-auto text-center"></Button>

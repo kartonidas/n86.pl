@@ -115,7 +115,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="rental" class="text-right mb-3"/>
+                <Help show="item:bill|rental" mark="item:bill" class="text-right mb-3"/>
                 <BillForm @submit-form="updateBill" @back="back" :bill="bill" source="update" :saving="saving" :loading="loading" :errors="errors" />
             </div>
         </div>

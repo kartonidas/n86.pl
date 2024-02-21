@@ -98,7 +98,8 @@
     }
 </script>
 <template>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="package" mark="package:prolong" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('orders.prolong_access') }}</h4>
         
         <template v-if="!invoicingOk">

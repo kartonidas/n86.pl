@@ -99,7 +99,7 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid pt-4">
-                <Help show="rental" class="text-right mb-3"/>
+                <Help show="rental" mark="rental:document|rental:template" class="text-right mb-3"/>
                 <DocumentForm @submit-form="updateDocument" @back="back" @set-rental="setRental" :document="document" :saving="saving" :errors="errors" />
             </div>
         </div>

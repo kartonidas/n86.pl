@@ -137,7 +137,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="item" class="text-right mb-3"/>
+                <Help show="item" mark="item:bill|item:payment" class="text-right mb-3"/>
                 <TabMenu activeIndex="fees:bills" :item="item" class="mb-5" :showEditButton="false" :showDivider="true"/>
                 
                 <form v-on:submit.prevent="submitForm" class="sticky-footer-form">

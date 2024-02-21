@@ -142,7 +142,7 @@
     <div class="grid mt-1">
         <div class="col">
             <div class="card p-fluid pt-4">
-                <Help show="rental" class="text-right mb-3"/>
+                <Help show="item:payment|rental" mark="item:payment" class="text-right mb-3"/>
                 <form v-on:submit.prevent="submitForm" class="sticky-footer-form">
                     <Message severity="error" :closable="false" v-if="errors.length" class="mb-5">
                         <ul class="list-unstyled">

@@ -58,7 +58,7 @@
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card pt-4">
-                <Help show="item" class="text-right mb-3"/>
+                <Help show="item" mark="item:bill|item:cyclical|item:archive" class="text-right mb-3"/>
                 
                 <TabMenu active="TabMenu" :item="item" activeIndex="base" class="mb-5"/>
                 

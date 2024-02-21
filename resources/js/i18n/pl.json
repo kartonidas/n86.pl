@@ -772,10 +772,10 @@
         },
         "packages" : {
             "title" : "Pakiety",
-            "extend_package" : "Przedłużanie ważności pakietu",
-            "extend_package_url" : "/pomoc/pakiety/przedluzanie-waznosci-pakietu",
-            "increase_package" : "Zwiększanie pakietu",
-            "increase_package_url" : "/pomoc/pakiety/zwiekszanie-pakietu"
+            "prolong_package" : "Przedłużanie ważności pakietu",
+            "prolong_package_url" : "/pomoc/pakiety/przedluzanie-waznosci-pakietu",
+            "extend_package" : "Zwiększanie pakietu",
+            "extend_package_url" : "/pomoc/pakiety/zwiekszanie-pakietu"
         }
     },
     "orders" : {

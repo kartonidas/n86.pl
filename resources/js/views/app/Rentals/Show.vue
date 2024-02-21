@@ -345,7 +345,7 @@
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card pt-4">
-                <Help show="rental" class="text-right mb-3"/>
+                <Help show="rental" mark="rental:terminate|rental:document|rental:status" class="text-right mb-3"/>
                 <div class="flex align-items-center">
                     <div class="w-full">
                         <h3 class="mt-2 mb-0 text-color">{{ rental.full_number }}</h3>

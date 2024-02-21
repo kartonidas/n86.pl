@@ -99,7 +99,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="rental" class="text-right mb-3"/>
+                <Help show="item:payment,bill|rental" mark="item:payment|item:bill" class="text-right mb-3"/>
                 <BillForm @submit-form="createBill" @back="back" :bill="bill" :saving="saving" :errors="errors" />
             </div>
         </div>

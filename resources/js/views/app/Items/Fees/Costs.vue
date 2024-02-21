@@ -170,7 +170,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="item" class="text-right mb-3"/>
+                <Help show="item" mark="item:cyclical|item:payment" class="text-right mb-3"/>
                 <TabMenu activeIndex="fees:const" :item="item" class="mb-3" :showEditButton="false" :showDivider="true"/>
                 
                 <div class="mb-3 flex justify-content-between w-full">

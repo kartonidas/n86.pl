@@ -126,7 +126,7 @@
     <div class="grid mt-1">
         <div class="col col-12">
             <div class="card pt-4">
-                <Help show="rental:history,status|item" class="text-right mb-3"/>
+                <Help show="rental:history,status|item" mark="rental:history" class="text-right mb-3"/>
                 <TabMenu active="TabMenu" :item="item" :showEditButton="false" activeIndex="rent:reservation" class="mb-5"/>
                 
                 <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">

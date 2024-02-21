@@ -231,7 +231,7 @@
     <div class="grid mt-1">
         <div class="col-12">
             <div class="card pt-4">
-                <Help show="item" class="text-right mb-3"/>
+                <Help show="item" mark="item:new|item:archive" class="text-right mb-3"/>
                 
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.estate_list') }}</h4>
