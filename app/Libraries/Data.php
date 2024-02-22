@@ -88,6 +88,7 @@ class Data
         return [
             "Nieruchomości" => "nieruchomosci",
             "Wynajem" => "wynajem",
+            "Najemcy i klienci" => "najemcy-i-klienci",
             "Rozliczenia" => "rozliczenia",
             "Użytkownicy" => "uzytkownicy",
             "Pakiety" => "pakiety",

@@ -91,7 +91,8 @@
 
 <template>
     <Breadcrumb :model="meta.breadcrumbItems"/>
-    <div class="card p-fluid mt-4">
+    <div class="card p-fluid mt-4 pt-4">
+        <Help show="tenant_customer" mark="tenant_customer:tenant" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('tenants.basic_data') }}</h4>
         <TenantForm @submit-form="updateTenant" :tenant="tenant" source="edit" :saving="saving" :loading="loading" :errors="errors" />
     </div>

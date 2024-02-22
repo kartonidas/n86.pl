@@ -121,12 +121,24 @@
                         case "package":
                             let packageMenu = [
                                 { label : this.$t('help.packages.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-box" },
+                                { id : "order", label : this.$t('help.packages.order_package'), url : this.$t('help.packages.order_package_url'), target : "_blank" },
                                 { id : "prolong", label : this.$t('help.packages.prolong_package'), url : this.$t('help.packages.prolong_package_url'), target : "_blank" },
                                 { id : "extend", label : this.$t('help.packages.extend_package'), url : this.$t('help.packages.extend_package_url'), target : "_blank" },
                             ];
                             packageMenu = this.filterItems(packageMenu, showItems)
                             this.markImportant(showCategory, packageMenu)
                             menuItems = menuItems.concat(packageMenu);
+                        break;
+                        
+                        case "tenant_customer":
+                            let tenantCustomerMenu = [
+                                { label : this.$t('help.tenant_customer.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-box" },
+                                { id : "tenant", label : this.$t('help.tenant_customer.tenant'), url : this.$t('help.tenant_customer.tenant_url'), target : "_blank" },
+                                { id : "customer", label : this.$t('help.tenant_customer.customer'), url : this.$t('help.tenant_customer.customer_url'), target : "_blank" }
+                            ];
+                            tenantCustomerMenu = this.filterItems(tenantCustomerMenu, showItems)
+                            this.markImportant(showCategory, tenantCustomerMenu)
+                            menuItems = menuItems.concat(tenantCustomerMenu);
                         break;
                     }
                 });

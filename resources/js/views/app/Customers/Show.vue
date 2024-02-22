@@ -139,7 +139,8 @@
     
     <div class="grid mt-1">
         <div class="col col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="tenant_customer" mark="tenant_customer:customer" class="text-right mb-3"/>
                 <Header :object="customer" type="customer" :showEditButton="true"/>
                 
                 <div class="mt-3">

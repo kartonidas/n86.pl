@@ -88,7 +88,8 @@
     }
 </script>
 <template>
-    <div class="card p-fluid mt-4" v-if="showForm">
+    <div class="card p-fluid mt-4 pt-4" v-if="showForm">
+        <Help show="package" mark="package:order" class="text-right mb-3"/>
         <h4 class="mb-5 header-border-bottom pb-2 text-color">{{ $t('orders.buy_access') }}</h4>
         
         <template v-if="!invoicingOk">

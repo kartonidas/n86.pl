@@ -12,7 +12,7 @@ class BasicAuthDevelopment
     {
         if(env("APP_DEV_MODE", false))
         {
-            if($request->is("api/*"))
+            if($request->is("api/*") || $request->is("ipn/*"))
                 return $next($request);
             
             $user = $_SERVER["PHP_AUTH_USER"] ?? "";

@@ -636,7 +636,7 @@
         "add_tenant" : "Dodaj najemce",
         "added" : "Najemca został utworzony",
         "address" : "Adres",
-        "agree_notifications" : "Nejemca wyraził zgodę na wysyłanie wiadomości",
+        "agree_notifications" : "Najemca wyraził zgodę na wysyłanie wiadomości",
         "apartment_no" : "Numer lokalu",
         "basic_data" : "Dane podstawowe",
         "card" : "Wizytówka",
@@ -772,10 +772,19 @@
         },
         "packages" : {
             "title" : "Pakiety",
+            "order_package" : "Wykupienie pakietu",
+            "order_package_url" : "/pomoc/pakiety/wykupienie-pakietu",
             "prolong_package" : "Przedłużanie ważności pakietu",
             "prolong_package_url" : "/pomoc/pakiety/przedluzanie-waznosci-pakietu",
             "extend_package" : "Zwiększanie pakietu",
             "extend_package_url" : "/pomoc/pakiety/zwiekszanie-pakietu"
+        },
+        "tenant_customer" : {
+            "title" : "Najemcy i klienci",
+            "tenant" : "Zarządzanie najemcami",
+            "tenant_url" : "/pomoc/najemcy-i-klienci/zarzadzanie-najemcami",
+            "customer" : "Zarządzanie klientami",
+            "customer_url" : "/pomoc/najemcy-i-klienci/zarzadzanie-klientami"
         }
     },
     "orders" : {

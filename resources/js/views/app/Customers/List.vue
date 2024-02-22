@@ -153,7 +153,8 @@
     
     <div class="grid mt-1">
         <div class="col-12">
-            <div class="card">
+            <div class="card pt-4">
+                <Help show="tenant_customer" mark="tenant_customer:customer" class="text-right mb-3"/>
                 <div class="flex justify-content-between align-items-center mb-5">
                     <h4 class="inline-flex mb-0 text-color font-medium">{{ $t('menu.customer_list') }}</h4>
                     <div class="text-right mb-0 inline-flex" v-if="hasAccess('customer:create')">
