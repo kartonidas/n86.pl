@@ -66,7 +66,7 @@
     $invoiceData = $data->getInvoiceData();
 ?>
 
-<table id="header-table">
+<table id="header-table" style="border-collapse: separate">
     <tr>
         <td rowspan="2">&nbsp;</td>
         <td style="font-size:17px; font-weight: bold" rowspan="2">

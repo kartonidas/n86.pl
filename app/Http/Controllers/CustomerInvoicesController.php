@@ -52,6 +52,10 @@ class CustomerInvoicesController extends Controller
                 $userInvoices->where("full_number", "LIKE", "%" . $validated["search"]["number"] . "%");
             if(!empty($validated["search"]["customer_id"]))
                 $userInvoices->where("customer_id", $validated["search"]["customer_id"]);
+            if(!empty($validated["search"]["customer_name"]))
+                $userInvoices->where("customer_name", "LIKE", "%" . $validated["search"]["customer_name"] . "%");
+            if(!empty($validated["search"]["customer_nip"]))
+                $userInvoices->where("customer_nip", "LIKE", "%" . $validated["search"]["customer_nip"] . "%");
             if(!empty($validated["search"]["date_from"]))
                 $userInvoices->where("document_date", ">=", $validated["search"]["date_from"]);
             if(!empty($validated["search"]["date_to"]))

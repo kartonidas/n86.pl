@@ -662,7 +662,7 @@
                             <Column :header="$t('rent.document_updated')" class="text-center" field="updated_at"></Column>
                             <Column class="text-center" style="min-width: 60px; width: 60px;">
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
+                                    <Button icon="pi pi-download" v-tooltip.bottom="$t('rent.download_document')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
                                 </template>
                             </Column>
                             <Column field="delete" v-if="hasAccess('rent:update')" style="min-width: 60px; width: 60px" class="text-center">

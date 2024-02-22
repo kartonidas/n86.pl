@@ -131,9 +131,9 @@ class Invoice extends Model
         $this->year =  $year;
         
         if($this->type == "firm")
-            $this->full_number = sprintf("NTF/%s/%s/%s", $this->number, $this->month, $this->year);
+            $this->full_number = sprintf("N86PL/%s/%s/%s", $this->number, $this->month, $this->year);
         else
-            $this->full_number = sprintf("NTR/%s/%s/%s", $this->number, $this->month, $this->year);
+            $this->full_number = sprintf("N86PL/%s/%s/%s", $this->number, $this->month, $this->year);
     }
 
     public function generateInvoice($save = false, $force = false)

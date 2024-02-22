@@ -94,7 +94,10 @@
         "type_firm" : "Firma",
         "type_person" : "Osoba fizyczna",
         "updated" : "Klient został zaktualizowany",
-        "zip" : "Kod pocztowy"
+        "zip" : "Kod pocztowy",
+        "invoices_list" : "Lista faktur",
+        "estates" : "Nieruchomości",
+        "invoices" : "Faktury"
     },
     "dictionaries" : {
         "active" : "Aktywny",
@@ -785,7 +788,9 @@
             "tenant_url" : "/pomoc/najemcy-i-klienci/zarzadzanie-najemcami",
             "customer" : "Zarządzanie klientami",
             "customer_url" : "/pomoc/najemcy-i-klienci/zarzadzanie-klientami"
-        }
+        },
+        "all_help" : "Wszystkie tematy pomocy",
+        "all_help_url" : "/pomoc"
     },
     "orders" : {
         "active_items" : "Ilość nieruchomości",

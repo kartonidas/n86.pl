@@ -29,7 +29,7 @@
                         if (splittedMark[0] == category) {
                             menuItems.forEach((mi) => {
                                 if (mi.id == splittedMark[1])
-                                    mi.class = "font-semibold"
+                                    mi.class = mi.class != undefined ? (mi.class + " font-semibold") : "font-semibold"
                             })
                         }
                     })
@@ -68,12 +68,12 @@
                         case "item":
                             let itemMenu = [
                                 { label : this.$t('help.items.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-building" },
-                                { id : "new", label : this.$t('help.items.new_item'), url : this.$t('help.items.new_item_url'), target : "_blank" },
-                                { id : "bill", label : this.$t('help.items.new_bill'), url : this.$t('help.items.new_bill_url'), target : "_blank" },
-                                { id : "cyclical", label : this.$t('help.items.new_cyclical_fee'), url : this.$t('help.items.new_cyclical_fee_url'), target : "_blank" },
-                                { id : "payment", label : this.$t('help.items.payment'), url : this.$t('help.items.payment_url'), target : "_blank" },
-                                { id : "fault", label : this.$t('help.items.faults'), url : this.$t('help.items.faults_url'), target : "_blank" },
-                                { id : "archive", label : this.$t('help.items.archive_block_item'), url : this.$t('help.items.archive_block_item_url'), target : "_blank" },
+                                { id : "new", label : this.$t('help.items.new_item'), url : this.$t('help.items.new_item_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "bill", label : this.$t('help.items.new_bill'), url : this.$t('help.items.new_bill_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "cyclical", label : this.$t('help.items.new_cyclical_fee'), url : this.$t('help.items.new_cyclical_fee_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "payment", label : this.$t('help.items.payment'), url : this.$t('help.items.payment_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "fault", label : this.$t('help.items.faults'), url : this.$t('help.items.faults_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "archive", label : this.$t('help.items.archive_block_item'), url : this.$t('help.items.archive_block_item_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
                             ];
                             itemMenu = this.filterItems(itemMenu, showItems)
                             this.markImportant(showCategory, itemMenu)
@@ -83,13 +83,13 @@
                         case "rental":
                             let rentalMenu = [
                                 { label : this.$t('help.rentals.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-dollar" },
-                                { id : "new", label : this.$t('help.rentals.start_rental'), url : this.$t('help.rentals.start_rental_url'), target : "_blank" },
-                                { id : "template", label : this.$t('help.rentals.document_templates'), url : this.$t('help.rentals.document_templates_url'), target : "_blank" },
-                                { id : "document", label : this.$t('help.rentals.generate_documents'), url : this.$t('help.rentals.generate_documents_url'), target : "_blank" },
-                                { id : "terminate", label : this.$t('help.rentals.terminate'), url : this.$t('help.rentals.terminate_url'), target : "_blank" },
-                                { id : "notify", label : this.$t('help.rentals.notifications'), url : this.$t('help.rentals.notifications_url'), target : "_blank" },
-                                { id : "history", label : this.$t('help.rentals.history_reservation'), url : this.$t('help.rentals.history_reservation_url'), target : "_blank" },
-                                { id : "status", label : this.$t('help.rentals.statuses'), url : this.$t('help.rentals.statuses_url'), target : "_blank" },
+                                { id : "new", label : this.$t('help.rentals.start_rental'), url : this.$t('help.rentals.start_rental_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "template", label : this.$t('help.rentals.document_templates'), url : this.$t('help.rentals.document_templates_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "document", label : this.$t('help.rentals.generate_documents'), url : this.$t('help.rentals.generate_documents_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "terminate", label : this.$t('help.rentals.terminate'), url : this.$t('help.rentals.terminate_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "notify", label : this.$t('help.rentals.notifications'), url : this.$t('help.rentals.notifications_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "history", label : this.$t('help.rentals.history_reservation'), url : this.$t('help.rentals.history_reservation_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "status", label : this.$t('help.rentals.statuses'), url : this.$t('help.rentals.statuses_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
                             ];
                             rentalMenu = this.filterItems(rentalMenu, showItems)
                             this.markImportant(showCategory, rentalMenu)
@@ -99,8 +99,8 @@
                         case "settlement":
                             let settlementMenu = [
                                 { label : this.$t('help.settlements.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-file-pdf" },
-                                { id : "register", label : this.$t('help.settlements.sale_registries'), url : this.$t('help.settlements.sale_registries_url'), target : "_blank" },
-                                { id : "invoice", label : this.$t('help.settlements.create_invoice'), url : this.$t('help.settlements.create_invoice_url'), target : "_blank" },
+                                { id : "register", label : this.$t('help.settlements.sale_registries'), url : this.$t('help.settlements.sale_registries_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "invoice", label : this.$t('help.settlements.create_invoice'), url : this.$t('help.settlements.create_invoice_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
                             ];
                             settlementMenu = this.filterItems(settlementMenu, showItems)
                             this.markImportant(showCategory, settlementMenu)
@@ -110,8 +110,8 @@
                         case "user":
                             let userMenu = [
                                 { label : this.$t('help.users.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-user" },
-                                { id : "manage", label : this.$t('help.users.manage'), url : this.$t('help.users.manage_url'), target : "_blank" },
-                                { id : "permission", label : this.$t('help.users.permissions'), url : this.$t('help.users.permissions_url'), target : "_blank" },
+                                { id : "manage", label : this.$t('help.users.manage'), url : this.$t('help.users.manage_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "permission", label : this.$t('help.users.permissions'), url : this.$t('help.users.permissions_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
                             ];
                             userMenu = this.filterItems(userMenu, showItems)
                             this.markImportant(showCategory, userMenu)
@@ -121,9 +121,9 @@
                         case "package":
                             let packageMenu = [
                                 { label : this.$t('help.packages.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-box" },
-                                { id : "order", label : this.$t('help.packages.order_package'), url : this.$t('help.packages.order_package_url'), target : "_blank" },
-                                { id : "prolong", label : this.$t('help.packages.prolong_package'), url : this.$t('help.packages.prolong_package_url'), target : "_blank" },
-                                { id : "extend", label : this.$t('help.packages.extend_package'), url : this.$t('help.packages.extend_package_url'), target : "_blank" },
+                                { id : "order", label : this.$t('help.packages.order_package'), url : this.$t('help.packages.order_package_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "prolong", label : this.$t('help.packages.prolong_package'), url : this.$t('help.packages.prolong_package_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
+                                { id : "extend", label : this.$t('help.packages.extend_package'), url : this.$t('help.packages.extend_package_url'), target : "_blank", class : "active-menu-item", icon : "pi pi-chevron-right" },
                             ];
                             packageMenu = this.filterItems(packageMenu, showItems)
                             this.markImportant(showCategory, packageMenu)
@@ -133,8 +133,8 @@
                         case "tenant_customer":
                             let tenantCustomerMenu = [
                                 { label : this.$t('help.tenant_customer.title'), disabled : true, class : "font-semibold surface-200", icon : "pi pi-box" },
-                                { id : "tenant", label : this.$t('help.tenant_customer.tenant'), url : this.$t('help.tenant_customer.tenant_url'), target : "_blank" },
-                                { id : "customer", label : this.$t('help.tenant_customer.customer'), url : this.$t('help.tenant_customer.customer_url'), target : "_blank" }
+                                { id : "tenant", label : this.$t('help.tenant_customer.tenant'), url : this.$t('help.tenant_customer.tenant_url'), target : "_blank", class : "active-menu-item" },
+                                { id : "customer", label : this.$t('help.tenant_customer.customer'), url : this.$t('help.tenant_customer.customer_url'), target : "_blank", class : "active-menu-item" }
                             ];
                             tenantCustomerMenu = this.filterItems(tenantCustomerMenu, showItems)
                             this.markImportant(showCategory, tenantCustomerMenu)
@@ -142,6 +142,12 @@
                         break;
                     }
                 });
+                
+                let lastElement = menuItems.pop();
+                lastElement.separator = true;
+                menuItems.push(lastElement);
+                menuItems.push({ id : "tenant", label : this.$t('help.all_help'), url : this.$t('help.all_help_url'), target : "_blank", icon : "pi pi-question" })
+                
                 return menuItems
             },
             
@@ -156,8 +162,8 @@
 
 <template>
     <template v-if="showMenu()">
-        <div :class="class">
-            <Menu ref="menu" :model="getMenuItems()" :popup="true" />
+        <div class="help-menu-container relative" :class="class">
+            <Menu ref="menu" :model="getMenuItems()" class="help-menu" :popup="true" appendTo=".help-menu-container"/>
             <Button type="button" class="button py-0 px-2 w-auto" outlined text @click="toggleHelpMenu">
                 {{ $t('app.need_help') }}
             </Button>

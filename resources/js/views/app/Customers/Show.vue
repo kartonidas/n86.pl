@@ -6,6 +6,7 @@
     import Header from '@/views/app/_partials/Header.vue'
     import CustomerService from '@/service/CustomerService'
     import ItemService from '@/service/ItemService'
+    import UserInvoiceService from '@/service/UserInvoiceService'
     
     export default {
         components: { Address, Header },
@@ -14,10 +15,12 @@
             
             const customerService = new CustomerService()
             const itemService = new ItemService()
+            const userInvoiceService = new UserInvoiceService()
             
             return {
                 customerService,
                 itemService,
+                userInvoiceService,
                 hasAccess,
                 getValueLabel,
                 getItemRowColor
@@ -28,10 +31,20 @@
                 errors: [],
                 customer: {},
                 items: [],
+                invoices: [],
                 displayConfirmationItem: false,
                 deleteItemId: null,
                 meta: {
                     items: {
+                        list: {
+                            first: 0,
+                            size: this.rowsPerPage,
+                        },
+                        totalRecords: null,
+                        totalPages: null,
+                        loading: true
+                    },
+                    invoices: {
                         list: {
                             first: 0,
                             size: this.rowsPerPage,
@@ -62,6 +75,7 @@
                         this.loading = false
                         
                         this.getItemsList()
+                        this.getInvoicesList()
                     },
                     (errors) => {
                         if(errors.response.status == 404)
@@ -80,6 +94,7 @@
             },
             
             getItemsList() {
+                this.meta.items.loading = true
                 const search = {
                     customer_id : this.$route.params.customerId,
                     mode: 'all'
@@ -129,7 +144,55 @@
             
             rowItemsClick(event) {
                 this.$router.push({name: 'item_show', params: { itemId : event.data.id }})
-            }
+            },
+            
+            getInvoicesList() {
+                this.meta.invoices.loading = true
+                const search = {
+                    customer_id : this.$route.params.customerId,
+                };
+                this.userInvoiceService.invoices(this.meta.invoices.list, search)
+                    .then(
+                        (response) => {
+                            this.invoices = response.data.data
+                            this.meta.invoices.totalRecords = response.data.total_rows
+                            this.meta.invoices.totalPages = response.data.total_pages
+                            this.meta.invoices.loading = false
+                        },
+                        (errors) => {
+                        }
+                    )
+            },
+            
+            changeInvoicesPage(event) {
+                this.meta.invoices.list.first = event["first"];
+                this.getInvoicesList()
+            },
+            
+            downloadPDF(invoiceId) {
+                this.userInvoiceService.getPDF(invoiceId)
+                    .then(
+                        (response) => {
+                            const contentDisposition = response.headers['content-disposition'];
+                            let fileName = 'file.pdf';
+                            if (contentDisposition) {
+                                const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+                                if (fileNameMatch.length === 2)
+                                    fileName = fileNameMatch[1];
+                            }
+                            
+                            var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            var fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            fileLink.setAttribute('download', fileName);
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                        },
+                        (errors) => {
+                            
+                        }
+                    )
+            },
         },
     }
 </script>
@@ -187,68 +250,119 @@
             
             
             <div class="card mt-5">
-                <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
-                    <h5 class="inline-flex mb-0 mt-2 text-color font-medium">
-                        {{ $t('customers.items_list') }}
-                    </h5>
-                    <div v-if="hasAccess('item:create')">
-                        <Button icon="pi pi-plus" @click="addItem" v-tooltip.left="$t('customers.add_new_item')"></Button>
-                    </div>
-                </div>
-                <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.list.size" :first="meta.items.list.first" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
-                    <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
-                        <template #body="{ data }">
-                            <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
-                            <div class="mt-1">
-                                <i class="pi pi-lock pr-1" v-if="data.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
-                                <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
-                                    {{ data.name }}
-                                </router-link>
-                                
-                                <div>
-                                    <small>
-                                        <Address :object="data" :newline="true" emptyChar=""/>
-                                    </small>
-                                </div>
+                <TabView class="mt-5">
+                    <TabPanel :header="$t('customers.estates')">
+                        <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
+                            <h5 class="inline-flex mb-0 mt-2 text-color font-medium">
+                                {{ $t('customers.items_list') }}
+                            </h5>
+                            <div v-if="hasAccess('item:create')">
+                                <Button icon="pi pi-plus" @click="addItem" v-tooltip.left="$t('customers.add_new_item')"></Button>
                             </div>
-                        </template>
-                    </Column>
-                    <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">
-                        <template #body="{ data }">
-                            <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
-                            <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
-                            
-                            <template v-if="data.rentals">
-                                <div class="text-sm text-gray-600 mt-2">
-                                    <div v-if="data.rentals.current">
-                                        {{ $t('items.end') }}: {{ data.rentals.current.end }}
+                        </div>
+                        <DataTable :rowClass="({ mode }) => getItemRowColor(mode)" :value="items" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.items.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.items.totalPages" :rows="meta.items.list.size" :first="meta.items.list.first" @page="changeItemsPage" :loading="meta.items.loading" @row-click="rowItemsClick($event)">
+                            <Column field="name" :header="$t('items.name')" style="min-width: 300px;">
+                                <template #body="{ data }">
+                                    <Badge :value="getValueLabel('item_types', data.type)" class="font-normal" severity="info"></Badge>
+                                    <div class="mt-1">
+                                        <i class="pi pi-lock pr-1" v-if="data.mode == 'locked'" v-tooltip.top="$t('items.locked')"></i>
+                                        <router-link :to="{name: 'item_show', params: { itemId : data.id }}">
+                                            {{ data.name }}
+                                        </router-link>
+                                        
+                                        <div>
+                                            <small>
+                                                <Address :object="data" :newline="true" emptyChar=""/>
+                                            </small>
+                                        </div>
                                     </div>
-                                    <div v-if="data.rentals.next">
-                                        {{ $t('items.reservation_single') }}: {{ data.rentals.next.start }}-{{ data.rentals.next.end }}
-                                    </div>
-                                </div>
+                                </template>
+                            </Column>
+                            <Column :header="$t('items.rented')" class="text-center" style="width: 120px;">
+                                <template #body="{ data }">
+                                    <Badge v-if="data.rented" severity="success" :value="$t('app.yes')"></Badge>
+                                    <Badge v-else severity="secondary" :value="$t('app.no')"></Badge>
+                                    
+                                    <template v-if="data.rentals">
+                                        <div class="text-sm text-gray-600 mt-2">
+                                            <div v-if="data.rentals.current">
+                                                {{ $t('items.end') }}: {{ data.rentals.current.end }}
+                                            </div>
+                                            <div v-if="data.rentals.next">
+                                                {{ $t('items.reservation_single') }}: {{ data.rentals.next.start }}-{{ data.rentals.next.end }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                            </Column>
+                            <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
+                                <template #body="{ data }">
+                                    <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmationItem(data.id)"/>
+                                </template>
+                            </Column>
+                            <template #empty>
+                                {{ $t('items.empty_list') }}
                             </template>
-                        </template>
-                    </Column>
-                    <Column field="delete" v-if="hasAccess('item:delete')" style="min-width: 60px; width: 60px" class="text-center">
-                        <template #body="{ data }">
-                            <Button :disabled="!data.can_delete" icon="pi pi-trash" v-tooltip.bottom="$t('app.remove')" class="p-button-danger p-2" style="width: auto" @click="openConfirmationItem(data.id)"/>
-                        </template>
-                    </Column>
-                    <template #empty>
-                        {{ $t('items.empty_list') }}
-                    </template>
-                </DataTable>
-                <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmationItem" :style="{ width: '450px' }" :modal="true">
-                    <div class="flex align-items-center justify-content-center">
-                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                        <span>{{ $t('app.remove_object_confirmation') }}</span>
-                    </div>
-                    <template #footer>
-                        <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmationItem" class="p-button-text" />
-                        <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-danger" autofocus />
-                    </template>
-                </Dialog>
+                        </DataTable>
+                        <Dialog :header="$t('app.confirmation')" v-model:visible="displayConfirmationItem" :style="{ width: '450px' }" :modal="true">
+                            <div class="flex align-items-center justify-content-center">
+                                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                                <span>{{ $t('app.remove_object_confirmation') }}</span>
+                            </div>
+                            <template #footer>
+                                <Button :label="$t('app.no')" icon="pi pi-times" @click="closeConfirmationItem" class="p-button-text" />
+                                <Button :label="$t('app.yes')" icon="pi pi-check" @click="confirmDeleteItem" class="p-button-danger" autofocus />
+                            </template>
+                        </Dialog>
+                    </TabPanel>
+                    <TabPanel :header="$t('customers.invoices')">
+                        <div class="flex justify-content-between align-items-center mb-3 text-color font-medium">
+                            <h5 class="inline-flex mb-0 mt-2 text-color font-medium">
+                                {{ $t('customers.invoices_list') }}
+                            </h5>
+                        </div>
+                        <DataTable :value="invoices" stripedRows class="p-datatable-gridlines" :totalRecords="meta.invoices.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.invoices.totalPages" :rows="meta.invoices.list.size" :first="meta.invoices.list.first" @page="changeInvoicesPage" :loading="meta.invoices.loading">
+                            <Column class="text-left" style="min-width: 60px; width: 60px;">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-download" v-tooltip.bottom="$t('customer_invoices.download_invoice')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
+                                </template>
+                            </Column>
+                            <Column :header="$t('customer_invoices.number')" field="full_number" style="min-width: 300px;">
+                                <template #body="{ data }">
+                                    <div class="font-medium mb-1 text-lg">{{ data.customer_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ data.full_number }}</div>
+                                    <template v-if="data.proforma_number">
+                                        <div class="mt-2 text-sm">
+                                            {{ $t("customer_invoices.from_proforma") }}:
+                                            <router-link :to="{name: 'customer_invoices_edit', params: { customerInvoiceId : data.proforma_id }}" v-if="hasAccess('dictionary:update')">
+                                                 {{ data.proforma_number }}
+                                            </router-link>
+                                        </div>
+                                    </template>
+                                </template>
+                            </Column>
+                            <Column :header="$t('customer_invoices.document_date')" field="document_date" class="text-center"></Column>
+                            <Column :header="$t('customer_invoices.net_amount')" field="net_amount" class="text-right">
+                                <template #body="{ data }">
+                                    {{ numeralFormat(data.net_amount, '0.00') }}
+                                </template>
+                            </Column>
+                            <Column :header="$t('customer_invoices.gross_amount')" field="gross_amount" class="text-right">
+                                <template #body="{ data }">
+                                    {{ numeralFormat(data.gross_amount, '0.00') }}
+                                </template>
+                            </Column>
+                            <Column :header="$t('customer_invoices.sale_register')">
+                                <template #body="{ data }">
+                                    {{ data.sale_register.name }}
+                                </template>
+                            </Column>
+                            <template #empty>
+                                {{ $t('customer_invoices.empty_list') }}
+                            </template>
+                        </DataTable>
+                    </TabPanel>
+                </TabView>
             </div>
         </div>
     </div>

@@ -15,6 +15,8 @@ class CustomerInvoicesRequest extends ListRequest
             "search.type" => ["nullable", "string", Rule::in(array_keys(SaleRegister::getAllowedTypes()))],
             "search.number" => "nullable|string|max:100",
             "search.customer_id" => "nullable|integer",
+            "search.customer_name" => "nullable|string",
+            "search.customer_nip" => "nullable|string",
             "search.date_from" => "nullable|date_format:Y-m-d",
             "search.date_to" => "nullable|date_format:Y-m-d",
             "search.sale_register_id" => "nullable|integer",

@@ -220,6 +220,13 @@
                             <InputText type="text" :placeholder="$t('customer_invoices.number')" class="w-full" v-model="meta.search.number"/>
                         </div>
                         
+                        <div class="col-12 md:col-6 mb-3">
+                            <InputText id="customer_name" type="text" :placeholder="$t('customer_invoices.customer_name')" class="w-full" v-model="meta.search.customer_name"/>
+                        </div>
+                        <div class="col-12 md:col-6 mb-3">
+                            <InputText id="customer_nip" type="text" :placeholder="$t('customer_invoices.customer_nip')" class="w-full" v-model="meta.search.customer_nip"/>
+                        </div>
+                        
                         <div class="col-12 md:col-3 mb-3">
                             <Dropdown v-model="meta.search.sale_register_id" :showClear="this.meta.search.sale_register_id ? true : false" :options="saleRegistries" optionLabel="name" optionValue="id" :placeholder="$t('customer_invoices.sale_register')" class="w-full" />
                         </div>
@@ -245,7 +252,7 @@
                 <DataTable :value="customerInvoices" stripedRows class="p-datatable-gridlines clickable" :totalRecords="meta.totalRecords" :rowHover="true" :lazy="true" :paginator="true" :pageCount="meta.totalPages" :rows="meta.list.size" :first="meta.list.first" @page="changePage" :loading="loading" @row-click="rowClick($event)" @sort="sort($event)" :sortField="this.meta.list.sort" :sortOrder="this.meta.list.order" stateStorage="session" stateKey="dt-state-customer-invoices-table">
                     <Column class="text-left" style="min-width: 60px; width: 60px;">
                         <template #body="{ data }">
-                            <Button icon="pi pi-file-pdf" v-tooltip.bottom="$t('customer_invoices.download_invoice')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
+                            <Button icon="pi pi-download" v-tooltip.bottom="$t('customer_invoices.download_invoice')" class="p-button-info p-2" style="width: auto" @click="downloadPDF(data.id)"/>
                             <template v-if="data.type == 'proforma' && data.make_from_proforma && hasAccess('customer_invoices:create')">
                                 <Button icon="pi pi-book" severity="warning" v-tooltip.bottom="$t('customer_invoices.make_from_proforma')" class="p-button-info p-2 ml-1" style="width: auto" @click="makeFromProforma(data.id)"/>
                             </template>
