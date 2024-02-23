@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <link rel="icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>@yield("metatitle", "Aplikacja do zarządzania wynajmem")</title>
         <meta name="description" content="@yield("metadesc", "Aplikacja do zarządzania wynajmem: mieszkań, domów, lokali usługowych, komercyjnych. Generowanie umów, umów okazjonalnych, zarządzanie najemcami, analiza zysków i kosztów generowanych przez nieruchomość. Obsługa niercuhomośći w imieniu klientów. Zarządzanie kosztami generowanymi przez obiekt, przypomnienia o płatnościach.")">
             
@@ -63,7 +64,7 @@
                     <div class="d-block d-lg-none navbar-divider mb-3"></div>
                     <div class="text-center text-lg-start">
                         <a href="/sign-in" class="btn round-50 fw-500 text-primary me-4">Zaloguj się</a>
-                        <a href="/sign-up" class="btn btn-primary fw-500 round-50">Zarejestruj się</a>
+                        <a href="/sign-up" class="btn btn-primary fw-500 round-50 fb-track" fb-data-source="signup:header">Zarejestruj się</a>
                     </div>
                 </div>
             </div>

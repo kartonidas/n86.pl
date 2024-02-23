@@ -143,10 +143,30 @@ App =
     
     verifyCaptchaCallback : function() {
         $("INPUT[name='captcha_response']").prop("checked", true);
+    },
+    
+    initFBTrack : function() {
+        if ($("A.fb-track").length) {
+            $("A.fb-track").click(function() {
+                $.ajax({
+                    headers: {
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+                    },
+                    url: "/fb-track",
+                    type: "post",
+                    data: {
+                        source : $(this).attr("fb-data-source")
+                    },
+                    success: function() {
+                    }
+                });
+            });
+        }
     }
 }
 
 $(document).ready(function(){
     App.validForm();
     App.initMagnificPopupImage();
+    App.initFBTrack();
 });

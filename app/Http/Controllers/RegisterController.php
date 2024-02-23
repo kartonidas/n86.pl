@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Exceptions\ObjectNotExist;
+use App\Libraries\FbTrack;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Models\UserRegisterToken;
@@ -134,6 +135,17 @@ class RegisterController extends Controller
             
             $user->ensureFirm();
             $user->prepareAccount();
+            
+            /* ---- Facebook track CompleteRegistration event ---- */
+            $trackParams = [
+                "user_data" => [
+                    "em" => $user->email,
+                    "fn" => $user->firstname,
+                    "ln" => $user->lastname
+                ]
+            ];
+            FbTrack::track($request, "CompleteRegistration", $trackParams);
+            /* ---- Facebook track CompleteRegistration event ---- */
         });
         
         return true;

@@ -9,7 +9,7 @@
                 Zaawanoswane narzędzie do zarządzania wynajmem nieruchomości. Obsługuj wynajem nieruchomości w swoim imieniu lub w imieniu swoich klientów.
             </p>
                 
-            <a href="/sign-up" class="btn btn-primary round-50 mt-2 mb-2 p-3 px-3">Wypróbuj za darmo przez 14 dni!</a>
+            <a href="/sign-up" class="btn btn-primary round-50 mt-2 mb-2 p-3 px-3 fb-track" fb-data-source="signup:intro">Wypróbuj za darmo przez 14 dni!</a>
                 
             <div class="d-flex justify-content-center justify-content-md-end">
                 <img src="/images/intro-screen.png" alt="Tablica i telefon" class="w-auto" style="max-width: 100%">
@@ -90,7 +90,7 @@
                                 <li><i class="bi bi-check-lg text-success"></i> Nielimitowana ilość użytkowników,</li>
                             </ul>
                                 
-                            <a href="/sign-up" class="btn btn-primary round-50 mt-3 mb-5 pt-2 pb-2 ps-4 pe-4">Zarejestruj się</a>
+                            <a href="/sign-up" class="btn btn-primary round-50 mt-3 mb-5 pt-2 pb-2 ps-4 pe-4 fb-track" fb-data-source="signup:price-month">Zarejestruj się</a>
                                 
                             <div class="text-muted fs-8">Podane ceny zawierają {{ config("packages.allowed.p12.vat") }}% podatku VAT.</div>
                         </div>
@@ -116,7 +116,7 @@
                                 <li><i class="bi bi-check-lg text-success"></i> Nielimitowana ilość użytkowników,</li>
                             </ul>
                                 
-                            <a href="/sign-up" class="btn btn-primary round-50 mt-3 mb-5 pt-2 pb-2 ps-4 pe-4">Zarejestruj się</a>
+                            <a href="/sign-up" class="btn btn-primary round-50 mt-3 mb-5 pt-2 pb-2 ps-4 pe-4 fb-track" fb-data-source="signup:price-year">Zarejestruj się</a>
                             
                             <div class="text-muted fs-8">Podane ceny zawierają {{ config("packages.allowed.p12.vat") }}% podatku VAT.</div>
                         </div>

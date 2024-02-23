@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\ContactRequest;
 use App\Libraries\Data;
+use App\Libraries\FbTrack;
 use App\Libraries\Helper;
 use App\Mail\ContactForm;
 
@@ -19,6 +20,7 @@ class PageController extends Controller
 {
     public function index(Request $request)
     {
+        FbTrack::track($request, "ViewContent");
         return view("pages.index");
     }
     
@@ -162,5 +164,34 @@ class PageController extends Controller
             $html
         );
         return $html;
+    }
+    
+    public function fbtrack(Request $request)
+    {
+        $actionSource = explode(":", $request->input("source", null));
+        
+        $eventTrack = null;
+        $eventParams = ["custom_data" => []];
+        
+        $action = $actionSource[0];
+        $source = $actionSource[1] ?? null;
+        
+        switch($action)
+        {
+            case "signup":
+                $allowedSources = ["header", "intro", "price-month", "price-year"];
+                if(in_array($source, $allowedSources))
+                {
+                    $eventTrack = "ViewContent";
+                    $eventParams["custom_data"] = [
+                        "content_name" => "sign-up",
+                        "content_category" => $source
+                    ];
+                }
+            break;
+        }
+        
+        if($eventTrack !== null)
+            FbTrack::track($request, $eventTrack, $eventParams);
     }
 }

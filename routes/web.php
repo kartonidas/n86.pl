@@ -24,6 +24,7 @@ $router->get('/polityka-prywatnosci', [PageController::class, "privacyPolicy"])-
 $router->get('/ciasteczka', [PageController::class, "cookies"])->name("cookies");
 
 $router->post('/kontakt', [PageController::class, "contact"])->name("contact");
+$router->post('/fb-track', [PageController::class, "fbtrack"])->name("fbtrack");
 
 $router->get('/najwazniejsze-funkcje/zarzadzanie-obiektami', [PageController::class, "features"])->name("zarzadzanie_obiektami");
 $router->get('/najwazniejsze-funkcje/zarzadzanie-klientami', [PageController::class, "features"])->name("zarzadzanie_klientami");
