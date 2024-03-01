@@ -52,11 +52,11 @@ class Notification extends Model
                         if($subscription)
                         {
                             if($type == "subscription:activated")
-                                Mail::to($user->email)->locale($locale)->queue(new Activated($order, $subscription));
+                                Mail::to($user->email, $user->email)->locale($locale)->queue(new Activated($order, $subscription));
                             if($type == "subscription:renewed")
-                                Mail::to($user->email)->locale($locale)->queue(new Renewed($order, $subscription));
+                                Mail::to($user->email, $user->email)->locale($locale)->queue(new Renewed($order, $subscription));
                             if($type == "subscription:extend")
-                                Mail::to($user->email)->locale($locale)->queue(new Extend($order, $subscription));
+                                Mail::to($user->email, $user->email)->locale($locale)->queue(new Extend($order, $subscription));
                                 
                             $message = self::generateMessage($locale, $type, $subscription);
                             if($message)
@@ -74,9 +74,9 @@ class Notification extends Model
                     if($subscription)
                     {
                         if($type == "subscription:expired")
-                            Mail::to($user->email)->locale($locale)->queue(new Expired($subscription));
+                            Mail::to($user->email, $user->email)->locale($locale)->queue(new Expired($subscription));
                         if($type == "subscription:expiration3")    
-                            Mail::to($user->email)->locale($locale)->queue(new Expiration($subscription, 3));
+                            Mail::to($user->email, $user->email)->locale($locale)->queue(new Expiration($subscription, 3));
                             
                         $message = self::generateMessage($locale, $type, $subscription);
                         if($message)

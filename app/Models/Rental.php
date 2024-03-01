@@ -717,7 +717,7 @@ class Rental extends Model
             if(!$user || $user->deleted)
                 continue;
             
-            Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndedSingle($data, $notification));
+            Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new RentalEndedSingle($data, $notification));
         }
     }
 }

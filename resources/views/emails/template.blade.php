@@ -2,7 +2,7 @@
 	<body>
 		<div style="background-color: #FFFFFF ">
 			<div style="margin-bottom: 20px">
-                <img src="{{ $message->embed(public_path("images/logo_mail.png")) }}">
+                <img src="{{ $message->embed(public_path("images/logo_mail.png")) }}" alt="logo - n86.pl">
 			</div>
 			<div style="font-size:13px;margin:0;padding:0;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;line-height:1.5;height:100%!important;width:100%!important">
 				<div style="margin:0;margin-bottom:{{ !empty($mb) ? $mb : "30px" }};color:#474747;font-family:'Open Sans','Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif;font-size:15px;font-weight:300">

@@ -74,7 +74,7 @@ class PageController extends Controller
         
         // wysyłka
         $mailable = new ContactForm($validated);
-        $mailable->to(env("CONTACT_FORM_EMAIL"));
+        $mailable->to(env("CONTACT_FORM_EMAIL"), env("CONTACT_FORM_EMAIL"));
         Mail::send($mailable);
         
         return [

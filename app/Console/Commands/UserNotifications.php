@@ -121,16 +121,16 @@ class UserNotifications extends Command
         {
             case ConfigNotification::MODE_SINGLE:
                 foreach($groupedBills as $bill)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsSingle($bill, $notification, $paymentDate));
+                    Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new ItemBillsSingle($bill, $notification, $paymentDate));
             break;
                 
             case ConfigNotification::MODE_GROUP:
-                Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroup($groupedBills, $notification, $paymentDate));
+                Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new ItemBillsGroup($groupedBills, $notification, $paymentDate));
             break;
                 
             case ConfigNotification::MODE_GROUP_OBJECT:
                 foreach($groupedBills as $bills)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new ItemBillsGroupObject($bills, $notification, $paymentDate));
+                    Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new ItemBillsGroupObject($bills, $notification, $paymentDate));
             break;
         }
         
@@ -191,10 +191,10 @@ class UserNotifications extends Command
         {
             case ConfigNotification::MODE_SINGLE:
                 foreach($groupedRentals as $rental)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingSingle($rental, $notification, $endDate));
+                    Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new RentalEndingSingle($rental, $notification, $endDate));
             break;
             case ConfigNotification::MODE_GROUP:
-                Mail::to($user->email)->locale($user->default_locale)->queue(new RentalEndingGroup($groupedRentals, $notification, $endDate));
+                Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new RentalEndingGroup($groupedRentals, $notification, $endDate));
             break;
         }
         
@@ -246,10 +246,10 @@ class UserNotifications extends Command
         {
             case ConfigNotification::MODE_SINGLE:
                 foreach($groupedRentals as $rental)
-                    Mail::to($user->email)->locale($user->default_locale)->queue(new RentalComingSingle($rental, $notification, $comingDate));
+                    Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new RentalComingSingle($rental, $notification, $comingDate));
             break;
             case ConfigNotification::MODE_GROUP:
-                Mail::to($user->email)->locale($user->default_locale)->queue(new RentalComingGroup($groupedRentals, $notification, $comingDate));
+                Mail::to($user->email, $user->email)->locale($user->default_locale)->queue(new RentalComingGroup($groupedRentals, $notification, $comingDate));
             break;
         }
         
