@@ -15,6 +15,18 @@
         <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
+        
+        @if(!env("APP_DEV_MODE", false))
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q26B5NWWJ6"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                
+                gtag('config', 'G-Q26B5NWWJ6');
+            </script>
+        @endif
     </head>
     <body>
         <div id="app"></div>
