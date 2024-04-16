@@ -111,7 +111,7 @@ class Customer extends Model
                         if(empty(trim($contact["val"])))
                             continue;
                         
-                        $customerContact = $this->contacts()->where("type", $type)->where("val", $contact["val"])->first();
+                        $customerContact = $this->contacts()->where("type", $type)->where("prefix", $contact["prefix"] ?? null)->where("val", $contact["val"])->first();
                         if(!$customerContact)
                         {
                             $customerContact = new CustomerContact;
@@ -124,6 +124,7 @@ class Customer extends Model
                         }
                         else
                         {
+                            $customerContact->prefix = $contact["prefix"] ?? NULL;
                             $customerContact->notification = !empty($contact["notification"]) ? 1 : 0;
                             $customerContact->save();
                         }

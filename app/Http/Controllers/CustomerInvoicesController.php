@@ -214,7 +214,7 @@ class CustomerInvoicesController extends Controller
             $row->proforma_id = $proforma->id;
             $row->sale_register_id = $validated["sale_register_id"];
             $row->created_user_id = $validated["created_user_id"];
-            $row->customer_id = $validated["customer_id"];
+            $row->customer_id = $validated["customer_id"] ?? null;
             $row->customer_type = $validated["customer_type"];
             $row->customer_name = $validated["customer_name"];
             $row->customer_street = $validated["customer_street"];
@@ -262,7 +262,7 @@ class CustomerInvoicesController extends Controller
             $row->type = SaleRegister::TYPE_CORRECTION;
             $row->sale_register_id = $validated["sale_register_id"];
             $row->created_user_id = $validated["created_user_id"];
-            $row->customer_id = $invoice->customer_id;
+            $row->customer_id = $invoice->customer_id ?? null;
             $row->customer_type = $invoice->customer_type;
             $row->customer_name = $invoice->customer_name;
             $row->customer_street = $invoice->customer_street;
